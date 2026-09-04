@@ -1,0 +1,22 @@
+version: '3'
+
+tasks:
+  run:
+    desc: Start the Streamlit application
+    cmd: uv run streamlit run src/ui/app.py
+
+  install:
+    desc: Install all Python dependencies via uv
+    cmd: uv sync
+
+  pull-model:
+    desc: Pull the recommended Ollama model (gemma2:2b)
+    cmd: ollama pull gemma2:2b
+
+  check-config:
+    desc: Verify and print resolved configuration
+    cmd: uv run python -c "from src.config import Settings; print(Settings())"
+
+  test:
+    desc: Run verification tests
+    cmd: uv run python -c "from src.config import Settings; s = Settings(); print('Config OK:', s.model_dump())"
