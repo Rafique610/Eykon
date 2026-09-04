@@ -26,3 +26,15 @@ class Embedder:
         """Embed multiple text strings in batch into unit-normalized float vectors."""
         embeddings = self._model.encode(texts, normalize_embeddings=True)
         return embeddings.tolist()
+
+    def count_tokens(self, text: str) -> int:
+        """Return the exact token count using the model tokenizer."""
+        return len(self._model.tokenizer.encode(text, add_special_tokens=False))
+
+    def tokenize(self, text: str) -> list[int]:
+        """Encode text into token IDs using the model tokenizer."""
+        return self._model.tokenizer.encode(text, add_special_tokens=False)
+
+    def decode_tokens(self, token_ids: list[int]) -> str:
+        """Decode a list of token IDs back into string."""
+        return self._model.tokenizer.decode(token_ids, skip_special_tokens=True)

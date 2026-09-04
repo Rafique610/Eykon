@@ -2,16 +2,17 @@
 
 A local-first personal memory app. Store details about your life (notes, facts, events, preferences), and query them using natural-language questions with locally-grounded retrieval-augmented generation (RAG).
 
-> 🚧 **Status:** Prototype Phase 1 — Steps 01 (Setup), 02 (Storage Layer), and 04 (Embedding Wrapper) completed & verified.
+> 🚧 **Status:** Prototype Phase 1 — Steps 01 (Setup), 02 (Storage Layer), 04 (Embedding Wrapper), and 03 (Capture Layer) completed & verified.
 
 ## Architecture
 
 Built using a **feature-based file structure**:
 - `src/memories/`: 
-  - `models.py`: Memory data schema (`MemoryRecord`).
-  - `database.py`: SQLite persistence and table schema initialization.
-  - `repository.py`: CRUD operations for memory records.
-  - `embedder.py`: Local `sentence-transformers` (`BAAI/bge-small-en-v1.5`, 512 tokens, 384-dim) wrapper with unit-length normalization.
+  - `models.py`: Memory data schema (`MemoryRecord` with `metadata` support).
+  - `database.py`: SQLite persistence and table schema initialization with idempotent `metadata` migration.
+  - `repository.py`: CRUD operations for memory records (`save_memory`, `save_memories`, `get_all_memories`, `get_memory_by_id`).
+  - `embedder.py`: Local `sentence-transformers` (`BAAI/bge-small-en-v1.5`, 512 tokens, 384-dim) wrapper with token counting (`count_tokens`, `tokenize`, `decode_tokens`).
+  - `service.py`: Text validation, token-bounded chunking (256 avg, 30-50 overlap, 400 ceiling), and `MemoryRecord` assembly (`create_memories_from_text`, `create_memory_from_text`).
 - `src/assistant/`: Question-answering prompt builder and Ollama local LLM generation.
 - `src/ui/`: Streamlit web interface.
 - `src/config.py`: Central Pydantic settings (`BaseSettings` backed by `.env` with `MEMORY_` prefix).
@@ -29,16 +30,16 @@ Built using a **feature-based file structure**:
 uv sync
 ```
 
-### 3. Verify Setup, Storage, and Embedder
+### 3. Verify Setup, Storage, Embedder, and Capture Layer
 ```bash
 # Verify configuration
 uv run python -c "from src.config import Settings; print(Settings())"
 
-# Test SQLite storage layer
-task test
+# Test full pipeline (Config, Storage, Embedder, Chunking, Capture)
+uv run python -c "from src.config import Settings; from src.memories import init_db, count_memories, Embedder, create_memories_from_text; init_db(); emb = Embedder(); recs = create_memories_from_text('Test memory chunking', emb); print('Pipeline OK | Count:', count_memories(), '| Chunks:', len(recs), '| Metadata:', recs[0].metadata)"
 
-# Verify local embedder
-uv run python -c "from src.memories import Embedder; emb = Embedder(); print('Embedder OK | Dim:', len(emb.embed('test')))"
+# Test Token Chunking & Metadata directly
+uv run python -c "from src.memories import create_memories_from_text, Embedder; emb = Embedder(); text = 'Long note sample. ' * 45; recs = create_memories_from_text(text, emb); print(f'Split into {len(recs)} chunks:'); [print(f'  Chunk {r.metadata[\"chunk_index\"]}: {r.metadata}') for r in recs]"
 ```
 
 ### 4. Inspect Database

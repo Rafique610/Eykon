@@ -33,9 +33,16 @@ def init_db(db_path: Path | str | None = None) -> None:
                     text TEXT NOT NULL,
                     embedding TEXT NOT NULL,
                     timestamp TEXT NOT NULL,
-                    source_type TEXT NOT NULL DEFAULT 'text'
+                    source_type TEXT NOT NULL DEFAULT 'text',
+                    metadata TEXT NOT NULL DEFAULT '{}'
                 );
                 """
             )
+            # Idempotent migration: ensure metadata column exists if table was created earlier
+            cursor = conn.execute("PRAGMA table_info(memories);")
+            columns = [row["name"] for row in cursor.fetchall()]
+            if "metadata" not in columns:
+                conn.execute("ALTER TABLE memories ADD COLUMN metadata TEXT NOT NULL DEFAULT '{}';")
     finally:
         conn.close()
+

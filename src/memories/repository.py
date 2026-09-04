@@ -15,18 +15,49 @@ def save_memory(record: MemoryRecord, db_path: Path | str | None = None) -> int:
         with conn:
             cursor = conn.execute(
                 """
-                INSERT INTO memories (text, embedding, timestamp, source_type)
-                VALUES (?, ?, ?, ?);
+                INSERT INTO memories (text, embedding, timestamp, source_type, metadata)
+                VALUES (?, ?, ?, ?, ?);
                 """,
                 (
                     record.text,
                     json.dumps(record.embedding),
                     record.timestamp.isoformat(),
                     record.source_type,
+                    json.dumps(record.metadata),
                 ),
             )
             record.id = cursor.lastrowid
             return record.id
+    finally:
+        conn.close()
+
+
+def save_memories(records: list[MemoryRecord], db_path: Path | str | None = None) -> list[int]:
+    """Save multiple MemoryRecords in a single database transaction."""
+    if not records:
+        return []
+    conn = get_connection(db_path)
+    try:
+        saved_ids: list[int] = []
+        with conn:
+            for rec in records:
+                cursor = conn.execute(
+                    """
+                    INSERT INTO memories (text, embedding, timestamp, source_type, metadata)
+                    VALUES (?, ?, ?, ?, ?);
+                    """,
+                    (
+                        rec.text,
+                        json.dumps(rec.embedding),
+                        rec.timestamp.isoformat(),
+                        rec.source_type,
+                        json.dumps(rec.metadata),
+                    ),
+                )
+                rec.id = cursor.lastrowid
+                if rec.id is not None:
+                    saved_ids.append(rec.id)
+        return saved_ids
     finally:
         conn.close()
 
@@ -37,7 +68,7 @@ def get_all_memories(db_path: Path | str | None = None) -> list[MemoryRecord]:
     try:
         cursor = conn.execute(
             """
-            SELECT id, text, embedding, timestamp, source_type
+            SELECT id, text, embedding, timestamp, source_type, metadata
             FROM memories
             ORDER BY id ASC;
             """
@@ -51,6 +82,7 @@ def get_all_memories(db_path: Path | str | None = None) -> list[MemoryRecord]:
                     "embedding": row["embedding"],
                     "timestamp": row["timestamp"],
                     "source_type": row["source_type"],
+                    "metadata": row["metadata"],
                 }
             )
             for row in rows
@@ -65,7 +97,7 @@ def get_memory_by_id(memory_id: int, db_path: Path | str | None = None) -> Memor
     try:
         cursor = conn.execute(
             """
-            SELECT id, text, embedding, timestamp, source_type
+            SELECT id, text, embedding, timestamp, source_type, metadata
             FROM memories
             WHERE id = ?;
             """,
@@ -81,6 +113,7 @@ def get_memory_by_id(memory_id: int, db_path: Path | str | None = None) -> Memor
                 "embedding": row["embedding"],
                 "timestamp": row["timestamp"],
                 "source_type": row["source_type"],
+                "metadata": row["metadata"],
             }
         )
     finally:

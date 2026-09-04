@@ -1,5 +1,5 @@
 import json
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Any
 
@@ -12,6 +12,7 @@ class MemoryRecord:
     timestamp: datetime
     source_type: str = "text"
     id: int | None = None
+    metadata: dict[str, Any] = field(default_factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
         """Convert record to dictionary representation."""
@@ -21,6 +22,7 @@ class MemoryRecord:
             "embedding": self.embedding,
             "timestamp": self.timestamp.isoformat(),
             "source_type": self.source_type,
+            "metadata": self.metadata,
         }
 
     @classmethod
@@ -40,10 +42,23 @@ class MemoryRecord:
         else:
             embedding = list(raw_embedding)
 
+        raw_metadata = data.get("metadata", {})
+        if isinstance(raw_metadata, str):
+            try:
+                metadata = json.loads(raw_metadata) if raw_metadata else {}
+            except json.JSONDecodeError:
+                metadata = {}
+        elif isinstance(raw_metadata, dict):
+            metadata = dict(raw_metadata)
+        else:
+            metadata = {}
+
         return cls(
             id=data.get("id"),
             text=data["text"],
             embedding=embedding,
             timestamp=timestamp,
             source_type=data.get("source_type", "text"),
+            metadata=metadata,
         )
+
