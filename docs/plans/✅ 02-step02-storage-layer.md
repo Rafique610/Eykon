@@ -1,6 +1,6 @@
 # Step 02 — Storage Layer (Models + SQLite + Repository)
 
-**Status:** 🔲 Not started  
+**Status:** ✅ Approved  
 **Depends on:** Step 01  
 **Blocks:** Steps 03, 05
 
@@ -20,9 +20,9 @@ Everything flows through storage. The capture layer writes to it, the retrieval 
 
 | File | Purpose |
 |---|---|
-| `src/storage/models.py` | `MemoryRecord` dataclass — the shape of every memory |
-| `src/storage/database.py` | SQLite connection, table creation |
-| `src/storage/repository.py` | CRUD functions (save, get all, get by ID, delete, count) |
+| `src/memories/models.py` | `MemoryRecord` dataclass — the shape of every memory |
+| `src/memories/database.py` | SQLite connection, table creation |
+| `src/memories/repository.py` | CRUD functions (save, get all, get by ID, delete, count) |
 
 ---
 
@@ -120,14 +120,14 @@ class MemoryRepository:
 
 ## How to Implement
 
-1. Create `src/storage/models.py`:
+1. Create `src/memories/models.py`:
    - `MemoryRecord` dataclass with `@dataclass(kw_only=True)`
    - `id: int | None = None` (last field, auto-assigned by SQLite)
    - `to_dict()` and `from_dict()` methods for serialization
 
-2. Create `src/storage/database.py`:
+2. Create `src/memories/database.py`:
    - `init_db()` — creates the `memories` table if it doesn't exist
-   - `get_connection()` — returns a SQLite connection
+   - `get_connection()` — returns a SQLite connection configured with Row factory
    - Table schema:
      ```sql
      CREATE TABLE IF NOT EXISTS memories (
@@ -139,12 +139,13 @@ class MemoryRepository:
      );
      ```
 
-3. Create `src/storage/repository.py`:
+3. Create `src/memories/repository.py`:
    - `save_memory(record) -> int`
    - `get_all_memories() -> list[MemoryRecord]`
    - `get_memory_by_id(id) -> MemoryRecord | None`
    - `delete_memory(id) -> bool`
    - `count_memories() -> int`
+   - `clear_all_memories() -> int`
 
 ---
 
@@ -152,9 +153,9 @@ class MemoryRepository:
 
 ```bash
 uv run python -c "
-from src.storage.database import init_db
-from src.storage.repository import save_memory, get_all_memories, count_memories
-from src.storage.models import MemoryRecord
+from src.memories.database import init_db
+from src.memories.repository import save_memory, get_all_memories, count_memories
+from src.memories.models import MemoryRecord
 from datetime import datetime
 
 init_db()
@@ -172,10 +173,10 @@ print(f'Fetched: {all_mem[0].text}')
 
 > _Leave your notes here as you research._
 
-- [ ] SQLite vs JSON file?
-- [ ] Any extra metadata fields to add?
-- [ ] Functions vs class-based repository?
-- [ ] Any Python SQLite gotchas to watch for?
+- [x] SQLite vs JSON file? (SQLite selected per recommendation)
+- [x] Any extra metadata fields to add? (Kept minimal for Phase 1 per spec)
+- [x] Functions vs class-based repository? (Module-level functions selected)
+- [x] Any Python SQLite gotchas to watch for? (Path parent dir creation handled)
 
 ---
 
@@ -190,6 +191,8 @@ print(f'Fetched: {all_mem[0].text}')
 
 ## Files Changed
 
-- `src/storage/models.py` (new)
-- `src/storage/database.py` (new)
-- `src/storage/repository.py` (new)
+- `src/memories/models.py` (new)
+- `src/memories/database.py` (new)
+- `src/memories/repository.py` (new)
+- `src/memories/__init__.py` (updated)
+- `Taskfile.yml` (updated test task)

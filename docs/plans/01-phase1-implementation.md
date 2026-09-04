@@ -77,7 +77,7 @@ FYP_Demo/
 | # | Step | Status | Depends On |
 |---|---|---|---|
 | 01 | [Project Setup & Dependencies](✅%2001-step01-project-setup.md) | ✅ Approved | — |
-| 02 | [Storage Layer](02-step02-storage-layer.md) | 🔲 Not started | 01 |
+| 02 | [Storage Layer](✅%2002-step02-storage-layer.md) | ✅ Approved | 01 |
 | 03 | [Capture Layer](03-step03-capture-layer.md) | 🔲 Not started | 01, 02, 04 |
 | 04 | [Embedding Wrapper](04-step04-embedding-wrapper.md) | 🔲 Not started | 01 |
 | 05 | [Retrieval / Similarity Search](05-step05-retrieval-search.md) | 🔲 Not started | 01, 02, 04 |
