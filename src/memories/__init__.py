@@ -1,6 +1,7 @@
 """Memories feature module: models, storage, embedding, and retrieval."""
 
 from src.memories.database import get_connection, get_db_path, init_db
+from src.memories.embedder import Embedder
 from src.memories.models import MemoryRecord
 from src.memories.repository import (
     clear_all_memories,
@@ -13,6 +14,7 @@ from src.memories.repository import (
 
 __all__ = [
     "MemoryRecord",
+    "Embedder",
     "init_db",
     "get_connection",
     "get_db_path",

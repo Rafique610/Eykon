@@ -17,7 +17,7 @@
 | Language | Python 3.10+ | Spec requirement |
 | Package manager | `uv` | INSTRUCTIONS.md rule |
 | UI | **Streamlit** | Fastest to prototype, looks like a product, not a terminal script |
-| Embeddings | `sentence-transformers` (all-MiniLM-L6-v2) | Small, fast, local, proven |
+| Embeddings | `sentence-transformers` (`BAAI/bge-small-en-v1.5`) | 512 tokens (2x context), ~45MB, higher MTEB accuracy |
 | Storage | SQLite via `sqlite3` + JSON for embeddings | Simple, no vector DB needed at this scale |
 | Similarity search | numpy brute-force cosine similarity | Spec says brute-force is preferred |
 | LLM generation | Ollama + Gemma (2B or small variant) | Spec default choice |
@@ -79,7 +79,7 @@ FYP_Demo/
 | 01 | [Project Setup & Dependencies](✅%2001-step01-project-setup.md) | ✅ Approved | — |
 | 02 | [Storage Layer](✅%2002-step02-storage-layer.md) | ✅ Approved | 01 |
 | 03 | [Capture Layer](03-step03-capture-layer.md) | 🔲 Not started | 01, 02, 04 |
-| 04 | [Embedding Wrapper](04-step04-embedding-wrapper.md) | 🔲 Not started | 01 |
+| 04 | [Embedding Wrapper](✅%2004-step04-embedding-wrapper.md) | ✅ Approved | 01 |
 | 05 | [Retrieval / Similarity Search](05-step05-retrieval-search.md) | 🔲 Not started | 01, 02, 04 |
 | 06 | [Generation / Ollama + Gemma](06-step06-generation-llm.md) | 🔲 Not started | 01 *(parallel with 02 & 04)* |
 | 07 | [Streamlit UI](07-step07-streamlit-ui.md) | 🔲 Not started | 01–06 |

@@ -18,5 +18,5 @@ tasks:
     cmd: uv run python -c "from src.config import Settings; print(Settings())"
 
   test:
-    desc: Run storage layer and config verification tests
-    cmd: uv run python -c "from src.config import Settings; from src.memories import init_db, count_memories; init_db(); print('Config & Storage OK | Count:', count_memories())"
+    desc: Run storage layer, embedder, and config verification tests
+    cmd: uv run python -c "from src.config import Settings; from src.memories import init_db, count_memories, Embedder; init_db(); emb = Embedder(); print('Config, Storage & Embedder OK | Count:', count_memories(), '| Dim:', len(emb.embed('test')))"

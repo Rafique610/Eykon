@@ -1,6 +1,6 @@
 # Step 04 — Embedding Model Wrapper
 
-**Status:** 🔲 Not started  
+**Status:** ✅ Approved  
 **Depends on:** Step 01  
 **Blocks:** Steps 03, 05
 
@@ -20,7 +20,7 @@ Embeddings are used by both capture (to store memories) and retrieval (to search
 
 | File | Purpose |
 |---|---|
-| `src/retrieval/embedder.py` | `Embedder` class with `embed()` and `embed_batch()` |
+| `src/memories/embedder.py` | `Embedder` class with `embed()` and `embed_batch()` |
 
 ---
 
@@ -29,7 +29,7 @@ Embeddings are used by both capture (to store memories) and retrieval (to search
 ```
 Embedder.__init__()
     │
-    ├─ Loads model: all-MiniLM-L6-v2 (one-time, ~90MB download)
+    ├─ Loads model: BAAI/bge-small-en-v1.5 (512 tokens, ~45MB download)
     ├─ Model stays in memory for all subsequent calls
     │
     embed("I have a dentist appointment")
@@ -92,21 +92,26 @@ First run downloads the model. What if there's no internet?
 
 ## How to Implement
 
-Create `src/retrieval/embedder.py`:
+Create `src/memories/embedder.py`:
 
 ```python
 from sentence_transformers import SentenceTransformer
 from src.config import Settings
 
 class Embedder:
-    def __init__(self, model_name: str = None):
+    def __init__(self, model_name: str | None = None) -> None:
         settings = Settings()
         self.model_name = model_name or settings.EMBEDDING_MODEL
-        self._model = SentenceTransformer(self.model_name)
+        try:
+            self._model = SentenceTransformer(self.model_name)
+        except Exception as err:
+            raise RuntimeError(
+                f"Failed to load embedding model '{self.model_name}'. "
+                "Ensure internet connectivity for the initial model download or verify local cache."
+            ) from err
     
     def embed(self, text: str) -> list[float]:
         """Embed a single text into a 384-dim unit vector."""
-        # normalize_embeddings=True ensures ||v|| ≈ 1.0, so dot product = cosine similarity
         return self._model.encode(text, normalize_embeddings=True).tolist()
     
     def embed_batch(self, texts: list[str]) -> list[list[float]]:
@@ -120,7 +125,7 @@ class Embedder:
 
 ```bash
 uv run python -c "
-from src.retrieval.embedder import Embedder
+from src.memories import Embedder
 
 emb = Embedder()
 v = emb.embed('Hello world')
@@ -138,13 +143,15 @@ Expected: dimension 384, norm ≈ 1.0
 
 > _Leave your notes here as you research._
 
-- [ ] Eager vs lazy model loading?
-- [ ] ✅ FIXED: Always normalize at embed time (`normalize_embeddings=True`)
-- [ ] How to handle first-run model download?
-- [ ] Any sentence-transformers gotchas on Windows?
+- [x] Eager vs lazy model loading? (Eager selected per recommendation)
+- [x] ✅ FIXED: Always normalize at embed time (`normalize_embeddings=True`)
+- [x] How to handle first-run model download? (Handled with descriptive error message)
+- [x] Any sentence-transformers gotchas on Windows? (Downloaded to local HF cache without issue)
 
 ---
 
 ## Files Changed
 
-- `src/retrieval/embedder.py` (new)
+- `src/memories/embedder.py` (new)
+- `src/memories/__init__.py` (updated)
+- `README.md` (updated)

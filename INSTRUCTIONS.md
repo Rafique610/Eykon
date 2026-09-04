@@ -8,12 +8,11 @@ Global project working instructions provided by the user. Follow these for ALL f
 - Work plans live in docs, whether under `additional` or explicit plans folders.
 - Before starting work, read the relevant plan in docs and follow it step by step.
 
-## 2. Folder structure (global rule)
+## 2. Folder structure (feature-based rule)
 
-- Every bank / feature / service gets its OWN top-level folder with separated responsibility.
-- Example: the Skagerak API lives in `server/skagerak/` with subfolders `orm/`, `repositories/`, `routers/`, `schemas/`.
-- If any other bank or feature is added, it gets a similar own folder — never mix responsibilities.
-- NEVER write code that belongs to one service inside another service's folder (e.g. `server/nordhaven/` stays untouched by Skagerak work).
+- Every feature/domain gets its OWN top-level folder with separated responsibility (e.g. `src/memories/`, `src/assistant/`, `src/ui/`).
+- Never use horizontal technical layering (e.g. do NOT split into `src/capture/`, `src/storage/`, `src/retrieval/`). Instead, group all components of a feature (models, DB, services, helpers) inside that feature's directory (`src/memories/`).
+- If any other feature is added, it gets its own folder — never mix responsibilities across features.
 
 ## 3. Working cadence
 
@@ -94,34 +93,39 @@ When the user asks for a plan, do a deep dive first:
 5. Save plan docs under `docs/` (e.g. `docs/additional/` or a plans folder).
 6. Follow the plan step by step using the working cadence in Section 3.
 
-## 8c. README maintenance (automatic)
+## 8c. README maintenance (mandatory on every step)
 
-- Do NOT wait for the user to ask. When relevant work lands, check the README and update it if it needs changes.
-- Keep README in sync with the current state of the project (services, folders, commands, architecture).
-- Always inform the user when the README was changed and why.
+- **Update README.md on EVERY step:** At the completion of each step (before handing off to the user for approval), update `README.md` with newly implemented capabilities, file paths, and terminal commands.
+- The user commits after each approved step, so **every git commit must naturally include an up-to-date README**. Never leave README updates to the end.
+- Always keep README synchronized with the live state of the codebase (architecture, folders, commands).
 
-## 8d. Token / pattern caching
+## 8d. Token / pattern caching & common project rules
 
 - If a thinking pattern, piece of code, or approach is likely to be reused again, cache/remember it so you don't regenerate it from scratch.
-- Reuse prior patterns and decisions (e.g. ORM model patterns, settings patterns, taskfile patterns) rather than re-deriving them.
-- Keep a working memory of repeated patterns across steps.
+- Reuse prior patterns and decisions (e.g. models, settings patterns, taskfile patterns) rather than re-deriving them.
+- Keep a working memory of repeated patterns across steps:
+  - **Feature-Based Architecture:** Domain features live in `src/<feature>/` (e.g. `src/memories/`, `src/assistant/`, `src/ui/`).
+  - **Configuration:** Always through `Settings` in `src/config.py` using `MEMORY_` prefix. Never read env vars directly.
+  - **Database:** Local SQLite in `data/memories.db`, fully parameterized queries (`?`), idempotent `init_db()`.
+  - **Commit Messages:** Short and to the point (e.g. `feat(memories): add SQLite storage models`). No bulleted body essays.
+  - **Session Memory:** Single daily file at `.memory/<date>/tasks.md` incremented sequentially.
+  - **Testing:** Always provide terminal verification commands with every step handoff so the user can test directly.
 - **Cache INSTRUCTIONS.md at read time:** the FIRST time the user tells the agent to read `INSTRUCTIONS.md`, the agent MUST cache/remember its full contents for the whole session (its rules apply for all subsequent work). Do not rely on re-reading it later or on memory files — that risks losing rules and burning tokens. If the rules need to persist across sessions, that is what `.memory/` is for; but in-session, keep INSTRUCTIONS.md rules available from the moment of the first read.
 
 ## 8e. Session memory log (.memory/)
 
 - Maintain a memory log in `.memory/` — this is shared memory for the agent AND the user.
-- Structure: one folder per day, named by date, e.g. `.memory/06-august-2026/`.
-- Inside the daily folder, keep markdown files per feature/time-slot/task batch. If the day has MANY changes/iterations, create multiple `.md` files inside the daily folder (e.g. `.memory/06-august-2026/tasks-skagerak-api.md` and split further as needed).
+- Structure: one folder per day, named by date, e.g. `.memory/05-september-2026/`.
+- **Single daily file:** Inside the daily folder, keep **ONE single file** (`tasks.md`) for the entire day — never split into multiple files per feature.
+- **Sequential incrementation:** As work progresses throughout the day, each new task, step, or feature is appended directly into the task board table below the previous rows in chronological sequence.
 - Each entry must include:
-  - Date formatted as human-readable words, e.g. **06 August 2026** (not `08/06/2026`).
-  - Timestamps in 12-hour AM/PM format, e.g. **6:08 PM**.
-- **Multi-region teams:** always include the time zone alongside the timestamp, and always also include UTC so colleagues in any country can correlate. Format: `6:08 PM (UTC+05:00 · 13:08 UTC)`. Optionally note which user/region did the work.
+  - Date formatted as human-readable words, e.g. **05 September 2026** (not `09/05/2026`).
+  - Timestamps in 12-hour AM/PM format, e.g. **1:48 AM**.
+- **Multi-region teams:** always include the time zone alongside the timestamp, and always also include UTC so colleagues in any country can correlate. Format: `1:48 AM (UTC+05:00 · 20:48 UTC)`. Optionally note which user/region did the work.
 - **NEVER guess or fabricate timestamps.** When writing/updating a memory entry, capture the real wall-clock time (e.g. `Get-Date`) at that exact moment. If past entries weren't captured live, mark them `(~ approx.)` with known order only, and go exact from the next entry onward.
 - Use a **task board table** so at a glance you can see: what was assigned, was it approved or not, and what changed. Update this table on EVERY iteration.
 - Make the board **impactful and scannable** for humans: start with a one-line day verdict, a bold summary row (X done / Y approved / Z changed), a clear status badge per task (e.g. ✅ Approved / 🔄 In progress / ⚠️ Needs changes), and a task board table.
 - Log which tasks the user assigned that day, how many got approved, and how many needed changes (and what changed when you made a change).
-- **Start a NEW `tasks.md` when a feature/phase completes.** When we finish a whole feature (e.g. all Skagerak steps) and move to another feature, create a new memory file for it. Name it clearly by date + feature, e.g. `.memory/<date>/tasks-<feature>.md` (e.g. `tasks-nordhaven`, `tasks-skagerak`, `tasks-fjordvik`, `tasks-denodo`). Keep completed-feature files as-is (they are the finished record) and start fresh for the next feature so history stays organized per feature.
-- **Every `tasks.md` file must have a feature subname in its filename** — NEVER just `tasks.md`. Always use `tasks-<feature>.md` (e.g. `tasks-skagerak-api.md`, `tasks-customer-360-nav.md`) so it's clear which feature each memory file covers.
 - **Update `tasks.md` after EVERY chat turn** — never skip or batch-skip it. Every session/step/decision/task board entry must be captured so the history is complete and never gaps.
 - Each task-board row must carry **enough detail to reverse it later** — e.g. "added route X in `file.py`", "added component Y", "changed fetch to use Z". If the user later says "reverse that", you (or any future session) must be able to undo it from the entry alone. Include file paths, names, and the exact thing that was added/changed.
 - **Also log EVERY instruction change in INSTRUCTIONS.md** — in `tasks.md` (and any follow-up daily files), keep a dedicated section listing every change to `INSTRUCTIONS.md` that day, including:
@@ -134,9 +138,20 @@ When the user asks for a plan, do a deep dive first:
 - Keep it easy to understand for BOTH the AI and a human: use tables, clear spacing, no ambiguity.
 - `.memory/` is git-ignored — never commit it or share it publicly. Share it only with teammates if they ask.
 
-## 9. Ponytail
+## 9. Ponytail (strictly active for all code writing)
 
-- Ponytail skill is active. If confused, rely on it (simplest solution, shortest working diff).
+- **Ponytail is strictly active for ALL code writing and refactoring:** Always write the laziest solution that actually works — simplest, shortest, most minimal.
+- **Follow the Ponytail ladder:**
+  1. *Does this need to exist at all?* (YAGNI — skip speculative abstractions).
+  2. *Already in this codebase?* Reuse existing functions, types, and patterns.
+  3. *Standard library does it?* Use standard library (`sqlite3`, `dataclasses`, `json`, `pathlib`).
+  4. *Native platform feature covers it?* Use native platform capability.
+  5. *Already-installed dependency solves it?* Use it. Never add new packages without explicit need.
+  6. *Can it be one line?* Make it one line.
+  7. *Only then:* write the minimum code that works.
+- **No unrequested abstractions:** No factories for one product, no speculative interfaces, no premature generalizations.
+- **Bug fixes address root causes:** One shared guard over multiple caller patches.
+- **Shortest working diff wins:** Every non-trivial piece of code gets ONE minimal runnable verification check.
 
 ## 10. UI/UX skill routing
 
