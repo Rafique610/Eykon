@@ -12,6 +12,7 @@ from src.memories.repository import (
     save_memories,
     save_memory,
 )
+from src.memories.search import search_memories
 from src.memories.service import (
     chunk_text_by_tokens,
     create_memories_from_text,
@@ -24,6 +25,7 @@ __all__ = [
     "create_memory_from_text",
     "create_memories_from_text",
     "chunk_text_by_tokens",
+    "search_memories",
     "init_db",
     "get_connection",
     "get_db_path",

@@ -43,6 +43,43 @@ def init_db(db_path: Path | str | None = None) -> None:
             columns = [row["name"] for row in cursor.fetchall()]
             if "metadata" not in columns:
                 conn.execute("ALTER TABLE memories ADD COLUMN metadata TEXT NOT NULL DEFAULT '{}';")
+
+            # Create FTS5 virtual table for keyword search
+            conn.execute(
+                """
+                CREATE VIRTUAL TABLE IF NOT EXISTS memories_fts USING fts5(
+                    text,
+                    content='memories',
+                    content_rowid='id'
+                );
+                """
+            )
+
+            # Keep FTS5 table in sync with memories table via SQLite triggers
+            conn.execute(
+                """
+                CREATE TRIGGER IF NOT EXISTS memories_ai AFTER INSERT ON memories BEGIN
+                    INSERT INTO memories_fts(rowid, text) VALUES (new.id, new.text);
+                END;
+                """
+            )
+            conn.execute(
+                """
+                CREATE TRIGGER IF NOT EXISTS memories_ad AFTER DELETE ON memories BEGIN
+                    INSERT INTO memories_fts(memories_fts, rowid, text) VALUES('delete', old.id, old.text);
+                END;
+                """
+            )
+            conn.execute(
+                """
+                CREATE TRIGGER IF NOT EXISTS memories_au AFTER UPDATE ON memories BEGIN
+                    INSERT INTO memories_fts(memories_fts, rowid, text) VALUES('delete', old.id, old.text);
+                    INSERT INTO memories_fts(rowid, text) VALUES (new.id, new.text);
+                END;
+                """
+            )
+            # Ensure any pre-existing records are indexed into FTS5
+            conn.execute("INSERT INTO memories_fts(memories_fts) VALUES('rebuild');")
     finally:
         conn.close()
 

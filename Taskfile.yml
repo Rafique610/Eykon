@@ -18,7 +18,8 @@ tasks:
     cmd: uv run python -c "from src.config import Settings; print(Settings())"
 
   test:
-    desc: Run storage layer, embedder, chunking, capture, and config verification tests
-    cmd: uv run python -c "from src.config import Settings; from src.memories import init_db, count_memories, Embedder, create_memories_from_text; init_db(); emb = Embedder(); recs = create_memories_from_text('Test memory chunking', emb); print('Config, Storage, Embedder, Chunking & Capture OK | Count:', count_memories(), '| Chunks:', len(recs), '| Metadata:', recs[0].metadata)"
+    desc: Run storage layer, embedder, chunking, capture, search, and config verification tests
+    cmd: uv run python -c "from src.config import Settings; from src.memories import init_db, count_memories, Embedder, create_memories_from_text, save_memories, search_memories; init_db(); emb = Embedder(); recs = create_memories_from_text('Test memory search', emb); save_memories(recs); hits = search_memories('search', emb, top_k=1); print('All OK | Total in DB:', count_memories(), '| Top Hit:', hits[0][0].text, '| Score:', round(hits[0][1], 4))"
+
 
 

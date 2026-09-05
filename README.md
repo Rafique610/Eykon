@@ -2,21 +2,22 @@
 
 A local-first personal memory app. Store details about your life (notes, facts, events, preferences), and query them using natural-language questions with locally-grounded retrieval-augmented generation (RAG).
 
-> 🚧 **Status:** Prototype Phase 1 — Steps 01 (Setup), 02 (Storage Layer), 04 (Embedding Wrapper), and 03 (Capture Layer) completed & verified.
+> 🚧 **Status:** Prototype Phase 1 — Steps 01 (Setup), 02 (Storage Layer), 04 (Embedding Wrapper), 03 (Capture Layer), and 05 (Retrieval Layer - Hybrid Search) completed & verified.
 
 ## Architecture
 
 Built using a **feature-based file structure**:
 - `src/memories/`: 
   - `models.py`: Memory data schema (`MemoryRecord` with `metadata` support).
-  - `database.py`: SQLite persistence and table schema initialization with idempotent `metadata` migration.
+  - `database.py`: SQLite persistence, table schema, and `memories_fts` (FTS5) virtual table with sync triggers.
   - `repository.py`: CRUD operations for memory records (`save_memory`, `save_memories`, `get_all_memories`, `get_memory_by_id`).
-  - `embedder.py`: Local `sentence-transformers` (`BAAI/bge-small-en-v1.5`, 512 tokens, 384-dim) wrapper with token counting (`count_tokens`, `tokenize`, `decode_tokens`).
-  - `service.py`: Text validation, token-bounded chunking (256 avg, 30-50 overlap, 400 ceiling), and `MemoryRecord` assembly (`create_memories_from_text`, `create_memory_from_text`).
+  - `embedder.py`: Local `sentence-transformers` (`BAAI/bge-small-en-v1.5`, 512 tokens, 384-dim) wrapper with token helpers.
+  - `service.py`: Text validation, token-bounded chunking (256 avg, 30-50 overlap, 400 ceiling), and `MemoryRecord` assembly.
+  - `search.py`: Hybrid search engine combining dense vector cosine similarity and SQLite FTS5 BM25 keyword matching via Reciprocal Rank Fusion (RRF).
 - `src/assistant/`: Question-answering prompt builder and Ollama local LLM generation.
 - `src/ui/`: Streamlit web interface.
 - `src/config.py`: Central Pydantic settings (`BaseSettings` backed by `.env` with `MEMORY_` prefix).
-- `data/memories.db`: Local embedded SQLite database.
+- `data/memories.db`: Local embedded SQLite database with FTS5 search index.
 
 ## Quick Start
 
@@ -30,16 +31,16 @@ Built using a **feature-based file structure**:
 uv sync
 ```
 
-### 3. Verify Setup, Storage, Embedder, and Capture Layer
+### 3. Verify Setup, Storage, Embedder, Capture, and Hybrid Search
 ```bash
 # Verify configuration
 uv run python -c "from src.config import Settings; print(Settings())"
 
-# Test full pipeline (Config, Storage, Embedder, Chunking, Capture)
-uv run python -c "from src.config import Settings; from src.memories import init_db, count_memories, Embedder, create_memories_from_text; init_db(); emb = Embedder(); recs = create_memories_from_text('Test memory chunking', emb); print('Pipeline OK | Count:', count_memories(), '| Chunks:', len(recs), '| Metadata:', recs[0].metadata)"
+# Test full pipeline (Config, Storage, Embedder, Chunking, Capture, Search)
+task test
 
-# Test Token Chunking & Metadata directly
-uv run python -c "from src.memories import create_memories_from_text, Embedder; emb = Embedder(); text = 'Long note sample. ' * 45; recs = create_memories_from_text(text, emb); print(f'Split into {len(recs)} chunks:'); [print(f'  Chunk {r.metadata[\"chunk_index\"]}: {r.metadata}') for r in recs]"
+# Test Hybrid Retrieval (Dense Semantic + Sparse FTS5 BM25 + RRF)
+uv run python -c "from src.memories import init_db, search_memories, Embedder; init_db(); emb = Embedder(); hits = search_memories('dentist appointment', emb, top_k=2); [print(f'Score: {s:.4f} | {m.text}') for m, s in hits]"
 ```
 
 ### 4. Inspect Database
