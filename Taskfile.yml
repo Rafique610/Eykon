@@ -20,7 +20,39 @@ tasks:
 
   test:
     desc: Run storage layer, embedder, chunking, capture, search, and config verification tests
-    cmd: uv run python -c "from src.config import Settings; from src.memories import init_db, count_memories, Embedder, create_memories_from_text, save_memories, search_memories; init_db(); emb = Embedder(); recs = create_memories_from_text('Test memory search', emb); save_memories(recs); hits = search_memories('search', emb, top_k=1); print('All OK | Total in DB:', count_memories(), '| Top Hit:', hits[0][0].text, '| Score:', round(hits[0][1], 4))"
+    cmd: uv run python -c "from src.config import Settings; from src.memories import init_db, count_memories, Embedder, create_memories_from_text, save_memories, search_memories; init_db(); emb = Embedder(); hits = search_memories('dentist', emb, top_k=1); print('All OK | Total in DB:', count_memories(), '| Top Hit:', hits[0][0].text, '| Fused:', round(hits[0][1], 4), '| Match:', hits[0].match_type, '| Sem:', round(hits[0].semantic_score, 4), '| BM25:', round(hits[0].bm25_score, 4))"
 
-
-
+  test-e2e:
+    desc: Pre-demo health check — verifies DB, embedder, search, and model availability
+    env:
+      PYTHONIOENCODING: utf-8
+    cmd: |
+      uv run python -c "
+      checks = []
+      try:
+          from src.memories import init_db; init_db(); checks.append('OK DB init')
+      except Exception as e:
+          checks.append(f'FAIL DB init: {e}')
+      try:
+          from src.memories import Embedder; emb = Embedder(); checks.append('OK Embedder loaded')
+      except Exception as e:
+          checks.append(f'FAIL Embedder: {e}')
+      try:
+          v = emb.embed('test'); assert len(v) > 0; checks.append(f'OK Embedding works ({len(v)}-dim)')
+      except Exception as e:
+          checks.append(f'FAIL Embedding: {e}')
+      try:
+          from src.memories import search_memories; r = search_memories('test', emb, top_k=1); checks.append(f'OK Search works ({len(r)} results)')
+      except Exception as e:
+          checks.append(f'FAIL Search: {e}')
+      try:
+          from src.assistant.helpers import check_model_available, get_model_status
+          ok, msg = get_model_status(); checks.append(f'Model: {msg}')
+      except Exception as e:
+          checks.append(f'FAIL Model check: {e}')
+      print('--- E2E Health Check ---')
+      for c in checks: print(c)
+      failed = sum(1 for c in checks if c.startswith('FAIL'))
+      print('------------------------')
+      print(f'Result: {len(checks)-failed}/{len(checks)} passed' + (' OK' if failed == 0 else f' ({failed} failed)'))
+      "

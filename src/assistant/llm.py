@@ -56,17 +56,25 @@ def generate_answer(
     """Generate a factual answer grounded in retrieved memories using Gemma 4 LiteRT-LM."""
     prompt = build_rag_prompt(question, context_memories)
 
-    if engine is None:
-        engine = get_engine()
+    try:
+        if engine is None:
+            engine = get_engine()
 
-    import litert_lm
-    sampler = litert_lm.SamplerConfig(temperature=temperature)
-    conversation = engine.create_conversation(sampler_config=sampler)
+        import litert_lm
+        sampler = litert_lm.SamplerConfig(temperature=temperature)
+        conversation = engine.create_conversation(sampler_config=sampler)
 
-    response = conversation.send_message(
-        prompt,
-        max_output_tokens=max_output_tokens,
-    )
+        response = conversation.send_message(
+            prompt,
+            max_output_tokens=max_output_tokens,
+        )
+    except FileNotFoundError:
+        raise  # Let the UI handle model-not-found specifically
+    except Exception as exc:
+        raise RuntimeError(
+            f"LLM generation failed: {exc}. "
+            "Make sure the model is downloaded ('task pull-model') and enough memory is available."
+        ) from exc
 
     if isinstance(response, dict):
         content = response.get("content", [])
