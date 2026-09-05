@@ -21,5 +21,8 @@ class Settings(BaseSettings):
     LITERT_MODEL_PATH: str | None = None
     EMBEDDING_MODEL: str = "BAAI/bge-small-en-v1.5"
     DB_PATH: str = "data/memories.db"
+    # RAG Settings
     TOP_K: int = 5
-
+    POOL_K: int = 20  # Candidates retrieved from each method in hybrid search before fusion
+    EXPAND_QUERY: bool = True  # Enable static concept expansion for semantic queries
+    RERANK: bool = True  # Enable cross-encoder re-ranking for hybrid search

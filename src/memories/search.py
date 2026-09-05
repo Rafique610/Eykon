@@ -112,14 +112,25 @@ def search_memories(
     top_k: int | None = None,
     mode: str = "hybrid",
     db_path: Path | str | None = None,
+    expand: bool | None = None,
+    pool_k: int | None = None,
+    rerank: bool | None = None,
 ) -> list[SearchResult]:
     """Search stored memories using hybrid (top 5 both + intersection first), semantic, or keyword retrieval."""
+    from src.memories.query import expand_query
+    
     settings = Settings()
     effective_top_k = top_k if top_k is not None else settings.TOP_K
+    effective_pool_k = pool_k if pool_k is not None else settings.POOL_K
+    effective_expand = expand if expand is not None else settings.EXPAND_QUERY
+    effective_rerank = rerank if rerank is not None else settings.RERANK
 
     cleaned_query = query.strip()
     if not cleaned_query:
         return []
+
+    # Only expand for dense/hybrid, keep keyword mode pure to user input
+    search_query = expand_query(cleaned_query) if effective_expand and mode != "keyword" else cleaned_query
 
     if mode == "keyword":
         sparse_hits = _sparse_search(cleaned_query, db_path=db_path)
@@ -141,7 +152,7 @@ def search_memories(
     if not all_memories:
         return []
 
-    dense_hits = _dense_search(cleaned_query, embedder, all_memories)
+    dense_hits = _dense_search(search_query, embedder, all_memories)
 
     if mode == "semantic":
         return [
@@ -155,11 +166,11 @@ def search_memories(
             for rec, score in dense_hits[:effective_top_k]
         ]
 
-    # Hybrid Search: Top 5 from semantic + top 5 from BM25.
+    # Hybrid Search: Top K from semantic + top K from BM25.
     # Prioritize memories common to both, then fill with individual highest-scoring candidates.
-    sparse_hits = _sparse_search(cleaned_query, db_path=db_path)
+    sparse_hits = _sparse_search(search_query, db_path=db_path)
 
-    pool_size = effective_top_k
+    pool_size = effective_pool_k
     dense_top = dense_hits[:pool_size]
     sparse_top = sparse_hits[:pool_size]
 
@@ -222,4 +233,20 @@ def search_memories(
     individual_candidates.sort(key=lambda x: x.score, reverse=True)
 
     final_results = common_results + individual_candidates
+    
+    if effective_rerank:
+        from src.memories.reranker import rerank as cross_encode
+        # Re-rank only the top pool_size candidates to save latency
+        candidates_to_rerank = final_results[:effective_pool_k]
+        if candidates_to_rerank:
+            texts = [r.record.text for r in candidates_to_rerank]
+            # We use the ORIGINAL query for re-ranking, not the expanded one.
+            # The expanded query was a crutch for bi-encoder cosine similarity.
+            # The cross-encoder is smart enough to understand the original query.
+            scores = cross_encode(cleaned_query, texts)
+            for res, new_score in zip(candidates_to_rerank, scores):
+                res.score = float(new_score)
+                res.match_type = "reranked"
+            final_results = sorted(candidates_to_rerank, key=lambda x: x.score, reverse=True)
+
     return final_results[:effective_top_k]

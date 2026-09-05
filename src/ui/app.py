@@ -21,9 +21,11 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 import importlib
+import time
 import numpy as np
 import streamlit as st
 
+from src.config import Settings
 import src.memories.search
 importlib.reload(src.memories.search)
 from src.memories.search import _sparse_search, search_memories
@@ -139,6 +141,19 @@ with st.sidebar:
         unsafe_allow_html=True,
     )
 
+    # Active RAG Pipeline details
+    settings = Settings()
+    with st.expander("⚙️ Active RAG Pipeline", expanded=False):
+        st.markdown(
+            f"<small style='line-height: 1.6;'>"
+            f"• <b>Query Expansion:</b> {'🟢 ON' if settings.EXPAND_QUERY else '⚪ OFF'}<br>"
+            f"• <b>Candidate Pool (Pool-K):</b> <code>{settings.POOL_K}</code><br>"
+            f"• <b>Cross-Encoder Rerank:</b> {'🟢 ON' if settings.RERANK else '⚪ OFF'}<br>"
+            f"• <b>Final Top-K:</b> <code>{settings.TOP_K}</code>"
+            f"</small>",
+            unsafe_allow_html=True,
+        )
+
 
 # ── Page 1: Add Memory ───────────────────────────────────────────────────────
 
@@ -204,11 +219,14 @@ elif page == "❓ Ask Question":
                 icon="⚠️",
             )
         else:
+            t_search_start = time.perf_counter()
             with st.spinner("Searching memories…"):
                 results = search_memories(question, embedder)
+            retrieval_latency = time.perf_counter() - t_search_start
 
             # Attempt LLM generation with graceful error handling
             answer = None
+            gen_latency = 0.0
             if not model_ok:
                 st.warning(
                     "LLM model not available — showing retrieved memories only. "
@@ -218,7 +236,9 @@ elif page == "❓ Ask Question":
             else:
                 try:
                     with st.spinner("Generating answer (this may take 10-30s on first run)…"):
+                        t_gen_start = time.perf_counter()
                         answer = generate_answer(question, [r[0] for r in results])
+                        gen_latency = time.perf_counter() - t_gen_start
                 except FileNotFoundError:
                     st.error(
                         "❌ **Model file not found.** Run `task pull-model` to download it, "
@@ -233,6 +253,25 @@ elif page == "❓ Ask Question":
             if answer:
                 st.subheader("💡 Answer")
                 st.info(answer, icon="💡")
+
+                # Latency & Pipeline metrics
+                total_latency = retrieval_latency + gen_latency
+                col1, col2, col3 = st.columns(3)
+                col1.metric("⏱️ Total Latency", f"{total_latency:.2f}s")
+                col2.metric("🔍 Retrieval Time", f"{retrieval_latency * 1000:.0f} ms")
+                col3.metric("🧠 LLM Generation", f"{gen_latency:.2f}s")
+
+                pipeline_parts = []
+                if settings.EXPAND_QUERY:
+                    pipeline_parts.append("✨ Query Expansion")
+                if settings.POOL_K > settings.TOP_K:
+                    pipeline_parts.append(f"🏊 Widen Pool (k={settings.POOL_K})")
+                if settings.RERANK:
+                    pipeline_parts.append("🎯 Cross-Encoder Rerank")
+                if not pipeline_parts:
+                    pipeline_parts.append("📦 Baseline Hybrid")
+
+                st.caption(f"**Pipeline Active:** {' · '.join(pipeline_parts)}")
 
             st.divider()
 

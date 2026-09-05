@@ -2,7 +2,9 @@
 
 A local-first personal memory app. Store details about your life (notes, facts, events, preferences), and query them using natural-language questions with locally-grounded retrieval-augmented generation (RAG).
 
-> ✅ **Status:** Phase 1 Complete — All 8 steps done: Setup, Storage, Embedder, Capture, Retrieval (Hybrid Search), Generation (Gemma 4 LiteRT-LM), Streamlit UI, and Integration Test & Polish.
+> ✅ **Status:** Phase 1 Complete (End-to-End Pipeline) + Phase 1.1 Complete (Retrieval Quality Improvements). 
+> - Hybrid search Hit@5: **93.3%**
+> - Exact factual questions Hit@1: **100%**
 
 ## Architecture
 
@@ -13,7 +15,12 @@ Built using a **feature-based file structure**:
   - `repository.py`: CRUD operations for memory records (`save_memory`, `save_memories`, `get_all_memories`, `get_memory_by_id`).
   - `embedder.py`: Local `sentence-transformers` (`BAAI/bge-small-en-v1.5`, 512 tokens, 384-dim) wrapper with token helpers.
   - `service.py`: Text validation, token-bounded chunking (256 avg, 30-50 overlap, 400 ceiling), and `MemoryRecord` assembly.
-  - `search.py`: Hybrid search engine pooling top 5 from semantic cosine and top 5 from SQLite FTS5 BM25, prioritizing memories common to both, then filling with highest individual scores. Emits `SearchResult` objects with individual semantic, BM25, and fused RRF scores.
+  - `query.py`: Zero-latency static concept map for query expansion (bridges semantic gap for abstract questions).
+  - `reranker.py`: Cross-encoder re-ranking model (`cross-encoder/ms-marco-MiniLM-L-6-v2`) for second-stage evaluation.
+  - `search.py`: Three-stage retrieval pipeline:
+    1. **Retrieval**: Fetches top 20 (`POOL_K`) candidates via semantic cosine similarity + top 20 via SQLite FTS5 BM25.
+    2. **Fusion**: Combines lists using Reciprocal Rank Fusion (RRF).
+    3. **Re-ranking**: Passes top 20 fused candidates to cross-encoder to compute deep semantic relevance against the original query, returning the final top 5. Emits `SearchResult` objects.
 - `src/assistant/`: 
   - `prompt.py`: Factual RAG prompt formatting with strict anti-hallucination guard (`build_rag_prompt`).
   - `llm.py`: Google LiteRT-LM on-device edge engine (`litert-community/gemma-4-E2B-it-litert-lm`, 2.4 GB) with singleton caching (`generate_answer`).

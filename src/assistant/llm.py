@@ -51,9 +51,9 @@ def generate_answer(
     context_memories: list[MemoryRecord],
     engine: Any | None = None,
     max_output_tokens: int = 256,
-    temperature: float = 0.1,
+    temperature: float = 0.3,
 ) -> str:
-    """Generate a factual answer grounded in retrieved memories using Gemma 4 LiteRT-LM."""
+    """Generate a factual, synthesized answer grounded in retrieved memories using Gemma 4 LiteRT-LM."""
     prompt = build_rag_prompt(question, context_memories)
 
     try:
@@ -76,6 +76,7 @@ def generate_answer(
             "Make sure the model is downloaded ('task pull-model') and enough memory is available."
         ) from exc
 
+    raw_text = ""
     if isinstance(response, dict):
         content = response.get("content", [])
         if isinstance(content, list):
@@ -85,8 +86,14 @@ def generate_answer(
                 if isinstance(item, dict) and "text" in item
             ]
             if parts:
-                return "".join(parts).strip()
+                raw_text = "".join(parts).strip()
         elif isinstance(content, str):
-            return content.strip()
+            raw_text = content.strip()
+    else:
+        raw_text = str(response).strip()
 
-    return str(response).strip()
+    # Clean up any leftover leading prefixes
+    if raw_text.lower().startswith("answer:"):
+        raw_text = raw_text[7:].strip()
+
+    return raw_text

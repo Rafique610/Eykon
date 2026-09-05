@@ -18,6 +18,10 @@ tasks:
     desc: Verify and print resolved configuration
     cmd: uv run python -c "from src.config import Settings; print(Settings())"
 
+  benchmark:
+    desc: Run RAG retrieval benchmark (500 memories, 30 queries, Hit@K / MRR / NDCG)
+    cmd: uv run python src/benchmarks/run.py
+
   test:
     desc: Run storage layer, embedder, chunking, capture, search, and config verification tests
     cmd: uv run python -c "from src.config import Settings; from src.memories import init_db, count_memories, Embedder, create_memories_from_text, save_memories, search_memories; init_db(); emb = Embedder(); hits = search_memories('dentist', emb, top_k=1); print('All OK | Total in DB:', count_memories(), '| Top Hit:', hits[0][0].text, '| Fused:', round(hits[0][1], 4), '| Match:', hits[0].match_type, '| Sem:', round(hits[0].semantic_score, 4), '| BM25:', round(hits[0].bm25_score, 4))"
