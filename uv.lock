@@ -384,6 +384,7 @@ name = "fyp-demo"
 version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
+    { name = "litert-lm-api" },
     { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
     { name = "numpy", version = "2.4.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version == '3.11.*'" },
     { name = "numpy", version = "2.5.2", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.12'" },
@@ -395,6 +396,7 @@ dependencies = [
 
 [package.metadata]
 requires-dist = [
+    { name = "litert-lm-api", specifier = ">=0.17.0" },
     { name = "numpy", specifier = ">=1.26.0" },
     { name = "ollama", specifier = ">=0.2.0" },
     { name = "pydantic-settings", specifier = ">=2.2.0" },
@@ -601,6 +603,19 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/19/74/a633ee74eb36c44aa6d1095e7cc5569bebf04342ee146178e2d36600708b/jsonschema_specifications-2025.9.1.tar.gz", hash = "sha256:b540987f239e745613c7a9176f3edb72b832a4ac465cf02712288397832b5e8d", size = 32855, upload-time = "2025-09-08T01:34:59.186Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/41/45/1a4ed80516f02155c51f51e8cedb3c1902296743db0bbc66608a0db2814f/jsonschema_specifications-2025.9.1-py3-none-any.whl", hash = "sha256:98802fee3a11ee76ecaca44429fda8a41bff98b00a0f2838151b113f210cc6fe", size = 18437, upload-time = "2025-09-08T01:34:57.871Z" },
+]
+
+[[package]]
+name = "litert-lm-api"
+version = "0.17.0"
+source = { registry = "https://pypi.org/simple" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/0c/1d/1508400668b1c17d883ba0d7257b5a68bbfc8ccaa2d897544fb6502ca0f7/litert_lm_api-0.17.0-py3-none-android_23_arm64_v8a.whl", hash = "sha256:91fdf62721a624a6b91c04228021c6781b1383e7142087deb9fe51acf40df9a1", size = 13970245, upload-time = "2026-09-04T22:14:53.525Z" },
+    { url = "https://files.pythonhosted.org/packages/17/5e/f599f115c3535b3f2bf02b64eca0b10e1168832b712734e3dbcae70ec668/litert_lm_api-0.17.0-py3-none-android_23_x86_64.whl", hash = "sha256:31856b701c550174b588e181df9a803439345427489443fe1441e23b2ac48a4f", size = 15082465, upload-time = "2026-09-04T22:14:56.006Z" },
+    { url = "https://files.pythonhosted.org/packages/37/f6/82e908e1ebea675ed615f134ff489b046d066fe8e6ead6bf829166af51a4/litert_lm_api-0.17.0-py3-none-macosx_12_0_arm64.whl", hash = "sha256:d8dd7806c2cb27967aeee53ff560bcf1e49a2d5b6522a9d6ab4c130c13a99691", size = 22353246, upload-time = "2026-09-04T22:14:58.574Z" },
+    { url = "https://files.pythonhosted.org/packages/b6/63/f5d575f2c88f44a039c19ff915ec25c7ec4b1b46e5ee28407d4c1392a50f/litert_lm_api-0.17.0-py3-none-manylinux_2_27_aarch64.whl", hash = "sha256:53d41afdad29fd4940e65e8fc252e2b235f943367f818e3811ae7d5adcd60771", size = 46443510, upload-time = "2026-09-04T22:15:02.433Z" },
+    { url = "https://files.pythonhosted.org/packages/1a/b5/52cdeda2ed557ce96dd1c627c25177eca3e31fe3219ae7f4ec5f28a1d777/litert_lm_api-0.17.0-py3-none-manylinux_2_27_x86_64.whl", hash = "sha256:654efe7dd6870335b3cfabe57debc9ef13beece16e4981a71c964d3a212fb724", size = 47230964, upload-time = "2026-09-04T22:15:06.254Z" },
+    { url = "https://files.pythonhosted.org/packages/46/09/fab014fe4394a3f1d21e30622fbd4add89b69b0688382bc93aeedde007f2/litert_lm_api-0.17.0-py3-none-win_amd64.whl", hash = "sha256:3ff68755e500eb8f046dd29b117f0e024f22cf7591569cd61903ca734e7873b7", size = 26100718, upload-time = "2026-09-04T22:15:09.304Z" },
 ]
 
 [[package]]

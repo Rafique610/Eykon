@@ -1,18 +1,18 @@
-# Step 06 — Generation Layer (Ollama + Gemma)
+# Step 06 — Generation Layer (Gemma 4 E2B via LiteRT-LM)
 
-**Status:** 🔲 Not started  
-**Depends on:** Step 01  
+**Status:** 🔲 In Progress  
+**Depends on:** Step 01, Step 05  
 **Blocks:** Steps 07, 08
 
 ---
 
 ## What This Step Does
 
-Takes the user's question + retrieved memories, sends them to a local LLM (Gemma via Ollama), and gets back a natural-language answer grounded in the stored context.
+Takes the user's question + retrieved memories from Step 05, formats them into a strictly grounded RAG prompt, and passes them to **Google's on-device Gemma 4 E2B LiteRT-LM** engine to generate a natural, factual answer.
 
 ## Why This Matters
 
-This is the "G" in RAG. It turns raw retrieved data into something a human can understand. Without it, the user would have to read raw memory records themselves.
+This is the "G" in RAG. Using **LiteRT-LM** directly aligns with the production mobile deployment target (Android / iOS / Edge), allowing us to benchmark latency, on-device memory footprint, and generation quality on the exact edge model (`gemma-4-E2B-it.litertlm`).
 
 ---
 
@@ -20,29 +20,33 @@ This is the "G" in RAG. It turns raw retrieved data into something a human can u
 
 | File | Purpose |
 |---|---|
-| `src/generation/llm.py` | `generate_answer()` — prompt formatting + Ollama call |
+| `src/assistant/prompt.py` | `build_rag_prompt()` — formats retrieved memories into strict RAG prompt |
+| `src/assistant/llm.py` | `generate_answer()` — engine lifecycle and LiteRT-LM generation |
+| `src/assistant/__init__.py` | Public exports for assistant feature |
 
 ---
 
 ## How It Works
 
 ```
-Question: "When is my dentist appointment?"
-Context:  [MemoryRecord(text="Dentist on the 14th"), ...]
+User Question: "When is my dentist appointment?"
+Retrieved Memories: [MemoryRecord(text="Dentist Dr. Smith on Tuesday at 3pm"), ...]
+        │
+        ▼
+build_rag_prompt(question, context_memories)
+        │
+        ├─ Strict system instructions: "Answer ONLY based on stored memories..."
+        ├─ Formatted context list: "[1] Dentist Dr. Smith on Tuesday at 3pm"
+        ├─ User question
         │
         ▼
 generate_answer(question, context_memories)
         │
-        ├─ Format prompt:
-        │    "Answer based ONLY on these memories:
-        │     1. Dentist on the 14th
-        │     2. ...
-        │     Question: When is my dentist appointment?"
-        │
-        ├─ Call Ollama API → gemma2:2b
+        ├─ LiteRT-LM Engine (gemma-4-E2B-it.litertlm)
+        ├─ Sampler: temperature=0.1, max_tokens=256
         │
         ▼
-"Your dentist appointment is on the 14th."
+"Your dentist appointment with Dr. Smith is on Tuesday at 3pm."
 ```
 
 ---

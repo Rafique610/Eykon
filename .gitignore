@@ -13,8 +13,9 @@ wheels/
 .gemini/
 .memory/
 
-# Data (SQLite DB)
+# Data (SQLite DB) and Models
 data/
+models/
 
 # Environment files
 .env

@@ -16,6 +16,10 @@ class Settings(BaseSettings):
 
     OLLAMA_BASE_URL: str = "http://localhost:11434"
     OLLAMA_MODEL: str = "gemma2:2b"
+    LITERT_MODEL_REPO: str = "litert-community/gemma-4-E2B-it-litert-lm"
+    LITERT_MODEL_FILE: str = "gemma-4-E2B-it.litertlm"
+    LITERT_MODEL_PATH: str | None = None
     EMBEDDING_MODEL: str = "BAAI/bge-small-en-v1.5"
     DB_PATH: str = "data/memories.db"
     TOP_K: int = 5
+

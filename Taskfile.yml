@@ -10,8 +10,9 @@ tasks:
     cmd: uv sync
 
   pull-model:
-    desc: Pull the recommended Ollama model (gemma2:2b)
-    cmd: ollama pull gemma2:2b
+    desc: Download Google Gemma 4 E2B LiteRT-LM model from Hugging Face
+    cmd: uv run python -c "from huggingface_hub import hf_hub_download; from src.config import Settings; s = Settings(); print('Downloading Gemma 4 E2B LiteRT-LM (2.4 GB)...'); p = hf_hub_download(s.LITERT_MODEL_REPO, s.LITERT_MODEL_FILE); print('Downloaded to:', p)"
+
 
   check-config:
     desc: Verify and print resolved configuration

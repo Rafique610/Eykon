@@ -2,7 +2,7 @@
 
 A local-first personal memory app. Store details about your life (notes, facts, events, preferences), and query them using natural-language questions with locally-grounded retrieval-augmented generation (RAG).
 
-> 🚧 **Status:** Prototype Phase 1 — Steps 01 (Setup), 02 (Storage Layer), 04 (Embedding Wrapper), 03 (Capture Layer), and 05 (Retrieval Layer - Hybrid Search) completed & verified.
+> 🚧 **Status:** Prototype Phase 1 — Steps 01 (Setup), 02 (Storage Layer), 04 (Embedding Wrapper), 03 (Capture Layer), 05 (Retrieval Layer - Hybrid Search), and 06 (Generation Layer - Gemma 4 LiteRT-LM) completed & verified.
 
 ## Architecture
 
@@ -14,7 +14,9 @@ Built using a **feature-based file structure**:
   - `embedder.py`: Local `sentence-transformers` (`BAAI/bge-small-en-v1.5`, 512 tokens, 384-dim) wrapper with token helpers.
   - `service.py`: Text validation, token-bounded chunking (256 avg, 30-50 overlap, 400 ceiling), and `MemoryRecord` assembly.
   - `search.py`: Hybrid search engine combining dense vector cosine similarity and SQLite FTS5 BM25 keyword matching via Reciprocal Rank Fusion (RRF).
-- `src/assistant/`: Question-answering prompt builder and Ollama local LLM generation.
+- `src/assistant/`: 
+  - `prompt.py`: Factual RAG prompt formatting with strict anti-hallucination guard (`build_rag_prompt`).
+  - `llm.py`: Google LiteRT-LM on-device edge engine (`litert-community/gemma-4-E2B-it-litert-lm`, 2.4 GB) with singleton caching (`generate_answer`).
 - `src/ui/`: Streamlit web interface.
 - `src/config.py`: Central Pydantic settings (`BaseSettings` backed by `.env` with `MEMORY_` prefix).
 - `data/memories.db`: Local embedded SQLite database with FTS5 search index.
@@ -24,14 +26,15 @@ Built using a **feature-based file structure**:
 ### 1. Prerequisites
 - Python 3.10+
 - [uv](https://github.com/astral-sh/uv)
-- [Ollama](https://ollama.ai) (for local LLM generation in Step 06+)
+- Google LiteRT-LM with Gemma 4 E2B on-device model (`task pull-model`)
 
-### 2. Install Dependencies
+### 2. Install Dependencies & Download Model
 ```bash
 uv sync
+task pull-model  # Downloads Gemma 4 E2B LiteRT-LM model (~2.4 GB)
 ```
 
-### 3. Verify Setup, Storage, Embedder, Capture, and Hybrid Search
+### 3. Verify Setup, Storage, Embedder, Hybrid Search, and Generation
 ```bash
 # Verify configuration
 uv run python -c "from src.config import Settings; print(Settings())"
@@ -39,8 +42,11 @@ uv run python -c "from src.config import Settings; print(Settings())"
 # Test full pipeline (Config, Storage, Embedder, Chunking, Capture, Search)
 task test
 
-# Test Hybrid Retrieval (Dense Semantic + Sparse FTS5 BM25 + RRF)
-uv run python -c "from src.memories import init_db, search_memories, Embedder; init_db(); emb = Embedder(); hits = search_memories('dentist appointment', emb, top_k=2); [print(f'Score: {s:.4f} | {m.text}') for m, s in hits]"
+# Test Prompt Construction (Anti-Hallucination Guard)
+uv run python -c "from src.assistant import build_rag_prompt; from src.memories.models import MemoryRecord; from datetime import datetime; p = build_rag_prompt('When is dentist?', [MemoryRecord(text='Dentist on Tuesday', embedding=[], timestamp=datetime.now(), source_type='text')]); print(p)"
+
+# Test On-Device Answer Generation (after task pull-model completes)
+uv run python -c "from src.assistant import generate_answer; from src.memories.models import MemoryRecord; from datetime import datetime; ans = generate_answer('When is dentist?', [MemoryRecord(text='Dentist appointment is on Tuesday at 3pm', embedding=[], timestamp=datetime.now(), source_type='text')]); print('Answer:', ans)"
 ```
 
 ### 4. Inspect Database
