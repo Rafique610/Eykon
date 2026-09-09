@@ -1,6 +1,6 @@
 # Step 02 — Text Capture (Ported Loop, No ML Yet)
 
-**Status:** 🔲 Not started  
+**Status:** ✅ Done  
 **Depends on:** Step 01  
 **Blocks:** Steps 05, 06
 

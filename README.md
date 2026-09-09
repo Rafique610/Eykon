@@ -3,7 +3,7 @@
 A local-first personal memory app. Store details about your life (notes, facts, events, preferences), and query them using natural-language questions with locally-grounded retrieval-augmented generation (RAG).
 
 > ✅ **Status:** Phase 1 Complete (End-to-End Pipeline) + Phase 1.1 Complete (Retrieval Quality Improvements).  
-> 🔄 **Phase 2 In Progress:** Step 01 Complete (Android Project Setup + Room SQLite Storage with API Level 31).
+> 🔄 **Phase 2 In Progress:** Step 01 & Step 02 Complete (Android Project Setup + Room SQLite Storage + Native Text Capture Loop).
 > - Hybrid search Hit@5: **93.3%**
 > - Exact factual questions Hit@1: **100%**
 > - Android Target: **API 31 (Android 12)+** for Gemma 4 / LiteRT-LM
@@ -12,16 +12,21 @@ A local-first personal memory app. Store details about your life (notes, facts, 
 
 Built using a **feature-based file structure**:
 
-### Android Core & Storage (`android/`)
+### Android Core & Capture (`android/`)
 - `android/app/src/main/java/com/eykon/memory/data/`:
   - `MemoryRecord.kt`: Room SQLite entity mirroring the Phase 1 schema (`id`, `text`, `embedding`, `timestamp`, `source_type`, `metadata`).
   - `Converters.kt`: Room TypeConverter serializing `List<Float>` ↔ SQLite TEXT (JSON string) for the 384-dim vector.
   - `MemoryDao.kt`: Suspend CRUD methods (`insert`, `insertAll`, `getAll`, `getById`, `deleteById`, `count`, `deleteAll`) + `getAllAsFlow()`.
   - `MemoryDatabase.kt`: Room SQLite database singleton (`memories.db`).
+- `android/app/src/main/java/com/eykon/memory/capture/`:
+  - `TextCaptureService.kt`: Input validation (empty/whitespace guard) and `MemoryRecord` assembly.
+- `android/app/src/main/java/com/eykon/memory/ui/`:
+  - `screens/AddMemoryScreen.kt`: Jetpack Compose screen with text input, validation feedback, and reactive list of recent memories.
+  - `viewmodels/AddMemoryViewModel.kt`: Compose ViewModel managing `AddMemoryUiState` and Room StateFlow.
+  - `theme/`: Material 3 theme (Color, Typography, Theme).
 - `android/app/src/main/java/com/eykon/memory/`:
   - `MemoryApp.kt`: Application class managing lazy database singleton.
-  - `MainActivity.kt`: Jetpack Compose UI observing storage status.
-  - `ui/theme/`: Material 3 theme (Color, Typography, Theme).
+  - `MainActivity.kt`: Entry activity hosting `AddMemoryScreen` with `AddMemoryViewModel`.
 - `android/app/build.gradle.kts`: Gradle Kotlin DSL, `minSdk = 31`, `compileSdk = 35`, Room 2.6.1, KSP 2.0.21, Compose BOM 2024.10.00.
 
 ### Python Backend & Desktop Prototype (`src/`)
@@ -48,59 +53,73 @@ Built using a **feature-based file structure**:
 
 ## Quick Start
 
-### 1. Prerequisites
-- Python 3.10+
-- [uv](https://github.com/astral-sh/uv)
-- Google LiteRT-LM with Gemma 4 E2B on-device model (`task pull-model`)
+### Prerequisites
 
-### 2. Install Dependencies & Download Model
+#### For Phase 1 (Python / Desktop Prototype)
+- **Python 3.10+**
+- **[uv](https://github.com/astral-sh/uv)** (Python package & environment manager)
+- *(Optional)* **[Task](https://taskfile.dev)** (`winget install Task.Task`) for one-line convenience commands (`task run`, `task test`, etc.). If not installed, you can use the direct `uv` commands listed below.
+
+#### For Phase 2 (Android Native Client)
+- **[Android Studio](https://developer.android.com/studio)** (recommended: automatically bundles JDK 17/21 and Android SDK)
+- **Android SDK:** Platform API 31+ (Android 12+) required for on-device LiteRT-LM / Gemma 4 hardware acceleration.
+- **Physical Device or Emulator:** Android 12+ (arm64 recommended for on-device LLM inference).
+
+---
+
+### Phase 1: Python Desktop Prototype
+
+#### 1. Install Dependencies & Download Model
 ```bash
 uv sync
-task pull-model  # Downloads Gemma 4 E2B LiteRT-LM model (~2.4 GB)
+task pull-model  # Or: uv run python -c "from huggingface_hub import hf_hub_download; from src.config import Settings; s = Settings(); hf_hub_download(s.LITERT_MODEL_REPO, s.LITERT_MODEL_FILE)"
 ```
 
-### 3. Run the App
+#### 2. Run the Streamlit App
 ```bash
 task run
 # or directly:
 uv run streamlit run src/ui/app.py
 ```
+Opens in your browser at `http://localhost:8501`.  
+- **📝 Add Memory** — paste any text; it's chunked, embedded, and stored in SQLite.  
+- **❓ Ask Question** — hybrid search retrieves relevant memories, Gemma 4 generates a grounded answer on-device.
 
-Opens at `http://localhost:8501`.  
-- **📝 Add Memory** — paste any text; it's chunked, embedded, and stored.  
-- **❓ Ask Question** — type a question; hybrid search retrieves relevant memories, Gemma 4 generates a grounded answer on-device.
-
-### 4. Verify Everything Works (Pre-Demo Check)
+#### 3. Health & Pipeline Verification
 ```bash
-# One-command health check — verifies DB, embedder, search, and model
-task test-e2e
-
-# Full pipeline test (requires memories in DB)
-task test
-
-# Verify configuration
-task check-config
+task test-e2e     # One-command health check: DB, embedder, search, model
+task test         # Full pipeline test
+task check-config # Verify resolved settings
 ```
 
-### 5. Inspect Database
-The database is stored locally at `data/memories.db`. You can view and query it with:
-- **VS Code Extension:** SQLite Viewer (by Florian Klampfer)
-- **Dedicated GUI:** [DB Browser for SQLite](https://sqlitebrowser.org/) (recommended)
-- **Universal GUI:** DBeaver (connect via SQLite driver pointing to `data/memories.db`)
+#### 4. Inspect SQLite Database
+The database is stored locally at `data/memories.db`. You can view it with [DB Browser for SQLite](https://sqlitebrowser.org/) or the VS Code SQLite Viewer extension.
 
-### 6. Android App (Phase 2)
-The Android native client is in `android/`:
+---
+
+### Phase 2: Android Native App (`android/`)
+
+#### 1. Open in Android Studio
+1. Launch Android Studio.
+2. Select **Open** and choose the `android/` directory (`FYP_Demo/android`).
+3. Allow Gradle to sync dependencies (Room 2.6.1, Compose, Kotlin coroutines).
+4. Click the green **Run (▶)** button to deploy to your connected Android 12+ device or emulator.
+
+#### 2. Build & Test via Command Line
+If running from terminal (requires `JAVA_HOME` pointing to JDK 17 or 21, e.g. Android Studio's bundled JBR):
 ```bash
-# Run local JVM unit tests (TypeConverter serialization & float vector round-trip)
 cd android
-./gradlew test
 
-# Run Room SQLite instrumented tests on connected Android device / emulator
-./gradlew connectedAndroidTest
+# Run local JVM unit tests (TypeConverter serialization & TextCapture validation)
+.\gradlew.bat test
 
 # Build debug APK
-./gradlew assembleDebug
+.\gradlew.bat assembleDebug
+
+# Run instrumented Room SQLite tests on connected device
+.\gradlew.bat connectedAndroidTest
 ```
+
 
 ## Troubleshooting
 
