@@ -60,3 +60,14 @@ tasks:
       print('------------------------')
       print(f'Result: {len(checks)-failed}/{len(checks)} passed' + (' OK' if failed == 0 else f' ({failed} failed)'))
       "
+
+  test-android:
+    desc: Run Android unit tests (TypeConverter serialization & float round-trip)
+    dir: android
+    cmd: gradlew.bat test
+
+  build-android:
+    desc: Build debug APK for Android app
+    dir: android
+    cmd: gradlew.bat assembleDebug
+
