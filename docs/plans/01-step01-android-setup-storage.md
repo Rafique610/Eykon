@@ -1,6 +1,6 @@
 # Step 01 — Android Project Setup + Room Storage
 
-**Status:** 🔲 Not started  
+**Status:** ✅ Done  
 **Depends on:** Nothing  
 **Blocks:** Everything
 

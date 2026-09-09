@@ -2,13 +2,29 @@
 
 A local-first personal memory app. Store details about your life (notes, facts, events, preferences), and query them using natural-language questions with locally-grounded retrieval-augmented generation (RAG).
 
-> ✅ **Status:** Phase 1 Complete (End-to-End Pipeline) + Phase 1.1 Complete (Retrieval Quality Improvements). 
+> ✅ **Status:** Phase 1 Complete (End-to-End Pipeline) + Phase 1.1 Complete (Retrieval Quality Improvements).  
+> 🔄 **Phase 2 In Progress:** Step 01 Complete (Android Project Setup + Room SQLite Storage with API Level 31).
 > - Hybrid search Hit@5: **93.3%**
 > - Exact factual questions Hit@1: **100%**
+> - Android Target: **API 31 (Android 12)+** for Gemma 4 / LiteRT-LM
 
 ## Architecture
 
 Built using a **feature-based file structure**:
+
+### Android Core & Storage (`android/`)
+- `android/app/src/main/java/com/eykon/memory/data/`:
+  - `MemoryRecord.kt`: Room SQLite entity mirroring the Phase 1 schema (`id`, `text`, `embedding`, `timestamp`, `source_type`, `metadata`).
+  - `Converters.kt`: Room TypeConverter serializing `List<Float>` ↔ SQLite TEXT (JSON string) for the 384-dim vector.
+  - `MemoryDao.kt`: Suspend CRUD methods (`insert`, `insertAll`, `getAll`, `getById`, `deleteById`, `count`, `deleteAll`) + `getAllAsFlow()`.
+  - `MemoryDatabase.kt`: Room SQLite database singleton (`memories.db`).
+- `android/app/src/main/java/com/eykon/memory/`:
+  - `MemoryApp.kt`: Application class managing lazy database singleton.
+  - `MainActivity.kt`: Jetpack Compose UI observing storage status.
+  - `ui/theme/`: Material 3 theme (Color, Typography, Theme).
+- `android/app/build.gradle.kts`: Gradle Kotlin DSL, `minSdk = 31`, `compileSdk = 35`, Room 2.6.1, KSP 2.0.21, Compose BOM 2024.10.00.
+
+### Python Backend & Desktop Prototype (`src/`)
 - `src/memories/`: 
   - `models.py`: Memory data schema (`MemoryRecord` with `metadata` support).
   - `database.py`: SQLite persistence, table schema, and `memories_fts` (FTS5) virtual table with sync triggers.
@@ -71,6 +87,20 @@ The database is stored locally at `data/memories.db`. You can view and query it 
 - **VS Code Extension:** SQLite Viewer (by Florian Klampfer)
 - **Dedicated GUI:** [DB Browser for SQLite](https://sqlitebrowser.org/) (recommended)
 - **Universal GUI:** DBeaver (connect via SQLite driver pointing to `data/memories.db`)
+
+### 6. Android App (Phase 2)
+The Android native client is in `android/`:
+```bash
+# Run local JVM unit tests (TypeConverter serialization & float vector round-trip)
+cd android
+./gradlew test
+
+# Run Room SQLite instrumented tests on connected Android device / emulator
+./gradlew connectedAndroidTest
+
+# Build debug APK
+./gradlew assembleDebug
+```
 
 ## Troubleshooting
 
