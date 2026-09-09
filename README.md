@@ -3,7 +3,7 @@
 A local-first personal memory app. Store details about your life (notes, facts, events, preferences), and query them using natural-language questions with locally-grounded retrieval-augmented generation (RAG).
 
 > ✅ **Status:** Phase 1 Complete (End-to-End Pipeline) + Phase 1.1 Complete (Retrieval Quality Improvements).  
-> 🔄 **Phase 2 In Progress:** Step 01 & Step 02 Complete (Android Project Setup + Room SQLite Storage + Native Text Capture Loop).
+> 🔄 **Phase 2 In Progress:** Step 01, Step 02 & Step 03 Complete (Android Project Setup + Room SQLite Storage + Text Capture + LiteRT-LM Generation Test Harness).
 > - Hybrid search Hit@5: **93.3%**
 > - Exact factual questions Hit@1: **100%**
 > - Android Target: **API 31 (Android 12)+** for Gemma 4 / LiteRT-LM
@@ -12,7 +12,7 @@ A local-first personal memory app. Store details about your life (notes, facts, 
 
 Built using a **feature-based file structure**:
 
-### Android Core & Capture (`android/`)
+### Android Core & Assistant (`android/`)
 - `android/app/src/main/java/com/eykon/memory/data/`:
   - `MemoryRecord.kt`: Room SQLite entity mirroring the Phase 1 schema (`id`, `text`, `embedding`, `timestamp`, `source_type`, `metadata`).
   - `Converters.kt`: Room TypeConverter serializing `List<Float>` ↔ SQLite TEXT (JSON string) for the 384-dim vector.
@@ -20,13 +20,20 @@ Built using a **feature-based file structure**:
   - `MemoryDatabase.kt`: Room SQLite database singleton (`memories.db`).
 - `android/app/src/main/java/com/eykon/memory/capture/`:
   - `TextCaptureService.kt`: Input validation (empty/whitespace guard) and `MemoryRecord` assembly.
+- `android/app/src/main/java/com/eykon/memory/assistant/`:
+  - `PromptBuilder.kt`: Formats grounded RAG prompt with Phase 1 parity (7 strict guidelines + 5 few-shot examples).
+  - `GenerationParams.kt`: Generation hyperparameters (`temperature: 0.3f`, `maxOutputTokens: 256`, `topK: 40`, `topP: 0.95`).
+  - `ModelManager.kt`: Resolves path to `gemma-4-E2B-it.litertlm` and provides target ADB sideload instructions.
+  - `LiteRTGenerator.kt`: On-device inference runner with background dispatch (`Dispatchers.Default`) and answer prefix cleaner.
 - `android/app/src/main/java/com/eykon/memory/ui/`:
-  - `screens/AddMemoryScreen.kt`: Jetpack Compose screen with text input, validation feedback, and reactive list of recent memories.
+  - `screens/AddMemoryScreen.kt`: Jetpack Compose screen for text capture and live recent memories list.
+  - `screens/GenerationTestScreen.kt`: Compose test harness for on-device LLM generation with latency metrics and full prompt inspector.
   - `viewmodels/AddMemoryViewModel.kt`: Compose ViewModel managing `AddMemoryUiState` and Room StateFlow.
+  - `viewmodels/GenerationTestViewModel.kt`: Compose ViewModel managing generation test state.
   - `theme/`: Material 3 theme (Color, Typography, Theme).
 - `android/app/src/main/java/com/eykon/memory/`:
   - `MemoryApp.kt`: Application class managing lazy database singleton.
-  - `MainActivity.kt`: Entry activity hosting `AddMemoryScreen` with `AddMemoryViewModel`.
+  - `MainActivity.kt`: Entry activity hosting tabbed navigation between Text Capture and Gemma Generation.
 - `android/app/build.gradle.kts`: Gradle Kotlin DSL, `minSdk = 31`, `compileSdk = 35`, Room 2.6.1, KSP 2.0.21, Compose BOM 2024.10.00.
 
 ### Python Backend & Desktop Prototype (`src/`)
@@ -118,6 +125,14 @@ cd android
 
 # Run instrumented Room SQLite tests on connected device
 .\gradlew.bat connectedAndroidTest
+```
+
+#### 3. Sideload Model to Device
+The Gemma 4 model must be pushed directly to the app's external files directory to bypass SELinux restrictions on modern Android devices:
+```bash
+# Assuming device is connected via USB or Wi-Fi ADB
+adb shell "mkdir -p /sdcard/Android/data/com.eykon.memory/files/models"
+adb push "models\gemma-4-E2B-it.litertlm" "/sdcard/Android/data/com.eykon.memory/files/models/"
 ```
 
 

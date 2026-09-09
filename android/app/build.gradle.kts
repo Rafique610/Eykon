@@ -40,6 +40,7 @@ android {
 
     kotlinOptions {
         jvmTarget = "17"
+        freeCompilerArgs = freeCompilerArgs + listOf("-Xskip-metadata-version-check")
     }
 
     buildFeatures {
@@ -55,7 +56,7 @@ android {
 
 dependencies {
     val roomVersion = "2.6.1"
-    val coroutinesVersion = "1.8.1"
+    val coroutinesVersion = "1.9.0"
     val serializationVersion = "1.7.1"
 
     // Core & Lifecycle
@@ -83,6 +84,9 @@ dependencies {
     // KotlinX Serialization & Coroutines
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$serializationVersion")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutinesVersion")
+
+    // Google AI Edge LiteRT-LM On-Device LLM Runtime
+    implementation("com.google.ai.edge.litertlm:litertlm-android:0.16.1")
 
     // Unit Testing
     testImplementation("junit:junit:4.13.2")
