@@ -104,5 +104,9 @@ class AddMemoryViewModelTest {
             }
             return 0
         }
+        
+        override suspend fun searchFtsRaw(query: androidx.sqlite.db.SupportSQLiteQuery): List<MemoryRecord> {
+            return emptyList()
+        }
     }
 }

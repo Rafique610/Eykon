@@ -3,7 +3,7 @@
 A local-first personal memory app. Store details about your life (notes, facts, events, preferences), and query them using natural-language questions with locally-grounded retrieval-augmented generation (RAG).
 
 > ✅ **Status:** Phase 1 Complete (End-to-End Pipeline) + Phase 1.1 Complete (Retrieval Quality Improvements).  
-> 🔄 **Phase 2 In Progress:** Step 01, Step 02 & Step 03 Complete (Android Project Setup + Room SQLite Storage + Text Capture + LiteRT-LM Generation Test Harness).
+> 🔄 **Phase 2 In Progress:** Step 01, Step 02, Step 03 & Step 04 Complete (Android Project Setup + Storage + Capture + LiteRT-LM + FTS5 & ONNX Semantic Search).
 > - Hybrid search Hit@5: **93.3%**
 > - Exact factual questions Hit@1: **100%**
 > - Android Target: **API 31 (Android 12)+** for Gemma 4 / LiteRT-LM
@@ -127,12 +127,18 @@ cd android
 .\gradlew.bat connectedAndroidTest
 ```
 
-#### 3. Sideload Model to Device
-The Gemma 4 model must be pushed directly to the app's external files directory to bypass SELinux restrictions on modern Android devices:
+#### 3. Sideload Models to Device
+The Gemma 4 model and ONNX models must be pushed directly to the app's external files directory to bypass SELinux restrictions on modern Android devices:
 ```bash
 # Assuming device is connected via USB or Wi-Fi ADB
 adb shell "mkdir -p /sdcard/Android/data/com.eykon.memory/files/models"
+
+# Sideload Generation Model (LiteRT-LM)
 adb push "models\gemma-4-E2B-it.litertlm" "/sdcard/Android/data/com.eykon.memory/files/models/"
+
+# Sideload Embedding & Re-ranking Models (ONNX) - When provided
+# adb push "models\bge-small-en-v1.5.onnx" "/sdcard/Android/data/com.eykon.memory/files/models/"
+# adb push "models\ms-marco-MiniLM-L-6-v2.onnx" "/sdcard/Android/data/com.eykon.memory/files/models/"
 ```
 
 

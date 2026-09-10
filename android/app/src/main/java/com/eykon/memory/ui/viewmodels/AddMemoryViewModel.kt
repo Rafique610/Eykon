@@ -49,12 +49,13 @@ class AddMemoryViewModel(private val dao: MemoryDao) : ViewModel() {
         viewModelScope.launch {
             try {
                 _uiState.update { it.copy(isSaving = true, errorMessage = null) }
-                val record = TextCaptureService.createMemoryFromText(currentText)
-                val id = dao.insert(record)
+                val records = TextCaptureService.createMemoriesFromText(currentText)
+                val ids = dao.insertAll(records)
+                
                 _uiState.update {
                     it.copy(
                         inputText = "",
-                        savedMessage = "Memory saved! (ID: #$id)",
+                        savedMessage = "Memory saved! (IDs: ${ids.joinToString()})",
                         errorMessage = null,
                         isSaving = false
                     )

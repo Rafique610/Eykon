@@ -88,6 +88,9 @@ dependencies {
     // Google AI Edge LiteRT-LM On-Device LLM Runtime
     implementation("com.google.ai.edge.litertlm:litertlm-android:0.16.1")
 
+    // ONNX Runtime for embeddings and cross-encoder
+    implementation("com.microsoft.onnxruntime:onnxruntime-android:1.18.0")
+
     // Unit Testing
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutinesVersion")

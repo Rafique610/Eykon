@@ -112,6 +112,8 @@ When the user asks for a plan, do a deep dive first:
   - **Testing:** Always provide terminal verification commands with every step handoff so the user can test directly.
 - **Cache INSTRUCTIONS.md at read time:** the FIRST time the user tells the agent to read `INSTRUCTIONS.md`, the agent MUST cache/remember its full contents for the whole session (its rules apply for all subsequent work). Do not rely on re-reading it later or on memory files — that risks losing rules and burning tokens. If the rules need to persist across sessions, that is what `.memory/` is for; but in-session, keep INSTRUCTIONS.md rules available from the moment of the first read.
 
+  - **Strict Phase 1 Parity:** Do not assume things. Always derive decisions, parameters, and constraints directly from the Phase 1 implementations. Keep Phase 1 constraints constant (e.g., chunk size 256, overlap 30-50, FTS configurations) when porting features to Android.
+
 ## 8e. Session memory log (.memory/)
 
 - Maintain a memory log in `.memory/` — this is shared memory for the agent AND the user.
