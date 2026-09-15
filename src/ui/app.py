@@ -22,6 +22,8 @@ if str(ROOT) not in sys.path:
 
 import importlib
 import time
+import tempfile
+import os
 import numpy as np
 import streamlit as st
 
@@ -36,9 +38,11 @@ from src.memories import (
     Embedder,
     count_memories,
     create_memories_from_text,
+    create_memories_from_video,
     init_db,
     save_memories,
 )
+from src.vision import process_video
 
 # ── Constants ────────────────────────────────────────────────────────────────
 
@@ -94,7 +98,7 @@ with st.sidebar:
 
     page = st.radio(
         "Navigate",
-        ["📝 Add Memory", "❓ Ask Question"],
+        ["📝 Add Memory", "❓ Ask Question", "🎬 Process Video"],
         label_visibility="collapsed",
     )
 
@@ -335,3 +339,105 @@ elif page == "❓ Ask Question":
                         )
             else:
                 st.info("No relevant memories found.", icon="🔎")
+
+# ── Page 3: Process Video ────────────────────────────────────────────────────
+
+elif page == "🎬 Process Video":
+    st.header("Process Video into Memories")
+    st.caption("Upload a video to automatically extract and caption frames, storing them as searchable memories.")
+
+    uploaded_file = st.file_uploader("Upload a video", type=["mp4", "avi", "mov", "mkv"])
+
+    with st.expander("⚙️ Processing Settings"):
+        interval_seconds = st.slider("Frame Extraction Interval (seconds)", min_value=1, max_value=30, value=5)
+        caption_prompt = st.text_input("Caption Prompt Override", value="", placeholder="Leave blank for default VLM prompt")
+
+    if uploaded_file and st.button("🚀 Process Video", type="primary", use_container_width=True):
+        # 1. Save uploaded bytes to temp file
+        with tempfile.NamedTemporaryFile(delete=False, suffix=f".{uploaded_file.name.split('.')[-1]}") as tmp:
+            tmp.write(uploaded_file.read())
+            tmp_path = tmp.name
+
+        try:
+            # UI elements for progress
+            st.subheader("Processing Video")
+            progress_bar = st.progress(0)
+            status_text = st.empty()
+            caption_preview = st.empty()
+            
+            start_time = time.perf_counter()
+
+            # Progress callback
+            def on_progress(current_frame: int, total_frames: int, caption: str):
+                progress = current_frame / total_frames if total_frames > 0 else 0
+                progress_bar.progress(progress)
+                status_text.text(f"Processing frame {current_frame} of {total_frames}...")
+                caption_preview.info(f"**Latest Caption:** {caption}")
+
+            # 3. Process video
+            prompt_arg = caption_prompt if caption_prompt.strip() else None
+            frames = process_video(
+                video_path=tmp_path,
+                interval_seconds=interval_seconds,
+                caption_prompt=prompt_arg,
+                on_progress=on_progress
+            )
+            
+            processing_time = time.perf_counter() - start_time
+
+            # 4. Store captions as memories
+            if frames:
+                status_text.text("Saving memories to database...")
+                records = create_memories_from_video(frames, uploaded_file.name, embedder)
+                ids = save_memories(records)
+                
+                # 5. Show results summary
+                progress_bar.empty()
+                status_text.empty()
+                caption_preview.empty()
+                
+                st.success(f"✅ Extracted {len(frames)} frames and stored {len(ids)} memories in {processing_time:.1f} seconds.")
+                
+                # Save to session state so it survives reruns
+                st.session_state["last_processed_frames"] = frames
+                
+                # Force sidebar count update
+                st.rerun()
+            else:
+                st.warning("No frames were extracted. The video might be too short for the current interval setting.")
+        
+        finally:
+            # Cleanup temp file
+            if os.path.exists(tmp_path):
+                os.remove(tmp_path)
+
+    # If we have recently processed frames in session state, show them and allow querying
+    if "last_processed_frames" in st.session_state and st.session_state["last_processed_frames"]:
+        frames = st.session_state["last_processed_frames"]
+        st.divider()
+        
+        with st.expander(f"📋 View all {len(frames)} extracted captions"):
+            for frame in frames:
+                st.markdown(f"- {frame.caption}")
+                
+        st.subheader("Ask about this video")
+        quick_query = st.text_input("Query the video memories:", placeholder="e.g. Where did I leave my keys?", key="video_query")
+        
+        if st.button("🔍 Ask", key="video_ask_btn"):
+            if quick_query.strip():
+                with st.spinner("Searching and answering..."):
+                    results = search_memories(quick_query, embedder, top_k=3)
+                    
+                    if not model_ok:
+                        st.warning("LLM model not available. Showing top retrieved memories instead.")
+                        for r in results:
+                            rec = r.record if hasattr(r, "record") else r[0]
+                            st.info(rec.text)
+                    else:
+                        try:
+                            answer = generate_answer(quick_query, [r[0] for r in results])
+                            st.success(answer)
+                        except Exception as e:
+                            st.error(f"Error generating answer: {e}")
+            else:
+                st.error("Please enter a question.")
