@@ -4,7 +4,7 @@ A local-first personal memory app. Store details about your life (notes, facts, 
 
 > ✅ **Status:** Phase 1 Complete (End-to-End Pipeline) + Phase 1.1 Complete (Retrieval Quality Improvements).  
 > 🔄 **Phase 2 In Progress:** Step 01, Step 02, Step 03 & Step 04 Complete (Android Project Setup + Storage + Capture + LiteRT-LM + FTS5 & ONNX Semantic Search).
-> 🔄 **Phase 3 In Progress:** Step 01, Step 02, & Step 03 Complete (Literature Review, Environment Setup, & Frame Extraction).
+> 🔄 **Phase 3 In Progress:** Step 01, Step 02, Step 03, & Step 04 Complete (Literature Review, Env Setup, Extractor, & VLM Captioner).
 > - Hybrid search Hit@5: **93.3%**
 > - Exact factual questions Hit@1: **100%**
 > - Android Target: **API 31 (Android 12)+** for Gemma 4 / LiteRT-LM

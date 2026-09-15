@@ -13,6 +13,13 @@ tasks:
     desc: Download Google Gemma 4 E2B LiteRT-LM model from Hugging Face
     cmd: uv run python -c "from huggingface_hub import hf_hub_download; from src.config import Settings; s = Settings(); print('Downloading Gemma 4 E2B LiteRT-LM (2.4 GB)...'); p = hf_hub_download(s.LITERT_MODEL_REPO, s.LITERT_MODEL_FILE); print('Downloaded to:', p)"
 
+  pull-vlm:
+    desc: Download VLM GGUF model and mmproj for video captioning (mobile-compatible format)
+    cmd: uv run python -c "from huggingface_hub import hf_hub_download; from src.config import Settings; s = Settings(); print('Downloading VLM Model...'); p = hf_hub_download(s.VLM_MODEL_REPO, s.VLM_MODEL_FILE); print('Model downloaded to:', p); mmproj = getattr(s, 'VLM_MMPROJ_FILE', None); mmproj_path = hf_hub_download(s.VLM_MODEL_REPO, mmproj) if mmproj else None; print('MMProj downloaded to:', mmproj_path)"
+
+  check-vlm:
+    desc: Verify VLM model is downloaded and llama.cpp can load it
+    cmd: uv run python -c "from llama_cpp import Llama; from huggingface_hub import hf_hub_download; from src.config import Settings; s = Settings(); p = hf_hub_download(s.VLM_MODEL_REPO, s.VLM_MODEL_FILE); print(f'Loading {p} on CPU...'); Llama(model_path=p, n_ctx=s.VLM_CONTEXT_SIZE, n_gpu_layers=s.VLM_N_GPU_LAYERS); print('Success!')"
 
   check-config:
     desc: Verify and print resolved configuration

@@ -8,6 +8,7 @@ Rules for package managers, build tools, and paths.
 - `uv run <command>` for all execution.
 - `uv sync` to install/update dependencies.
 - `uv add <package>` to add new dependencies.
+- **Windows C++ Packages:** When installing C++ bound packages on Windows (like `llama-cpp-python`), `uv` will hang or fail if Visual Studio Build Tools are missing. *Always* bypass source compilation by using pre-built binary wheels (e.g. configuring `[[tool.uv.index]]` in `pyproject.toml` or using `uv pip install --only-binary`).
 - Config: `pyproject.toml` + `uv.lock` (both committed).
 
 ## Task Runner — `Taskfile.yml`

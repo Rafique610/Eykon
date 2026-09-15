@@ -26,3 +26,14 @@ class Settings(BaseSettings):
     POOL_K: int = 20  # Candidates retrieved from each method in hybrid search before fusion
     EXPAND_QUERY: bool = True  # Enable static concept expansion for semantic queries
     RERANK: bool = True  # Enable cross-encoder re-ranking for hybrid search
+
+    # Vision / VLM Settings (mobile-compatible)
+    VLM_MODEL_PATH: str | None = None
+    VLM_MODEL_REPO: str = "moondream/moondream2-gguf"
+    VLM_MODEL_FILE: str = "moondream2-text-model-f16.gguf"
+    VLM_MMPROJ_FILE: str | None = "moondream2-mmproj-f16.gguf"
+    FRAME_INTERVAL_SECONDS: float = 5.0
+    CAPTION_MAX_TOKENS: int = 128
+    CAPTION_PROMPT: str = "Describe what you see in this image in one detailed sentence."
+    VLM_N_GPU_LAYERS: int = 0
+    VLM_CONTEXT_SIZE: int = 2048
