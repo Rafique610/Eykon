@@ -78,3 +78,20 @@ tasks:
     dir: android
     cmd: gradlew.bat assembleDebug
 
+  test-vision-integration:
+    desc: Process a test video, store as memories, then query them
+    cmd: |
+      uv run python -c "
+      from src.memories import init_db, Embedder, save_memories, search_memories
+      from src.memories.service import create_memories_from_video
+      from src.vision import process_video
+      init_db()
+      embedder = Embedder()
+      frames = process_video('test_video.mp4', interval_seconds=10)
+      records = create_memories_from_video(frames, 'test_video.mp4', embedder)
+      ids = save_memories(records)
+      print(f'Stored {len(ids)} video memories')
+      results = search_memories('where did I put my keys', embedder, top_k=3)
+      for r in results:
+          print(f'  [{r.score:.4f}] {r.record.text[:80]}')
+      "

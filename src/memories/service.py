@@ -91,3 +91,48 @@ def create_memory_from_text(
     records = create_memories_from_text(text, embedder=embedder)
     return records[0]
 
+
+def create_memories_from_video(
+    captioned_frames: list["CaptionedFrame"],  # type: ignore
+    video_filename: str,
+    embedder: Embedder | None = None,
+    chunk_size: int = DEFAULT_CHUNK_SIZE,
+    overlap: int = DEFAULT_OVERLAP,
+) -> list[MemoryRecord]:
+    """Convert captioned video frames into embeddable MemoryRecords.
+
+    Each caption is stored as a separate memory record with:
+    - source_type = "video"
+    - metadata includes: video_filename, timestamp_seconds, frame_index
+    - Text is prefixed with timestamp: "[MM:SS] caption text"
+    """
+    if embedder is None:
+        embedder = Embedder()
+
+    records = []
+    total_frames = len(captioned_frames)
+
+    if not total_frames:
+        return records
+
+    texts = [frame.caption for frame in captioned_frames]
+    embeddings = embedder.embed_batch(texts)
+    now = datetime.now()
+
+    for frame, embedding in zip(captioned_frames, embeddings):
+        records.append(
+            MemoryRecord(
+                text=frame.caption,
+                embedding=embedding,
+                timestamp=now,
+                source_type="video",
+                metadata={
+                    "video_filename": video_filename,
+                    "timestamp_seconds": frame.timestamp_seconds,
+                    "frame_index": frame.frame_index,
+                    "total_frames": total_frames,
+                },
+            )
+        )
+
+    return records

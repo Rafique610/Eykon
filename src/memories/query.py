@@ -24,6 +24,11 @@ CONCEPT_MAP = {
     "friend": "omar hassan zara bilal classmate roommate group",
     "professor": "sir mam teacher class lecture office hours grade",
     "project": "fyp thesis model training experiment report supervisor",
+    "keys": "key keychain table counter pocket door lock car",
+    "left": "placed put set down forgot left behind dropped",
+    "wearing": "shirt jacket hat glasses shoes clothes outfit",
+    "cooking": "kitchen stove pan pot food cutting chopping",
+    "reading": "book page paper document screen tablet phone",
 }
 
 def expand_query(query: str) -> str:
