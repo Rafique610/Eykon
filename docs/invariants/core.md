@@ -56,3 +56,7 @@ Bug fixes address root causes. Shortest working diff wins.
 
 - When porting features across phases (desktop → Android), derive decisions, parameters, and constraints directly from earlier phase implementations.
 - Keep Phase 1 constants (chunk size 256, overlap 40, FTS5 config) unchanged unless explicitly approved.
+
+## Destructive Operations & File Safety
+- **Never blindly overwrite JSON/data files:** Always read existing data, parse it, merge updates, and write back. Overwriting a file from an empty state is strictly prohibited unless explicitly requested.
+- **Never run destructive actions silently:** Deleting files, wiping databases, or resetting states requires explicit user confirmation before execution.

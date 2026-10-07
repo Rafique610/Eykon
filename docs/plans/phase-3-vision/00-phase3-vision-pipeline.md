@@ -1,5 +1,26 @@
 # Phase 3 — Vision Pipeline: Pre-Recorded Video → Memory RAG
 
+> [!IMPORTANT]
+> **Realignment — 05 October 2026.** Everything below is kept as originally
+> written. Changes from the realignment (see `docs/plans/00-roadmap.md`):
+>
+> 1. Phase 3 scope stays **pre-recorded video**. Live capture, keyframe gating
+>    and hierarchical memory move to Phases 4–6. "Phase 4 (Mobile Android)" in
+>    Step 14 now means *the phases after Phase 3*, not a single mobile port.
+> 2. Steps 01–10 ✅ are done. Remaining execution order:
+>    **11 → 12 → 14 → 15 (honest audit) → 16 (citation verification + LR v2) → 13 (re-defense package, last)**.
+> 3. Phase 3 results are re-labelled: A2/A3 (3 short clips, 9 QA pairs) are
+>    **smoke tests**, not evidence; A4 is a **laptop** stability result, not a
+>    mobile thermal result; A1 measured similarity, not quality. Step 15 writes
+>    this honestly so the panel hears it from us first.
+> 4. The "1 frame / 5 s" decision is **provisional** — Phase 4 replaces it with
+>    an online gating cascade and re-tests uniform sampling as a baseline on
+>    long egocentric recordings.
+> 5. The "shared Gemma model for continuous captioning" claim is
+>    **provisional** — continuous captioning with a 2B model every few seconds
+>    is the always-on compute trap described in `new_Dev.md`; A6/A8 + Phase 4
+>    decide.
+
 ## Goal
 
 Build a complete **Video-to-Text RAG Pipeline** that processes pre-recorded video files, extracts visual context using a local VLM, stores the captions as memory records in the existing RAG pipeline, and allows the user to query them using natural language.
@@ -128,15 +149,20 @@ The existing architecture (Phase 1) already normalizes all input into `MemoryRec
 
 ## Working Assumptions to Test (Experiments)
 
+We are moving away from purely checking Hit@K (which only proves the model saw an object, e.g., "sunglasses") to measuring **True Answer Accuracy**. Does the model actually formulate the answer the user wants ("You left them on the kitchen counter")?
+
+All experiments (A2–A7) will be run **individually across Moondream2, Gemma 4 E2B, and SmolVLM** to capture Speed, Memory, and True Answer Accuracy for each, concluding with a Mega Test.
+
 | # | Assumption | Experiment | Success Metric |
 |---|---|---|---|
-| A1 | **Quantized models are NOT significantly worse** | Blind side-by-side comparison: Q4 vs Q8 vs FP16 captions evaluated by humans | ≥80% of evaluators rate Q4 as "equivalent or acceptable" |
-| A2 | 1 frame per 5 seconds captures enough context | Process test video at 1s, 3s, 5s, 10s intervals | Hit@5 at 5s ≥ 70% of 1s |
-| A3 | Short captions embed better than paragraphs | Compare 1-sentence vs multi-sentence captions | Short MRR ≥ 90% of long |
-| A4 | System runs 30+ min on CPU without thermal throttle | CPU-only soak test with RAM and latency monitoring | Zero crashes, latency drift < 20% |
+| A1 | **Quantized models are NOT significantly worse** | Blind side-by-side comparison: Q4 vs Q8 vs FP16 | ≥80% of evaluators rate Q4 as "equivalent or acceptable" |
+| A2 | 1 frame per 5 seconds captures enough context | Process test video at 1s, 3s, 5s, 10s intervals for each VLM | Hit@5 at 5s ≥ 70% of 1s |
+| A3 | Short captions embed better than paragraphs | Compare 1-sentence vs multi-sentence captions for each VLM | Short MRR ≥ 90% of long |
+| A4 | System runs 30+ min on CPU without thermal throttle | CPU-only soak test for **all 3 VLMs** (RAM and latency tracking) | Zero crashes, latency drift < 20% |
 | A5 | Video memories coexist with text memories | Add 50 video memories to benchmark DB | Existing scores within 5% of baseline |
-| A6 | **Gemma 4 E2B matches dedicated VLMs** | Compare Gemma 4 E2B vs Moondream2/PaliGemma | Gemma 4 wins purely on the massive 1GB+ RAM efficiency advantage. |
+| A6 | **Gemma 4 vs Moondream vs SmolVLM** | Measure Peak RAM, Speed, and LLM-as-a-Judge Answer Accuracy for each | Find optimal balance of memory vs. context flow |
 | A7 | **Other optimizations recover quantization drops** | Test: better prompts, multi-frame context aggregation | Combined optimizations recover ≥50% of any gap |
+| **A8** | **The Mega Test (End-to-End Final)** | Combine optimal A2/A3 settings + full mixed DB (A5). Run gauntlet on each model. | Definitively select the winning VLM for Mobile transition |
 
 ---
 

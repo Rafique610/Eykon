@@ -3,7 +3,7 @@
 A local-first personal memory app. Store details about your life (notes, facts, events, preferences), and query them using natural-language questions with locally-grounded retrieval-augmented generation (RAG).
 
 > ✅ **Status:** Phase 1 Complete (End-to-End Pipeline) + Phase 1.1 Complete (Retrieval Quality Improvements).  
-> 🔄 **Phase 2 In Progress:** Step 01, Step 02, Step 03 & Step 04 Complete (Android Project Setup + Storage + Capture + LiteRT-LM + FTS5 & ONNX Semantic Search).
+> 🔄 **Phase 2 In Progress:** Step 01, Step 02, Step 03, Step 04, Step 05 & Step 06 Complete (Android Setup + Room SQLite + Text Capture + LiteRT-LM + FTS & Hybrid Search + Voice Memo Capture + Full End-to-End RAG UI).
 > 🔄 **Phase 3 In Progress:** Step 01, Step 02, Step 03, & Step 04 Complete (Literature Review, Env Setup, Extractor, & VLM Captioner).
 > - Hybrid search Hit@5: **93.3%**
 > - Exact factual questions Hit@1: **100%**
@@ -17,24 +17,33 @@ Built using a **feature-based file structure**:
 - `android/app/src/main/java/com/eykon/memory/data/`:
   - `MemoryRecord.kt`: Room SQLite entity mirroring the Phase 1 schema (`id`, `text`, `embedding`, `timestamp`, `source_type`, `metadata`).
   - `Converters.kt`: Room TypeConverter serializing `List<Float>` ↔ SQLite TEXT (JSON string) for the 384-dim vector.
-  - `MemoryDao.kt`: Suspend CRUD methods (`insert`, `insertAll`, `getAll`, `getById`, `deleteById`, `count`, `deleteAll`) + `getAllAsFlow()`.
-  - `MemoryDatabase.kt`: Room SQLite database singleton (`memories.db`).
+  - `MemoryDao.kt`: Suspend CRUD methods (`insert`, `insertAll`, `getAll`, `getById`, `deleteById`, `count`, `deleteAll`, `searchFts`) + `getAllAsFlow()`.
+  - `MemoryDatabase.kt`: Room SQLite database singleton (`memories.db`) with `fts4` virtual table synchronization and triggers.
 - `android/app/src/main/java/com/eykon/memory/capture/`:
-  - `TextCaptureService.kt`: Input validation (empty/whitespace guard) and `MemoryRecord` assembly.
+  - `TextCaptureService.kt`: Input validation, token-bounded chunking, and `MemoryRecord` assembly (supports `sourceType = "text"` and `"audio"`).
+  - `AudioCaptureService.kt`: Low-level 16kHz 16-bit Mono PCM audio capture using Android `AudioRecord` with RIFF/WAVE header assembly.
+  - `WhisperTranscriber.kt`: Resolves local Whisper model weights and transcribes recorded audio on background coroutines.
+- `android/app/src/main/java/com/eykon/memory/retrieval/`:
+  - `QueryExpander.kt`: Zero-latency concept expansion dictionary for abstract queries.
+  - `SearchService.kt`: Hybrid retrieval combining FTS SQLite search, vector similarity, RRF fusion, and score attribution.
 - `android/app/src/main/java/com/eykon/memory/assistant/`:
   - `PromptBuilder.kt`: Formats grounded RAG prompt with Phase 1 parity (7 strict guidelines + 5 few-shot examples).
   - `GenerationParams.kt`: Generation hyperparameters (`temperature: 0.3f`, `maxOutputTokens: 256`, `topK: 40`, `topP: 0.95`).
   - `ModelManager.kt`: Resolves path to `gemma-4-E2B-it.litertlm` and provides target ADB sideload instructions.
   - `LiteRTGenerator.kt`: On-device inference runner with background dispatch (`Dispatchers.Default`) and answer prefix cleaner.
 - `android/app/src/main/java/com/eykon/memory/ui/`:
-  - `screens/AddMemoryScreen.kt`: Jetpack Compose screen for text capture and live recent memories list.
-  - `screens/GenerationTestScreen.kt`: Compose test harness for on-device LLM generation with latency metrics and full prompt inspector.
-  - `viewmodels/AddMemoryViewModel.kt`: Compose ViewModel managing `AddMemoryUiState` and Room StateFlow.
-  - `viewmodels/GenerationTestViewModel.kt`: Compose ViewModel managing generation test state.
+  - `navigation/AppNavigation.kt`: Material 3 Bottom Navigation switching between `Capture` (📝) and `Ask` (💬).
+  - `components/MemoryHeaderBar.kt`: Top banner bar displaying app title, model status (`🟢 Ready` / `⚠️ Pending`), and reactive memory count badge (`📊 X`).
+  - `components/RetrievedMemoryCard.kt`: Grounding transparency card displaying retrieved record text, similarity score, rank, and source badge.
+  - `components/VoiceRecordButton.kt`: Compose button with runtime audio permission launcher and speech-to-text integration.
+  - `screens/AddMemoryScreen.kt`: Jetpack Compose screen for text & voice capture with live recent memories list and memory header.
+  - `screens/AskQuestionScreen.kt`: End-to-end question answering interface with typed/voice queries, staged loading indicators, synthesized Gemma 4 answer card with latency metrics, and retrieved memories attribution.
+  - `viewmodels/AddMemoryViewModel.kt`: Compose ViewModel managing text/voice memory capture and Room StateFlow.
+  - `viewmodels/AskQuestionViewModel.kt`: Compose ViewModel orchestrating Room SQLite, SearchService, and LiteRTGenerator with test dispatcher injection.
   - `theme/`: Material 3 theme (Color, Typography, Theme).
 - `android/app/src/main/java/com/eykon/memory/`:
   - `MemoryApp.kt`: Application class managing lazy database singleton.
-  - `MainActivity.kt`: Entry activity hosting tabbed navigation between Text Capture and Gemma Generation.
+  - `MainActivity.kt`: Entry activity hosting bottom navigation between Capture and Ask tabs.
 - `android/app/build.gradle.kts`: Gradle Kotlin DSL, `minSdk = 31`, `compileSdk = 35`, Room 2.6.1, KSP 2.0.21, Compose BOM 2024.10.00.
 
 ### Python Backend & Desktop Prototype (`src/`)

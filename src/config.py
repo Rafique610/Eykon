@@ -29,11 +29,18 @@ class Settings(BaseSettings):
 
     # Vision / VLM Settings (mobile-compatible)
     VLM_MODEL_PATH: str | None = None
-    VLM_MODEL_REPO: str = "moondream/moondream2-gguf"
-    VLM_MODEL_FILE: str = "moondream2-text-model-f16.gguf"
-    VLM_MMPROJ_FILE: str | None = "moondream2-mmproj-f16.gguf"
+    VLM_MODEL_REPO: str = "ggml-org/SmolVLM-500M-Instruct-GGUF"
+    VLM_MODEL_FILE: str = "SmolVLM-500M-Instruct-Q8_0.gguf"
+    VLM_MMPROJ_FILE: str | None = "mmproj-SmolVLM-500M-Instruct-Q8_0.gguf"
     FRAME_INTERVAL_SECONDS: float = 5.0
-    CAPTION_MAX_TOKENS: int = 128
-    CAPTION_PROMPT: str = "Describe what you see in this image in one detailed sentence."
+    CAPTION_MAX_TOKENS: int = 300
+    CAPTION_PROMPT: str = (
+        "Describe this image thoroughly for visual memory storage:\n"
+        "- State the room or setting and main surface.\n"
+        "- List all visible objects, personal items, accessories, food, and containers.\n"
+        "- Note their exact locations and spatial relationships (what is next to, behind, or on top of what).\n"
+        "Be precise, factual, and do not repeat words."
+    )
     VLM_N_GPU_LAYERS: int = 0
     VLM_CONTEXT_SIZE: int = 2048
+    VLM_USE_SHARED_GEMMA: bool = True

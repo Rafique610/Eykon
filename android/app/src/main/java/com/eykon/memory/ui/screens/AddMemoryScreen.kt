@@ -1,6 +1,8 @@
 package com.eykon.memory.ui.screens
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -9,8 +11,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -23,9 +27,15 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalContext
+import com.eykon.memory.assistant.ModelManager
 import com.eykon.memory.data.MemoryRecord
+import com.eykon.memory.ui.components.MemoryHeaderBar
+import com.eykon.memory.ui.components.VoiceRecordButton
 import com.eykon.memory.ui.viewmodels.AddMemoryViewModel
 
 @Composable
@@ -35,23 +45,34 @@ fun AddMemoryScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val memories by viewModel.memories.collectAsState()
+    val context = LocalContext.current
+    val isModelReady = remember { ModelManager.getModelStatus(context).isAvailable }
 
-    LazyColumn(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-        item {
-            HeaderSection()
-        }
+    Column(modifier = modifier.fillMaxSize()) {
+        MemoryHeaderBar(
+            memoryCount = memories.size,
+            isModelReady = isModelReady
+        )
+
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
 
         item {
             CaptureInputCard(
                 inputText = uiState.inputText,
                 isSaving = uiState.isSaving,
+                isRecording = uiState.isRecording,
+                isTranscribing = uiState.isTranscribing,
+                currentSourceType = uiState.currentSourceType,
                 onTextChanged = viewModel::onInputTextChanged,
-                onSave = viewModel::saveMemory
+                onSave = viewModel::saveMemory,
+                onSpeechResult = viewModel::onSpeechResult,
+                onError = viewModel::onSpeechError,
+                onPermissionDenied = viewModel::onPermissionDenied
             )
         }
 
@@ -95,77 +116,111 @@ fun AddMemoryScreen(
         if (memories.isEmpty()) {
             item {
                 Text(
-                    text = "No memories stored yet. Type a memory above to test the SQLite loop.",
+                    text = "No memories stored yet. Type or record a memory above to test on-device SQLite storage.",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
         } else {
-            items(memories.take(5), key = { it.id }) { memory ->
+            items(memories.take(10), key = { it.id }) { memory ->
                 MemoryItemCard(memory = memory)
             }
         }
     }
 }
-
-@Composable
-private fun HeaderSection() {
-    Column {
-        Text(
-            text = "Eykon Memory",
-            style = MaterialTheme.typography.headlineMedium,
-            fontWeight = FontWeight.Bold
-        )
-        Text(
-            text = "Phase 2 — Text Capture & Local Storage",
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
-    }
 }
 
 @Composable
 private fun CaptureInputCard(
     inputText: String,
     isSaving: Boolean,
+    isRecording: Boolean,
+    isTranscribing: Boolean,
+    currentSourceType: String,
     onTextChanged: (String) -> Unit,
-    onSave: () -> Unit
+    onSave: () -> Unit,
+    onSpeechResult: (String) -> Unit,
+    onError: (String) -> Unit,
+    onPermissionDenied: () -> Unit
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
-            Text(
-                text = "New Memory",
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.SemiBold
-            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "Capture Memory",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.SemiBold
+                )
+
+                if (currentSourceType == "audio") {
+                    Box(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(8.dp))
+                            .background(MaterialTheme.colorScheme.tertiaryContainer)
+                            .padding(horizontal = 8.dp, vertical = 4.dp)
+                    ) {
+                        Text(
+                            text = "🎤 Voice",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onTertiaryContainer,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                }
+            }
+
             Spacer(modifier = Modifier.height(8.dp))
+
             OutlinedTextField(
                 value = inputText,
                 onValueChange = onTextChanged,
-                label = { Text("Type something to remember...") },
+                label = { Text("Type or record memory...") },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(120.dp),
+                    .height(130.dp),
                 maxLines = 5,
                 enabled = !isSaving
             )
+
             Spacer(modifier = Modifier.height(12.dp))
-            Button(
-                onClick = onSave,
+
+            Row(
                 modifier = Modifier.fillMaxWidth(),
-                enabled = !isSaving && inputText.isNotBlank()
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                if (isSaving) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(20.dp),
-                        strokeWidth = 2.dp,
-                        color = MaterialTheme.colorScheme.onPrimary
-                    )
-                } else {
-                    Text("Save to SQLite")
+                VoiceRecordButton(
+                    isRecording = isRecording,
+                    isTranscribing = isTranscribing,
+                    onSpeechResult = onSpeechResult,
+                    onError = onError,
+                    onPermissionDenied = onPermissionDenied,
+                    modifier = Modifier.weight(1f)
+                )
+
+                Button(
+                    onClick = onSave,
+                    modifier = Modifier.weight(1f),
+                    enabled = !isSaving && !isRecording && !isTranscribing && inputText.isNotBlank()
+                ) {
+                    if (isSaving) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(18.dp),
+                            strokeWidth = 2.dp,
+                            color = MaterialTheme.colorScheme.onPrimary
+                        )
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text("Saving...")
+                    } else {
+                        Text("Save Memory")
+                    }
                 }
             }
         }
@@ -210,13 +265,18 @@ private fun MemoryItemCard(memory: MemoryRecord) {
                 text = memory.text,
                 style = MaterialTheme.typography.bodyLarge
             )
-            Spacer(modifier = Modifier.height(4.dp))
+            Spacer(modifier = Modifier.height(6.dp))
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
+                val icon = when (memory.sourceType) {
+                    "audio" -> "🎤 audio"
+                    "video" -> "📹 video"
+                    else -> "📝 text"
+                }
                 Text(
-                    text = "ID: #${memory.id} • ${memory.sourceType}",
+                    text = "ID: #${memory.id} • $icon",
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )

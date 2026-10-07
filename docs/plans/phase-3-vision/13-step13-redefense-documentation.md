@@ -1,5 +1,18 @@
 # Step 12 — Re-defense Documentation Package
 
+> [!NOTE]
+> **Realignment 05 Oct 2026 (additions only):**
+> - Runs **last** in Phase 3 (after Steps 14, 15, 16).
+> - Add §11 "Honest limitations of Phase 3" — taken verbatim from Step 15's
+>   audit. Panels trust teams that name their own weak points.
+> - Add §12 "Research problems and roadmap" — P1–P4 and Phases 4–8 from
+>   `docs/plans/00-roadmap.md`, positioned against LightMem-Ego,
+>   DeepLearning.AI `sc-on-device-ai-memory`, and Meta Muse.
+> - Literature section links to **LR v2** from Step 16 (verified citations only).
+> - Title proposal for the panel (decide here): keep "Eykon" as product name,
+>   academic title along the lines of *"Edge-native streaming egocentric memory
+>   with online event segmentation and temporal state reconciliation"*.
+
 ## What
 Compile all results from Steps 01–11 into a cohesive re-defense document that directly addresses every point of the panel's feedback.
 

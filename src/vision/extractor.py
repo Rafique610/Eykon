@@ -62,33 +62,60 @@ def extract_frames(
 
     try:
         fps = cap.get(cv2.CAP_PROP_FPS) or 30.0
-        frames_step = max(1, int(fps * interval))
+        total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+        duration = total_frames / fps if fps > 0 else 0.0
         
         extracted = []
         frame_idx = 0
-        current_frame = 0
+        target_seconds = 0.0
         
-        while True:
-            cap.set(cv2.CAP_PROP_POS_FRAMES, current_frame)
+        # Include exactly the boundaries like 10.0s for a 10s video
+        while target_seconds <= duration + 0.01:
+            target_frame = int(target_seconds * fps)
+            # Ensure we don't ask for a frame past the end
+            target_frame = min(target_frame, max(0, total_frames - 1))
+            
+            cap.set(cv2.CAP_PROP_POS_FRAMES, target_frame)
             ret, frame = cap.read()
-            if not ret:
-                break
+            
+            # OpenCV sometimes fails on the exact last frame of some containers
+            if not ret and target_frame > 0:
+                cap.set(cv2.CAP_PROP_POS_FRAMES, target_frame - 1)
+                ret, frame = cap.read()
                 
-            rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-            img = Image.fromarray(rgb_frame)
-            
-            timestamp = current_frame / fps if fps > 0 else 0.0
-            
-            extracted.append(ExtractedFrame(
-                image=img,
-                timestamp_seconds=timestamp,
-                frame_index=frame_idx,
-                video_path=path
-            ))
-            
-            frame_idx += 1
-            current_frame += frames_step
-            
+            if ret:
+                rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+                img = Image.fromarray(rgb_frame)
+                extracted.append(ExtractedFrame(
+                    image=img,
+                    timestamp_seconds=target_seconds,
+                    frame_index=frame_idx,
+                    video_path=path,
+                ))
+                frame_idx += 1
+                
+            target_seconds += interval
+
+        # Force the final frame if there is a gap (e.g. video is 9.96s but interval is 5.0)
+        last_extracted_ts = extracted[-1].timestamp_seconds if extracted else -1
+        if duration - last_extracted_ts > interval * 0.2:
+            target_frame = max(0, total_frames - 1)
+            cap.set(cv2.CAP_PROP_POS_FRAMES, target_frame)
+            ret, frame = cap.read()
+            if not ret and target_frame > 0:
+                cap.set(cv2.CAP_PROP_POS_FRAMES, target_frame - 1)
+                ret, frame = cap.read()
+                
+            if ret:
+                rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+                img = Image.fromarray(rgb_frame)
+                extracted.append(ExtractedFrame(
+                    image=img,
+                    timestamp_seconds=duration,
+                    frame_index=frame_idx,
+                    video_path=path,
+                ))
+
         return extracted
     finally:
         cap.release()

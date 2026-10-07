@@ -13,7 +13,7 @@ object TextCaptureService {
 
     var embedder: LocalEmbedder? = null
 
-    fun createMemoriesFromText(text: String): List<MemoryRecord> {
+    fun createMemoriesFromText(text: String, sourceType: String = "text"): List<MemoryRecord> {
         val cleaned = text.trim()
         require(cleaned.isNotEmpty()) { "Memory text cannot be empty or whitespace only" }
 
@@ -27,9 +27,13 @@ object TextCaptureService {
                 text = chunkText,
                 embedding = embedding,
                 timestamp = timestamp,
-                sourceType = "text",
+                sourceType = sourceType,
                 metadata = """{"chunk_index": $index, "total_chunks": ${chunks.size}, "token_count": 0}"""
             )
         }
+    }
+
+    fun createMemoryFromText(text: String, sourceType: String = "text"): MemoryRecord {
+        return createMemoriesFromText(text, sourceType).first()
     }
 }

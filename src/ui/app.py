@@ -27,13 +27,19 @@ import os
 import numpy as np
 import streamlit as st
 
+import src.config
+importlib.reload(src.config)
 from src.config import Settings
+
+import src.assistant.llm
+importlib.reload(src.assistant.llm)
+from src.assistant.helpers import check_model_available, get_model_status
+from src.assistant.llm import generate_answer
+
 import src.memories.search
 importlib.reload(src.memories.search)
 from src.memories.search import _sparse_search, search_memories
 
-from src.assistant.helpers import check_model_available, get_model_status
-from src.assistant.llm import generate_answer
 from src.memories import (
     Embedder,
     count_memories,
@@ -42,6 +48,15 @@ from src.memories import (
     init_db,
     save_memories,
 )
+
+import src.vision.extractor
+importlib.reload(src.vision.extractor)
+import src.vision.captioner
+importlib.reload(src.vision.captioner)
+import src.vision.processor
+importlib.reload(src.vision.processor)
+import src.vision
+importlib.reload(src.vision)
 from src.vision import process_video
 
 # ── Constants ────────────────────────────────────────────────────────────────

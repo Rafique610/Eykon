@@ -1,5 +1,17 @@
 # Step 11 — Experiment A5–A6: Cross-Pipeline Quality & Model Comparison
 
+> [!NOTE]
+> **Realignment 05 Oct 2026 (additions only):**
+> - A6 must report **per-frame latency on the phone too** (Pixel + Infinix) for
+>   whichever models can run there, not only laptop CPU. Laptop-only numbers
+>   go in a column labelled "laptop (emulation profile)".
+> - Add a `## You test this` pass: for each model, you read 15 random captions
+>   side-by-side with the frames and mark each *correct / partly / wrong /
+>   hallucinated*. That human table is reported next to Hit@5.
+> - `## How this number could be lying`: Hit@5 on 9 QA pairs from 3 clips can
+>   be 100 % for every model; A6 ranking must lean on the human caption audit
+>   and latency, not Hit@5.
+
 ## What
 Two final experiments: (A5) verify that adding video memories doesn't break retrieval quality for existing text memories, and (A6) compare Moondream2 vs PaliGemma to justify our model choice.
 
@@ -33,39 +45,39 @@ Adding 50 video-sourced memories to the existing 499-memory benchmark database d
 
 ---
 
-## Experiment A6: Gemma 4 E2B vs Dedicated VLMs (Shared Architecture Test)
+## Experiment A6: Comprehensive VLM Profiling (Gemma vs Moondream vs SmolVLM)
 
 ### Hypothesis
-Gemma 4 E2B (already loaded for answer generation) can produce captions comparable to dedicated VLMs (Moondream2/PaliGemma). Using it as a "Shared Model" eliminates the need for a separate VLM, saving ~1–2GB of RAM on the mobile device.
+Different VLMs prioritize speed vs. accuracy. SmolVLM might be incredibly fast and achieve a 100% Hit@K rate by spotting objects (like "sunglasses"), but lacks the deeper conversational phrasing needed for high "True Answer Accuracy" when formulating the final response. We must profile them individually.
 
 ### Method
-1. Select the same 20 test frames used in A1.
-2. Caption each frame with three candidates:
+1. Select the standard test videos.
+2. Run the full vision capture pipeline for each candidate individually:
    - **Gemma 4 E2B** (Shared Model via LiteRT-LM, FP16/INT8)
-   - **Moondream2** (Dedicated VLM via llama.cpp, 1.8B Q4 GGUF)
-   - **PaliGemma** (Dedicated VLM via llama.cpp, 3B Q4 GGUF)
-3. Measure per model: caption quality (blind human eval 1–5), inference latency, and **Total AI System RAM** (VLM + LLM + Embedder).
-4. Run the 10 video QA queries against memories from each model.
-5. Compare retrieval accuracy (MRR, Hit@5).
+   - **Moondream2** (Dedicated VLM via llama.cpp, 1.8B F16 GGUF)
+   - **SmolVLM** (Dedicated VLM via llama.cpp, 500M Q8 GGUF)
+3. For **each model**, strictly record:
+   - **Performance Speed:** Frames processed per second (latency/frame).
+   - **Peak System Memory:** Total RAM footprint (VLM + LLM + Embedder).
+   - **Retrieval Hit Rate:** Standard MRR and Hit@5 metrics.
+4. Pass the generated captions to the QA LLM layer to assess if the resulting context allows the model to answer queries properly ("True Answer Accuracy" - to be deeply judged in A7).
 
 ### Output Table
-| Model Strategy | Total System RAM | Caption Quality | Latency (s/frame) | Hit@5 | MRR |
-|---|---|---|---|---|---|
-| Gemma 4 E2B (Shared) | **~2.4 GB** (0 extra) | — | — | — | — |
-| Moondream2 (Separate)| ~3.4 GB (+1GB) | — | — | — | — |
-| PaliGemma (Separate) | ~4.0 GB (+1.6GB)| — | — | — | — |
+| Model Strategy | Total System RAM | Latency (s/frame) | Hit@5 | Answer Context Quality (1-5) |
+|---|---|---|---|---|
+| Gemma 4 E2B (Shared) | **~2.4 GB** (0 extra) | — | — | — |
+| Moondream2 (Separate)| ~3.4 GB (+1GB) | — | — | — |
+| SmolVLM (Separate)   | ~2.7 GB (+300MB)| — | — | — |
 
 ### Decision Matrix
-| Factor | Weight | Gemma 4 (Shared) | Moondream2 | PaliGemma |
+| Factor | Weight | Gemma 4 (Shared) | Moondream2 | SmolVLM |
 |---|---|---|---|---|
-| RAM Efficiency | 40% | — | — | — |
+| RAM Efficiency | 30% | — | — | — |
 | Inference Speed | 20% | — | — | — |
-| Caption Quality | 25% | — | — | — |
-| Retrieval Acc. | 15% | — | — | — |
+| Context/Answer Quality| 50% | — | — | — |
 
 ### Success Criteria
-- If Gemma 4 E2B supports vision and its caption quality is within 15% of the best dedicated VLM, it wins purely on the massive RAM efficiency advantage (saving 1GB+).
-- This is the "killer slide" for the defense presentation, proving deep architectural optimization.
+- We must prove mathematically which model balances speed and memory without sacrificing the actual flow and context needed to satisfy the user's queries.
 
 ---
 
@@ -90,7 +102,7 @@ experiment-a5:
   cmd: uv run python src/benchmarks/cross_pipeline.py --experiment a5 --video test_video.mp4
 
 experiment-a6:
-  desc: Compare Moondream2 vs PaliGemma for video captioning
+  desc: Compare Moondream2 vs SmolVLM for video captioning
   cmd: uv run python src/benchmarks/cross_pipeline.py --experiment a6 --video test_video.mp4
 ```
 

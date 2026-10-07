@@ -71,12 +71,16 @@ tasks:
   test-android:
     desc: Run Android unit tests (TypeConverter serialization & float round-trip)
     dir: android
-    cmd: gradlew.bat test
+    env:
+      JAVA_HOME: 'C:\Users\rafique_\AppData\Roaming\.minecraft\runtime\java-runtime-delta\windows\java-runtime-delta'
+    cmd: cmd.exe /c gradlew.bat test
 
   build-android:
     desc: Build debug APK for Android app
     dir: android
-    cmd: gradlew.bat assembleDebug
+    env:
+      JAVA_HOME: 'C:\Users\rafique_\AppData\Roaming\.minecraft\runtime\java-runtime-delta\windows\java-runtime-delta'
+    cmd: cmd.exe /c gradlew.bat assembleDebug
 
   test-vision-integration:
     desc: Process a test video, store as memories, then query them
@@ -95,3 +99,27 @@ tasks:
       for r in results:
           print(f'  [{r.score:.4f}] {r.record.text[:80]}')
       "
+
+  benchmark-vision:
+    desc: Run VLM pipeline benchmark (CPU-only, mobile simulation)
+    env:
+      PYTHONIOENCODING: utf-8
+    cmd: uv run python src/benchmarks/vision_bench.py --video test_video.mp4
+
+  experiment:
+    desc: Run vision experiments A1-A3 (CPU-only, mobile simulation)
+    env:
+      PYTHONIOENCODING: utf-8
+    cmd: uv run python src/benchmarks/experiments.py --experiment all --video data/test_video.mp4
+
+  experiment-a5:
+    desc: "A5 — Cross-pipeline regression: add video memories, check retrieval doesn't degrade"
+    env:
+      PYTHONIOENCODING: utf-8
+    cmd: uv run python src/benchmarks/cross_pipeline.py --experiment a5 --videos data/a5_video_1.mp4 data/a5_video_2.mp4 data/a5_video_3.mp4 data/a5_video_4.mp4 data/a5_video_5.mp4
+
+  experiment-a6:
+    desc: "A6 — Shared model test: SmolVLM vs Moondream2 vs Gemma 4 E2B (vision)"
+    env:
+      PYTHONIOENCODING: utf-8
+    cmd: uv run python src/benchmarks/cross_pipeline.py --experiment a6 --video data/a5_video_1.mp4 --frames 20
