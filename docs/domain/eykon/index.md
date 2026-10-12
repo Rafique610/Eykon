@@ -90,7 +90,7 @@ match; the phone code is its real home.
 | Language | Python 3.11+ (lab), Kotlin (phone) | in use |
 | UI | Streamlit (lab), Jetpack Compose (phone) | in use |
 | Text embeddings | `BAAI/bge-small-en-v1.5` (384-dim) | in use |
-| Image embeddings | MobileCLIP (512-dim) | planned (EYKO-6, 11) |
+| Image embeddings | MobileCLIP-S2 image encoder as ONNX (512-dim). Weights under the Apple ML Research Model License: research and academic use only, never shipped in the app package | in use on the phone (EYKO-6) |
 | Detector | YOLOX-Nano, Apache-2.0, ONNX Runtime | decided (EYKO-9) |
 | Speech | faster-whisper small int8 = laptop baseline; phone engine (whisper.cpp tiny.en / base.en) measured at the phone gate | planned (EYKO-8) |
 | Sound embeddings | CLAP | optional, later (EYKO-13) |

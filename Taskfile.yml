@@ -90,6 +90,10 @@ tasks:
     desc: Create the video memory tables if missing and list each table with its row count
     cmd: uv run python -m src.video_memory.schema
 
+  export-clip:
+    desc: "EYKO-6 — export MobileCLIP-S2's image encoder to models/mobileclip_s2_image.onnx and check it (downloads about 2 GB of tools and weights; research-only licence)"
+    cmd: uv run --with open_clip_torch --with onnx --with onnxruntime --with onnxscript python src/benchmarks/export_clip.py {{.CLI_ARGS}}
+
   golden-filters:
     desc: "EYKO-5 — write the frame-filter test pictures and OpenCV's reference numbers that the phone code is tested against"
     cmd: uv run python src/benchmarks/filters_golden.py

@@ -14,5 +14,6 @@ object VideoPipeline {
     val STAGES: List<Pair<String, Stage>> = listOf(
         "split" to VideoSplit::run,
         "filter" to VideoFilter::run,
+        "dedup" to VideoDedup::run,
     )
 }

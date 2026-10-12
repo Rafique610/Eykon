@@ -35,6 +35,13 @@ def hist(gray: np.ndarray) -> np.ndarray:
     return cv2.calcHist([gray], [0], None, [64], [0, 256])
 
 
+def dhash(gray: np.ndarray) -> int:
+    """Difference hash (card EYKO-6): shrink to 9x8, one bit per pixel that is brighter than its left neighbour."""
+    tiny = cv2.resize(gray, (9, 8), interpolation=cv2.INTER_AREA)
+    bits = (tiny[:, 1:] > tiny[:, :-1]).flatten()
+    return int("".join("1" if b else "0" for b in bits), 2)
+
+
 def measures(gray: np.ndarray) -> dict:
     return {
         "width": int(gray.shape[1]),
@@ -42,6 +49,7 @@ def measures(gray: np.ndarray) -> dict:
         "brightness": float(gray.mean()),
         "laplacian_variance": float(cv2.Laplacian(gray, cv2.CV_64F).var()),
         "checksum": int(gray.astype(np.int64).sum()),
+        "dhash": f"{dhash(gray):016x}",
     }
 
 
@@ -49,6 +57,7 @@ def pair(a: np.ndarray, b: np.ndarray) -> dict:
     return {
         "diff": float(cv2.absdiff(a, b).mean()),
         "hist_change": float(cv2.compareHist(hist(a), hist(b), cv2.HISTCMP_BHATTACHARYYA)),
+        "hash_distance": (dhash(a) ^ dhash(b)).bit_count(),
     }
 
 

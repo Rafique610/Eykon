@@ -141,11 +141,11 @@ class VideoSplitTest {
         addVideo("test_clip.mp4", "v1")
         val jobs = VideoJobs { db }
         jobs.enqueue("v1")
-        VideoWorker({ db }, jobs).drain() // the real pipeline stages
+        VideoWorker({ db }, jobs, listOf("split" to VideoSplit::run)).drain() // this card's stage only: needs no model
 
         val job = db.query("SELECT status, stage, error FROM jobs WHERE video_id = 'v1'").use { it.moveToFirst(); Triple(it.getString(0), it.getString(1), it.getString(2)) }
         assertEquals("done", job.first)
-        assertEquals(VideoPipeline.STAGES.last().first, job.second)
+        assertEquals("split", job.second)
         assertEquals(30, frameRows("v1").size)
     }
 }

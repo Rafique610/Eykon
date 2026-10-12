@@ -54,7 +54,7 @@ object VideoFilter {
         Log.i(TAG, "filter $videoId: kept ${frames.size - dropped.values.sum()} of ${frames.size}$detail in $ms ms")
     }
 
-    private fun loadSmallGray(file: File): Gray {
+    fun loadSmallGray(file: File): Gray {
         val bitmap = BitmapFactory.decodeFile(file.absolutePath) ?: throw IllegalStateException("frame ${file.name} cannot be read")
         val pixels = IntArray(bitmap.width * bitmap.height)
         bitmap.getPixels(pixels, 0, bitmap.width, 0, 0, bitmap.width, bitmap.height)

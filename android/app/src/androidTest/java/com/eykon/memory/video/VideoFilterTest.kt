@@ -117,11 +117,11 @@ class VideoFilterTest {
         )
         val jobs = VideoJobs { db }
         jobs.enqueue("job")
-        VideoWorker({ db }, jobs).drain()
+        VideoWorker({ db }, jobs, listOf("split" to VideoSplit::run, "filter" to VideoFilter::run)).drain() // needs no model
 
         val (status, stage) = db.query("SELECT status, stage FROM jobs WHERE video_id = 'job'").use { it.moveToFirst(); it.getString(0) to it.getString(1) }
         assertEquals("done", status)
-        assertEquals(VideoPipeline.STAGES.last().first, stage)
+        assertEquals("filter", stage)
         assertEquals(1, decisions("job").count { it.second == 1 })
     }
 }

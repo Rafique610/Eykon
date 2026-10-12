@@ -47,6 +47,13 @@ android {
         compose = true
     }
 
+    // The on-phone tests read the same test pictures as the JVM tests (src/test/resources/filters).
+    sourceSets {
+        getByName("androidTest") {
+            assets.srcDir("src/test/resources")
+        }
+    }
+
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
