@@ -61,12 +61,27 @@ Flows on Synverk: "Eykon Ingestion & Retrieval Flow" (the pipeline),
 
 ## Laptop and phone
 
-**Laptop is the lab, phone is the exam.** Options are tried and thrown away
-on the laptop (Python). Only the option that wins the evaluation is ported
-to the phone (Kotlin), checked against shared golden fixtures (card
-EYKO-34). To keep the port small: prefer models with ONNX / TFLite exports
-so the same file runs on both sides, keep the same SQLite schema, and spike
-phone-only risks early (as card EYKO-31 did for vector storage).
+**The product is built once, on the phone. The laptop is only a lab**
+(decided 12 October 2026). Picking a video, storing it, processing, the
+database, search and the answer screen are written in Kotlin inside the
+existing Android app. The laptop answers model questions with plain scripts
+(which model finds the objects, which thresholds) and exports the winning
+model for the phone; it does not get its own job queue, pages or
+notifications. To keep the two sides honest: the same SQLite table design
+(`src/video_memory/schema.py` is the contract), the same ONNX model files,
+the same maths for the cheap filters, and golden frames whose results must
+match on both.
+
+Phones: Pixel 9 Pro XL (the capable phone) and Samsung A32 (the modest one,
+standing in for the Infinix Note 12). Results are shown for both so the
+cost is visible.
+
+**How the cards are worked:** the existing cards are followed in their own
+order (EYKO-1, 2, 3, …), each one built into the Android app, with the
+cheap models in place of the VLM. A card's laptop text is the behaviour to
+match; the phone code is its real home.
+
+**Next milestone:** supervisor demo, Thursday 15 October 2026, 3 PM.
 
 ## Tech Stack
 
@@ -110,7 +125,12 @@ android/               # Kotlin + Compose app
 | Phase 1 — Text RAG on desktop | ✅ Complete |
 | Phase 2 — Android app + audio capture | Steps 01–05 done; 06–07 folded into the phone gate |
 | Phase 3 — VLM vision pipeline (pre-recorded video) | Steps 01–10 done; kept as the VLM reference. Remaining audit / citation / re-defense work is card EYKO-35 |
-| Synverk pipeline (cards EYKO-1 … 35) | All in backlog. First: EYKO-30 (pytest) and EYKO-31 (Android vector spike), then EYKO-1 |
+| Phase 2 remaining steps (06 full UI, 07 integration test) | Dropped as written; the app is repurposed for video (phone track) |
+| EYKO-30 (pytest), EYKO-31 (storage spike), EYKO-1 laptop tables | Done and pushed |
+| EYKO-1 and EYKO-2 on the phone (video tables, pick and store a video) | Built, awaiting a phone test |
+| EYKO-3 onward | Next, in card order, on the phone |
+| EYKO-36 … 43 (a separate demo card list) | Withdrawn; not used |
+| EYKO-33 (measured comparison), 34 (phone gate), 35 (defense package) | After the demo |
 | Older phase plans 3.1 – 8 in `docs/plans/` | Background and method (probes, gates, pessimist rules, KPIs). Not the active task list |
 
 ## Key Constants (Phase 1 — Locked)
