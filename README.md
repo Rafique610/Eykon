@@ -105,7 +105,8 @@ Opens in your browser at `http://localhost:8501`.
 #### 3. Health & Pipeline Verification
 ```bash
 task test-e2e     # One-command health check: DB, embedder, search, model
-task test         # Full pipeline test
+task test         # pytest suite in tests/ (temporary databases only, never data/memories.db)
+task smoke        # One-line pipeline check against the real data/memories.db (was `task test`)
 task check-config # Verify resolved settings
 ```
 
