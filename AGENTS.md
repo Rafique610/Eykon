@@ -124,9 +124,10 @@ to skim, so where things stand is never buried in scrollback.
   for the rest of the session — no re-reading needed.
 - Destructive actions. Always confirm before pushing, deleting, or
   rebuilding containers.
-- Commits. The agent commits a step itself once the user has approved it
-  (changed 12 October 2026). Never commit unapproved work, and never push
-  without asking.
+- Commits. The agent commits a step itself once the user has approved it,
+  and pushes that branch to `origin` straight after (changed 12 October
+  2026). Never commit or push unapproved work. Merging into `main`,
+  force-pushing and tagging still need a yes each time.
 - Co-author. Never add the AI/agent's name as co-author.
 
 ## Git
