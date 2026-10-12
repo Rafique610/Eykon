@@ -44,6 +44,12 @@ Built using a **feature-based file structure**:
 - `android/app/src/main/java/com/eykon/memory/`:
   - `MemoryApp.kt`: Application class managing lazy database singleton.
   - `MainActivity.kt`: Entry activity hosting bottom navigation between Capture and Ask tabs.
+- `android/app/src/main/java/com/eykon/memory/video/` (video memory on the phone, cards EYKO-1 and EYKO-2):
+  - `VideoSchema.kt`: The same video tables as the laptop's `src/video_memory/schema.py` (same names and columns), created on every open; the keyword index is fts4 because the phone's SQLite has no FTS5.
+  - `VideoRepository.kt`: `insert`, `get`, `list` for the `videos` table, plain SQL with `?` parameters.
+  - `VideoMetadata.kt`: Parsers for recording time and GPS, the 500 MB limit and the accepted types.
+  - `VideoCapture.kt`: Copies a picked clip into `files/videos/<video_id>/`, reads recording time, length and GPS, refuses files with no video, adds the `videos` row.
+- `ui/screens/VideoScreen.kt` + `ui/viewmodels/VideoViewModel.kt`: The **📼 Video** tab: pick a clip from the gallery (system photo picker, no storage permission), confirmation line, list of saved videos.
 - `android/app/build.gradle.kts`: Gradle Kotlin DSL, `minSdk = 31`, `compileSdk = 35`, Room 2.6.1, KSP 2.0.21, Compose BOM 2024.10.00.
 
 ### Python Backend & Desktop Prototype (`src/`)

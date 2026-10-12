@@ -15,18 +15,22 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.sp
 import com.eykon.memory.ui.screens.AddMemoryScreen
 import com.eykon.memory.ui.screens.AskQuestionScreen
+import com.eykon.memory.ui.screens.VideoScreen
 import com.eykon.memory.ui.viewmodels.AddMemoryViewModel
 import com.eykon.memory.ui.viewmodels.AskQuestionViewModel
+import com.eykon.memory.ui.viewmodels.VideoViewModel
 
 enum class NavDestination(val label: String, val icon: String) {
     CAPTURE("Capture", "📝"),
-    ASK("Ask", "💬")
+    ASK("Ask", "💬"),
+    VIDEO("Video", "📼")
 }
 
 @Composable
 fun AppNavigation(
     addMemoryViewModel: AddMemoryViewModel,
     askQuestionViewModel: AskQuestionViewModel,
+    videoViewModel: VideoViewModel,
     modifier: Modifier = Modifier
 ) {
     var selectedIndex by rememberSaveable { mutableIntStateOf(NavDestination.ASK.ordinal) }
@@ -65,6 +69,12 @@ fun AppNavigation(
             NavDestination.ASK -> {
                 AskQuestionScreen(
                     viewModel = askQuestionViewModel,
+                    modifier = Modifier.padding(innerPadding)
+                )
+            }
+            NavDestination.VIDEO -> {
+                VideoScreen(
+                    viewModel = videoViewModel,
                     modifier = Modifier.padding(innerPadding)
                 )
             }

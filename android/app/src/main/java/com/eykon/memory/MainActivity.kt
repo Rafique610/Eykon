@@ -10,6 +10,9 @@ import com.eykon.memory.ui.navigation.AppNavigation
 import com.eykon.memory.ui.theme.EykonMemoryTheme
 import com.eykon.memory.ui.viewmodels.AddMemoryViewModel
 import com.eykon.memory.ui.viewmodels.AskQuestionViewModel
+import com.eykon.memory.ui.viewmodels.VideoViewModel
+import com.eykon.memory.video.VideoCapture
+import com.eykon.memory.video.VideoRepository
 
 class MainActivity : ComponentActivity() {
 
@@ -25,6 +28,12 @@ class MainActivity : ComponentActivity() {
         AskQuestionViewModel.provideFactory(app, dao, searchService)
     }
 
+    private val videoViewModel: VideoViewModel by viewModels {
+        val app = application as MemoryApp
+        val repository = VideoRepository { app.database.openHelper.writableDatabase }
+        VideoViewModel.provideFactory(VideoCapture(applicationContext, repository), repository)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -32,7 +41,8 @@ class MainActivity : ComponentActivity() {
             EykonMemoryTheme {
                 AppNavigation(
                     addMemoryViewModel = addMemoryViewModel,
-                    askQuestionViewModel = askQuestionViewModel
+                    askQuestionViewModel = askQuestionViewModel,
+                    videoViewModel = videoViewModel
                 )
             }
         }

@@ -14,8 +14,8 @@ wheels/
 .memory/
 
 # Data (SQLite DB) and Models
-data/
-models/
+/data/
+/models/
 
 # Environment files
 .env
