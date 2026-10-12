@@ -12,8 +12,12 @@ class UploadException(message: String) : Exception(message)
 
 data class SavedVideo(val video: Video, val timeFromFile: Boolean)
 
-/** Phone twin of the laptop's capture.py: check, copy into app storage, read metadata, add the videos row. */
-class VideoCapture(private val context: Context, private val repository: VideoRepository) {
+/** Phone twin of the laptop's capture.py: check, copy into app storage, read metadata, add the videos row and its job. */
+class VideoCapture(
+    private val context: Context,
+    private val repository: VideoRepository,
+    private val jobs: VideoJobs,
+) {
 
     fun save(uri: Uri): SavedVideo {
         val ext = VideoMetadata.TYPES[context.contentResolver.getType(uri)]
@@ -51,7 +55,10 @@ class VideoCapture(private val context: Context, private val repository: VideoRe
             } finally {
                 retriever.release()
             }
-            repository.insert(video)
+            repository.transaction {
+                repository.insert(video)
+                jobs.enqueue(video.videoId)
+            }
             return SavedVideo(video, timeFromFile = recorded != null)
         } catch (e: Exception) {
             folder.deleteRecursively()

@@ -49,6 +49,7 @@ Built using a **feature-based file structure**:
   - `VideoRepository.kt`: `insert`, `get`, `list` for the `videos` table, plain SQL with `?` parameters.
   - `VideoMetadata.kt`: Parsers for recording time and GPS, the 500 MB limit and the accepted types.
   - `VideoCapture.kt`: Copies a picked clip into `files/videos/<video_id>/`, reads recording time, length and GPS, refuses files with no video, adds the `videos` row.
+  - `VideoJobs.kt`, `VideoPipeline.kt`, `VideoWorker.kt` (card EYKO-3): every saved video gets a job in the `jobs` table; one background worker runs the job's stages in order, saves the stage reached, retries a failing stage up to 3 times, and resumes interrupted jobs when the app next starts. `VideoPipeline.STAGES` is the list later cards add their stage to (empty for now). The worker only runs while there are jobs; it does not poll.
 - `ui/screens/VideoScreen.kt` + `ui/viewmodels/VideoViewModel.kt`: The **📼 Video** tab: pick a clip from the gallery (system photo picker, no storage permission), confirmation line, list of saved videos.
 - `android/app/build.gradle.kts`: Gradle Kotlin DSL, `minSdk = 31`, `compileSdk = 35`, Room 2.6.1, KSP 2.0.21, Compose BOM 2024.10.00.
 

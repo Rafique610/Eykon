@@ -11,7 +11,7 @@ object VideoSchema {
 
     val TABLES = listOf(
         "videos", "frames", "audio_segments", "transcript_chunks", "scene_records",
-        "video_texts", "video_texts_fts", "audio_windows", "image_vec", "text_vec", "audio_vec",
+        "video_texts", "video_texts_fts", "audio_windows", "image_vec", "text_vec", "audio_vec", "jobs",
     )
 
     private val STATEMENTS = listOf(
@@ -107,6 +107,18 @@ object VideoSchema {
         "CREATE TABLE IF NOT EXISTS image_vec (frame_id INTEGER PRIMARY KEY REFERENCES frames(id) ON DELETE CASCADE, embedding BLOB NOT NULL)",
         "CREATE TABLE IF NOT EXISTS text_vec (text_id INTEGER PRIMARY KEY REFERENCES video_texts(id) ON DELETE CASCADE, embedding BLOB NOT NULL)",
         "CREATE TABLE IF NOT EXISTS audio_vec (window_id INTEGER PRIMARY KEY REFERENCES audio_windows(id) ON DELETE CASCADE, embedding BLOB NOT NULL)",
+        // One job per video. `stage` is the last stage that finished ('' at first).
+        """
+        CREATE TABLE IF NOT EXISTS jobs (
+          id INTEGER PRIMARY KEY,
+          video_id TEXT NOT NULL REFERENCES videos(video_id) ON DELETE CASCADE,
+          status TEXT NOT NULL DEFAULT 'queued' CHECK (status IN ('queued', 'running', 'done', 'failed')),
+          stage TEXT NOT NULL DEFAULT '',
+          attempts INTEGER NOT NULL DEFAULT 0,
+          error TEXT,
+          created_at TEXT NOT NULL, updated_at TEXT NOT NULL
+        )
+        """,
     )
 
     /** Idempotent: safe to run on every open. */

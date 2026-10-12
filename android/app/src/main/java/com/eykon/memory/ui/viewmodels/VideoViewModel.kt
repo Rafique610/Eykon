@@ -6,10 +6,12 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.eykon.memory.video.SavedVideo
 import com.eykon.memory.video.UploadException
-import com.eykon.memory.video.Video
 import com.eykon.memory.video.VideoCapture
 import com.eykon.memory.video.VideoRepository
+import com.eykon.memory.video.VideoWithJob
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -21,19 +23,22 @@ data class VideoUiState(
     val isSaving: Boolean = false,
     val saved: SavedVideo? = null,
     val errorMessage: String? = null,
-    val videos: List<Video> = emptyList(),
+    val videos: List<VideoWithJob> = emptyList(),
 )
 
 class VideoViewModel(
     private val capture: VideoCapture,
     private val repository: VideoRepository,
+    private val startProcessing: () -> Unit,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(VideoUiState())
     val uiState: StateFlow<VideoUiState> = _uiState.asStateFlow()
 
+    private var watching: Job? = null
+
     init {
-        refresh()
+        watchJobs()
     }
 
     fun onVideoPicked(uri: Uri?) {
@@ -43,27 +48,35 @@ class VideoViewModel(
             try {
                 val saved = withContext(Dispatchers.IO) { capture.save(uri) }
                 _uiState.update { it.copy(isSaving = false, saved = saved) }
+                startProcessing()
             } catch (e: UploadException) {
                 _uiState.update { it.copy(isSaving = false, errorMessage = e.message) }
             } catch (e: Exception) {
                 _uiState.update { it.copy(isSaving = false, errorMessage = "The video could not be saved (${e.javaClass.simpleName}).") }
             }
-            refresh()
+            watchJobs()
         }
     }
 
-    private fun refresh() {
-        viewModelScope.launch {
-            val videos = withContext(Dispatchers.IO) { repository.list() }
-            _uiState.update { it.copy(videos = videos) }
+    /** Reload the list, and keep reloading once a second only while a job is still waiting or running. */
+    private fun watchJobs() {
+        if (watching?.isActive == true) return
+        watching = viewModelScope.launch {
+            do {
+                val videos = withContext(Dispatchers.IO) { repository.listWithJobs() }
+                _uiState.update { it.copy(videos = videos) }
+                val busy = videos.any { it.jobStatus == "queued" || it.jobStatus == "running" }
+                if (busy) delay(1000)
+            } while (busy)
         }
     }
 
     companion object {
-        fun provideFactory(capture: VideoCapture, repository: VideoRepository): ViewModelProvider.Factory =
+        fun provideFactory(capture: VideoCapture, repository: VideoRepository, startProcessing: () -> Unit): ViewModelProvider.Factory =
             object : ViewModelProvider.Factory {
                 @Suppress("UNCHECKED_CAST")
-                override fun <T : ViewModel> create(modelClass: Class<T>): T = VideoViewModel(capture, repository) as T
+                override fun <T : ViewModel> create(modelClass: Class<T>): T =
+                    VideoViewModel(capture, repository, startProcessing) as T
             }
     }
 }

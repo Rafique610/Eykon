@@ -1,7 +1,14 @@
 package com.eykon.memory
 
 import android.app.Application
+import androidx.sqlite.db.SupportSQLiteDatabase
 import com.eykon.memory.data.MemoryDatabase
+import com.eykon.memory.video.VideoJobs
+import com.eykon.memory.video.VideoWorker
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 
 class MemoryApp : Application() {
 
@@ -9,9 +16,23 @@ class MemoryApp : Application() {
         MemoryDatabase.getInstance(this)
     }
 
+    /** Lives as long as the app process: video jobs keep running when the person leaves the screen. */
+    private val applicationScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+
+    private val videoDb: () -> SupportSQLiteDatabase = { database.openHelper.writableDatabase }
+    val videoJobs: VideoJobs by lazy { VideoJobs(videoDb) }
+    private val videoWorker: VideoWorker by lazy { VideoWorker(videoDb, videoJobs) }
+
+    /** Start working through queued video jobs in the background. */
+    fun kickVideoWorker() = videoWorker.kick(applicationScope)
+
     override fun onCreate() {
         super.onCreate()
         instance = this
+        applicationScope.launch {
+            videoJobs.requeueInterrupted() // jobs cut short when the app last stopped
+            kickVideoWorker()
+        }
     }
 
     companion object {

@@ -31,7 +31,7 @@ class MainActivity : ComponentActivity() {
     private val videoViewModel: VideoViewModel by viewModels {
         val app = application as MemoryApp
         val repository = VideoRepository { app.database.openHelper.writableDatabase }
-        VideoViewModel.provideFactory(VideoCapture(applicationContext, repository), repository)
+        VideoViewModel.provideFactory(VideoCapture(applicationContext, repository, app.videoJobs), repository, app::kickVideoWorker)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

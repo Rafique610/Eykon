@@ -24,7 +24,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.eykon.memory.ui.viewmodels.VideoViewModel
 import com.eykon.memory.video.SavedVideo
-import com.eykon.memory.video.Video
+import com.eykon.memory.video.VideoPipeline
+import com.eykon.memory.video.VideoWithJob
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -35,12 +36,22 @@ private val WHEN = DateTimeFormatter.ofPattern("d MMM yyyy, HH:mm", Locale.ENGLI
 private fun localTime(isoUtc: String): String =
     WHEN.format(Instant.parse(isoUtc).atZone(ZoneId.systemDefault()))
 
-/** The stored status in plain words. Nothing processes videos yet, so 'processing' means saved and waiting. */
-private fun statusLabel(status: String): String = when (status) {
-    "processing" -> "Saved, waiting to be processed"
-    "ready" -> "Ready to search"
-    "failed" -> "Processing failed"
-    else -> status
+/** Where the video's job stands, in plain words, from the stored job row. */
+private fun statusLabel(item: VideoWithJob): String {
+    val stages = VideoPipeline.STAGES.map { it.first }
+    val done = stages.indexOf(item.jobStage) + 1 // 0 when no stage has finished
+    return when (item.jobStatus) {
+        null -> "Saved, no job (added before the queue existed)"
+        "queued" -> if (item.jobAttempts > 0) "Waiting to retry (attempt ${item.jobAttempts + 1})" else "Waiting in the queue"
+        "running" -> "Processing: stage ${done + 1} of ${stages.size}"
+        "failed" -> "Failed after ${item.jobAttempts} attempts: ${item.jobError.orEmpty()}"
+        "done" -> when {
+            item.video.status == "ready" -> "Ready to search"
+            stages.isEmpty() -> "Job finished (no processing stages exist yet)"
+            else -> "Job finished ($done of ${stages.size} stages)"
+        }
+        else -> item.jobStatus
+    }
 }
 
 private fun confirmation(saved: SavedVideo): String {
@@ -105,8 +116,8 @@ fun VideoScreen(
                 style = MaterialTheme.typography.titleMedium,
             )
         }
-        items(uiState.videos, key = { it.videoId }) { video ->
-            VideoRow(video)
+        items(uiState.videos, key = { it.video.videoId }) { item ->
+            VideoRow(item)
         }
     }
 }
@@ -119,12 +130,12 @@ private fun MessageCard(text: String, color: androidx.compose.ui.graphics.Color)
 }
 
 @Composable
-private fun VideoRow(video: Video) {
+private fun VideoRow(item: VideoWithJob) {
     Card(modifier = Modifier.fillMaxWidth()) {
         Column(modifier = Modifier.padding(12.dp)) {
-            Text(localTime(video.recordedAt), fontWeight = FontWeight.SemiBold)
+            Text(localTime(item.video.recordedAt), fontWeight = FontWeight.SemiBold)
             Text(
-                String.format(Locale.ENGLISH, "%.0f s · %s", video.durationS, statusLabel(video.status)),
+                String.format(Locale.ENGLISH, "%.0f s · %s", item.video.durationS, statusLabel(item)),
                 style = MaterialTheme.typography.bodySmall,
             )
         }
