@@ -1,5 +1,11 @@
 # INSTRUCTIONS.md
 
+> **Superseded (12 October 2026).** `AGENTS.md` and `docs/invariants/` are the
+> working rules now. This file is kept as history only. Where it disagrees
+> with them, they win. Known differences: database access is raw `sqlite3`
+> with `?` parameters, not an ORM (Section 5b); steps are tracked as Synverk
+> cards, not `✅` file renames (Section 3).
+
 Global project working instructions provided by the user. Follow these for ALL future work, across the whole project.
 
 ## 1. Source of truth

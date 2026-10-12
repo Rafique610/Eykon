@@ -2,7 +2,11 @@
 
 ## Project: Eykon (F26-220)
 
-A local-first, on-device personal memory application using RAG (Retrieval-Augmented Generation). Users store text, audio, and video memories, then query them with natural language — everything runs offline on the device.
+A "second brain": a persistent, local-first memory for a phone. It reads video and sound, keeps the moments worth remembering, and answers questions with proof ("where are my keys?") — everything runs offline on the device. Cheap specialised models do the perception; a vision-language model is an optional, measured alternative.
+
+## Current plan
+
+The active task list is the **Synverk board** (project Eykon, key `EYKO`), reached through the `synverk` MCP server in `.mcp.json`. Read the card and its flow before working. `docs/plans/` is background and method; where it disagrees with a card, the card wins.
 
 ## Domain Documents
 
@@ -32,5 +36,7 @@ A local-first, on-device personal memory application using RAG (Retrieval-Augmen
 | Phase | Location | Status |
 |---|---|---|
 | Phase 1 (Text RAG) | `docs/plans/done/` | ✅ Complete |
-| Phase 2 (Android + Audio) | `docs/plans/phase 2/` | 🔄 In progress |
-| Phase 3 (Vision Pipeline) | `docs/plans/phase-3-vision/` | 📋 Planned |
+| Phase 2 (Android + Audio) | `docs/plans/phase 2/` | Steps 01–05 done; rest folded into the phone gate |
+| Phase 3 (VLM vision pipeline) | `docs/plans/phase-3-vision/` | Steps 01–10 done; kept as the VLM reference |
+| Roadmap and phases 3.1 – 8 | `docs/plans/00-roadmap.md`, `docs/plans/phase-*/` | Background and method, not the active task list |
+| Cheap-model pipeline, evaluation, phone gate | Synverk cards `EYKO-1` … `EYKO-35` | Active |

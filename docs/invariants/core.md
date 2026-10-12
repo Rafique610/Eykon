@@ -43,7 +43,8 @@ Bug fixes address root causes. Shortest working diff wins.
 
 - Local SQLite at `data/memories.db`.
 - Fully parameterized queries (`?`), idempotent `init_db()`.
-- Established pattern: raw `sqlite3` with parameterized queries (not ORM — this is the actual project convention despite INSTRUCTIONS.md mentioning ORM).
+- Raw `sqlite3` with parameterized queries. No ORM (confirmed 12 October 2026; the old INSTRUCTIONS.md ORM rule is retired).
+- Anything the database needs must also work on Android. Loadable extensions (such as sqlite-vec) are used only after a phone spike shows they load there; otherwise store vectors as float32 BLOBs and search in code.
 
 ## UI/UX Skill Routing
 

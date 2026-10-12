@@ -11,6 +11,17 @@ Rules for package managers, build tools, and paths.
 - **Windows C++ Packages:** When installing C++ bound packages on Windows (like `llama-cpp-python`), `uv` will hang or fail if Visual Studio Build Tools are missing. *Always* bypass source compilation by using pre-built binary wheels (e.g. configuring `[[tool.uv.index]]` in `pyproject.toml` or using `uv pip install --only-binary`).
 - Config: `pyproject.toml` + `uv.lock` (both committed).
 
+## Tests — `pytest`
+
+- pytest is the test framework (dev dependency only, decided 12 October 2026). Tests live in `tests/`, run with `task test`.
+- Tests use a temporary database (`tmp_path`). They never touch `data/memories.db`.
+- The older one-line health check is `task smoke`.
+
+## Licences
+
+- No AGPL dependencies (for example `ultralytics` / YOLO11). Check a model's and a library's licence before `uv add`, and write it in the card or step.
+- Prefer models with a phone-ready export (ONNX / TFLite) so the same file runs on the laptop and on Android.
+
 ## Task Runner — `Taskfile.yml`
 
 - Every runnable command gets a Taskfile entry.

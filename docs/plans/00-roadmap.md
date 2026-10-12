@@ -1,5 +1,32 @@
 # Eykon — Master Roadmap (Phases 3 → 8)
 
+> [!IMPORTANT]
+> **Direction annotation — 12 October 2026 (additions only).**
+> The active task list is now the **Synverk board** (project Eykon, cards
+> `EYKO-1` … `EYKO-35`). This roadmap stays as background and method: the
+> pessimist rules (§5.1), the Mobile Emulation Profile (§4.1), the KPIs (§7)
+> and the issue list (§9) still apply. Where a card and this roadmap
+> disagree, the card wins.
+>
+> What changed, decided with the user:
+> - **Product:** a general "second brain". Order of work: objects first,
+>   then speech and actions, then sounds and meetings. Meetings are
+>   important but are not the lead use case.
+> - **Perception:** cheap specialised models are the default (Option A);
+>   the VLM is the optional last resort and the comparison baseline. Both
+>   are run on the same data to compare cost and accuracy (EYKO-33). This is
+>   the L0–L3 idea from v2, with L0 as the default build.
+> - **§8 decisions now closed:** detector = YOLOX-Nano, Apache-2.0, ONNX
+>   (no AGPL); test framework = pytest (dev dependency); database = raw
+>   `sqlite3`, no ORM; speech = faster-whisper as laptop baseline behind one
+>   function, phone engine measured at the phone gate, English only.
+> - **§8 decisions still open:** vector storage (sqlite-vec vs float32
+>   BLOBs, Android spike EYKO-31); hand finder for small objects (EYKO-32).
+> - **Laptop is the lab, phone is the exam** stays, sharpened: only the
+>   option that wins the evaluation is ported to the phone (EYKO-34).
+> - The phase folders 3.1 – 8 are not deleted; they are the detailed method
+>   to draw on when a card needs it.
+
 > Created 05 October 2026. Sources: `new_Dev.md` (brainstorm), LightMem-Ego
 > (Chen et al., arXiv:2607.11487, read in full), existing `docs/plans/`,
 > `.memory/` logs and on-device KPI runs (Pixel 9 Pro XL, Infinix Note 12).

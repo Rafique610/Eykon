@@ -45,11 +45,10 @@ current task — never load all of them.
 real-data-only, and the Ponytail ladder — rules that hold no matter what
 you're building. Everything else loads on demand.
 
-Open item from this merge: the tooling row used to say "Pixi." The detailed
-rules that actually existed (in the old INSTRUCTIONS.md) specify `uv` for
-Python and `pnpm` for Node, with no mention of Pixi. `docs/invariants/tooling.md`
-below is written for uv/pnpm. Confirm which one this repo actually uses and
-fix whichever side is wrong.
+Tooling is `uv` (Python) — confirmed 12 October 2026 from `pyproject.toml` +
+`uv.lock`; there is no Pixi in this repo. The root `INSTRUCTIONS.md` is kept
+only as history: where it disagrees with this file or `docs/invariants/`,
+these win.
 
 ## First run — bootstrapping the docs tree
 
@@ -91,7 +90,10 @@ docs say to do X — verify X in the source first.
 This shape is fixed and always active — no need to load `processes.md` just
 to know it:
 
-1. Work ONE step at a time, from the current plan doc.
+1. Work ONE step at a time. The step is one Synverk card (project Eykon,
+   key EYKO, through the `synverk` MCP server): read the card and its flow
+   first. Synverk is the current plan; `docs/plans/` is background and
+   method. Where they disagree, the card wins — and say so.
 2. Test it yourself before handing off. Fix obvious errors yourself — don't
    hand basic issues back to the user.
 3. Note anything else you notice along the way (UI gaps, config, missing
@@ -100,15 +102,16 @@ to know it:
 4. Hand off in plain language — what changed, why, what the user will
    notice — for both frontend and backend, plus the exact terminal commands
    so the user can verify it themselves.
-5. Wait for explicit approval before starting the next step. Rename the step
-   doc `✅ <name>.md` once approved.
+5. Wait for explicit approval before starting the next step. Paste the
+   check output in a comment on the card and move it to review; the project
+   owner approves it there. (Older step docs used a `✅ <name>.md` rename;
+   cards replace that.)
 6. Log the step in that day's `.memory/tasks.md` (format in `processes.md`)
    so progress is visible without re-deriving it from chat history.
 
-This is what gives a visible timetable: the numbered plan docs under
-`docs/plans/` are the "what's next," and `.memory/tasks.md` is the running
-"what's done" — both are cheap to skim, so where things stand is never
-buried in scrollback.
+This is what gives a visible timetable: the Synverk board is the "what's
+next," and `.memory/tasks.md` is the running "what's done" — both are cheap
+to skim, so where things stand is never buried in scrollback.
 
 ## Session-level rules
 
@@ -121,8 +124,9 @@ buried in scrollback.
   for the rest of the session — no re-reading needed.
 - Destructive actions. Always confirm before pushing, deleting, or
   rebuilding containers.
-- Commits. Never run `git commit` without explicit user confirmation. Stage
-  the change, propose the message (below), let the user commit.
+- Commits. The agent commits a step itself once the user has approved it
+  (changed 12 October 2026). Never commit unapproved work, and never push
+  without asking.
 - Co-author. Never add the AI/agent's name as co-author.
 
 ## Git
@@ -137,7 +141,8 @@ several commits, and never fold unrelated work into one commit.
   earlier or already-committed work.
 - No bulleted essays in the body.
 
-The agent proposes the message; the user runs the commit.
+The agent states the message and runs the commit after approval. No
+co-author or "generated with" lines for the agent, ever.
 
 ## Skills
 
