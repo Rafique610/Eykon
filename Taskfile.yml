@@ -90,6 +90,10 @@ tasks:
     desc: Create the video memory tables if missing and list each table with its row count
     cmd: uv run python -m src.video_memory.schema
 
+  golden-filters:
+    desc: "EYKO-5 — write the frame-filter test pictures and OpenCV's reference numbers that the phone code is tested against"
+    cmd: uv run python src/benchmarks/filters_golden.py
+
   spike-laptop-vectors:
     desc: "EYKO-31 spike — on the laptop, time sqlite-vec against BLOB brute-force vector search (sqlite-vec is fetched for this run only)"
     cmd: uv run --with sqlite-vec python src/benchmarks/vector_storage_spike.py

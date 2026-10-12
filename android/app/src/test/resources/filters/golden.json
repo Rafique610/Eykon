@@ -1,0 +1,58 @@
+{
+  "opencv": "5.0.0",
+  "pictures": {
+    "sharp": {
+      "width": 320,
+      "height": 180,
+      "brightness": 126.81107638888889,
+      "laplacian_variance": 939.9719694851344,
+      "checksum": 7304318
+    },
+    "other": {
+      "width": 320,
+      "height": 180,
+      "brightness": 149.99668402777777,
+      "laplacian_variance": 433.9412726550443,
+      "checksum": 8639809
+    },
+    "blurred": {
+      "width": 320,
+      "height": 180,
+      "brightness": 126.50855902777778,
+      "laplacian_variance": 6.633981264166184,
+      "checksum": 7286893
+    },
+    "dark": {
+      "width": 320,
+      "height": 180,
+      "brightness": 35.22986111111111,
+      "laplacian_variance": 130.2577348765432,
+      "checksum": 2029240
+    },
+    "upright": {
+      "width": 180,
+      "height": 320,
+      "brightness": 127.024375,
+      "laplacian_variance": 1293.2051830620658,
+      "checksum": 7316604
+    }
+  },
+  "pairs": {
+    "sharp_vs_sharp": {
+      "diff": 0.0,
+      "hist_change": 0.0
+    },
+    "sharp_vs_other": {
+      "diff": 55.67081597222222,
+      "hist_change": 0.6775642124743662
+    },
+    "sharp_vs_blurred": {
+      "diff": 5.882899305555555,
+      "hist_change": 0.35669190678073226
+    },
+    "sharp_vs_dark": {
+      "diff": 91.58121527777777,
+      "hist_change": 0.9613073699650062
+    }
+  }
+}
