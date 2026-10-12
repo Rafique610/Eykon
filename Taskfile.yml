@@ -86,6 +86,20 @@ tasks:
       JAVA_HOME: 'C:\Users\rafique_\AppData\Roaming\.minecraft\runtime\java-runtime-delta\windows\java-runtime-delta'
     cmd: cmd.exe /c gradlew.bat assembleDebug
 
+  spike-laptop-vectors:
+    desc: "EYKO-31 spike — on the laptop, time sqlite-vec against BLOB brute-force vector search (sqlite-vec is fetched for this run only)"
+    cmd: uv run --with sqlite-vec python src/benchmarks/vector_storage_spike.py
+
+  spike-android-vectors:
+    desc: "EYKO-31 spike — on the connected phone, test sqlite-vec loading and time BLOB brute-force vector search (results print from logcat)"
+    dir: android
+    env:
+      JAVA_HOME: 'C:\Users\rafique_\AppData\Roaming\.minecraft\runtime\java-runtime-delta\windows\java-runtime-delta'
+      ADB: 'C:\Users\rafique_\AppData\Local\Android\Sdk\platform-tools\adb.exe'
+    cmds:
+      - cmd.exe /c gradlew.bat connectedDebugAndroidTest "-Pandroid.testInstrumentationRunnerArguments.class=com.eykon.memory.spike.VectorStorageSpikeTest"
+      - cmd.exe /c "%ADB%" logcat -d -s EYKO31:I
+
   test-vision-integration:
     desc: Process a test video, store as memories, then query them
     cmd: |

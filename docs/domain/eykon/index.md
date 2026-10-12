@@ -66,7 +66,7 @@ on the laptop (Python). Only the option that wins the evaluation is ported
 to the phone (Kotlin), checked against shared golden fixtures (card
 EYKO-34). To keep the port small: prefer models with ONNX / TFLite exports
 so the same file runs on both sides, keep the same SQLite schema, and spike
-phone-only risks early (card EYKO-31).
+phone-only risks early (as card EYKO-31 did for vector storage).
 
 ## Tech Stack
 
@@ -81,7 +81,7 @@ phone-only risks early (card EYKO-31).
 | Sound embeddings | CLAP | optional, later (EYKO-13) |
 | LLM | Gemma 4 E2B-it via LiteRT-LM — optional answer layer | in use (text RAG) |
 | Database | SQLite (`data/memories.db`), raw `sqlite3`, FTS5 | in use |
-| Vector storage | sqlite-vec or float32 BLOBs — decided by the Android spike | open (EYKO-31) |
+| Vector storage | float32 BLOB columns, loaded into memory once, dot-product search (no sqlite-vec) | decided (EYKO-31, `docs/results/`) |
 | Search | Dense cosine + BM25 fused with RRF (k=60) | in use |
 | Config | Pydantic Settings (`MEMORY_` prefix) | in use |
 | Package manager / tasks | `uv`, `Taskfile.yml` | in use |

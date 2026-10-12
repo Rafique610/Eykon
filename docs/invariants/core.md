@@ -44,7 +44,8 @@ Bug fixes address root causes. Shortest working diff wins.
 - Local SQLite at `data/memories.db`.
 - Fully parameterized queries (`?`), idempotent `init_db()`.
 - Raw `sqlite3` with parameterized queries. No ORM (confirmed 12 October 2026; the old INSTRUCTIONS.md ORM rule is retired).
-- Anything the database needs must also work on Android. Loadable extensions (such as sqlite-vec) are used only after a phone spike shows they load there; otherwise store vectors as float32 BLOBs and search in code.
+- Anything the database needs must also work on Android. No loadable SQLite extensions: the phone's SQLite cannot load them.
+- Vectors are float32 BLOB columns in normal tables. Search loads a vector table into memory once and uses the dot product; never read every vector from SQLite on each query (decided 12 October 2026, measurements in `docs/results/2026-10-12-eyko-31-vector-storage.md`).
 
 ## UI/UX Skill Routing
 
