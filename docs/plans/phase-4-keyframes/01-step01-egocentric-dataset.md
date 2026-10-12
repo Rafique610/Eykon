@@ -1,5 +1,15 @@
 # Step 01 — Egocentric Evaluation Dataset v1
 
+> [!IMPORTANT]
+> **Merged into Phase 3.1 — 07 October 2026 (annotation only, nothing
+> deleted).** This step is now executed as Phase 3.1 Steps 05, 07, 09, 10 and
+> 12 (`docs/plans/phase-3.1-data-probes/`). The content below is kept as the
+> original intent. Changes: the dataset folder becomes `data/scenarios_v1/`
+> with an `objects/` pack inside it, the QA target is raised to at least 30
+> pairs per category (pessimist rule), and four new categories are added
+> (meeting_summary, who_said, action_items, lecture_recall). Phase 4 starts
+> from the Phase 3.1 dataset instead of recording its own.
+
 ## What
 Build the dataset every later experiment in Phases 4–6 is measured on:
 egocentric recordings (mostly ours), annotated with event boundaries, short

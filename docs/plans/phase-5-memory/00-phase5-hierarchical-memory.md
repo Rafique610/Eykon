@@ -4,6 +4,46 @@
 > folder are written at plan level now; each gets a "Kickoff refinement" note
 > appended when the phase starts, using Phase 4 results. Nothing is deleted.
 
+> [!IMPORTANT]
+> **Roadmap v2 annotation — 07 October 2026 (additions only, nothing
+> deleted).** Source: `docs/new/eykon-roadmap-v2.md` §4 (Phase 5: "keep as
+> planned; the entity-state table also accepts interaction events from
+> Phase 4.1; the router and time parser stay rules-first").
+>
+> 1. **Data**: every `ego_v1` reference below now means
+>    `data/scenarios_v1/` (Phase 3.1), with `qa_v2.json` (11 categories, at
+>    least 30 per category) and the frozen split. Evaluation is per category.
+> 2. **Inputs to memory are slot records** (`src/memories/slots.py`, Phase 3.1
+>    Step 02) from both perception paths (VLM path V, cheap path C from
+>    Phase 4.1) and from speech. Memory never depends on which producer wrote
+>    a record.
+> 3. **Step 01 schema v2** must also reserve the conversation tables Phase 5.1
+>    needs (sessions, speakers, utterances, topics, summaries, action items)
+>    and the Phase 4.1 tables (`tracked_objects`, `object_prototypes`,
+>    `places`). One schema, designed once.
+> 4. **Step 04 audio** overlaps with Phase 3.1 Steps 20–21 and Phase 5.1. The
+>    feature folder is `src/speech/` (created in Phase 3.1), not `src/audio/`.
+>    It implements the real on-device transcription call: the Whisper model
+>    file is downloaded to the phone, but `WhisperTranscriber.transcribe()`
+>    currently returns a placeholder string and must be wired to the runtime
+>    chosen in Phase 3.1 Step 20. English only (planning default).
+> 5. **Step 07 ledger** accepts interaction state-change records from
+>    Phase 4.1 (contract: `docs/results/phase-4.1/ledger-interface.md`) and
+>    resolves conflicts between producers explicitly.
+> 6. **Steps 08 and 09 are rules-first**: rule-based time parser and router
+>    are the default; LLM fallbacks are switchable and measured, because
+>    Phase 5.2's L0 configuration must work with no generative model at all.
+> 7. **Step 11** keeps the M0–M4 comparison (retrieval and memory structure).
+>    The answer-level comparison L0–L3 is Phase 5.2; Step 11 uses the
+>    Phase 5.2 answer interface if it exists, otherwise the current Gemma
+>    prompt, and says which.
+> 8. **Step 06 (semantic memory)** stays exploratory and is the last item to
+>    cut if time runs short (roadmap v2 §7).
+> 9. **Housekeeping**: no pytest in the project (see `00-roadmap.md` §8 test
+>    framework decision); result reports go to `docs/results/phase-5/`.
+>    Database stays plain `sqlite3` with parameterised queries (planning
+>    default, 07 October 2026).
+
 ## Goal
 Turn micro-events (Phase 4) and speech (this phase) into a memory that:
 1. is **hierarchical** — current → short-term → long-term episodic + semantic

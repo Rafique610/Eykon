@@ -1,5 +1,14 @@
 # Step 11 — Retrieval & QA Evaluation v2 (Main P2 Results)
 
+> [!NOTE]
+> **Roadmap v2 — 07 October 2026 (addition):** data is the Phase 3.1 QA set
+> v2 (11 categories, tuning split) plus the held-out sessions. M0–M4 compare
+> memory structure; answer generation for this comparison is fixed to one
+> answer level (stated in the report) so that only memory varies. The
+> answer-level comparison (L0–L3) is Phase 5.2 Step 09, which reuses this
+> step's runner. The LLM judge rule here (different family, human agreement)
+> applies unchanged.
+
 ## What
 One controlled comparison on the ego_v1 QA set (tuning + held-out reported
 separately):

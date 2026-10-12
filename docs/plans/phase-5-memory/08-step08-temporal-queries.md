@@ -1,5 +1,15 @@
 # Step 08 — Temporal Query Understanding + Time-Window Gating
 
+> [!NOTE]
+> **Roadmap v2 — 07 October 2026 (addition):** rules-first is the default
+> (roadmap v2: "the router and time parser stay rules-first"). The LLM
+> fallback is behind a setting and is off in Phase 5.2's L0 and L1
+> configurations; its benefit is measured as "parse accuracy with and without
+> fallback". English only (planning default), so the Urdu time words mentioned
+> below are out of scope unless that default changes. Intents gain
+> `who_said`, `action_items`, `meeting_summary`, `lecture_recall` from the
+> Phase 3.1 taxonomy.
+
 ## What
 Parse each question into `{intent, time_window, anchors, entities}`:
 - explicit ("yesterday at 3", "this morning") → absolute window;

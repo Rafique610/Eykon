@@ -1,5 +1,13 @@
 # Step 13 — Mobile Parity Gate 4 (Gating Cascade on Pixel + Infinix)
 
+> [!NOTE]
+> **Roadmap v2 — 07 October 2026 (additions only):** the port includes Tier 0d
+> (hand-activity gate, Step 07b) if it survived the ablation, using the same
+> hand model file as Phase 3.1 Step 22. Phase 2 Steps 06–07 (full UI,
+> integration test) are folded into this and later parity gates: the
+> integration test here also confirms that text capture, voice capture and Q&A
+> from Phase 2 still work alongside the cascade.
+
 ## What
 Port the frozen cascade (Tier 0a/0b/0c, Tier 1, segmenter; Tier 2 using the
 phone's model) to Kotlin, run it on golden fixtures and on replayed Step 03

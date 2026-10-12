@@ -1,5 +1,18 @@
 # Step 11 — Ablation Study B0–B6 (Main P1 Results)
 
+> [!IMPORTANT]
+> **Roadmap v2 — 07 October 2026 (additions only):** extra configurations
+>
+> | Config | Tiers |
+> |---|---|
+> | B6-V | Full cascade + segmenter + structured extraction, path V (VLM) |
+> | B6-C | Full cascade + segmenter + structured extraction, path C (cheap, Phase 4.1) — only if Phase 4.1 delivers |
+> | B7 | B5 + Tier 0d hand-activity gate (Step 07b) |
+>
+> Metrics unchanged, plus "model calls per hour" split by model type (VLM vs
+> small encoders), which Phase 5.2 needs for the L0–L3 cost table. Data is the
+> Phase 3.1 tuning split; questions from `qa_v2.json`, reported per category.
+
 ## What
 One controlled experiment, same tuning set, same captioner, same metrics,
 wall-clock replay under the emulation profile:

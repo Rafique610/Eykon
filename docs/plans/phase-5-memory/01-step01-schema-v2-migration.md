@@ -1,5 +1,26 @@
 # Step 01 — Memory Schema v2 + Non-Destructive Migration
 
+> [!IMPORTANT]
+> **Roadmap v2 — 07 October 2026 (additions only):**
+> - Add a `slots` table (or columns on `events`) that stores the full slot
+>   record JSON plus indexed fields: `kind`, `producer_path`, `confidence`,
+>   `t_start`, `t_end`, `session_id`. Records from path V, path C and speech
+>   all land here.
+> - Reserve Phase 5.1 tables now: `sessions` (id, kind meeting/lecture/day,
+>   start, end, title), `speakers` (id, session_id, label, is_me, user_name
+>   NULL), `utterances` (id, session_id, speaker_id, start, end, text,
+>   confidence), `topics` (id, session_id, start, end, title),
+>   `summaries` (id, session_id, topic_id NULL, bullet, evidence_json, level),
+>   `action_items` (id, session_id, owner_speaker_id, text, t, evidence_json).
+>   The existing draft `transcripts` table becomes `utterances`.
+> - Include Phase 4.1 tables: `tracked_objects`, `object_prototypes`,
+>   `places` (whichever step runs first creates them; the other references
+>   them).
+> - `entity_states` gains `producer_path` and `ambiguous` columns (Phase 4.1
+>   ledger interface).
+> - Walk all 11 QA categories from Phase 3.1 Step 01 (not 7) through the ER
+>   diagram in "You test this".
+
 ## What
 Design the SQLite schema for the hierarchy and ledger, and migrate existing
 `memories` (Phase 1–3 text/audio/video records) into it **without losing or

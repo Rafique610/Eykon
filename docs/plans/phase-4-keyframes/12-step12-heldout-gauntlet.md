@@ -1,5 +1,14 @@
 # Step 12 — Held-Out Real-World Gauntlet
 
+> [!NOTE]
+> **Roadmap v2 — 07 October 2026 (additions only):** the held-out objects
+> sessions recorded and locked in Phase 3.1 Step 07 are part of this held-out
+> set, alongside the new recordings below. Their QA is written in this step,
+> before the single run, using the Phase 3.1 taxonomy and QA format. This step
+> closes **Gate 2** (roadmap v2 §6): the verdict "cascade beats B0 on held-out:
+> yes / partly / no" is written into `docs/results/phase-4/gate2.md` and the
+> master roadmap annotation.
+
 ## What
 Freeze all thresholds and models. Record **new** sessions (≥ 1 h total) that
 were never seen during tuning, write their QA before running anything, then run

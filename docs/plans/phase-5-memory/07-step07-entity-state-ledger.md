@@ -1,5 +1,22 @@
 # Step 07 — Entity-State Ledger & Invalidation (P2 Core)
 
+> [!IMPORTANT]
+> **Roadmap v2 — 07 October 2026 (additions only):**
+> - The ledger also accepts **interaction state-change records** from
+>   Phase 4.1 (cheap path C), following the contract in
+>   `docs/results/phase-4.1/ledger-interface.md` (written in Phase 4.1
+>   Step 10). Entity normalisation uses the user's object list
+>   (`tracked_objects`, Phase 4.1 Step 03) as the alias source.
+> - "Extraction source" open decision gains option (d): slots from path V
+>   **and** path C records, conflicts resolved by confidence and recency, with
+>   `ambiguous` when they disagree within a time window.
+> - Verification adds: ledger accuracy reported separately for records from
+>   path V only, path C only, and both — this feeds Phase 5.2's L0 vs L3 rows
+>   for object questions.
+> - Template answers from the ledger ("Your keys were last seen in the bag at
+>   14:03", with the evidence frame) are built in Phase 5.2 Step 03; this step
+>   only guarantees the ledger exposes what templates need.
+
 ## What
 From structured records (`objects`, `hand_object`, `place`) and transcripts
 ("I put the keys in my bag"), extract **state transitions**

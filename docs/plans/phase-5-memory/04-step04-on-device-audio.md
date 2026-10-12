@@ -1,5 +1,22 @@
 # Step 04 — On-Device Audio: VAD + ASR Aligned to the Timeline
 
+> [!IMPORTANT]
+> **Roadmap v2 — 07 October 2026 (additions only):**
+> - Model and engine choices come from Phase 3.1 Step 20 (shortlist) and
+>   Step 21 (Probe C results); the "Language" and "ASR engine" open decisions
+>   below are answered there (planning default: English only).
+> - Feature folder is `src/speech/` (created in Phase 3.1), replacing
+>   `src/audio/` in "Files changed".
+> - Android: the Whisper model file is downloaded to the phone by the user.
+>   `WhisperTranscriber.transcribe()` currently returns the placeholder
+>   `"Voice memo (N s recorded)"` and never runs the model; this step replaces
+>   the placeholder with a real call to the chosen runtime (whisper.cpp JNI
+>   or sherpa-onnx), loading the downloaded file. Phase 2 Step 05 is annotated
+>   accordingly.
+> - This step covers ambient speech for daily life. Session-based meeting
+>   capture, speaker separation and summaries are Phase 5.1, which reuses this
+>   step's VAD + ASR components.
+
 ## What
 Continuous microphone → voice activity detection → on-device ASR on speech
 segments only → transcripts with absolute timestamps attached to the

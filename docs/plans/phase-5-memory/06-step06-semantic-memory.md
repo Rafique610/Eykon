@@ -1,5 +1,11 @@
 # Step 06 — Semantic Memory (Routines & Preferences) — Exploratory
 
+> [!NOTE]
+> **07 October 2026:** the multi-day data referred to below as "Phase 6
+> Step 10" is now **Phase 6 Step 13** (multi-day field study) in
+> `docs/plans/phase-6-live/`. Roadmap v2 §7 lists semantic memory as the last
+> item in the cut order before the must-keep items.
+
 ## What
 Derive higher-level facts from many episodes: routines ("usually at the library
 after 2 PM on weekdays"), preferences, relationships. Each fact stores its

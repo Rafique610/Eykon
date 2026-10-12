@@ -1,5 +1,24 @@
 # Step 09 — Tier 2: Structured VLM Extraction (Provisional → Refined)
 
+> [!IMPORTANT]
+> **Roadmap v2 — 07 October 2026 (additions only):**
+> - The structured record below is replaced by the **slot schema v1**
+>   (`src/memories/slots.py`, Phase 3.1 Step 02). Same idea, fixed field
+>   names, validated. The prompt starts from `src/vision/slot_prompt.py` and
+>   the Probe A findings (Phase 3.1 Step 16): if Probe A found the slot prompt
+>   worse than free captions, that is addressed here first.
+> - **Two paths, one record.** Tier 2 is an interface
+>   `extract(frame_or_event) -> SlotRecord` with two implementations:
+>   path V (this doc, VLM) and path C (cheap perception from Phase 4.1,
+>   `src/perception/`). A setting `MEMORY_EXTRACTION_PATH=vlm|cheap|both`
+>   chooses. The bounded queue and drop policy apply to path V; path C is
+>   expected to run inline (to be measured).
+> - The "Provisional model" open decision gains option (d): path C as the
+>   provisional record, VLM as the asynchronous refinement — cheap and
+>   immediate, refined later.
+> - Verification adds: both paths produce records that pass `validate_slot`
+>   on the golden fixtures.
+
 ## What
 When Tier 1 fires, the heavy model produces a **structured record** instead of
 a free sentence, e.g.

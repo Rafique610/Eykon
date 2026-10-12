@@ -1,5 +1,11 @@
 # Step 03 — Phone Sensor-Capture Spike (Video + IMU, Real Pipeline)
 
+> [!NOTE]
+> **07 October 2026:** executed earlier as Phase 3.1 Step 06
+> (`docs/plans/phase-3.1-data-probes/06-step06-phone-capture-spike.md`), which
+> adds synchronised audio. Mark this step done when that step is approved.
+> Session folders live in `data/scenarios_v1/<pack>/<session>/phone/`.
+
 ## What
 A minimal Android screen/service in the existing app that records what the
 real product will see: CameraX `ImageAnalysis` frames at the target resolution

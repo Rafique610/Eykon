@@ -1,5 +1,13 @@
 # Step 12 — Mobile Parity Gate 5 (Memory Engine on Pixel + Infinix)
 
+> [!NOTE]
+> **Roadmap v2 — 07 October 2026 (addition):** the port includes the Phase 4.1
+> ledger interface (path C records) and the conversation tables reserved in
+> Step 01. Phase 2 Step 06 (full UI) is folded in here: the app's memory
+> screens show events, ledger states and evidence thumbnails, not only text
+> memories. The FTS4 vs FTS5 decision (roadmap §8) must be closed before this
+> gate.
+
 ## What
 Port schema v2, ledger, temporal gating, router and lifecycle jobs to the
 Android app; load the same replayed memory DB on both phones; run the M3/M4

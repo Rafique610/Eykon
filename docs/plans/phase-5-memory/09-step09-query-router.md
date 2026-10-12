@@ -1,5 +1,13 @@
 # Step 09 — Query Router
 
+> [!NOTE]
+> **Roadmap v2 — 07 October 2026 (addition):** the router is rules-first by
+> default (option (a) below is the planning default; (b) and (c) stay as
+> measured alternatives). Routes gain the Phase 5.1 conversation sources
+> (utterances, topics, summaries, action items). The router returns an
+> evidence block, not an answer; answers are produced by the Phase 5.2 answer
+> layer at the configured level (template, quote, extractive, generative).
+
 ## What
 Route each parsed query to the **cheapest sufficient** source (LightMem-Ego):
 current memory → ledger → short-term events/transcripts → episodes → semantic

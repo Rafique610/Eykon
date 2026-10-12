@@ -1,5 +1,13 @@
 # Step 08 — Tier 1: Embedding Novelty Gate + Adaptive Hysteresis
 
+> [!NOTE]
+> **Roadmap v2 — 07 October 2026 (addition):** the image-text model chosen in
+> Phase 3.1 Step 17 (for crop matching) is added as the first candidate in the
+> encoder shortlist below. If it passes the same Pareto comparison, the phone
+> loads one encoder for Tier 1 novelty, Phase 4.1 crop matching and place
+> recognition. The other options stay open; the shared-encoder benefit (RAM,
+> one runtime) is reported next to accuracy, not assumed to win.
+
 ## What
 For frames that pass Tier 0, compute a compact image embedding with a tiny
 vision encoder and compare it to (a) the last keyframe and (b) a short rolling

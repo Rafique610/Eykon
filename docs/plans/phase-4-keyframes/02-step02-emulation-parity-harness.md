@@ -1,5 +1,12 @@
 # Step 02 — Mobile Emulation Profile + Parity Harness
 
+> [!NOTE]
+> **Roadmap v2 — 07 October 2026 (additions only):** golden fixtures are
+> taken from `data/scenarios_v1/` (Phase 3.1) and include the golden slot
+> records from Phase 3.1 Step 02. The replay generator reads the Phase 3.1
+> phone session format (`frames/`, `imu.csv`, `audio.wav`, `meta.json`) so
+> audio can be replayed on the same clock for Phase 5 and 5.1.
+
 ## What
 Infrastructure so every laptop experiment runs under phone-like constraints
 and every result can be compared with the phone later:
