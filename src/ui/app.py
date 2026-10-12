@@ -59,6 +59,7 @@ import src.vision
 importlib.reload(src.vision)
 from src.vision import process_video
 from src.video_memory import schema as video_schema
+from src.ui import video_memory_page
 
 # ── Constants ────────────────────────────────────────────────────────────────
 
@@ -115,7 +116,7 @@ with st.sidebar:
 
     page = st.radio(
         "Navigate",
-        ["📝 Add Memory", "❓ Ask Question", "🎬 Process Video"],
+        ["📝 Add Memory", "❓ Ask Question", "🎬 Process Video", "📼 Video memory"],
         label_visibility="collapsed",
     )
 
@@ -458,3 +459,8 @@ elif page == "🎬 Process Video":
                             st.error(f"Error generating answer: {e}")
             else:
                 st.error("Please enter a question.")
+
+# ── Page 4: Video memory (cheap-model pipeline) ──────────────────────────────
+
+elif page == "📼 Video memory":
+    video_memory_page.render()

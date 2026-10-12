@@ -69,7 +69,11 @@ Built using a **feature-based file structure**:
   - `schema.py`: Video memory tables in the same `data/memories.db` (`videos`, `frames`, `audio_segments`, `transcript_chunks`, `scene_records`, `video_texts` + `video_texts_fts`, `audio_windows`) and three vector tables (`image_vec` 512-d, `text_vec` 384-d, `audio_vec` 512-d). `init_db()` is idempotent; `delete_video()` removes a video and everything that belongs to it.
   - `db.py`: `connect()` (foreign keys on), `put_vector()` (float32 BLOB, size-checked) and `knn()` (loads a vector table into memory once, dot-product search). No SQLite extensions, so the same schema works on Android.
   - `models.py`: One dataclass per table.
-- `src/config.py`: Central Pydantic settings (`BaseSettings` backed by `.env` with `MEMORY_` prefix). Video memory settings: `MEMORY_VIDEO_DIR` (`data/videos`), `MEMORY_VIDEO_IMAGE_DIM` (512), `MEMORY_VIDEO_TEXT_DIM` (384), `MEMORY_VIDEO_AUDIO_DIM` (512).
+  - `capture.py`: `save_upload()` checks the file type and size, stores the clip as `data/videos/<video_id>/<video_id>.<ext>`, reads recording time, duration and GPS with ffmpeg (`read_metadata()`), refuses files that hold no video, and adds the `videos` row. ffmpeg comes from the `imageio-ffmpeg` package, so nothing is installed by hand.
+  - `repository.py`: `insert_video()`, `get_video()`.
+- `src/ui/video_memory_page.py`: The **📼 Video memory** page (upload a clip; confirmation with recording time and length).
+- `.streamlit/config.toml`: Streamlit's upload cap (500 MB), kept equal to `MEMORY_VIDEO_MAX_MB`.
+- `src/config.py`: Central Pydantic settings (`BaseSettings` backed by `.env` with `MEMORY_` prefix). Video memory settings: `MEMORY_VIDEO_DIR` (`data/videos`), `MEMORY_VIDEO_IMAGE_DIM` (512), `MEMORY_VIDEO_TEXT_DIM` (384), `MEMORY_VIDEO_AUDIO_DIM` (512), `MEMORY_VIDEO_MAX_MB` (500), `MEMORY_VIDEO_TYPES` (`["mp4","mov","m4v","avi"]`).
 - `data/memories.db`: Local embedded SQLite database with FTS5 search index.
 
 ## Quick Start

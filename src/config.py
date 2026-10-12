@@ -52,3 +52,5 @@ class Settings(BaseSettings):
     video_image_dim: int = 512
     video_text_dim: int = 384
     video_audio_dim: int = 512
+    video_max_mb: int = 500
+    video_types: list[str] = ["mp4", "mov", "m4v", "avi"]
