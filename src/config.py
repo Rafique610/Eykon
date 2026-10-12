@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -44,3 +46,9 @@ class Settings(BaseSettings):
     VLM_N_GPU_LAYERS: int = 0
     VLM_CONTEXT_SIZE: int = 2048
     VLM_USE_SHARED_GEMMA: bool = True
+
+    # Video memory (cheap-model pipeline, src/video_memory)
+    video_dir: Path = Path("data/videos")
+    video_image_dim: int = 512
+    video_text_dim: int = 384
+    video_audio_dim: int = 512

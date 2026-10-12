@@ -58,6 +58,7 @@ importlib.reload(src.vision.processor)
 import src.vision
 importlib.reload(src.vision)
 from src.vision import process_video
+from src.video_memory import schema as video_schema
 
 # ── Constants ────────────────────────────────────────────────────────────────
 
@@ -81,6 +82,7 @@ st.set_page_config(
 )
 
 init_db()
+video_schema.init_db()
 
 
 @st.cache_resource(show_spinner="Loading embedding model…")

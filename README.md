@@ -65,7 +65,11 @@ Built using a **feature-based file structure**:
   - `helpers.py`: Model health check utility (`check_model_available`, `get_model_status`).
 - `src/ui/`:
   - `app.py`: Two-page Streamlit UI (📝 Add Memory · ❓ Ask Question). Startup model check, sample data loader, graceful error handling. Sidebar shows live memory count, model status, and demo tools. Retrieved memories display match badges (`⚡ Common`, `🧠 Semantic`, `🔤 BM25`), Semantic Cosine score, BM25 score, and Fused RRF score.
-- `src/config.py`: Central Pydantic settings (`BaseSettings` backed by `.env` with `MEMORY_` prefix).
+- `src/video_memory/` (cheap-model video pipeline, storage layer so far):
+  - `schema.py`: Video memory tables in the same `data/memories.db` (`videos`, `frames`, `audio_segments`, `transcript_chunks`, `scene_records`, `video_texts` + `video_texts_fts`, `audio_windows`) and three vector tables (`image_vec` 512-d, `text_vec` 384-d, `audio_vec` 512-d). `init_db()` is idempotent; `delete_video()` removes a video and everything that belongs to it.
+  - `db.py`: `connect()` (foreign keys on), `put_vector()` (float32 BLOB, size-checked) and `knn()` (loads a vector table into memory once, dot-product search). No SQLite extensions, so the same schema works on Android.
+  - `models.py`: One dataclass per table.
+- `src/config.py`: Central Pydantic settings (`BaseSettings` backed by `.env` with `MEMORY_` prefix). Video memory settings: `MEMORY_VIDEO_DIR` (`data/videos`), `MEMORY_VIDEO_IMAGE_DIM` (512), `MEMORY_VIDEO_TEXT_DIM` (384), `MEMORY_VIDEO_AUDIO_DIM` (512).
 - `data/memories.db`: Local embedded SQLite database with FTS5 search index.
 
 ## Quick Start
@@ -108,6 +112,7 @@ task test-e2e     # One-command health check: DB, embedder, search, model
 task test         # pytest suite in tests/ (temporary databases only, never data/memories.db)
 task smoke        # One-line pipeline check against the real data/memories.db (was `task test`)
 task check-config # Verify resolved settings
+task check-video-db # Create the video memory tables if missing and list each with its row count
 ```
 
 #### 4. Inspect SQLite Database
