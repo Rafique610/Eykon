@@ -121,6 +121,15 @@ Rafique to save time.
   laptop and the test phones, are never committed or uploaded, and are described in the
   marks only by clothing.
 
+**12 October 2026 (later) — the person's check of the AI marks.** Rafique reviewed the
+marks of clips 1, 2 and 3 against the videos (19 of the 35 moments; clip 3 is a held-out
+clip). Result: no moment added, none removed, **no start or end time changed**; the
+wording of 7 descriptions was corrected (for example "small lit device" was a laptop).
+Those 19 lines now carry `marked_by = human`. Scores depend only on the times, so the
+first-run numbers are unchanged. Clips 4, 5 and 6 (16 moments) are still AI-marked only.
+Honest reading: the person agreed with the AI's times after seeing them, which is weaker
+than marking them independently first.
+
 ## 7. What we already know (before the comparison)
 
 From one real 3-second pan clip on the Pixel 9 Pro XL (12 October 2026, not part of the evaluation set):

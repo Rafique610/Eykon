@@ -49,7 +49,8 @@ object VideoFilter {
             db.endTransaction()
         }
 
-        val dropped = decisions.mapNotNull { it.second }.groupingBy { it }.eachCount()
+        val dropped = LinkedHashMap<String, Int>()
+        decisions.mapNotNull { it.second }.forEach { dropped[it] = (dropped[it] ?: 0) + 1 }
         val detail = if (dropped.isEmpty()) "" else dropped.entries.joinToString(", ", " (", ")") { "${it.key} ${it.value}" }
         Log.i(TAG, "filter $videoId: kept ${frames.size - dropped.values.sum()} of ${frames.size}$detail in $ms ms")
     }
