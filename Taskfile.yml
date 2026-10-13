@@ -126,6 +126,10 @@ tasks:
     desc: "Ahead of EYKO-19 — on the laptop, rank frames against typed phrases with MobileCLIP vectors and score against presence labels (give the frames folder, the presence csv and optionally a phone perception json)"
     cmd: uv run --with open_clip_torch python src/benchmarks/frame_search_probe.py {{.CLI_ARGS}}
 
+  eval-small-objects:
+    desc: "EYKO-32 — on the laptop, compare hand crops (MediaPipe Hands) with grid tiles for naming small objects, on EPIC-KITCHENS take / put events (give the epic100 folder, hand_landmarker.task and optionally an output json)"
+    cmd: uv run --with open_clip_torch --with mediapipe python src/benchmarks/small_objects_eval.py {{.CLI_ARGS}}
+
   golden-filters:
     desc: "EYKO-5 — write the frame-filter test pictures and OpenCV's reference numbers that the phone code is tested against"
     cmd: uv run python src/benchmarks/filters_golden.py
