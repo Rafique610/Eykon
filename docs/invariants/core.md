@@ -58,6 +58,7 @@ Bug fixes address root causes. Shortest working diff wins.
 
 - When porting features across phases (desktop → Android), derive decisions, parameters, and constraints directly from earlier phase implementations.
 - Keep Phase 1 constants (chunk size 256, overlap 40, FTS5 config) unchanged unless explicitly approved.
+- Retrieval on the phone is the laptop's retrieval, not a simpler one (13 October 2026): keyword search scored with BM25, dense vector search, the two lists fused with RRF (k = 60), the same pool and top-K sizes, and the later steps the laptop has (query expansion, re-ranking). Where the phone lacks a building block (its SQLite has fts4 without a `bm25()` function), build the same maths on the phone and check it against the laptop's numbers; do not drop the step.
 
 ## Destructive Operations & File Safety
 - **Never blindly overwrite JSON/data files:** Always read existing data, parse it, merge updates, and write back. Overwriting a file from an empty state is strictly prohibited unless explicitly requested.

@@ -18,5 +18,6 @@ object VideoPipeline {
         "scene" to VideoScene::run,
         "embed_images" to VideoEmbedImages::run,
         "embed_texts" to VideoEmbedTexts::run,
+        "link" to VideoLink::run,
     )
 }
