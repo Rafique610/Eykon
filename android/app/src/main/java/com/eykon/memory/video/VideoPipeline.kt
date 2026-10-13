@@ -17,5 +17,6 @@ object VideoPipeline {
         "dedup" to VideoDedup::run,
         "scene" to VideoScene::run,
         "embed_images" to VideoEmbedImages::run,
+        "embed_texts" to VideoEmbedTexts::run,
     )
 }

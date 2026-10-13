@@ -162,7 +162,7 @@ class VideoEmbedImagesTest {
 
     @Test
     fun theWholeJobStoresARealVectorForEveryKeptFrameWithTheRealModels() {
-        assumeTrue("models not on this phone", ObjectDetector.modelFile(context).exists() && ImageEmbedder.modelFile(context).exists())
+        assumeTrue("models not on this phone", ObjectDetector.modelFile(context).exists() && ImageEmbedder.modelFile(context).exists() && com.eykon.memory.ml.embedder.BgeEmbedder.modelFile(context).exists())
         addVideo("job")
         val jobs = VideoJobs { db }
         jobs.enqueue("job")

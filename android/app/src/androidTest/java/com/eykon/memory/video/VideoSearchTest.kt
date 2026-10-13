@@ -153,7 +153,7 @@ class VideoSearchTest {
         val phrases = (InstrumentationRegistry.getArguments().getString("phrases") ?: "a backpack|a laptop|a red chair|people laughing").split("|")
         assumeTrue(
             "models or ${clip.name} not on this phone",
-            clip.exists() && TextEmbedder.modelFile(context).exists() && ImageEmbedder.modelFile(context).exists() && ObjectDetector.modelFile(context).exists(),
+            clip.exists() && TextEmbedder.modelFile(context).exists() && ImageEmbedder.modelFile(context).exists() && ObjectDetector.modelFile(context).exists() && com.eykon.memory.ml.embedder.BgeEmbedder.modelFile(context).exists(),
         )
         val folder = File(root, "real").apply { mkdirs() }
         val copy = File(folder, "real.mp4").also { clip.copyTo(it, overwrite = true) }

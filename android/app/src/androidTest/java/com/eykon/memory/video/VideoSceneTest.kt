@@ -57,7 +57,7 @@ class VideoSceneTest {
     }
 
     private val testAssets get() = InstrumentationRegistry.getInstrumentation().context.assets
-    private val modelsAreOnThePhone get() = ObjectDetector.modelFile(context).exists() && ImageEmbedder.modelFile(context).exists()
+    private val modelsAreOnThePhone get() = ObjectDetector.modelFile(context).exists() && ImageEmbedder.modelFile(context).exists() && com.eykon.memory.ml.embedder.BgeEmbedder.modelFile(context).exists()
 
     private fun addVideo(videoId: String, copyFrom: (File) -> Unit, durationS: Double? = null): File {
         val folder = File(root, videoId).apply { mkdirs() }
