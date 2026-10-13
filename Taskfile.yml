@@ -94,6 +94,18 @@ tasks:
     desc: "EYKO-45 — score every keyframe method against the marked moments (give the phone results json files; needs PySceneDetect, fetched for this run)"
     cmd: uv run --with scenedetect python src/benchmarks/keyframe_eval.py {{.CLI_ARGS}}
 
+  tune-keyframes:
+    desc: "EYKO-45 — try threshold settings for our keyframe layers on the tuning clips (give the MobileCLIP onnx file and a phone results json)"
+    cmd: uv run --with scenedetect --with onnxruntime python src/benchmarks/keyframe_tune.py {{.CLI_ARGS}}
+
+  eval-keyframes-public:
+    desc: "EYKO-45 — the keyframe comparison on an outside dataset (give the clips folder, moments csv, MobileCLIP onnx file, cache folder and optional groups csv)"
+    cmd: uv run --with scenedetect --with onnxruntime python src/benchmarks/keyframe_public.py {{.CLI_ARGS}}
+
+  eval-keyframes-motion:
+    desc: "EYKO-45 — laptop trial of motion-paced keyframes against evenly spaced frames (give the clips folder, moments csv, cache folder and a comma-separated list of video names without .mp4)"
+    cmd: uv run python src/benchmarks/keyframe_motion.py {{.CLI_ARGS}}
+
   export-clip:
     desc: "EYKO-6 — export MobileCLIP-S2's image encoder to models/mobileclip_s2_image.onnx and check it (downloads about 2 GB of tools and weights; research-only licence)"
     cmd: uv run --with open_clip_torch --with onnx --with onnxruntime --with onnxscript python src/benchmarks/export_clip.py {{.CLI_ARGS}}
