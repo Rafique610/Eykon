@@ -4,6 +4,7 @@ import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.eykon.memory.video.FrameHit
 import com.eykon.memory.video.SavedVideo
 import com.eykon.memory.video.UploadException
 import com.eykon.memory.video.VideoCapture
@@ -24,12 +25,20 @@ data class VideoUiState(
     val saved: SavedVideo? = null,
     val errorMessage: String? = null,
     val videos: List<VideoWithJob> = emptyList(),
+    val query: String = "",
+    val isSearching: Boolean = false,
+    /** Null until a search has run; the phrase it ran for is [searchedFor]. */
+    val hits: List<FrameHit>? = null,
+    val searchedFor: String = "",
+    val searchMs: Long = 0,
+    val searchError: String? = null,
 )
 
 class VideoViewModel(
     private val capture: VideoCapture,
     private val repository: VideoRepository,
     private val startProcessing: () -> Unit,
+    private val searchFrames: (String) -> List<FrameHit>,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(VideoUiState())
@@ -58,6 +67,24 @@ class VideoViewModel(
         }
     }
 
+    fun onQueryChanged(text: String) = _uiState.update { it.copy(query = text) }
+
+    /** Find the stored frames that best match the typed phrase. */
+    fun onSearch() {
+        val text = _uiState.value.query.trim()
+        if (text.isEmpty() || _uiState.value.isSearching) return
+        _uiState.update { it.copy(isSearching = true, searchError = null) }
+        viewModelScope.launch {
+            try {
+                val start = System.nanoTime()
+                val hits = withContext(Dispatchers.Default) { searchFrames(text) }
+                _uiState.update { it.copy(isSearching = false, hits = hits, searchedFor = text, searchMs = (System.nanoTime() - start) / 1_000_000) }
+            } catch (e: Exception) {
+                _uiState.update { it.copy(isSearching = false, hits = null, searchError = e.message ?: "The search failed (${e.javaClass.simpleName}).") }
+            }
+        }
+    }
+
     /** Reload the list, and keep reloading once a second only while a job is still waiting or running. */
     private fun watchJobs() {
         if (watching?.isActive == true) return
@@ -72,11 +99,16 @@ class VideoViewModel(
     }
 
     companion object {
-        fun provideFactory(capture: VideoCapture, repository: VideoRepository, startProcessing: () -> Unit): ViewModelProvider.Factory =
+        fun provideFactory(
+            capture: VideoCapture,
+            repository: VideoRepository,
+            startProcessing: () -> Unit,
+            searchFrames: (String) -> List<FrameHit>,
+        ): ViewModelProvider.Factory =
             object : ViewModelProvider.Factory {
                 @Suppress("UNCHECKED_CAST")
                 override fun <T : ViewModel> create(modelClass: Class<T>): T =
-                    VideoViewModel(capture, repository, startProcessing) as T
+                    VideoViewModel(capture, repository, startProcessing, searchFrames) as T
             }
     }
 }

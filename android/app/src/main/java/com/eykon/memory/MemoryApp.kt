@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.eykon.memory.data.MemoryDatabase
 import com.eykon.memory.video.VideoJobs
+import com.eykon.memory.video.VideoPipeline
 import com.eykon.memory.video.VideoWorker
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -31,6 +32,7 @@ class MemoryApp : Application() {
         instance = this
         applicationScope.launch {
             videoJobs.requeueInterrupted() // jobs cut short when the app last stopped
+            videoJobs.requeueBehind(VideoPipeline.STAGES.last().first) // videos processed before newer stages existed
             kickVideoWorker()
         }
     }

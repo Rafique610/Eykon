@@ -61,6 +61,13 @@ class VideoJobs(private val db: () -> SupportSQLiteDatabase) {
     fun requeueInterrupted() =
         db().execSQL("UPDATE jobs SET status = 'queued', updated_at = ? WHERE status = 'running'", arrayOf(now()))
 
+    /**
+     * A job that finished before the pipeline grew stopped at an earlier stage than today's
+     * last one. Back in the queue, it runs only the stages it has not done yet.
+     */
+    fun requeueBehind(lastStage: String) =
+        db().execSQL("UPDATE jobs SET status = 'queued', updated_at = ? WHERE status = 'done' AND stage != ?", arrayOf(now(), lastStage))
+
     fun hasQueued(): Boolean =
         db().query("SELECT 1 FROM jobs WHERE status = 'queued' LIMIT 1").use { it.moveToFirst() }
 

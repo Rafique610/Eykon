@@ -74,7 +74,7 @@ object VideoScene {
             else -> parts.add(labels.joinToString(" and "))
         }
         if (p.people > 0) parts.add(if (p.people == 1) "1 person" else "${p.people} people")
-        p.place?.let { parts.add("in $it") }
+        p.place?.let { parts.add(if (it.startsWith("inside ")) it else "in $it") } // "inside a car", not "in inside a car"
         p.action?.let { parts.add(it) }
         return parts.joinToString(", ").ifEmpty { "nothing recognised" }
     }

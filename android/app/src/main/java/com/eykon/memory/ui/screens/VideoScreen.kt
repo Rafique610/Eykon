@@ -3,26 +3,37 @@ package com.eykon.memory.ui.screens
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import android.graphics.BitmapFactory
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.eykon.memory.ui.viewmodels.VideoViewModel
+import com.eykon.memory.video.FrameHit
 import com.eykon.memory.video.SavedVideo
 import com.eykon.memory.video.VideoPipeline
 import com.eykon.memory.video.VideoWithJob
@@ -111,6 +122,38 @@ fun VideoScreen(
             }
         }
         item {
+            Text("Find a moment", style = MaterialTheme.typography.titleMedium)
+            OutlinedTextField(
+                value = uiState.query,
+                onValueChange = viewModel::onQueryChanged,
+                label = { Text("What to look for, for example: a helmet") },
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+                keyboardActions = KeyboardActions(onSearch = { viewModel.onSearch() }),
+                modifier = Modifier.fillMaxWidth(),
+            )
+            Button(
+                onClick = viewModel::onSearch,
+                enabled = uiState.query.isNotBlank() && !uiState.isSearching,
+                modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
+            ) {
+                Text(if (uiState.isSearching) "Searching…" else "Search frames")
+            }
+        }
+        uiState.searchError?.let { message ->
+            item { MessageCard(message, MaterialTheme.colorScheme.errorContainer) }
+        }
+        uiState.hits?.let { hits ->
+            item {
+                Text(
+                    if (hits.isEmpty()) "No frames are stored yet. Add a video and wait for it to finish."
+                    else "Closest ${hits.size} frames for \"${uiState.searchedFor}\" (${uiState.searchMs} ms), best first",
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+            }
+            items(hits, key = { "hit-${it.frameId}" }) { hit -> HitRow(hit) }
+        }
+        item {
             Text(
                 if (uiState.videos.isEmpty()) "No videos yet." else "Saved videos (${uiState.videos.size})",
                 style = MaterialTheme.typography.titleMedium,
@@ -126,6 +169,24 @@ fun VideoScreen(
 private fun MessageCard(text: String, color: androidx.compose.ui.graphics.Color) {
     Card(colors = CardDefaults.cardColors(containerColor = color), modifier = Modifier.fillMaxWidth()) {
         Text(text, modifier = Modifier.padding(12.dp))
+    }
+}
+
+/** One found frame: the picture, when it was, how alike it is to the phrase, and its stored caption. */
+@Composable
+private fun HitRow(hit: FrameHit) {
+    val picture = remember(hit.file) { BitmapFactory.decodeFile(hit.file.absolutePath)?.asImageBitmap() }
+    Card(modifier = Modifier.fillMaxWidth()) {
+        Column(modifier = Modifier.padding(12.dp)) {
+            if (picture != null) {
+                Image(picture, contentDescription = hit.caption ?: "Video frame", contentScale = ContentScale.Fit, modifier = Modifier.fillMaxWidth().height(220.dp))
+            }
+            Text(
+                String.format(Locale.ENGLISH, "%s · at %.1f s · likeness %.3f", localTime(hit.recordedAt), hit.tS, hit.score),
+                fontWeight = FontWeight.SemiBold,
+            )
+            hit.caption?.let { Text("Stored caption: $it", style = MaterialTheme.typography.bodySmall) }
+        }
     }
 }
 

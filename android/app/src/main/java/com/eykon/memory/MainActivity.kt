@@ -13,6 +13,7 @@ import com.eykon.memory.ui.viewmodels.AskQuestionViewModel
 import com.eykon.memory.ui.viewmodels.VideoViewModel
 import com.eykon.memory.video.VideoCapture
 import com.eykon.memory.video.VideoRepository
+import com.eykon.memory.video.VideoSearch
 
 class MainActivity : ComponentActivity() {
 
@@ -31,7 +32,9 @@ class MainActivity : ComponentActivity() {
     private val videoViewModel: VideoViewModel by viewModels {
         val app = application as MemoryApp
         val repository = VideoRepository { app.database.openHelper.writableDatabase }
-        VideoViewModel.provideFactory(VideoCapture(applicationContext, repository, app.videoJobs), repository, app::kickVideoWorker)
+        VideoViewModel.provideFactory(
+            VideoCapture(applicationContext, repository, app.videoJobs), repository, app::kickVideoWorker,
+        ) { text -> VideoSearch.frames(app.database.openHelper.writableDatabase, text) }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

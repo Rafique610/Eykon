@@ -35,6 +35,11 @@ class VideoSceneCaptionTest {
     }
 
     @Test
+    fun aPlaceThatAlreadySaysInsideIsNotGivenASecondIn() {
+        assertEquals("car, 2 people, inside a car", VideoScene.buildCaption(Perception(listOf(thing("car", 0.8f)), null, "inside a car", 2)))
+    }
+
+    @Test
     fun peoplePlaceAndAction() {
         assertEquals("1 person, in an office, typing on a laptop", VideoScene.buildCaption(Perception(emptyList(), "typing on a laptop", "an office", 1)))
         assertEquals("laptop, 3 people, in a classroom, reading", VideoScene.buildCaption(Perception(listOf(thing("laptop", 0.8f)), "reading", "a classroom", 3)))
