@@ -176,7 +176,7 @@ class VideoSceneTest {
 
         val (status, stage, error) = db.query("SELECT status, stage, error FROM jobs WHERE video_id = 'job'").use { it.moveToFirst(); Triple(it.getString(0), it.getString(1), it.getString(2)) }
         assertEquals("job error: $error", "done", status)
-        assertEquals("scene", stage)
+        assertEquals(VideoPipeline.STAGES.last().first, stage)
         val kept = db.query("SELECT frame_no FROM frames WHERE video_id = 'job' AND kept = 1 ORDER BY t_s").use { c -> buildList { while (c.moveToNext()) add(c.getInt(0)) } }
         val written = records("job")
         assertEquals(kept, written.map { it.frameNo })
