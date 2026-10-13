@@ -192,7 +192,8 @@ class VideoDedupTest {
 
     @Test
     fun theWholeJobRunsAllThreeStagesWithTheRealModel() {
-        assumeTrue("model not on this phone", modelIsOnThePhone)
+        // the job now also runs the scene stage after dedup, which needs the detector
+        assumeTrue("models not on this phone", modelIsOnThePhone && com.eykon.memory.ml.vision.ObjectDetector.modelFile(context).exists())
         val folder = File(root, "job").apply { mkdirs() }
         val file = File(folder, "job.mp4")
         testAssets.open("test_clip_repeat.mp4").use { input -> file.outputStream().use { input.copyTo(it) } }

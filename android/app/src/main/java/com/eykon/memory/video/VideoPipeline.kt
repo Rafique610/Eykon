@@ -15,5 +15,6 @@ object VideoPipeline {
         "split" to VideoSplit::run,
         "filter" to VideoFilter::run,
         "dedup" to VideoDedup::run,
+        "scene" to VideoScene::run,
     )
 }
