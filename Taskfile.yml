@@ -138,6 +138,10 @@ tasks:
     desc: "EYKO-12 — fetch bge-small-en-v1.5's ONNX file for the phone (optional: where to put it), check it against the laptop's embedder, and write the vocabulary and reference numbers the phone tests use"
     cmd: uv run --with onnxruntime python -m src.benchmarks.export_bge {{.CLI_ARGS}}
 
+  crop-pairs:
+    desc: "EYKO-15 — compare crop vectors of same-object and different-object pairs and print the threshold with the fewest wrong calls (give the phone's object crops json and the identity csv)"
+    cmd: uv run python src/benchmarks/crop_pairs.py {{.CLI_ARGS}}
+
   golden-filters:
     desc: "EYKO-5 — write the frame-filter test pictures and OpenCV's reference numbers that the phone code is tested against"
     cmd: uv run python src/benchmarks/filters_golden.py

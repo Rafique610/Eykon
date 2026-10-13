@@ -11,7 +11,7 @@ object VideoSchema {
 
     val TABLES = listOf(
         "videos", "frames", "audio_segments", "transcript_chunks", "scene_records",
-        "video_texts", "video_texts_fts", "audio_windows", "image_vec", "text_vec", "audio_vec", "jobs",
+        "video_texts", "video_texts_fts", "audio_windows", "image_vec", "text_vec", "audio_vec", "jobs", "object_sightings",
     )
 
     private val STATEMENTS = listOf(
@@ -107,6 +107,22 @@ object VideoSchema {
         "CREATE TABLE IF NOT EXISTS image_vec (frame_id INTEGER PRIMARY KEY REFERENCES frames(id) ON DELETE CASCADE, embedding BLOB NOT NULL)",
         "CREATE TABLE IF NOT EXISTS text_vec (text_id INTEGER PRIMARY KEY REFERENCES video_texts(id) ON DELETE CASCADE, embedding BLOB NOT NULL)",
         "CREATE TABLE IF NOT EXISTS audio_vec (window_id INTEGER PRIMARY KEY REFERENCES audio_windows(id) ON DELETE CASCADE, embedding BLOB NOT NULL)",
+        // One row each time an object is seen. The newest sighting of the same object is the latest;
+        // the one it replaces keeps its row and says which sighting replaced it.
+        """
+        CREATE TABLE IF NOT EXISTS object_sightings (
+          id            INTEGER PRIMARY KEY,
+          label         TEXT NOT NULL,
+          frame_id      INTEGER NOT NULL REFERENCES frames(id) ON DELETE CASCADE,
+          video_id      TEXT NOT NULL REFERENCES videos(video_id) ON DELETE CASCADE,
+          seen_at       TEXT NOT NULL,
+          place         TEXT,
+          embedding     BLOB NOT NULL,
+          is_latest     INTEGER NOT NULL DEFAULT 1,
+          superseded_by INTEGER
+        )
+        """,
+        "CREATE INDEX IF NOT EXISTS object_sightings_label ON object_sightings(label, is_latest)",
         // One job per video. `stage` is the last stage that finished ('' at first).
         """
         CREATE TABLE IF NOT EXISTS jobs (

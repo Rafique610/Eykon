@@ -19,5 +19,6 @@ object VideoPipeline {
         "embed_images" to VideoEmbedImages::run,
         "embed_texts" to VideoEmbedTexts::run,
         "link" to VideoLink::run,
+        "latest" to VideoLatest::run,
     )
 }

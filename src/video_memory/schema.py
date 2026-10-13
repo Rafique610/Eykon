@@ -5,6 +5,7 @@ from src.video_memory import db
 TABLES = (
     "videos", "frames", "audio_segments", "transcript_chunks", "scene_records",
     "video_texts", "video_texts_fts", "audio_windows", "image_vec", "text_vec", "audio_vec",
+    "object_sightings",
 )
 
 DDL = """
@@ -42,7 +43,7 @@ CREATE TABLE IF NOT EXISTS transcript_chunks (
 );
 CREATE TABLE IF NOT EXISTS scene_records (
   frame_id INTEGER PRIMARY KEY REFERENCES frames(id) ON DELETE CASCADE,
-  objects TEXT NOT NULL,                   -- JSON list of {"label", "conf"}
+  objects TEXT NOT NULL,                   -- JSON list of {"label", "conf", "box": [left, top, right, bottom]}
   action TEXT, place TEXT, people INTEGER NOT NULL DEFAULT 0,
   caption TEXT NOT NULL,
   source TEXT NOT NULL CHECK (source IN ('A', 'B', 'C'))
@@ -74,6 +75,18 @@ CREATE TABLE IF NOT EXISTS audio_windows (
 CREATE TABLE IF NOT EXISTS image_vec (frame_id  INTEGER PRIMARY KEY REFERENCES frames(id)        ON DELETE CASCADE, embedding BLOB NOT NULL);
 CREATE TABLE IF NOT EXISTS text_vec  (text_id   INTEGER PRIMARY KEY REFERENCES video_texts(id)   ON DELETE CASCADE, embedding BLOB NOT NULL);
 CREATE TABLE IF NOT EXISTS audio_vec (window_id INTEGER PRIMARY KEY REFERENCES audio_windows(id) ON DELETE CASCADE, embedding BLOB NOT NULL);
+CREATE TABLE IF NOT EXISTS object_sightings (   -- one row each time an object is seen; the newest of the same object is the latest
+  id            INTEGER PRIMARY KEY,
+  label         TEXT NOT NULL,
+  frame_id      INTEGER NOT NULL REFERENCES frames(id) ON DELETE CASCADE,
+  video_id      TEXT NOT NULL REFERENCES videos(video_id) ON DELETE CASCADE,
+  seen_at       TEXT NOT NULL,             -- ISO 8601, UTC: the video's recording time plus the frame's seconds
+  place         TEXT,
+  embedding     BLOB NOT NULL,             -- the object's own crop as a float32 vector
+  is_latest     INTEGER NOT NULL DEFAULT 1,
+  superseded_by INTEGER                    -- the sighting that replaced this one, when is_latest = 0
+);
+CREATE INDEX IF NOT EXISTS object_sightings_label ON object_sightings(label, is_latest);
 """
 
 
