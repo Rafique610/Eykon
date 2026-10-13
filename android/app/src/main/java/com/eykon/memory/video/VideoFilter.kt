@@ -7,13 +7,17 @@ import java.io.File
 
 /**
  * Stage "filter" (card EYKO-5): drop useless frames with plain maths before any model runs.
+ * Frames are taken in slots of a few seconds and at most the sharpest frame of each slot is kept.
  * A dropped frame keeps its row and its file, with kept = 0 and the reason.
  */
 object VideoFilter {
 
     private const val TAG = "EykonVideo"
 
-    fun run(db: SupportSQLiteDatabase, videoId: String) {
+    fun run(db: SupportSQLiteDatabase, videoId: String) = run(db, videoId, FrameFilters.SLOT_FRAMES)
+
+    /** [slotFrames] = 1 checks every frame on its own, as this stage did before slots. */
+    fun run(db: SupportSQLiteDatabase, videoId: String, slotFrames: Int) {
         val videosDir = db.query("SELECT file_path FROM videos WHERE video_id = ?", arrayOf(videoId)).use { cursor ->
             if (!cursor.moveToFirst()) throw IllegalStateException("video $videoId is not in the database")
             File(cursor.getString(0)).parentFile?.parentFile ?: throw IllegalStateException("video file has no folder")
@@ -26,13 +30,13 @@ object VideoFilter {
         val thresholds = FrameFilters.Thresholds()
         val decisions = ArrayList<Pair<Long, String?>>(frames.size)
         var previousKept: Gray? = null
-        for ((id, frameNo, path) in frames) {
-            val gray = loadSmallGray(File(videosDir, path))
-            val reason = FrameFilters.check(previousKept, gray, thresholds)
-            if (reason == null) previousKept = gray
-            decisions.add(id to reason)
-            if (Log.isLoggable(TAG, Log.DEBUG)) {
-                Log.d(TAG, "filter $videoId frame $frameNo: ${reason ?: "kept"}")
+        for (slot in frames.chunked(slotFrames)) { // only one slot of pictures is in memory at a time
+            val grays = slot.map { loadSmallGray(File(videosDir, it.third)) }
+            val reasons = FrameFilters.pickSlot(previousKept, grays, thresholds)
+            reasons.indexOf(null).takeIf { it >= 0 }?.let { previousKept = grays[it] }
+            slot.forEachIndexed { i, (id, frameNo, _) ->
+                decisions.add(id to reasons[i])
+                if (Log.isLoggable(TAG, Log.DEBUG)) Log.d(TAG, "filter $videoId frame $frameNo: ${reasons[i] ?: "kept"}")
             }
         }
         val ms = (System.nanoTime() - start) / 1_000_000

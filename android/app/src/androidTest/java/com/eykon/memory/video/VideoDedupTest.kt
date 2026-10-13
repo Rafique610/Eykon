@@ -70,7 +70,7 @@ class VideoDedupTest {
             Video(videoId = videoId, filePath = file.absolutePath, recordedAt = "2026-10-12T16:00:00Z", createdAt = "2026-10-12T16:00:00Z", durationS = durationS),
         )
         VideoSplit.run(db, videoId)
-        VideoFilter.run(db, videoId)
+        VideoFilter.run(db, videoId, 1) // every frame checked on its own, so each scene of the short clip reaches dedup
         return folder
     }
 
@@ -206,8 +206,11 @@ class VideoDedupTest {
         val (status, stage, error) = db.query("SELECT status, stage, error FROM jobs WHERE video_id = 'job'").use { it.moveToFirst(); Triple(it.getString(0), it.getString(1), it.getString(2)) }
         assertEquals("job error: $error", "done", status)
         assertEquals(VideoPipeline.STAGES.last().first, stage)
-        // A and B are different pictures (the laptop measured cosine 0.72), so both stay
-        assertEquals(listOf(1, 4), kept("job"))
+        // A and B are different pictures (the laptop measured cosine 0.72), so both stay: the clip is
+        // A B A B, one second each, and the two slots (frames 1-9, 10-12) give one A and one B
+        val keptFrames = kept("job")
+        assertEquals(2, keptFrames.size)
+        assertTrue("kept $keptFrames", keptFrames[0] in setOf(1, 2, 3, 7, 8, 9) && keptFrames[1] in 10..12)
         assertEquals(2, VideoDedup.readVectors(File(folder, VideoDedup.VECTORS_FILE)).values.count { it.size == ImageEmbedder.DIMENSIONS })
     }
 }

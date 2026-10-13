@@ -72,8 +72,11 @@ class VideoFilterTest {
 
         val rows = decisions("still")
         assertEquals(15, rows.size)
-        assertEquals(Triple(1, 1, null), rows.first())
-        assertTrue(rows.drop(1).all { it.second == 0 && it.third == "still" })
+        // slots of 9 frames: the first slot keeps its sharpest frame, the best of the second slot is "still"
+        assertEquals(1, rows.count { it.second == 1 })
+        assertEquals(1, rows.take(FrameFilters.SLOT_FRAMES).count { it.second == 1 })
+        assertTrue(rows.filter { it.second == 0 }.all { it.third in setOf("less sharp", "still") })
+        assertEquals(1, rows.drop(FrameFilters.SLOT_FRAMES).count { it.third == "still" })
         // dropped frames keep their files: later cards and the panel need to see why they were dropped
         assertEquals(15, File(root, "still/frames").listFiles()!!.size)
     }
@@ -85,11 +88,22 @@ class VideoFilterTest {
 
         val rows = decisions("moving")
         assertEquals(30, rows.size)
-        assertEquals(1, rows.first().second) // the first good frame is always kept
+        assertTrue(rows.take(FrameFilters.SLOT_FRAMES).any { it.second == 1 }) // the first slot always gives a frame
+        rows.chunked(FrameFilters.SLOT_FRAMES).forEach { slot -> assertTrue(slot.count { it.second == 1 } <= 1) }
         rows.forEach { (frameNo, kept, reason) ->
             assertTrue("frame $frameNo", (kept == 1) == (reason == null))
-            assertTrue("frame $frameNo: $reason", reason == null || reason in setOf("dark", "bright", "blurry", "still"))
+            assertTrue("frame $frameNo: $reason", reason == null || reason in setOf("dark", "bright", "blurry", "still", "less sharp"))
         }
+    }
+
+    @Test
+    fun aSlotOfOneFrameChecksEveryFrameOnItsOwn() {
+        addAndSplit("test_clip_still.mp4", "still", 5.0)
+        VideoFilter.run(db, "still", 1)
+
+        val rows = decisions("still")
+        assertEquals(Triple(1, 1, null), rows.first())
+        assertTrue(rows.drop(1).all { it.second == 0 && it.third == "still" })
     }
 
     @Test

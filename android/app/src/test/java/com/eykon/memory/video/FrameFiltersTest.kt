@@ -104,4 +104,39 @@ class FrameFiltersTest {
         val tall = Gray(180, 320, wide.pixels.copyOf())
         assertNull(FrameFilters.check(wide, tall))
     }
+
+    // ── Slots: at most the sharpest frame of each is kept ───────────────────────
+
+    /** Noise with every second column copied from its neighbour: clearly less sharp than plain noise. */
+    private fun softer(gray: Gray) = Gray(gray.width, gray.height, IntArray(gray.pixels.size) { gray.pixels[if (it % 2 == 1) it - 1 else it] })
+
+    @Test
+    fun theSharpestFrameOfASlotIsKeptAndTheOthersAreLessSharp() {
+        val sharp = noise(1)
+        assertTrue(FrameFilters.laplacianVariance(softer(noise(2))) < FrameFilters.laplacianVariance(sharp))
+        assertEquals(listOf("less sharp", null, "less sharp"), FrameFilters.pickSlot(null, listOf(softer(noise(2)), sharp, softer(noise(3)))))
+    }
+
+    @Test
+    fun darkAndBrightFramesKeepTheirOwnReasonAndAreNeverPicked() {
+        assertEquals(listOf("dark", "bright", null), FrameFilters.pickSlot(null, listOf(flat(0), flat(255), noise(1))))
+        assertEquals(listOf("dark", "dark"), FrameFilters.pickSlot(null, listOf(flat(0), flat(0))))
+    }
+
+    @Test
+    fun aSlotThatShowsWhatWasLastKeptGivesNoFrame() {
+        val frame = noise(1)
+        assertEquals(listOf("still", "less sharp"), FrameFilters.pickSlot(frame, listOf(frame, softer(frame))))
+    }
+
+    @Test
+    fun aSlotWhoseBestFrameIsBlurryGivesNoFrame() =
+        assertEquals(listOf("blurry", "less sharp"), FrameFilters.pickSlot(null, listOf(flat(128), flat(128))))
+
+    @Test
+    fun aSlotOfOneFrameIsThePlainCheck() {
+        val frame = noise(1)
+        assertEquals(listOf(FrameFilters.check(frame, frame)), FrameFilters.pickSlot(frame, listOf(frame)))
+        assertEquals(listOf<String?>(null), FrameFilters.pickSlot(null, listOf(frame)))
+    }
 }

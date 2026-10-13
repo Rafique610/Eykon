@@ -20,6 +20,9 @@ object FrameFilters {
     const val SMALL_SIDE = 320 // the longer side after shrinking by a whole-number factor
     private const val BINS = 64
 
+    /** Frames per slot: 9 frames at 3 a second is 3 s, so at most about 20 kept frames a minute. */
+    const val SLOT_FRAMES = 9
+
     /** Starting values from the card. Tune them on real clips; they are not yet tuned. */
     data class Thresholds(
         val darkMax: Double = 25.0,
@@ -118,5 +121,28 @@ object FrameFilters {
             meanAbsDiff(previousKept, gray) < t.diffMin && histChange(previousKept, gray) < t.histMin
         ) return "still"
         return null
+    }
+
+    /**
+     * One slot of consecutive frames: the reason to drop each, with null for the one kept (if any).
+     * Only the sharpest frame that is neither dark nor bright can be kept; it still has to pass
+     * [check]. The others are "less sharp". Evenly spaced slots with the sharpest frame of each
+     * found as many moments as our older layers on outside video, with far fewer frames
+     * (docs/results/2026-10-13-keyframes-epic-kitchens.md). A slot of one frame is plain [check].
+     */
+    fun pickSlot(previousKept: Gray?, slot: List<Gray>, t: Thresholds = Thresholds()): List<String?> {
+        val reasons = slot.map { gray ->
+            val brightness = brightness(gray)
+            if (brightness < t.darkMax) "dark" else if (brightness > t.brightMin) "bright" else "less sharp"
+        }.toMutableList<String?>()
+        var best = -1
+        var bestSharpness = -1.0
+        for (i in slot.indices) {
+            if (reasons[i] != "less sharp") continue
+            val sharpness = laplacianVariance(slot[i])
+            if (sharpness > bestSharpness) { best = i; bestSharpness = sharpness }
+        }
+        if (best >= 0) reasons[best] = check(previousKept, slot[best], t)
+        return reasons
     }
 }
