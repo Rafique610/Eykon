@@ -55,7 +55,7 @@ private fun statusLabel(item: VideoWithJob): String {
         null -> "Saved, no job (added before the queue existed)"
         "queued" -> if (item.jobAttempts > 0) "Waiting to retry (attempt ${item.jobAttempts + 1})" else "Waiting in the queue"
         "running" -> "Processing: stage ${done + 1} of ${stages.size}"
-        "failed" -> "Failed after ${item.jobAttempts} attempts: ${item.jobError.orEmpty()}"
+        "failed" -> "Failed at stage ${done + 1} of ${stages.size} (${stages.getOrElse(done) { "?" }}) after ${item.jobAttempts} attempts: ${item.jobError.orEmpty()}"
         "done" -> when {
             item.video.status == "ready" -> "Ready to search"
             stages.isEmpty() -> "Job finished (no processing stages exist yet)"
@@ -64,6 +64,8 @@ private fun statusLabel(item: VideoWithJob): String {
         else -> item.jobStatus
     }
 }
+
+private fun count(n: Int, thing: String) = if (n == 1) "1 $thing" else "$n ${thing}s"
 
 private fun confirmation(saved: SavedVideo): String {
     val video = saved.video
@@ -110,6 +112,9 @@ fun VideoScreen(
         }
         if (uiState.isSaving) {
             item { CircularProgressIndicator() }
+        }
+        uiState.readyNotice?.let { notice ->
+            item { MessageCard(notice, MaterialTheme.colorScheme.primaryContainer) }
         }
         uiState.saved?.let { saved ->
             item {
@@ -160,7 +165,7 @@ fun VideoScreen(
             )
         }
         items(uiState.videos, key = { it.video.videoId }) { item ->
-            VideoRow(item)
+            VideoRow(item, onRetry = viewModel::onRetry)
         }
     }
 }
@@ -191,7 +196,7 @@ private fun HitRow(hit: FrameHit) {
 }
 
 @Composable
-private fun VideoRow(item: VideoWithJob) {
+private fun VideoRow(item: VideoWithJob, onRetry: (Long) -> Unit) {
     Card(modifier = Modifier.fillMaxWidth()) {
         Column(modifier = Modifier.padding(12.dp)) {
             Text(localTime(item.video.recordedAt), fontWeight = FontWeight.SemiBold)
@@ -199,6 +204,13 @@ private fun VideoRow(item: VideoWithJob) {
                 String.format(Locale.ENGLISH, "%.0f s · %s", item.video.durationS, statusLabel(item)),
                 style = MaterialTheme.typography.bodySmall,
             )
+            Text(
+                "${count(item.keptFrames, "frame")} kept · ${count(item.speechSegments, "speech segment")} · ${count(item.transcriptChunks, "transcript chunk")}",
+                style = MaterialTheme.typography.bodySmall,
+            )
+            if (item.jobStatus == "failed" && item.jobId != null) {
+                Button(onClick = { onRetry(item.jobId) }, modifier = Modifier.padding(top = 8.dp)) { Text("Retry") }
+            }
         }
     }
 }

@@ -55,6 +55,16 @@ class VideoJobs(private val db: () -> SupportSQLiteDatabase) {
             "UPDATE jobs SET status = ?, attempts = ?, error = ?, updated_at = ? WHERE id = ?",
             arrayOf(status, attempts, error, now(), job.id),
         )
+        if (status == "failed") db().execSQL("UPDATE videos SET status = 'failed' WHERE video_id = ?", arrayOf(job.videoId))
+    }
+
+    /**
+     * Give a failed job a fresh set of attempts. Its stage is kept, so it starts again at the
+     * stage that failed, not at the beginning.
+     */
+    fun retry(jobId: Long) {
+        db().execSQL("UPDATE videos SET status = 'processing' WHERE video_id = (SELECT video_id FROM jobs WHERE id = ? AND status = 'failed')", arrayOf(jobId))
+        db().execSQL("UPDATE jobs SET status = 'queued', attempts = 0, error = NULL, updated_at = ? WHERE id = ? AND status = 'failed'", arrayOf(now(), jobId))
     }
 
     /** A job still 'running' when the app starts was interrupted; put it back in the queue. */
@@ -65,8 +75,10 @@ class VideoJobs(private val db: () -> SupportSQLiteDatabase) {
      * A job that finished before the pipeline grew stopped at an earlier stage than today's
      * last one. Back in the queue, it runs only the stages it has not done yet.
      */
-    fun requeueBehind(lastStage: String) =
+    fun requeueBehind(lastStage: String) {
+        db().execSQL("UPDATE videos SET status = 'processing' WHERE video_id IN (SELECT video_id FROM jobs WHERE status = 'done' AND stage != ?)", arrayOf(lastStage))
         db().execSQL("UPDATE jobs SET status = 'queued', updated_at = ? WHERE status = 'done' AND stage != ?", arrayOf(now(), lastStage))
+    }
 
     fun hasQueued(): Boolean =
         db().query("SELECT 1 FROM jobs WHERE status = 'queued' LIMIT 1").use { it.moveToFirst() }

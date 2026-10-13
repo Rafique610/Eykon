@@ -74,6 +74,7 @@ class VideoSearchTest {
         VideoDedup.run(db, videoId) { along(next++) }
         VideoScene.run(db, videoId, "A") { f, _ -> Perception(emptyList(), null, null, 0, caption = "caption of ${f.name}") }
         VideoEmbedImages.run(db, videoId) { throw AssertionError("vectors are saved") }
+        VideoFinish.run(db, videoId) // only ready videos are searched
     }
 
     // ── The search's rules, with a stand-in for the text model ──────────────────

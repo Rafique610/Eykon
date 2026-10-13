@@ -20,5 +20,12 @@ object VideoPipeline {
         "embed_texts" to VideoEmbedTexts::run,
         "link" to VideoLink::run,
         "latest" to VideoLatest::run,
+        "finish" to VideoFinish::run,
     )
+}
+
+/** Stage "finish" (card EYKO-16): every stage before it worked, so the video may now be searched. */
+object VideoFinish {
+    fun run(db: SupportSQLiteDatabase, videoId: String) =
+        db.execSQL("UPDATE videos SET status = 'ready' WHERE video_id = ?", arrayOf(videoId))
 }

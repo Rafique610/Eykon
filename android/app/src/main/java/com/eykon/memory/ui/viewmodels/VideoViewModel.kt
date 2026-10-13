@@ -19,6 +19,10 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.time.Instant
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 data class VideoUiState(
     val isSaving: Boolean = false,
@@ -32,6 +36,8 @@ data class VideoUiState(
     val searchedFor: String = "",
     val searchMs: Long = 0,
     val searchError: String? = null,
+    /** "Your video from 7 Oct is ready to search.", shown once when a video finishes while the app is open. */
+    val readyNotice: String? = null,
 )
 
 class VideoViewModel(
@@ -39,12 +45,16 @@ class VideoViewModel(
     private val repository: VideoRepository,
     private val startProcessing: () -> Unit,
     private val searchFrames: (String) -> List<FrameHit>,
+    private val retryJob: (Long) -> Unit,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(VideoUiState())
     val uiState: StateFlow<VideoUiState> = _uiState.asStateFlow()
 
     private var watching: Job? = null
+
+    /** The ready videos already seen, so each one is announced once. Null until the list has been loaded once. */
+    private var knownReady: Set<String>? = null
 
     init {
         watchJobs()
@@ -85,13 +95,26 @@ class VideoViewModel(
         }
     }
 
+    /** Put a failed job back in the queue; it starts again at the stage that failed. */
+    fun onRetry(jobId: Long) {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) { retryJob(jobId) }
+            startProcessing()
+            watchJobs()
+        }
+    }
+
     /** Reload the list, and keep reloading once a second only while a job is still waiting or running. */
     private fun watchJobs() {
         if (watching?.isActive == true) return
         watching = viewModelScope.launch {
             do {
                 val videos = withContext(Dispatchers.IO) { repository.listWithJobs() }
-                _uiState.update { it.copy(videos = videos) }
+                val ready = videos.filter { it.video.status == "ready" }
+                val fresh = knownReady?.let { known -> ready.firstOrNull { it.video.videoId !in known } }
+                knownReady = ready.map { it.video.videoId }.toSet()
+                val notice = fresh?.let { "Your video from ${NOTICE_DATE.format(Instant.parse(it.video.recordedAt).atZone(ZoneId.systemDefault()))} is ready to search." }
+                _uiState.update { it.copy(videos = videos, readyNotice = notice ?: it.readyNotice) }
                 val busy = videos.any { it.jobStatus == "queued" || it.jobStatus == "running" }
                 if (busy) delay(1000)
             } while (busy)
@@ -99,16 +122,19 @@ class VideoViewModel(
     }
 
     companion object {
+        private val NOTICE_DATE = DateTimeFormatter.ofPattern("d MMM", Locale.ENGLISH)
+
         fun provideFactory(
             capture: VideoCapture,
             repository: VideoRepository,
             startProcessing: () -> Unit,
             searchFrames: (String) -> List<FrameHit>,
+            retryJob: (Long) -> Unit,
         ): ViewModelProvider.Factory =
             object : ViewModelProvider.Factory {
                 @Suppress("UNCHECKED_CAST")
                 override fun <T : ViewModel> create(modelClass: Class<T>): T =
-                    VideoViewModel(capture, repository, startProcessing, searchFrames) as T
+                    VideoViewModel(capture, repository, startProcessing, searchFrames, retryJob) as T
             }
     }
 }

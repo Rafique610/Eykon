@@ -34,7 +34,9 @@ class MainActivity : ComponentActivity() {
         val repository = VideoRepository { app.database.openHelper.writableDatabase }
         VideoViewModel.provideFactory(
             VideoCapture(applicationContext, repository, app.videoJobs), repository, app::kickVideoWorker,
-        ) { text -> VideoSearch.frames(app.database.openHelper.writableDatabase, text) }
+            { text -> VideoSearch.frames(app.database.openHelper.writableDatabase, text) },
+            app.videoJobs::retry,
+        )
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
