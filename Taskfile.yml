@@ -110,6 +110,22 @@ tasks:
     desc: "EYKO-6 — export MobileCLIP-S2's image encoder to models/mobileclip_s2_image.onnx and check it (downloads about 2 GB of tools and weights; research-only licence)"
     cmd: uv run --with open_clip_torch --with onnx --with onnxruntime --with onnxscript python src/benchmarks/export_clip.py {{.CLI_ARGS}}
 
+  pull-detector:
+    desc: "EYKO-9 — download the official YOLOX-Tiny ONNX file (Apache-2.0, 20 MB) into models/"
+    cmd: uv run python -c "import urllib.request; from src.config import Settings; s = Settings(); s.detector_model.parent.mkdir(exist_ok=True); urllib.request.urlretrieve(s.detector_url, s.detector_model); print(s.detector_model, s.detector_model.stat().st_size, 'bytes')"
+
+  golden-perception:
+    desc: "EYKO-9 — write the place / action prompt vectors the phone loads and the laptop's reference answer for the test picture (needs task pull-detector; fetches the MobileCLIP tools, research-only licence)"
+    cmd: uv run --with open_clip_torch --with onnxruntime python -m src.benchmarks.perception_golden
+
+  eval-perception:
+    desc: "EYKO-9 — score the phone's perception results against the hand labels (give perception_bench.json and the labels csv)"
+    cmd: uv run python src/benchmarks/perception_score.py {{.CLI_ARGS}}
+
+  probe-frame-search:
+    desc: "Ahead of EYKO-19 — on the laptop, rank frames against typed phrases with MobileCLIP vectors and score against presence labels (give the frames folder, the presence csv and optionally a phone perception json)"
+    cmd: uv run --with open_clip_torch python src/benchmarks/frame_search_probe.py {{.CLI_ARGS}}
+
   golden-filters:
     desc: "EYKO-5 — write the frame-filter test pictures and OpenCV's reference numbers that the phone code is tested against"
     cmd: uv run python src/benchmarks/filters_golden.py

@@ -52,7 +52,7 @@ and compared:
 
 | Option | What | Role |
 |---|---|---|
-| A | YOLOX-Nano (ONNX) + MobileCLIP prompts + hand-centred crop matching for small objects | Default, start here |
+| A | YOLOX-Tiny (ONNX) + MobileCLIP prompts + hand-centred crop matching for small objects | Default, start here |
 | B | Small clip action model | Only if A misses actions |
 | C | Small VLM caption (Gemma 4 E2B path in `src/vision/` is the reference) | Last resort and comparison baseline |
 
@@ -91,7 +91,7 @@ match; the phone code is its real home.
 | UI | Streamlit (lab), Jetpack Compose (phone) | in use |
 | Text embeddings | `BAAI/bge-small-en-v1.5` (384-dim) | in use |
 | Image embeddings | MobileCLIP-S2 image encoder as ONNX (512-dim). Weights under the Apple ML Research Model License: research and academic use only, never shipped in the app package | in use on the phone (EYKO-6) |
-| Detector | YOLOX-Nano, Apache-2.0, ONNX Runtime | decided (EYKO-9) |
+| Detector | YOLOX-Tiny, Apache-2.0, ONNX Runtime | on the phone (EYKO-9). Chosen over Nano on 13 October 2026: 18 against 4 of 32 everyday things in our frames, 244 against 102 ms per frame on the Pixel. Still misses about half, and phones most of all: `docs/results/2026-10-13-eyko-9-perception-option-a.md`, `docs/results/2026-10-13-frame-search-probe.md` |
 | Speech | faster-whisper small int8 = laptop baseline; phone engine (whisper.cpp tiny.en / base.en) measured at the phone gate | planned (EYKO-8) |
 | Sound embeddings | CLAP | optional, later (EYKO-13) |
 | LLM | Gemma 4 E2B-it via LiteRT-LM — optional answer layer | in use (text RAG) |

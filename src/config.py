@@ -54,3 +54,17 @@ class Settings(BaseSettings):
     video_audio_dim: int = 512
     video_max_mb: int = 500
     video_types: list[str] = ["mp4", "mov", "m4v", "avi"]
+
+    # Perception, Option A: detector + place / action prompts (the phone holds the same values in OptionA.kt)
+    detector_model: Path = Path("models/yolox_tiny.onnx")
+    detector_url: str = "https://github.com/Megvii-BaseDetection/YOLOX/releases/download/0.1.1rc0/yolox_tiny.onnx"
+    detector_conf: float = 0.35
+    scene_prompt_min: float = 0.30
+    scene_places: list[str] = [
+        "a kitchen", "a hallway", "a bedroom", "a living room", "an office",
+        "a classroom", "a street", "inside a car", "a shop",
+    ]
+    scene_actions: list[str] = [
+        "picking something up", "putting something down", "typing on a laptop", "cooking",
+        "walking", "talking to someone", "reading", "eating",
+    ]
