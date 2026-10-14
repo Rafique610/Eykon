@@ -87,10 +87,42 @@ Not a held-out result: a pointer for the next test. OWLv2 and OmDet-Turbo kept e
   matter for live video. The app works on recorded clips and already looks at one kept frame per
   3 s slot at 416 px; the detector is 244 ms of that on the Pixel, not the bottleneck.
 
+## Follow-up, same evening: OWL-ViT, the 8-bit OWLv2 file, and OWLv2 on the Pixel
+
+Same sets, phrases and minimum (0.1) as OWLv2; both added to the script before they ran.
+
+| Model | ours44 found | false | own50 found | false | ms / frame (laptop) | own50 at 0.4 (post hoc) |
+|---|---|---|---|---|---|---|
+| OWLv2 base (full precision) | 86 of 88 | 117 | 81 of 87 | 67 | 4664 | 71 \| 9 |
+| OWLv2 base, 8-bit ONNX (`Xenova/...` `model_quantized.onnx`, 155 MB) | 86 of 88 | 159 | 72 of 87 | 65 | 3141 | 55 \| 12 |
+| OWL-ViT base patch32 (Apache-2.0) | 54 of 88 | 82 | 32 of 87 | 33 | 686 | 16 \| 7 |
+
+- **OWL-ViT patch32 is out:** 7 times faster but names no keys (0 of 22) and no earbuds (0 of 13).
+- **The 8-bit file loses accuracy:** at 0.4 it finds 55 against 71 of our things; earbuds fall to
+  3 of 13 at the documented minimum (full precision 9).
+
+**On the Pixel 9 Pro XL** (`OwlPhoneBenchmarkTest`, the 8-bit file, onnxruntime-android 1.18.0,
+default CPU options, five of our frames already turned into the model's input on the laptop;
+raw output `detectors/pixel9proxl-owlv2-q8-2026-10-14.json`; battery 32.4 °C, 69 %):
+
+| Measure | Value |
+|---|---|
+| Loading the model | 1.5 s |
+| Model run per frame | 8.3 to 9.5 s (five frames) |
+| Native memory at peak | 4.9 GB |
+| Largest score difference from the laptop running the same file | 0.10 to 0.32 per frame |
+
+- About 9 s per kept frame means 1.5 to 2.5 minutes for a 75 s clip (10 to 16 kept frames),
+  in the background, with close to 5 GB of memory. Too heavy to run on every kept frame.
+- **The phone does not give the laptop's answer** on the same 8-bit file: "keys" on S1-01 at
+  16.5 s scores 0.53 on the laptop and 0.37 on the phone, so a 0.4 minimum would flip. Likely the
+  different 8-bit maths on ARM and x86 and the older runtime in the app (1.18.0); not looked into.
+  Any minimum must be set from phone runs, not laptop runs.
+
 ## Not done yet
 
-- A held-out check of the 0.4 minimum on the sealed clips (S1-03, S1-06) once more are labelled.
-- OWLv2 on the phone (8-bit ONNX): time per frame and memory on the Pixel.
-- OWL-ViT base patch32 (Apache-2.0, ONNX available): smaller input than OWLv2, likely much faster.
+- A held-out check of the 0.4 minimum on the sealed clips (S1-03, S1-06): waits for the user's
+  decision, because those clips are kept for the final test.
+- Why the phone's scores differ (runtime version, 8-bit kernels); the fp16 file (308 MB) as a check.
 - The "earbuds" phrase: the visible thing is the case; the phrase was fixed before the run.
 - YOLOX-Tiny's load time (77.8 s) includes importing the MobileCLIP tools; not its real load cost.

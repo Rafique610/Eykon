@@ -4,6 +4,7 @@ Only a winner is moved to the phone.
 
     task detector-bench -- run <model>     detect on both frame sets with one model, save its results
     task detector-bench -- score           one table for all models
+    task detector-bench -- phone           write the inputs for the Pixel's OwlPhoneBenchmarkTest
 
 Fixed before any model ran (14 October 2026):
   sets     ours44  the 44 frames the Pixel kept on 13 October (D:/eykon-cache/bench/vlm/frames, made by
@@ -16,6 +17,9 @@ Fixed before any model ran (14 October 2026):
            grounding_dino (all Apache-2.0): open vocabulary, asked for the set's things with the
            phrases in QUERY below. Not tried: YOLO11 / YOLO26 / YOLOE (AGPL-3.0) and YOLO-World
            (GPL-3.0), ruled out by the project's licence rule.
+           Added 14 October 2026 after the first five: owlvit (OWL-ViT base patch32, Apache-2.0) and
+           owlv2_q8 (the 8-bit ONNX copy of owlv2 in OWLV2_Q8, the file a phone would load), same
+           phrases, same minimum as owlv2
   minimum  each model's own documented example value, not tuned: in MIN below
   scoring  per thing: named when present (found) and named when absent (false), as in vlm_bench
   cost     ms per frame after loading, loading time and the process's peak memory, on this laptop's
@@ -42,11 +46,15 @@ COCO = {"phone": ["cell phone"], "laptop": ["laptop"], "chair": ["chair", "couch
 QUERY = {"phone": "a phone", "laptop": "a laptop", "chair": "a chair", "backpack": "a backpack", "car": "a car",
          "monitor": "a computer monitor", "papers": "papers", "table_tennis": "a table tennis table", "keys": "keys",
          "wallet": "a wallet", "glasses": "glasses", "earbuds": "earbuds", "pen": "a pen"}
-MIN = {"yolox_tiny": 0.35, "rfdetr_nano": 0.5, "owlv2": 0.1, "omdet_turbo": 0.3, "grounding_dino": 0.4}
+MIN = {"yolox_tiny": 0.35, "rfdetr_nano": 0.5, "owlv2": 0.1, "omdet_turbo": 0.3, "grounding_dino": 0.4,
+       "owlvit": 0.1, "owlv2_q8": 0.1}
+OWL = ("owlv2", "owlvit", "owlv2_q8")
+OWLV2_Q8 = ("Xenova/owlv2-base-patch16-ensemble", "onnx/model_quantized.onnx")  # the 8-bit ONNX file a phone would load
 FLOOR = 0.05  # OWLv2 and OmDet-Turbo keep every box above this, so `score` can also show stricter minimums
 STRICTER = (0.2, 0.4, 0.5, 0.6)
 HF = {"owlv2": "google/owlv2-base-patch16-ensemble", "omdet_turbo": "omlab/omdet-turbo-swin-tiny-hf",
-      "grounding_dino": "IDEA-Research/grounding-dino-tiny"}
+      "grounding_dino": "IDEA-Research/grounding-dino-tiny", "owlvit": "google/owlvit-base-patch32",
+      "owlv2_q8": "google/owlv2-base-patch16-ensemble"}
 
 
 def labelled(set_name: str) -> tuple[list[str], list[dict]]:
@@ -75,7 +83,10 @@ def detector(name: str):
     from PIL import Image
     from transformers import AutoModelForZeroShotObjectDetection, AutoProcessor
     processor = AutoProcessor.from_pretrained(HF[name])
-    model = AutoModelForZeroShotObjectDetection.from_pretrained(HF[name]).eval()
+    if name == "owlv2_q8":
+        model = onnx_owlv2()
+    else:
+        model = AutoModelForZeroShotObjectDetection.from_pretrained(HF[name]).eval()
 
     def run(image, things):
         picture = Image.fromarray(image[:, :, ::-1])
@@ -83,11 +94,11 @@ def detector(name: str):
         if name == "grounding_dino":
             inputs = processor(images=picture, text=". ".join(phrases) + ".", return_tensors="pt")
         else:
-            inputs = processor(images=picture, text=[phrases] if name == "owlv2" else phrases, return_tensors="pt")
+            inputs = processor(images=picture, text=[phrases] if name in OWL else phrases, return_tensors="pt")
         with torch.no_grad():
             outputs = model(**inputs)
         size = [picture.size[::-1]]
-        if name == "owlv2":
+        if name in OWL:
             result = processor.post_process_grounded_object_detection(outputs, threshold=FLOOR, target_sizes=size, text_labels=[phrases])[0]
         elif name == "omdet_turbo":
             result = processor.post_process_grounded_object_detection(outputs, text_labels=phrases, threshold=FLOOR, target_sizes=size)[0]
@@ -100,6 +111,21 @@ def detector(name: str):
                     best[t] = round(max(best.get(t, 0.0), conf), 3)
         return sorted(t for t, conf in best.items() if conf >= MIN[name]), best
     return run
+
+
+def onnx_owlv2():
+    """The 8-bit OWLv2 ONNX file behind the same call as the transformers model (processor unchanged)."""
+    import onnxruntime as ort
+    import torch
+    from huggingface_hub import hf_hub_download
+    from transformers.models.owlv2.modeling_owlv2 import Owlv2ObjectDetectionOutput
+    session = ort.InferenceSession(hf_hub_download(*OWLV2_Q8), providers=["CPUExecutionProvider"])
+
+    def model(input_ids, attention_mask, pixel_values):
+        logits, boxes = session.run(["logits", "pred_boxes"], {"input_ids": input_ids.numpy(), "attention_mask": attention_mask.numpy(),
+                                                               "pixel_values": pixel_values.numpy()})
+        return Owlv2ObjectDetectionOutput(logits=torch.from_numpy(logits), pred_boxes=torch.from_numpy(boxes))
+    return model
 
 
 def coco_things(classes: set[str], things: list[str]) -> list[str]:
@@ -161,5 +187,41 @@ def score() -> None:
     (OUT / "scores-2026-10-14.json").write_text(json.dumps(table, indent=1), encoding="utf-8")
 
 
+PHONE = ROOT / "phone"
+PHONE_FRAMES = ("s1-01_016.5", "s1-01_040.5", "s1-02_025.5", "s1-02_043.5", "s1-02_061.5")  # keys, pen, glasses, all four, earbuds
+
+
+def phone_inputs() -> None:
+    """Inputs for OwlPhoneBenchmarkTest: the 8-bit OWLv2 file, five own frames already turned into the
+    model's input (raw little-endian), the phrase tokens, and the laptop's best score per phrase to match."""
+    import shutil
+
+    import numpy as np
+    from huggingface_hub import hf_hub_download
+    from PIL import Image
+    from transformers import AutoProcessor
+    import onnxruntime as ort
+    things, _ = labelled("own50")
+    phrases = [QUERY[t] for t in things]
+    processor = AutoProcessor.from_pretrained(HF["owlv2_q8"])
+    model = hf_hub_download(*OWLV2_Q8)
+    session = ort.InferenceSession(model, providers=["CPUExecutionProvider"])
+    PHONE.mkdir(parents=True, exist_ok=True)
+    shutil.copy(model, PHONE / "owlv2_q8.onnx")
+    golden = {"phrases": phrases, "frames": {}}
+    for frame in PHONE_FRAMES:
+        inputs = processor(images=Image.open(SETS["own50"][0] / f"{frame}.jpg").convert("RGB"), text=[phrases], return_tensors="np")
+        feed = {"input_ids": inputs["input_ids"].astype(np.int64), "attention_mask": inputs["attention_mask"].astype(np.int64),
+                "pixel_values": inputs["pixel_values"].astype(np.float32)}
+        feed["pixel_values"].tofile(PHONE / f"{frame}.f32")
+        logits = session.run(["logits"], feed)[0][0]
+        golden["frames"][frame] = [round(float(x), 4) for x in 1 / (1 + np.exp(-logits.max(0)))]
+    feed["input_ids"].tofile(PHONE / "input_ids.i64")
+    feed["attention_mask"].tofile(PHONE / "attention_mask.i64")
+    golden["ids_shape"], golden["pixels_shape"] = list(feed["input_ids"].shape), list(feed["pixel_values"].shape)
+    (PHONE / "golden.json").write_text(json.dumps(golden, indent=1), encoding="utf-8")
+    print(PHONE, golden["ids_shape"], golden["pixels_shape"])
+
+
 if __name__ == "__main__":
-    {"run": lambda: run(sys.argv[2]), "score": score}[sys.argv[1]]()
+    {"run": lambda: run(sys.argv[2]), "score": score, "phone": phone_inputs}[sys.argv[1]]()
