@@ -13,8 +13,11 @@ import kotlin.math.floor
 import kotlin.math.max
 import kotlin.math.min
 
-/** One thing the detector found. [box] is left, top, right, bottom in the picture's own pixels. */
-data class Detection(val label: String, val conf: Float, val box: List<Float>)
+/**
+ * One thing a detector found. [box] is left, top, right, bottom in the picture's own pixels.
+ * [source] is "detector" (YOLOX-Tiny or D-FINE, every kept frame) or "owl" (OWLv2, picked frames only).
+ */
+data class Detection(val label: String, val conf: Float, val box: List<Float>, val source: String = "detector")
 
 /**
  * YOLOX-Tiny (Apache-2.0), the official ONNX file, run with ONNX Runtime on the CPU. It knows the

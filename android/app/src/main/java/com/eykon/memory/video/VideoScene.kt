@@ -3,7 +3,13 @@ package com.eykon.memory.video
 import android.util.Log
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.eykon.memory.MemoryApp
+import com.eykon.memory.ml.vision.Detection
+import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.float
+import kotlinx.serialization.json.jsonArray
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
 import kotlinx.serialization.json.buildJsonArray
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
@@ -62,11 +68,13 @@ object VideoScene {
     }
 
     /**
-     * Plain words from the fields, no model: up to three different things (surest first), then
-     * the people, the place and the action. What is unknown is left out.
+     * Plain words from the fields, no model: up to three different things (the user's own things
+     * from OWLv2 first, then surest first), then the people, the place and the action. What is
+     * unknown is left out.
      */
     fun buildCaption(p: Perception): String {
-        val labels = p.objects.sortedByDescending { it.conf }.map { it.label }.distinct().take(3)
+        val labels = p.objects.sortedWith(compareByDescending<Detection> { it.source == "owl" }.thenByDescending { it.conf })
+            .map { it.label }.distinct().take(3)
         val parts = ArrayList<String>()
         when (labels.size) {
             0 -> Unit
@@ -79,14 +87,24 @@ object VideoScene {
         return parts.joinToString(", ").ifEmpty { "nothing recognised" }
     }
 
-    /** The objects as JSON text: [{"label": ..., "conf": ..., "box": [left, top, right, bottom]}]. */
-    private fun objectsJson(p: Perception): String = buildJsonArray {
+    /** The objects as JSON text: [{"label": ..., "conf": ..., "box": [left, top, right, bottom], "source": ...}]. */
+    internal fun objectsJson(p: Perception): String = buildJsonArray {
         p.objects.forEach { found ->
             add(buildJsonObject {
                 put("label", found.label)
                 put("conf", found.conf)
                 put("box", buildJsonArray { found.box.forEach { add(JsonPrimitive(it)) } })
+                put("source", found.source)
             })
         }
     }.toString()
+
+    /** The reverse of [objectsJson]; rows written before "source" existed count as "detector". */
+    internal fun objectsFrom(json: String): List<Detection> = Json.parseToJsonElement(json).jsonArray.map { o ->
+        val thing = o.jsonObject
+        Detection(
+            thing["label"]!!.jsonPrimitive.content, thing["conf"]!!.jsonPrimitive.float,
+            thing["box"]!!.jsonArray.map { it.jsonPrimitive.float }, thing["source"]?.jsonPrimitive?.content ?: "detector",
+        )
+    }
 }

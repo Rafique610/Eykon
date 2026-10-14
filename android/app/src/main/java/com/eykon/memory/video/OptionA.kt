@@ -2,6 +2,7 @@ package com.eykon.memory.video
 
 import android.content.Context
 import android.graphics.BitmapFactory
+import com.eykon.memory.ml.vision.DfineDetector
 import com.eykon.memory.ml.vision.Detection
 import com.eykon.memory.ml.vision.ImageEmbedder
 import com.eykon.memory.ml.vision.ObjectDetector
@@ -26,9 +27,10 @@ data class Perception(
 )
 
 /**
- * Perception Option A (card EYKO-9): describe a frame without a language model. A small detector
- * lists the objects, and MobileCLIP scores a fixed list of place and action phrases against the
- * picture. Nothing is written to the database here.
+ * Perception Option A (card EYKO-9): describe a frame without a language model. Two detectors
+ * list the objects: YOLOX-Tiny (80 COCO things, also counts the people) and D-FINE S (365
+ * Objects365 things, card EYKO-32); MobileCLIP scores a fixed list of place and action phrases
+ * against the picture. Nothing is written to the database here.
  *
  * The phrases' vectors come from assets/scene_prompts.json, written on the laptop by
  * `task golden-perception` (the phone has no text encoder yet). Changing a phrase means
@@ -59,7 +61,8 @@ object OptionA {
     fun describe(context: Context, file: File, imageVector: FloatArray? = null): Perception {
         val bitmap = BitmapFactory.decodeFile(file.absolutePath) ?: throw IllegalStateException("picture ${file.name} cannot be read")
         try {
-            val detections = ObjectDetector.detect(context, bitmap, DETECTOR_CONF)
+            // D-FINE's "person" is left out: it called keys a person on our clips; YOLOX counts the people
+            val detections = merge(ObjectDetector.detect(context, bitmap, DETECTOR_CONF), DfineDetector.detect(context, bitmap).filter { it.label != "person" })
             val vector = imageVector ?: ImageEmbedder.embed(context, bitmap)
             val (places, actions) = prompts(context)
             return perception(detections, bestPrompt(vector, places, PROMPT_MIN), bestPrompt(vector, actions, PROMPT_MIN))
@@ -67,6 +70,10 @@ object OptionA {
             bitmap.recycle()
         }
     }
+
+    /** YOLOX's things, plus D-FINE's unless YOLOX already has the same name for the same place (overlap above 0.5). */
+    internal fun merge(yolox: List<Detection>, dfine: List<Detection>): List<Detection> =
+        yolox + dfine.filter { d -> yolox.none { it.label == d.label && ObjectDetector.overlap(it.box, d.box) > 0.5f } }
 
     /** People are counted, not listed: the objects list is for things. */
     internal fun perception(detections: List<Detection>, place: String?, action: String?): Perception =

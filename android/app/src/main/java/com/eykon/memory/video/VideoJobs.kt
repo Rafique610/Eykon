@@ -80,6 +80,12 @@ class VideoJobs(private val db: () -> SupportSQLiteDatabase) {
         db().execSQL("UPDATE jobs SET status = 'queued', updated_at = ? WHERE status = 'done' AND stage != ?", arrayOf(now(), lastStage))
     }
 
+    /** Every finished job back in the queue, to run again from the stage after [afterStage] (a changed middle stage). */
+    fun requeueAfter(afterStage: String) {
+        db().execSQL("UPDATE videos SET status = 'processing' WHERE video_id IN (SELECT video_id FROM jobs WHERE status = 'done')")
+        db().execSQL("UPDATE jobs SET status = 'queued', stage = ?, updated_at = ? WHERE status = 'done'", arrayOf(afterStage, now()))
+    }
+
     fun hasQueued(): Boolean =
         db().query("SELECT 1 FROM jobs WHERE status = 'queued' LIMIT 1").use { it.moveToFirst() }
 

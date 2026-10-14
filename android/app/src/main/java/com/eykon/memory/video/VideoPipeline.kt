@@ -16,12 +16,21 @@ object VideoPipeline {
         "filter" to VideoFilter::run,
         "dedup" to VideoDedup::run,
         "scene" to VideoScene::run,
+        "small_objects" to VideoSmallObjects::run,
         "embed_images" to VideoEmbedImages::run,
         "embed_texts" to VideoEmbedTexts::run,
         "link" to VideoLink::run,
         "latest" to VideoLatest::run,
         "finish" to VideoFinish::run,
     )
+
+    /**
+     * Raised when a stage in the middle changes what it writes. Videos finished under an older
+     * version run again from the stage after [REDO_AFTER] (2: D-FINE in "scene" and the new
+     * "small_objects", card EYKO-32).
+     */
+    const val VERSION = 2
+    const val REDO_AFTER = "dedup"
 }
 
 /** Stage "finish" (card EYKO-16): every stage before it worked, so the video may now be searched. */

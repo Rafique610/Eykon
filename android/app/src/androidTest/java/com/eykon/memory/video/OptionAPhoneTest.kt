@@ -76,7 +76,9 @@ class OptionAPhoneTest {
             val seen = OptionA.describe(context, file)
             val again = OptionA.describe(context, file, ImageEmbedder.embed(context, file))
 
-            assertEquals(golden["detections"]!!.jsonArray.map { it.jsonObject["label"]!!.jsonPrimitive.content }, seen.objects.map { it.label })
+            // YOLOX's things come first; D-FINE's extra ones (card EYKO-32) follow them
+            val yolox = golden["detections"]!!.jsonArray.map { it.jsonObject["label"]!!.jsonPrimitive.content }
+            assertEquals(yolox, seen.objects.take(yolox.size).map { it.label })
             assertEquals(0, seen.people)
             assertEquals(golden["scene"]!!.jsonObject["place"]!!.jsonPrimitive.content, seen.place)
             assertEquals(null, seen.caption)

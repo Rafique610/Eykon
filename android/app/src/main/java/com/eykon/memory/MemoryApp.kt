@@ -32,6 +32,11 @@ class MemoryApp : Application() {
         instance = this
         applicationScope.launch {
             videoJobs.requeueInterrupted() // jobs cut short when the app last stopped
+            val prefs = getSharedPreferences("video_pipeline", MODE_PRIVATE)
+            if (prefs.getInt("version", 1) < VideoPipeline.VERSION) { // a middle stage changed: redo finished videos once
+                videoJobs.requeueAfter(VideoPipeline.REDO_AFTER)
+                prefs.edit().putInt("version", VideoPipeline.VERSION).apply()
+            }
             videoJobs.requeueBehind(VideoPipeline.STAGES.last().first) // videos processed before newer stages existed
             kickVideoWorker()
         }
