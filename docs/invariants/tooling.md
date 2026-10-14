@@ -19,7 +19,11 @@ Rules for package managers, build tools, and paths.
 
 ## Licences
 
-- No AGPL dependencies (for example `ultralytics` / YOLO11). Check a model's and a library's licence before `uv add`, and write it in the card or step.
+- Check a model's and a library's licence before `uv add`, and write it in the card or step.
+- AGPL-3.0 (for example `ultralytics`: YOLO11, YOLO26, YOLOE) is allowed while the project is
+  academic only (decided by the user, 14 October 2026; it was "no AGPL" before). Mark every AGPL
+  model as such in results and cards. Shipping or publishing the app needs a new decision first:
+  release the whole source under AGPL, buy a licence, or swap to a permissively licensed model.
 - Prefer models with a phone-ready export (ONNX / TFLite) so the same file runs on the laptop and on Android.
 
 ## Task Runner — `Taskfile.yml`

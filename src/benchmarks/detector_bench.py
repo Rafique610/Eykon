@@ -20,6 +20,15 @@ Fixed before any model ran (14 October 2026):
            Added 14 October 2026 after the first five: owlvit (OWL-ViT base patch32, Apache-2.0) and
            owlv2_q8 (the 8-bit ONNX copy of owlv2 in OWLV2_Q8, the file a phone would load), same
            phrases, same minimum as owlv2
+           Added 14 October 2026 at the user's request, as a reference that can never ship:
+           yoloe_11s (YOLOE-11S, THU-MIG / Ultralytics, AGPL-3.0), run only with a one-off
+           `uv run --with ultralytics python -m src.benchmarks.detector_bench run yoloe_11s`;
+           ultralytics is not in pyproject.toml (the Taskfile has it since AGPL was allowed). Minimum: 0.25
+           Added later the same evening, after the user allowed AGPL while the project is academic only:
+           yolo11n, yolo26n (COCO), yolov8s_oiv7 (Open Images V7, 601 classes), yoloe_11s_pf (YOLOE's own
+           4585-class list), yoloe_11l (our phrases) - all Ultralytics, AGPL-3.0, minimum 0.25; and
+           dfine_s_obj365 / dfine_m_obj365 (D-FINE trained on Objects365, 365 classes, Apache-2.0,
+           minimum 0.5 as in its documentation). Class lists in VOCAB, fixed from the class names only
   minimum  each model's own documented example value, not tuned: in MIN below
   scoring  per thing: named when present (found) and named when absent (false), as in vlm_bench
   cost     ms per frame after loading, loading time and the process's peak memory, on this laptop's
@@ -47,7 +56,27 @@ QUERY = {"phone": "a phone", "laptop": "a laptop", "chair": "a chair", "backpack
          "monitor": "a computer monitor", "papers": "papers", "table_tennis": "a table tennis table", "keys": "keys",
          "wallet": "a wallet", "glasses": "glasses", "earbuds": "earbuds", "pen": "a pen"}
 MIN = {"yolox_tiny": 0.35, "rfdetr_nano": 0.5, "owlv2": 0.1, "omdet_turbo": 0.3, "grounding_dino": 0.4,
-       "owlvit": 0.1, "owlv2_q8": 0.1}
+       "owlvit": 0.1, "owlv2_q8": 0.1, "yoloe_11s": 0.25, "yoloe_11l": 0.25, "yolo11n": 0.25, "yolo26n": 0.25,
+       "yolov8s_oiv7": 0.25, "yoloe_11s_pf": 0.25, "dfine_s_obj365": 0.5, "dfine_m_obj365": 0.5}
+# Fixed lists (closed vocabularies): which of the model's own classes count as each thing, chosen from the class
+# names before any of these models saw a frame. A thing with no entry cannot be named by that model.
+VOCAB = {
+    "oiv7": {"phone": ["Mobile phone"], "laptop": ["Laptop"], "chair": ["Chair", "Couch"], "backpack": ["Backpack", "Handbag"],
+             "car": ["Car"], "monitor": ["Computer monitor", "Television"], "glasses": ["Glasses", "Sunglasses"],
+             "earbuds": ["Headphones"], "pen": ["Pen"]},
+    "lvis_pf": {"phone": ["phone", "smartphone", "iphone"], "laptop": ["laptop"],
+                "chair": ["chair", "armchair", "office chair", "computer chair", "swivel chair", "folding chair", "couch"],
+                "backpack": ["backpack", "bag", "handbag", "shoulder bag"], "car": ["car"],
+                "monitor": ["monitor", "computer monitor", "computer screen", "television", "screen"],
+                "papers": ["paper", "document", "notepaper"], "table_tennis": ["table tennis table", "table tennis"],
+                "keys": ["key"], "glasses": ["glasses", "sunglasses"], "earbuds": ["earphone"], "pen": ["pen", "fountain pen"]},
+    "o365": {"phone": ["Cell Phone"], "laptop": ["Laptop"], "chair": ["Chair", "Couch"], "backpack": ["Backpack", "Handbag/Satchel"],
+             "car": ["Car"], "monitor": ["Monitor/TV"], "papers": ["Notepaper"], "table_tennis": ["Table Tennis"], "keys": ["Key"],
+             "wallet": ["Wallet/Purse"], "glasses": ["Glasses"], "earbuds": ["earphone", "Head Phone"], "pen": ["Pen/Pencil"]},
+}
+ULTRALYTICS = {"yolo11n": ("yolo11n.pt", "coco"), "yolo26n": ("yolo26n.pt", "coco"), "yolov8s_oiv7": ("yolov8s-oiv7.pt", "oiv7"),
+               "yoloe_11s_pf": ("yoloe-11s-seg-pf.pt", "lvis_pf")}
+DFINE = {"dfine_s_obj365": "ustc-community/dfine-small-obj365", "dfine_m_obj365": "ustc-community/dfine-medium-obj365"}
 OWL = ("owlv2", "owlvit", "owlv2_q8")
 OWLV2_Q8 = ("Xenova/owlv2-base-patch16-ensemble", "onnx/model_quantized.onnx")  # the 8-bit ONNX file a phone would load
 FLOOR = 0.05  # OWLv2 and OmDet-Turbo keep every box above this, so `score` can also show stricter minimums
@@ -69,6 +98,43 @@ def detector(name: str):
         from src.benchmarks.perception_golden import detect
         session = ort.InferenceSession("models/yolox_tiny.onnx", providers=["CPUExecutionProvider"])
         return lambda image, things: (coco_things({d["label"] for d in detect(session, image, MIN[name])}, things), {})
+    if name in ULTRALYTICS:  # AGPL-3.0
+        from ultralytics import YOLO
+        weights, vocab = ULTRALYTICS[name]
+        model = YOLO(str(ROOT / weights))
+        return lambda image, things: named_from(model.names, model.predict(image, conf=FLOOR, verbose=False)[0].boxes, vocab, things, name)
+    if name in DFINE:
+        import torch
+        from PIL import Image
+        from transformers import AutoImageProcessor, AutoModelForObjectDetection
+        processor = AutoImageProcessor.from_pretrained(DFINE[name])
+        model = AutoModelForObjectDetection.from_pretrained(DFINE[name]).eval()
+
+        def run(image, things):
+            picture = Image.fromarray(image[:, :, ::-1])
+            with torch.no_grad():
+                outputs = model(**processor(images=picture, return_tensors="pt"))
+            found = processor.post_process_object_detection(outputs, threshold=FLOOR, target_sizes=[picture.size[::-1]])[0]
+            boxes = type("Boxes", (), {"cls": found["labels"], "conf": found["scores"]})
+            return named_from(model.config.id2label, boxes, "o365", things, name)
+        return run
+    if name in ("yoloe_11s", "yoloe_11l"):  # AGPL-3.0, asked for our phrases
+        from ultralytics import YOLOE
+        model = YOLOE(str(ROOT / f"{name.replace('_', '-')}-seg.pt"))
+        current: list[str] = []
+
+        def run(image, things):
+            if current != things:
+                phrases = [QUERY[t] for t in things]
+                model.set_classes(phrases, model.get_text_pe(phrases))
+                current[:] = things
+            found = model.predict(image, conf=FLOOR, verbose=False)[0].boxes
+            best = {}
+            for c, conf in zip(found.cls.tolist(), found.conf.tolist()):
+                t = things[int(c)]
+                best[t] = round(max(best.get(t, 0.0), conf), 3)
+            return sorted(t for t, conf in best.items() if conf >= MIN[name]), best
+        return run
     if name == "rfdetr_nano":
         from PIL import Image
         from rfdetr import RFDETRNano
@@ -126,6 +192,17 @@ def onnx_owlv2():
                                                                "pixel_values": pixel_values.numpy()})
         return Owlv2ObjectDetectionOutput(logits=torch.from_numpy(logits), pred_boxes=torch.from_numpy(boxes))
     return model
+
+
+def named_from(names, boxes, vocab: str, things: list[str], name: str) -> tuple[list[str], dict]:
+    """Closed vocabulary with scores: the best score per thing over the classes VOCAB (or COCO) lists for it."""
+    lists = COCO if vocab == "coco" else VOCAB[vocab]
+    best = {}
+    for c, conf in zip(boxes.cls.tolist(), boxes.conf.tolist()):
+        for t in things:
+            if names[int(c)] in lists.get(t, []):
+                best[t] = round(max(best.get(t, 0.0), conf), 3)
+    return sorted(t for t, conf in best.items() if conf >= MIN[name]), best
 
 
 def coco_things(classes: set[str], things: list[str]) -> list[str]:

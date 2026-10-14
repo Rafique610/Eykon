@@ -103,7 +103,7 @@ match; the phone code is its real home.
 | Package manager / tasks | `uv`, `Taskfile.yml` | in use |
 | Tests | pytest | decided (EYKO-30) |
 
-Rules: no AGPL dependencies; no ORM; every model must have a phone-ready form.
+Rules: AGPL allowed while academic only, re-decide before shipping (`docs/invariants/tooling.md`); no ORM; every model must have a phone-ready form.
 
 ## Folder Structure
 

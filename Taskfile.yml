@@ -136,7 +136,11 @@ tasks:
 
   detector-bench:
     desc: "EYKO-9 — on the laptop, compare YOLOX-Tiny with RF-DETR Nano and open-vocabulary detectors on our frames and own clips (run <model> | score)"
-    cmd: uv run --with open_clip_torch --with onnxruntime --with rfdetr python -m src.benchmarks.detector_bench {{.CLI_ARGS}}
+    cmd: uv run --with open_clip_torch --with onnxruntime --with rfdetr --with ultralytics python -m src.benchmarks.detector_bench {{.CLI_ARGS}}
+
+  detector-hybrid:
+    desc: "EYKO-32 — on the laptop, score D-FINE on every frame plus OWLv2 on frames picked by a cheap signal, from the saved detector-bench results"
+    cmd: uv run --with open_clip_torch python -m src.benchmarks.detector_hybrid
 
   export-clip-text:
     desc: "EYKO-19 — export MobileCLIP-S2's text encoder to ONNX for the phone (optional: where to write it), and write the tokenizer rules and reference numbers the phone tests use (research-only licence)"
@@ -209,3 +213,7 @@ tasks:
     env:
       PYTHONIOENCODING: utf-8
     cmd: uv run python src/benchmarks/cross_pipeline.py --experiment a6 --video data/a5_video_1.mp4 --frames 20
+
+  hybrid-phone:
+    desc: "EYKO-32 — write the Pixel inputs for the mixed detectors (inputs), then score the pulled phone result like the laptop (score)"
+    cmd: uv run --with open_clip_torch --with onnxruntime --with rfdetr python -m src.benchmarks.hybrid_phone {{.CLI_ARGS}}

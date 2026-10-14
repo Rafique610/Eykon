@@ -119,6 +119,136 @@ raw output `detectors/pixel9proxl-owlv2-q8-2026-10-14.json`; battery 32.4 °C, 6
   different 8-bit maths on ARM and x86 and the older runtime in the app (1.18.0); not looked into.
   Any minimum must be set from phone runs, not laptop runs.
 
+## Reference only: YOLOE-11S (AGPL-3.0, cannot ship)
+
+Run at the user's request to see what the AGPL option would have given. Laptop only, through a
+one-off `uv run --with ultralytics` (Ultralytics 8.4.177); not added to `pyproject.toml` or the
+Taskfile. Same sets and phrases; Ultralytics' default minimum 0.25, fixed before the run.
+
+| Model | ours44 found | false | own50 found | false | ms / frame (laptop) |
+|---|---|---|---|---|---|
+| YOLOX-Tiny (app) | 30 of 88 | 6 | 7 of 87 | 10 | 24 |
+| YOLOE-11S | 39 of 88 | 3 | 20 of 87 | 0 | 753 |
+| OWLv2 base | 86 of 88 | 117 | 81 of 87 | 67 | 4664 |
+
+Our own things for YOLOE-11S: keys 0 of 22, wallet 9 of 16, glasses 0 of 13, earbuds 1 of 13,
+pen 9 of 12, phone 1 of 11; no false alarms. Lower minimums (post hoc): 0.2 gives 25 of 87 with
+2 false. **It is very careful and misses most of our things**: on these clips it is far behind
+OWLv2 and would not be worth a licence even if one were bought.
+
+## Wider sweep after AGPL was allowed (academic only)
+
+The user allowed AGPL models while the project is academic (`docs/invariants/tooling.md`, changed
+14 October 2026). Same sets and scoring. Closed lists were matched to our things from the class
+names only, before any of these models saw a frame (`VOCAB` in the script). Minimum: Ultralytics'
+default 0.25; D-FINE's documented 0.5.
+
+| Model | Licence | Classes | ours44 found | false | own50 found | false | ms / frame (laptop) |
+|---|---|---|---|---|---|---|---|
+| YOLOX-Tiny (app) | Apache | 80 COCO | 30 of 88 | 6 | 7 of 87 | 10 | 24 |
+| YOLO11n | AGPL | 80 COCO | 31 | 13 | 8 | 10 | 54 |
+| YOLO26n | AGPL | 80 COCO | 30 | 10 | 8 | 4 | 49 |
+| YOLOv8s Open Images V7 | AGPL | 601 | 3 | 0 | 4 | 0 | 137 |
+| YOLOE-11S, its own 4585-class list | AGPL | 4585 | 45 | 21 | 9 | 13 | 216 |
+| YOLOE-11S, our phrases | AGPL | open | 39 | 3 | 20 | 0 | 753 |
+| YOLOE-11L, our phrases | AGPL | open | 39 | 1 | 44 | 6 | 544 |
+| **D-FINE S, Objects365** | **Apache** | 365 | 39 | 24 | 37 | 12 | 370 |
+| **D-FINE M, Objects365** | **Apache** | 365 | 48 | 26 | 42 | 11 | 654 |
+| OWLv2 base, our phrases | Apache | open | 86 | 117 | 81 | 67 | 4664 |
+
+Our own things (found of present, false alarms after the comma when not 0):
+
+| Model | keys /22 | wallet /16 | glasses /13 | earbuds /13 | pen /12 | phone /11 |
+|---|---|---|---|---|---|---|
+| YOLO11n / YOLO26n | 0 | 0 | 0 | 0 | 0 | 8, 10 / 8, 4 |
+| YOLOE-11L, our phrases | 13 | 10, 3 | 5, 1 | 4, 2 | 9 | 3 |
+| D-FINE S, Objects365 | 0 | 10 | 9 | 0 | 10 | 8, 12 |
+| D-FINE M, Objects365 | 0 | 12 | 11 | 0 | 10 | 9, 11 |
+| OWLv2 | 22, 18 | 16, 2 | 13, 1 | 9, 11 | 12, 21 | 9, 14 |
+
+- **The newer COCO models (YOLO11n, YOLO26n) change nothing for us:** same 80 objects, same
+  result as YOLOX-Tiny, about twice its laptop time.
+- **Big fixed lists help only when the list has our things and the model has seen them:**
+  Open Images V7 and YOLOE's own 4585-class list have "glasses", "key", "earphone" and "pen", but
+  name almost none of them in our frames (the glasses were called a "handkerchief").
+- **Objects365 (D-FINE) is the best closed-list option and it is Apache-2.0:** wallet, glasses and
+  pen without false alarms, at 0.37 s (S) per laptop frame, about 13 times faster than OWLv2. It
+  never named keys or the earbud case, and calls the wallet / earbud case a phone 11 to 12 times.
+- **YOLOE-11L is the best AGPL result:** keys 13 of 22, few false alarms, 0.54 s, but it is still
+  below OWLv2 on every one of our things.
+- **No single fast model covers all four objects.** OWLv2 does, at about 9 s per frame on the Pixel.
+
+## Mixing the two: D-FINE on every frame, OWLv2 only on picked frames
+
+`task detector-hybrid` (`src/benchmarks/detector_hybrid.py`), from the saved per-frame scores; no
+detector was run again. D-FINE S (Objects365) answers for everything except keys and earbuds; OWLv2
+answers for those. This split comes from the sweep above, so it is not held out. "Union" lets OWLv2
+also name D-FINE's things on the frames it sees. Pixel cost = share of frames OWLv2 sees x 13 kept
+frames per 75 s clip x 9 s (the Pixel's 8-bit time); D-FINE's own phone time is not measured yet.
+
+| Which frames OWLv2 sees | OWLv2 on | + Pixel s per clip | own50 found / false (OWLv2 min 0.1) | (min 0.4) | keys /22 (0.1) |
+|---|---|---|---|---|---|
+| None (D-FINE only) | 0 % | 0 | 37 / 12 | 37 / 12 | 0 |
+| Every third frame | 34 % | 40 | 48 / 20 | 44 / 12 | 7 |
+| D-FINE already sees a phone / key / earphone / wallet (score 0.1) | 82 % | 96 | 63 / 41 | 53 / 12 | 17 |
+| **MobileCLIP: top third by likeness to "keys" / "earbuds"** | 34 % | 40 | **53 / 18** | **50 / 12** | **13** |
+| All frames | 100 % | 117 | 68 / 41 | 58 / 12 | 22 |
+| All frames, union | 100 % | 117 | 81 / 68 | 71 / 16 | 22 |
+
+- **Picking by MobileCLIP beats a fixed every-third-frame budget at the same cost:** keys 13
+  against 7, all own things 53 against 48. The phone already stores this vector for every kept
+  frame, so the picking itself costs nothing extra.
+- **D-FINE as the picker does not save much:** it flags 82 % of frames (it sees "phones"
+  everywhere).
+- **Earbuds are the weak point:** OWLv2's earbud scores stay under 0.4, so at that minimum no mix
+  finds them; at 0.1 they come with false alarms.
+- **Cost:** with one frame in three sent to OWLv2, a 75 s clip takes about 40 s more on the Pixel
+  in the background. The app works on recorded clips, so this is processing time per clip, not a
+  frame rate.
+- Not measured: D-FINE's own time on the phone (laptop 0.37 s per frame); the phone's lower OWLv2
+  scores (see above) would change which minimum to use.
+
+## The mix on the Pixel (15 October 2026, 00:20)
+
+`HybridPhoneBenchmarkTest`: D-FINE S Objects365 (full precision ONNX, `onnx-community/dfine_s_obj365-ONNX`,
+42 MB) and the 8-bit OWLv2 on all 50 own frames on the Pixel 9 Pro XL, inputs prepared on the laptop
+(`task hybrid-phone -- inputs`), scored with the same rules (`task hybrid-phone -- score`). Raw
+output `detectors/pixel9proxl-hybrid-2026-10-15.json`, table `detectors/hybrid-pixel-2026-10-15.json`.
+Only the test package was installed; the app was not changed. Battery 32.7 °C at the start, 37.8 °C
+at the end (12 minutes).
+
+**D-FINE needed one setting:** onnxruntime-android 1.18.0 (the app's version) fails on D-FINE's
+`ScatterND` node with the default graph optimisation; with optimisation off it runs. The same file
+runs with default settings in onnxruntime 1.18.0 on the laptop, so it is a phone-side runtime issue.
+
+| Measure on the Pixel | D-FINE S | OWLv2 8-bit |
+|---|---|---|
+| Loading | 0.2 s | 1.4 s |
+| Per frame (median of 50) | 0.96 s | 13.3 s |
+| Same answers as the laptop running the same file | yes (largest difference 0.001) | no (up to 0.32) |
+| Native memory at peak (both loaded) | 5.2 GB | |
+
+Mixes, scored from the phone's own answers (own50: found of 87 / false of 213; keys of 22; added time
+for a 75 s clip with 13 kept frames, at the Pixel's medians):
+
+| OWLv2 sees | OWLv2 min | Found | False | Keys | Earbuds | Pixel s per clip |
+|---|---|---|---|---|---|---|
+| None (D-FINE only) | - | 37 | 12 | 0 | 0 | 12 |
+| Every third frame | 0.1 | 47 | 21 | 7 | 3 | 12 + 59 |
+| **MobileCLIP top third** | **0.1** | **53** | **16** | **13** | 3 | **12 + 59** |
+| **MobileCLIP top third** | **0.3** | **50** | **12** | **13** | 0 | **12 + 59** |
+| All frames | 0.3 | 58 | 13 | 21 | 0 | 12 + 173 |
+| All frames, union | 0.3 | 71 | 24 | 21 | 0 | 12 + 173 |
+
+- **On the phone the mix holds up:** D-FINE plus OWLv2 on the third of frames MobileCLIP picks finds
+  50 of 87 own things with the same 12 false alarms as D-FINE alone (13 more keys, no new false
+  alarms) at OWLv2 minimum 0.3; 53 with 16 false at 0.1. The minimums are chosen after seeing results.
+- **Cost:** about 71 s of background work for a 75 s clip (D-FINE 12 s, OWLv2 59 s), against about
+  3 s for today's YOLOX-Tiny step. Memory peaks at 5.2 GB with both models loaded.
+- **Earbuds:** the phone's OWLv2 scores for the earbud case stay below 0.3; only 3 of 13 at 0.1.
+- OWLv2 was slower here (13.3 s) than in the five-frame test (8.3 to 9.5 s); the phone was warmer
+  and ran D-FINE alongside.
+
 ## Not done yet
 
 - A held-out check of the 0.4 minimum on the sealed clips (S1-03, S1-06): waits for the user's
