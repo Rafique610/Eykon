@@ -134,6 +134,10 @@ tasks:
     desc: "EYKO-26 — on the laptop, caption the 44 kept frames with one small VLM and score all models against Option A (frames | run <model> | score)"
     cmd: uv run python -m src.benchmarks.vlm_bench {{.CLI_ARGS}}
 
+  detector-bench:
+    desc: "EYKO-9 — on the laptop, compare YOLOX-Tiny with RF-DETR Nano and open-vocabulary detectors on our frames and own clips (run <model> | score)"
+    cmd: uv run --with open_clip_torch --with onnxruntime --with rfdetr python -m src.benchmarks.detector_bench {{.CLI_ARGS}}
+
   export-clip-text:
     desc: "EYKO-19 — export MobileCLIP-S2's text encoder to ONNX for the phone (optional: where to write it), and write the tokenizer rules and reference numbers the phone tests use (research-only licence)"
     cmd: uv run --with open_clip_torch --with onnx --with onnxruntime --with onnxscript python src/benchmarks/export_clip_text.py {{.CLI_ARGS}}
