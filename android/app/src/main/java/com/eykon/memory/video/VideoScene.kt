@@ -32,6 +32,12 @@ object VideoScene {
     )
     private const val TAG = "EykonVideo"
 
+    /**
+     * Things a person carries and asks about ("where are my ...?"): card EYKO-32's own list, in the
+     * names YOLOX, D-FINE and OWLv2 give them. A caption always names these, so furniture cannot crowd them out.
+     */
+    val PERSONAL = setOf("keys", "earbuds", "wallet", "glasses", "pen", "cell phone", "remote", "watch", "earphone", "handbag", "umbrella")
+
     fun run(db: SupportSQLiteDatabase, videoId: String) = run(db, videoId, SCENE_OPTION, OPTIONS.getValue(SCENE_OPTION))
 
     /** [describe] is the option's function; tests pass their own. */
@@ -68,18 +74,19 @@ object VideoScene {
     }
 
     /**
-     * Plain words from the fields, no model: up to three different things (the user's own things
-     * from OWLv2 first, then surest first), then the people, the place and the action. What is
-     * unknown is left out.
+     * Plain words from the fields, no model: every personal thing seen (OWLv2's finds and
+     * [PERSONAL], surest first), then other things up to three in all (surest first), then the
+     * people, the place and the action. What is unknown is left out.
      */
     fun buildCaption(p: Perception): String {
-        val labels = p.objects.sortedWith(compareByDescending<Detection> { it.source == "owl" }.thenByDescending { it.conf })
-            .map { it.label }.distinct().take(3)
+        val names = p.objects.sortedByDescending { it.conf }.map { it.label to (it.source == "owl" || it.label in PERSONAL) }.distinctBy { it.first }
+        val personal = names.filter { it.second }.map { it.first }
+        val labels = personal + names.filterNot { it.second }.map { it.first }.take(maxOf(0, 3 - personal.size))
         val parts = ArrayList<String>()
         when (labels.size) {
             0 -> Unit
-            3 -> parts.add("${labels[0]}, ${labels[1]} and ${labels[2]}")
-            else -> parts.add(labels.joinToString(" and "))
+            1, 2 -> parts.add(labels.joinToString(" and "))
+            else -> parts.add("${labels.dropLast(1).joinToString(", ")} and ${labels.last()}")
         }
         if (p.people > 0) parts.add(if (p.people == 1) "1 person" else "${p.people} people")
         p.place?.let { parts.add(if (it.startsWith("inside ")) it else "in $it") } // "inside a car", not "in inside a car"

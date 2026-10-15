@@ -29,7 +29,7 @@ class SmallObjectsTest {
 
     @Test
     fun objects365NamesBecomePlainWords() {
-        assertEquals(listOf("wallet", "pen", "cell phone", "earphone"), listOf("Wallet/Purse", "Pen/Pencil", "Cell Phone", "earphone").map(DfineDetector::plain))
+        assertEquals(listOf("wallet", "pen", "cell phone", "earphone", "keys"), listOf("Wallet/Purse", "Pen/Pencil", "Cell Phone", "earphone", "Key").map(DfineDetector::plain))
     }
 
     @Test
@@ -63,6 +63,21 @@ class SmallObjectsTest {
     fun theUsersOwnThingsComeFirstInTheCaption() {
         val p = Perception(listOf(thing("desk", 0.9f), thing("cabinet", 0.8f), thing("whiteboard", 0.7f), thing("keys", 0.35f, source = "owl")), null, null, 0)
         assertEquals("keys, desk and cabinet", VideoScene.buildCaption(p))
+    }
+
+    @Test
+    fun personalThingsAreNeverCrowdedOutByFurniture() {
+        val p = Perception(listOf(thing("desk", 0.9f), thing("chair", 0.85f), thing("dining table", 0.8f), thing("glasses", 0.6f), thing("wallet", 0.55f), thing("cabinet", 0.5f)), null, null, 1)
+        assertEquals("glasses, wallet and desk, 1 person", VideoScene.buildCaption(p))
+        val many = Perception(listOf("keys", "wallet", "glasses", "pen").map { thing(it, 0.5f) } + thing("desk", 0.9f), null, null, 0)
+        assertEquals("keys, wallet, glasses and pen", VideoScene.buildCaption(many))
+    }
+
+    @Test
+    fun aVersionJumpRedoesFromTheEarliestChangedStage() {
+        assertEquals("dedup", VideoPipeline.redoAfter(1))
+        assertEquals("scene", VideoPipeline.redoAfter(2))
+        assertEquals(null, VideoPipeline.redoAfter(VideoPipeline.VERSION))
     }
 
     @Test
