@@ -52,7 +52,7 @@ and compared:
 
 | Option | What | Role |
 |---|---|---|
-| A | YOLOX-Tiny + D-FINE S Objects365 (ONNX) + MobileCLIP prompts; OWLv2 for the user's own small things on frames MobileCLIP picks (stage `small_objects`, EYKO-32) | Default, start here |
+| A | YOLOX-Tiny + D-FINE S Objects365 (ONNX) + MobileCLIP prompts; YOLOE-11L for the user's own small things (keys, earbuds) on every kept frame (stage `small_objects`, EYKO-32) | Default, start here |
 | B | Small clip action model | Only if A misses actions |
 | C | Small VLM caption (Gemma 4 E2B path in `src/vision/` is the reference) | Last resort and comparison baseline |
 
@@ -92,7 +92,7 @@ match; the phone code is its real home.
 | Text embeddings | `BAAI/bge-small-en-v1.5` (384-dim), MIT; on the phone as the repository's own ONNX file with a Kotlin WordPiece tokenizer | in use on the laptop; on the phone for video captions (EYKO-12). The phone's memory search still has no embedder switched on |
 | Image embeddings | MobileCLIP-S2 image encoder as ONNX (512-dim). Weights under the Apple ML Research Model License: research and academic use only, never shipped in the app package | in use on the phone (EYKO-6) |
 | Search by typed phrase | MobileCLIP-S2 text encoder as ONNX (254 MB, same licence as the image encoder) + CLIP tokenizer in Kotlin; nearest stored frame vectors | on the phone (core of EYKO-19); date range, latest-only and the question set are not built yet |
-| Detector | YOLOX-Tiny + D-FINE S Objects365 (both Apache-2.0) in the scene step; OWLv2 base 8-bit (Apache-2.0) on one kept frame in three for "keys" / "earbuds" | on the phone since 15 October 2026 (EYKO-32): `docs/results/2026-10-14-detectors-open-vocabulary.md`. D-FINE needs graph optimisation off on onnxruntime-android 1.18. Earlier, YOLOX-Tiny alone (EYKO-9). Chosen over Nano on 13 October 2026: 18 against 4 of 32 everyday things in our frames, 244 against 102 ms per frame on the Pixel. Still misses about half, and phones most of all: `docs/results/2026-10-13-eyko-9-perception-option-a.md`, `docs/results/2026-10-13-frame-search-probe.md` |
+| Detector | YOLOX-Tiny + D-FINE S Objects365 (both Apache-2.0) in the scene step; YOLOE-11L with a fixed six-word list (AGPL-3.0, academic use) on every kept frame for "keys" / "earbuds" | on the phone since 15 October 2026 (EYKO-32): `docs/results/2026-10-14-detectors-open-vocabulary.md`. D-FINE needs graph optimisation off on onnxruntime-android 1.18. OWLv2 (8-bit, MobileCLIP-picked frames) was used for half a day before YOLOE replaced it. Earlier, YOLOX-Tiny alone (EYKO-9). |
 | Speech | faster-whisper small int8 = laptop baseline; phone engine (whisper.cpp tiny.en / base.en) measured at the phone gate | planned (EYKO-8) |
 | Sound embeddings | CLAP | optional, later (EYKO-13) |
 | LLM | Gemma 4 E2B-it via LiteRT-LM — optional answer layer | in use (text RAG) |

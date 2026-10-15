@@ -126,8 +126,18 @@
    ]
   }
  ],
- "owl_best": {
-  "keys": 0.5462,
-  "earbuds": 0.0463
- }
+ "yoloe_best": {
+  "keys": 0.7475,
+  "wallet": 0.0079,
+  "glasses": 0.0041,
+  "earbuds": 0.0073,
+  "phone": 0.0244,
+  "pen": 0.0062
+ },
+ "yoloe_keys_box": [
+  267.3,
+  170.0,
+  313.0,
+  201.9
+ ]
 }

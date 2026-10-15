@@ -7,7 +7,8 @@ import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.eykon.memory.ml.vision.DfineDetector
-import com.eykon.memory.ml.vision.OwlDetector
+import com.eykon.memory.ml.vision.ObjectDetector
+import com.eykon.memory.ml.vision.YoloeDetector
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.float
 import kotlinx.serialization.json.jsonArray
@@ -20,7 +21,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 /**
- * D-FINE and OWLv2 with the real files on this phone, the picture prepared by the app's own code,
+ * D-FINE and YOLOE with the real files on this phone, the picture prepared by the app's own code,
  * against what the laptop's processors and the same ONNX files found (detector_golden.json, written
  * by `task phone-detector-assets`). Skipped when a model is not in the phone's models folder.
  */
@@ -46,15 +47,19 @@ class DetectorGoldenTest {
         }
     }
 
-    /** The phone's 8-bit maths gives lower OWLv2 scores than the laptop's (up to 0.32), so only "found or not" is checked. */
+    /** YOLOE runs in full precision: the phone's scores match the laptop's (0.000 apart on 50 own frames). */
     @Test
-    fun owlFindsTheKeysAndNoEarbuds() {
-        assumeTrue("OWLv2 not on this phone", OwlDetector.modelFile(context).exists())
-        val phone = try { OwlDetector.detect(context, picture()) } finally { OwlDetector.close() }
-        Log.i("EykonVideo", "OWLv2 parity: phone ${phone.map { "${it.label} %.3f".format(it.conf) }}, laptop ${golden["owl_best"]}")
+    fun yoloeFindsTheKeysLikeTheLaptop() {
+        assumeTrue("YOLOE not on this phone", YoloeDetector.modelFile(context).exists())
+        val laptop = golden["yoloe_best"]!!.jsonObject.mapValues { it.value.jsonPrimitive.float }
+        val (scores, found) = try {
+            YoloeDetector.bestScores(context, picture()) to YoloeDetector.detect(context, picture())
+        } finally { YoloeDetector.close() }
+        Log.i("EykonVideo", "YOLOE parity: phone $scores, laptop $laptop")
 
-        assertEquals(listOf("keys"), phone.map { it.label })
-        val box = phone.single().box
-        assertTrue("keys box $box should be near the middle of the desk", box[0] < 320f && box[2] > 280f && box[1] < 200f && box[3] > 160f)
+        laptop.forEach { (word, expected) -> assertEquals("$word score", expected, scores.getValue(word), 0.01f) }
+        assertEquals(listOf("keys"), found.map { it.label })
+        val box = golden["yoloe_keys_box"]!!.jsonArray.map { it.jsonPrimitive.float }
+        assertTrue("keys box ${found.single().box} against the laptop's $box", ObjectDetector.overlap(box, found.single().box) > 0.9f)
     }
 }

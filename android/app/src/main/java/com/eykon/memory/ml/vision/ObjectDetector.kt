@@ -15,7 +15,7 @@ import kotlin.math.min
 
 /**
  * One thing a detector found. [box] is left, top, right, bottom in the picture's own pixels.
- * [source] is "detector" (YOLOX-Tiny or D-FINE, every kept frame) or "owl" (OWLv2, picked frames only).
+ * [source] is "detector" (YOLOX-Tiny or D-FINE, stage "scene") or "own" (YOLOE, stage "small_objects").
  */
 data class Detection(val label: String, val conf: Float, val box: List<Float>, val source: String = "detector")
 

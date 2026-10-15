@@ -49,7 +49,7 @@ object DfineDetector {
         context.assets.open(LABELS_ASSET).bufferedReader().use { it.readText() },
     ).jsonArray.map { it.jsonPrimitive.content }.also { labels = it }
 
-    /** Objects365 names in plain words: the first of "Wallet/Purse", lower case; "Key" as OWLv2 says it, "keys". */
+    /** Objects365 names in plain words: the first of "Wallet/Purse", lower case; "Key" as YOLOE says it, "keys". */
     internal fun plain(name: String): String = name.substringBefore('/').trim().lowercase().let { if (it == "key") "keys" else it }
 
     /** Everything found with confidence of at least [minConf], surest first, with plain names. */

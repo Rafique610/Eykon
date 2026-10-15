@@ -34,7 +34,7 @@ object VideoScene {
 
     /**
      * Things a person carries and asks about ("where are my ...?"): card EYKO-32's own list, in the
-     * names YOLOX, D-FINE and OWLv2 give them. A caption always names these, so furniture cannot crowd them out.
+     * names YOLOX, D-FINE and YOLOE give them. A caption always names these, so furniture cannot crowd them out.
      */
     val PERSONAL = setOf("keys", "earbuds", "wallet", "glasses", "pen", "cell phone", "remote", "watch", "earphone", "handbag", "umbrella")
 
@@ -74,12 +74,12 @@ object VideoScene {
     }
 
     /**
-     * Plain words from the fields, no model: every personal thing seen (OWLv2's finds and
+     * Plain words from the fields, no model: every personal thing seen (YOLOE's finds and
      * [PERSONAL], surest first), then other things up to three in all (surest first), then the
      * people, the place and the action. What is unknown is left out.
      */
     fun buildCaption(p: Perception): String {
-        val names = p.objects.sortedByDescending { it.conf }.map { it.label to (it.source == "owl" || it.label in PERSONAL) }.distinctBy { it.first }
+        val names = p.objects.sortedByDescending { it.conf }.map { it.label to (it.source in VideoSmallObjects.SOURCES || it.label in PERSONAL) }.distinctBy { it.first }
         val personal = names.filter { it.second }.map { it.first }
         val labels = personal + names.filterNot { it.second }.map { it.first }.take(maxOf(0, 3 - personal.size))
         val parts = ArrayList<String>()

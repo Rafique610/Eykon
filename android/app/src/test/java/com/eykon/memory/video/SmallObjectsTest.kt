@@ -3,11 +3,11 @@ package com.eykon.memory.video
 import com.eykon.memory.ml.vision.Detection
 import com.eykon.memory.ml.vision.DfineDetector
 import com.eykon.memory.ml.vision.ImagePrep
-import com.eykon.memory.ml.vision.OwlDetector
+import com.eykon.memory.ml.vision.YoloeDetector
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
-/** The plain maths of D-FINE, OWLv2 and the "small_objects" stage (card EYKO-32). The models run in DetectorGoldenTest on a phone. */
+/** The plain maths of D-FINE, YOLOE and the "small_objects" stage (card EYKO-32). The models run in DetectorGoldenTest on a phone. */
 class SmallObjectsTest {
 
     private fun thing(label: String, conf: Float, box: List<Float> = listOf(0f, 0f, 10f, 10f), source: String = "detector") = Detection(label, conf, box, source)
@@ -20,11 +20,13 @@ class SmallObjectsTest {
     }
 
     @Test
-    fun paddingPutsThePictureTopLeftOnBlack() {
-        val white = 0xFFFFFFFF.toInt()
-        val planes = ImagePrep.rgbPlanes(IntArray(4 * 2) { white }, 4, 2, 4, padTo = 4)
-        assertEquals(1f, planes[0 * 4 + 1], 1e-6f) // row 0 is picture
-        assertEquals(0f, planes[3 * 4 + 1], 1e-6f) // row 3 is padding
+    fun yoloeCentresTheFrameOnGrey() {
+        val fit = YoloeDetector.fit(640, 360, 1f)
+        assertEquals(listOf(0, 140), listOf(fit.left, fit.top)) // Ultralytics' letterbox for our 640 x 360 frames
+        val planes = YoloeDetector.letterbox(IntArray(640 * 360) { 0xFFFF0000.toInt() }, 640, 360, fit)
+        val plane = 640 * 640
+        assertEquals(114f / 255f, planes[10 * 640 + 5], 1e-6f) // row 10 is grey padding
+        assertEquals(listOf(1f, 0f, 0f), listOf(planes[200 * 640 + 5], planes[plane + 200 * 640 + 5], planes[2 * plane + 200 * 640 + 5]))
     }
 
     @Test
@@ -43,13 +45,16 @@ class SmallObjectsTest {
     }
 
     @Test
-    fun owlGivesOneBoxPerPhraseInsideThePicture() {
-        val logits = arrayOf(floatArrayOf(2f, -9f), floatArrayOf(0f, -9f))
-        val boxes = arrayOf(floatArrayOf(0.5f, 0.5f, 0.25f, 0.25f), floatArrayOf(0.9f, 0.9f, 0.5f, 0.5f))
-        val found = OwlDetector.decode(logits, boxes, listOf("keys", "earbuds"), 640, 640, 360, 0.3f)
-        assertEquals(listOf("keys"), found.map { it.label })
-        assertEquals("owl", found[0].source)
-        assertEquals(listOf(240f, 240f, 400f, 360f), found[0].box) // bottom clipped to the picture
+    fun yoloeGivesTheWordsTheAppTakesWithBoxesInTheFrame() {
+        // two candidate boxes; words: keys, wallet, earbuds; the app takes keys and earbuds only
+        val rows = arrayOf(
+            floatArrayOf(300f, 100f), floatArrayOf(330f, 100f), floatArrayOf(40f, 10f), floatArrayOf(20f, 10f), // cx, cy, w, h
+            floatArrayOf(0.2f, 0.7f), floatArrayOf(0.9f, 0.1f), floatArrayOf(0.1f, 0.2f), // keys, wallet, earbuds
+        )
+        val found = YoloeDetector.decode(rows, listOf("keys", "wallet", "earbuds"), setOf("keys", "earbuds"), YoloeDetector.fit(640, 360, 1f), 640, 360, 0.25f)
+        assertEquals(listOf("keys"), found.map { it.label }) // wallet is D-FINE's, earbuds too unsure
+        assertEquals("own", found[0].source)
+        assertEquals(listOf(95f, 0f, 105f, 0f), found[0].box) // box above the picture clipped to its top edge
     }
 
     @Test
@@ -61,7 +66,7 @@ class SmallObjectsTest {
 
     @Test
     fun theUsersOwnThingsComeFirstInTheCaption() {
-        val p = Perception(listOf(thing("desk", 0.9f), thing("cabinet", 0.8f), thing("whiteboard", 0.7f), thing("keys", 0.35f, source = "owl")), null, null, 0)
+        val p = Perception(listOf(thing("desk", 0.9f), thing("cabinet", 0.8f), thing("whiteboard", 0.7f), thing("keys", 0.35f, source = "own")), null, null, 0)
         assertEquals("keys, desk and cabinet", VideoScene.buildCaption(p))
     }
 
@@ -77,21 +82,14 @@ class SmallObjectsTest {
     fun aVersionJumpRedoesFromTheEarliestChangedStage() {
         assertEquals("dedup", VideoPipeline.redoAfter(1))
         assertEquals("scene", VideoPipeline.redoAfter(2))
+        assertEquals("scene", VideoPipeline.redoAfter(3))
         assertEquals(null, VideoPipeline.redoAfter(VideoPipeline.VERSION))
     }
 
     @Test
     fun objectsSurviveTheDatabaseText() {
-        val p = Perception(listOf(thing("keys", 0.4f, source = "owl"), thing("chair", 0.7f)), null, null, 0)
+        val p = Perception(listOf(thing("keys", 0.4f, source = "own"), thing("chair", 0.7f)), null, null, 0)
         assertEquals(p.objects, VideoScene.objectsFrom(VideoScene.objectsJson(p)))
         assertEquals("detector", VideoScene.objectsFrom("""[{"label":"cup","conf":0.5,"box":[0,0,1,1]}]""").single().source)
-    }
-
-    @Test
-    fun oneFrameInThreeIsPickedByLikeness() {
-        val frames = (1L..6L).toList()
-        val vectors = frames.associateWith { floatArrayOf(it.toFloat(), 0f) } + (7L to floatArrayOf(0f, 9f))
-        assertEquals(setOf(6L, 5L), VideoSmallObjects.picked(frames, vectors, listOf(floatArrayOf(1f, 0f))))
-        assertEquals(setOf(1L), VideoSmallObjects.picked(listOf(1L), emptyMap(), listOf(floatArrayOf(1f, 0f))))
     }
 }
