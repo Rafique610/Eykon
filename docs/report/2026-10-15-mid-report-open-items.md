@@ -185,3 +185,41 @@ the repository.
 
 The other rows (Gemma 4 E2B on LiteRT-LM; Room + FTS4 with BLOB vectors; cheap filters, sharpest frame
 per 3 s slot, dHash and MobileCLIP dedup; L0 to L3 experiment) agree with the repository.
+
+---
+
+## Round 2 (15 October 2026, afternoon)
+
+### Energy figure: use about 52 J, or re-measure
+- 58.56 J is typed in by hand in `scratch/generate_comparison_graphs.py` (`energy_vals = [6.72, 58.56]`);
+  no raw Infinix log in the repository produces it.
+- The same chart's Pixel value follows power × warm query time (`scratch/profile_device_kpis.py`:
+  energy = average power × inference seconds): 1.42 W × 4.7 s ≈ 6.7 J, matching its 6.72 J.
+- The same formula for the Infinix: 4.68 W × 11.1 s = **51.9 J (14.4 mWh)**. 58.56 J would need 12.5 s
+  or 5.28 W; neither appears anywhere.
+- Recommendation: report **≈ 52 J (4.68 W × 11.1 s warm query)** with a footnote that the Infinix raw
+  energy log was not kept, unless someone has the original run output. A 5-minute re-run with
+  `scratch/endurance_test_infinix.py` would settle it.
+
+### "Hybrid": recommend offline only
+- The design says "nothing leaves the device at runtime" and "zero network calls at runtime"; the
+  privacy argument and the airplane-mode acceptance test rest on it.
+- Nothing online is built and no card covers it, so UC-09, FR-22 and NFR-14 promise a feature the plan
+  never delivers.
+- Suggested wording: "Eykon is offline only. An optional online mode for non-sensitive questions is
+  future work, outside the FYP." Move UC-09, FR-22 and NFR-14 to Future Work. Team's call.
+
+### Hit@5 target: tie the phone to the laptop
+- Team rule (phone retrieval parity): phone search must equal the laptop's (BM25 + dense + RRF + query
+  expansion + rerank). Target: **phone Hit@5 within one question of the laptop's 93.3 %** on the same
+  499-memory, 30-question benchmark, in practice **≥ 90 %**.
+- Keep **≥ 80 %** only as the floor for the new video questions (EYKO-33), which have no baseline yet.
+
+### Still for the team
+Proposal defence date and meeting minutes; today's demo outcome; submission date and Turnitin rule;
+co-supervisor; owners and FYP-II dates in the Gantt. Labels: as far as the repository shows, nobody has
+checked the AI-made labels (all still `marked_by = ai`).
+
+### "Decided earlier" table
+Matches the repository: 219 tests (14 Python, 102 JVM, 103 instrumented), 56 commits before this one,
+detection YOLOX-Tiny + D-FINE S + YOLOE-11L.
