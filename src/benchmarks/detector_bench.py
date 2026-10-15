@@ -233,6 +233,8 @@ def score() -> None:
     table = {}
     for path in sorted(ROOT.glob("*.json")):
         result = json.loads(path.read_text(encoding="utf-8"))
+        if "load_s" not in result:  # phone results and helper files share the folder
+            continue
         row = {"load_s": result["load_s"], "peak_mb": result["peak_mb"]}
         times = []
         for set_name, frames in result["sets"].items():

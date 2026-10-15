@@ -221,3 +221,7 @@ tasks:
   phone-detector-assets:
     desc: "EYKO-32 — write the app's D-FINE labels and OWLv2 phrases, and the laptop answer the phone's detector test must match (needs task hybrid-phone -- inputs)"
     cmd: uv run --with open_clip_torch --with onnxruntime --with rfdetr python -m src.benchmarks.phone_detector_assets
+
+  yoloe-phone:
+    desc: "EYKO-32 — YOLOE-11L (AGPL, academic) on the Pixel: export and write inputs (inputs), then score the pulled phone result (score)"
+    cmd: uv run --with ultralytics --with onnx --with onnxslim --with onnxruntime python -m src.benchmarks.yoloe_phone {{.CLI_ARGS}}

@@ -249,6 +249,42 @@ for a 75 s clip with 13 kept frames, at the Pixel's medians):
 - OWLv2 was slower here (13.3 s) than in the five-frame test (8.3 to 9.5 s); the phone was warmer
   and ran D-FINE alongside.
 
+## YOLOE-11L on the Pixel (15 October 2026, 09:20)
+
+Asked because the chart suggested YOLOE-11L (AGPL-3.0, allowed while academic) matches the mix at a
+fraction of the time. `task yoloe-phone -- inputs | score`, `YoloePhoneBenchmarkTest` (test package
+only; the app was not changed). Word list fixed to the six own50 phrases, exported by Ultralytics
+8.4.177 to ONNX (640 x 640, 106 MB, full precision). Raw output
+`detectors/pixel9proxl-yoloe11l-2026-10-15.json`. Battery 31.8 → 35.9 °C over 2 minutes.
+
+- The exported file needs the full 640 x 640 square; the laptop benchmark ran YOLOE on 640 x 384, so
+  per-frame scores move by up to 0.37. Overall it is the same or better: 48 of 87, 6 false at 0.25
+  (the benchmark run: 44, 6).
+- **Pixel: 2.34 s per frame (median; worst 3.4 s), 0.4 s to load, 570 MB native memory, exactly the
+  laptop's scores (difference 0.000)**, against OWLv2 8-bit at 13.3 s, 5 GB and up to 0.32 off.
+
+Combinations, scored from the Pixel's own answers (D-FINE 0.5, OWLv2 0.3, YOLOE 0.25; time for a 75 s
+clip with 13 kept frames at the Pixel's medians):
+
+| Setup | Found of 87 | False of 213 | Keys /22 | Wallet /16 | Glasses /13 | Earbuds /13 | Pen /12 | Pixel s per clip |
+|---|---|---|---|---|---|---|---|---|
+| D-FINE only | 37 | 12 | 0 | 10 | 9 | 0 | 10 | 12 |
+| D-FINE + OWLv2 on MobileCLIP's third (in the app) | 50 | 12 | 13 | 10 | 9 | 0 | 10 | 70 |
+| YOLOE-11L alone, every frame | 48 | 6 | 13 | 10 | 8 | 5 | 9 | 30 |
+| D-FINE + YOLOE on MobileCLIP's third | 47 | 12 | 10 | 10 | 9 | 0 | 10 | 23 |
+| **D-FINE + YOLOE every frame (YOLOE for keys, earbuds)** | **55** | 15 | 13 | 10 | 9 | 5 | 10 | **43** |
+| D-FINE + YOLOE every frame, either names anything | 57 | 18 | 13 | 10 | 10 | 5 | 11 | 43 |
+
+- **YOLOE-11L replaces OWLv2 well:** D-FINE + YOLOE on every frame finds more (55 against 50), finds
+  earbuds (5 against 0), and costs about 43 s per clip instead of 70 s, with 3 more false alarms.
+- **YOLOE alone** is the cheapest good option (30 s, fewest false alarms), but loses D-FINE's general
+  365-class objects for captions.
+- With YOLOE this cheap, picking frames with MobileCLIP no longer pays: on a third of frames it misses
+  keys that every-frame finds.
+- YOLOE is AGPL: fine while the project is academic (`docs/invariants/tooling.md`); shipping needs a
+  new decision. Its word list is fixed at export: a new personal object means a new export.
+- Not changed in the app before the demo. Minimums are the documented defaults, not tuned.
+
 ## Not done yet
 
 - A held-out check of the 0.4 minimum on the sealed clips (S1-03, S1-06): waits for the user's
