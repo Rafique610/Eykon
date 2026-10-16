@@ -103,8 +103,9 @@ to know it:
    notice — for both frontend and backend, plus the exact terminal commands
    so the user can verify it themselves.
 5. Wait for explicit approval before starting the next step. Paste the
-   check output in a comment on the card and move it to review; the project
-   owner approves it there. (Older step docs used a `✅ <name>.md` rename;
+   check output in a comment on the card and move it to review. The user is the
+   project owner (since 16 October 2026) and approves it, in chat or on
+   the board; the agent never approves its own card. (Older step docs used a `✅ <name>.md` rename;
    cards replace that.)
 6. Log the step in that day's `.memory/tasks.md` (format in `processes.md`)
    so progress is visible without re-deriving it from chat history.
