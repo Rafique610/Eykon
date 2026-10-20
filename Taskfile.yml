@@ -118,6 +118,10 @@ tasks:
     desc: "EYKO-9 — write the place / action prompt vectors the phone loads and the laptop's reference answer for the test picture (needs task pull-detector; fetches the MobileCLIP tools, research-only licence)"
     cmd: uv run --with open_clip_torch --with onnxruntime python -m src.benchmarks.perception_golden
 
+  ego4d-select:
+    desc: "EYKO-57 — pick a new set of 24 Ego4D val clips by set A's rule, from unused videos (give the set name and the earlier sets, e.g. B A)"
+    cmd: uv run python -m src.benchmarks.ego4d_select {{.CLI_ARGS}}
+
   ego4d-pipeline:
     desc: "EYKO-55 — run the laptop copy of the phone pipeline on the Ego4D clips (default: all 24 in D:/eykon-cache/ego4d/selection; or give clip uids)"
     cmd: uv run --with open_clip_torch --with onnxruntime python -m src.benchmarks.ego4d_pipeline {{.CLI_ARGS}}
@@ -125,6 +129,22 @@ tasks:
   ego4d-eval:
     desc: "EYKO-55 — score the ego4d-pipeline run per area (NLQ objects / people, VQ last seen, MQ actions / social / mobility)"
     cmd: uv run --with open_clip_torch --with onnxruntime python -m src.benchmarks.ego4d_eval
+
+  ego4d-actions:
+    desc: "EYKO-60 — action prompt variants (app / wearer / ensemble, smoothing, floor) scored on MQ from stored frame vectors (give A or B)"
+    cmd: uv run --with open_clip_torch --with onnxruntime python -m src.benchmarks.ego4d_actions {{.CLI_ARGS}}
+
+  ego4d-hybrid:
+    desc: "EYKO-61 — hybrid search (MobileCLIP frames + BM25 + bge over caption windows, RRF) scored on NLQ (give A or B)"
+    cmd: uv run --with open_clip_torch --with onnxruntime --with tokenizers python -m src.benchmarks.ego4d_hybrid {{.CLI_ARGS}}
+
+  ego4d-lastseen:
+    desc: "EYKO-62 — last seen with prompt-free YOLOE-11S crops and DINOv2-S vs MobileCLIP vectors, scored on VQ (give A or B; AGPL model, academic use)"
+    cmd: uv run --with open_clip_torch --with onnxruntime --with ultralytics --with transformers python -m src.benchmarks.ego4d_lastseen {{.CLI_ARGS}}
+
+  ego4d-gate:
+    desc: "EYKO-63 — how many frames YOLOE still runs on, and which finds survive, when MobileCLIP must flag keys or earbuds first (give A or B)"
+    cmd: uv run --with open_clip_torch --with onnxruntime python -m src.benchmarks.ego4d_gate {{.CLI_ARGS}}
 
   ego4d-phone-compare:
     desc: "EYKO-56 — compare the Pixel's run of the Ego4D sample with the laptop copy (give the pulled memories.db and the phone-video-to-clip map.json)"

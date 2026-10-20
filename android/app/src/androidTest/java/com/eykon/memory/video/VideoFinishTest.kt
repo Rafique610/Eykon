@@ -79,6 +79,24 @@ class VideoFinishTest {
     }
 
     @Test
+    fun finishDeletesTheFilesOfDroppedFramesAndKeepsTheKeptOnes() {
+        add("clip")
+        val videosDir = File(context.cacheDir, "videos-finish").apply { deleteRecursively(); mkdirs() }
+        db.execSQL("UPDATE videos SET file_path = ? WHERE video_id = 'clip'", arrayOf(File(videosDir, "clip/clip.mp4").absolutePath))
+        val files = (1..3).map { File(videosDir, "clip/frames/%06d.jpg".format(it)).apply { parentFile!!.mkdirs(); writeText("x") } }
+        files.forEachIndexed { i, _ ->
+            db.execSQL(
+                "INSERT INTO frames (video_id, frame_no, t_s, path, kept, drop_reason) VALUES ('clip', ?, ?, ?, ?, ?)",
+                arrayOf(i + 1, i / 3.0, "clip/frames/%06d.jpg".format(i + 1), if (i == 1) 1 else 0, if (i == 1) null else "less sharp"),
+            )
+        }
+        work()
+
+        assertEquals(listOf(false, true, false), files.map { it.exists() })
+        assertEquals(3L, db.query("SELECT COUNT(*) FROM frames WHERE video_id = 'clip'").use { it.moveToFirst(); it.getLong(0) }) // rows stay
+    }
+
+    @Test
     fun aJobThatKeepsFailingLeavesItsVideoFailedWithTheStageReachedAndTheReason() {
         breakSecondStage = true
         add("clip")
