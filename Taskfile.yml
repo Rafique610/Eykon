@@ -118,6 +118,18 @@ tasks:
     desc: "EYKO-9 — write the place / action prompt vectors the phone loads and the laptop's reference answer for the test picture (needs task pull-detector; fetches the MobileCLIP tools, research-only licence)"
     cmd: uv run --with open_clip_torch --with onnxruntime python -m src.benchmarks.perception_golden
 
+  ego4d-pipeline:
+    desc: "EYKO-55 — run the laptop copy of the phone pipeline on the Ego4D clips (default: all 24 in D:/eykon-cache/ego4d/selection; or give clip uids)"
+    cmd: uv run --with open_clip_torch --with onnxruntime python -m src.benchmarks.ego4d_pipeline {{.CLI_ARGS}}
+
+  ego4d-eval:
+    desc: "EYKO-55 — score the ego4d-pipeline run per area (NLQ objects / people, VQ last seen, MQ actions / social / mobility)"
+    cmd: uv run --with open_clip_torch --with onnxruntime python -m src.benchmarks.ego4d_eval
+
+  ego4d-phone-compare:
+    desc: "EYKO-56 — compare the Pixel's run of the Ego4D sample with the laptop copy (give the pulled memories.db and the phone-video-to-clip map.json)"
+    cmd: uv run --with open_clip_torch --with onnxruntime python -m src.benchmarks.ego4d_phone_compare {{.CLI_ARGS}}
+
   eval-perception:
     desc: "EYKO-9 — score the phone's perception results against the hand labels (give perception_bench.json and the labels csv)"
     cmd: uv run python src/benchmarks/perception_score.py {{.CLI_ARGS}}
