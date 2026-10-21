@@ -31,11 +31,12 @@ object VideoPipeline {
      * version run again from the stage after the one [REDO_AFTER] gives for each newer version,
      * the earliest one when several versions were skipped.
      */
-    const val VERSION = 4
+    const val VERSION = 5
     val REDO_AFTER: Map<Int, String> = mapOf(
         2 to "dedup", // D-FINE in "scene" and the new "small_objects" (card EYKO-32)
         3 to "scene", // captions always name personal things ("small_objects" writes every caption again)
         4 to "scene", // YOLOE-11L on every kept frame replaces OWLv2 on MobileCLIP-picked frames
+        5 to "dedup", // first-person action prompts with smoothing (EYKO-60); YOLOE only on flagged frames (EYKO-63)
     )
 
     /** The stage to redo after, for a phone whose videos were finished under [from]; null when nothing changed. */

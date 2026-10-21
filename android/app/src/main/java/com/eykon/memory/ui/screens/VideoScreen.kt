@@ -187,7 +187,7 @@ private fun HitRow(hit: FrameHit) {
                 Image(picture, contentDescription = hit.caption ?: "Video frame", contentScale = ContentScale.Fit, modifier = Modifier.fillMaxWidth().height(220.dp))
             }
             Text(
-                String.format(Locale.ENGLISH, "%s · at %.1f s · likeness %.3f", localTime(hit.recordedAt), hit.tS, hit.score),
+                String.format(Locale.ENGLISH, "%s · %.1f–%.1f s (best at %.1f s) · likeness %.3f", localTime(hit.recordedAt), hit.startS, hit.endS, hit.tS, hit.score),
                 fontWeight = FontWeight.SemiBold,
             )
             hit.caption?.let { Text("Stored caption: $it", style = MaterialTheme.typography.bodySmall) }

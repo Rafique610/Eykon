@@ -18,6 +18,9 @@ import java.io.File
 /** Describes one frame file; the second argument is the frame's saved MobileCLIP vector, when there is one. */
 typealias Describe = (File, FloatArray?) -> Perception
 
+/** Rewrites the perceptions once every frame is described, from the frames' times and saved picture vectors. */
+typealias Smooth = (List<Double>, List<FloatArray?>, List<Perception>) -> List<Perception>
+
 /**
  * Stage "scene" (card EYKO-10): one scene_records row for every frame that is still kept:
  * the objects, how many people, the place, the action, and a one-line caption in plain words.
@@ -38,22 +41,30 @@ object VideoScene {
      */
     val PERSONAL = setOf("keys", "earbuds", "wallet", "glasses", "pen", "cell phone", "remote", "watch", "earphone", "handbag", "umbrella")
 
-    fun run(db: SupportSQLiteDatabase, videoId: String) = run(db, videoId, SCENE_OPTION, OPTIONS.getValue(SCENE_OPTION))
+    fun run(db: SupportSQLiteDatabase, videoId: String) =
+        run(db, videoId, SCENE_OPTION, OPTIONS.getValue(SCENE_OPTION), smooth = { times, vectors, seen ->
+            val actions = OptionA.smoothActions(times, vectors, OptionA.prompts(MemoryApp.instance).second, seen.map { it.action })
+            seen.mapIndexed { i, p -> p.copy(action = actions[i]) } // Option A's actions, card EYKO-60
+        })
 
-    /** [describe] is the option's function; tests pass their own. */
-    fun run(db: SupportSQLiteDatabase, videoId: String, source: String, describe: Describe) {
+    /** [describe] is the option's function; tests pass their own. Nothing is smoothed. */
+    fun run(db: SupportSQLiteDatabase, videoId: String, source: String, describe: Describe) = run(db, videoId, source, describe, smooth = null)
+
+    private fun run(db: SupportSQLiteDatabase, videoId: String, source: String, describe: Describe, smooth: Smooth?) {
         val videoFolder = db.query("SELECT file_path FROM videos WHERE video_id = ?", arrayOf(videoId)).use { cursor ->
             if (!cursor.moveToFirst()) throw IllegalStateException("video $videoId is not in the database")
             File(cursor.getString(0)).parentFile ?: throw IllegalStateException("video file has no folder")
         }
         val videosDir = videoFolder.parentFile ?: throw IllegalStateException("video folder has no parent")
-        val frames = db.query("SELECT id, path FROM frames WHERE video_id = ? AND kept = 1 ORDER BY t_s", arrayOf(videoId)).use { cursor ->
-            buildList { while (cursor.moveToNext()) add(cursor.getLong(0) to cursor.getString(1)) }
+        val frames = db.query("SELECT id, path, t_s FROM frames WHERE video_id = ? AND kept = 1 ORDER BY t_s", arrayOf(videoId)).use { cursor ->
+            buildList { while (cursor.moveToNext()) add(Triple(cursor.getLong(0), cursor.getString(1), cursor.getDouble(2))) }
         }
         val saved = VideoDedup.readVectors(File(videoFolder, VideoDedup.VECTORS_FILE))
 
         val start = System.nanoTime()
-        val seen = frames.map { (id, path) -> id to describe(File(videosDir, path), saved[id]) }
+        val described = frames.map { (id, path, _) -> describe(File(videosDir, path), saved[id]) }
+        val final = smooth?.invoke(frames.map { it.third }, frames.map { saved[it.first] }, described) ?: described
+        val seen = frames.map { it.first }.zip(final)
         val ms = (System.nanoTime() - start) / 1_000_000
 
         db.beginTransaction()

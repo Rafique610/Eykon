@@ -8,8 +8,8 @@ import com.eykon.memory.ml.vision.Detection
 import com.eykon.memory.ml.vision.YoloeDetector
 import java.io.File
 
-/** Finds the user's own small things in one frame file. */
-typealias FindOwn = (File) -> List<Detection>
+/** Finds the user's own small things in one frame file; the second argument is the frame's saved MobileCLIP vector, when there is one. */
+typealias FindOwn = (File, FloatArray?) -> List<Detection>
 
 /**
  * Stage "small_objects" (card EYKO-32): YOLOE-11L looks for the user's own small things ("keys",
@@ -18,6 +18,8 @@ typealias FindOwn = (File) -> List<Detection>
  * step: 55 of 87 own things against 37 without this stage, about 30 s more for a 75 s clip
  * (docs/results/2026-10-14-detectors-open-vocabulary.md, "YOLOE-11L on the Pixel"). It replaced
  * OWLv2 on a third of the frames picked by MobileCLIP: 50 of 87 at about 58 s more.
+ * Since card EYKO-63 YOLOE only looks at frames MobileCLIP flags as possibly showing keys or earbuds
+ * ([OptionA.flagged]): on Ego4D 15 to 20 % of kept frames, while all 18 right finds on our own clips stay.
  */
 object VideoSmallObjects {
 
@@ -27,8 +29,10 @@ object VideoSmallObjects {
 
     fun run(db: SupportSQLiteDatabase, videoId: String) {
         val context = MemoryApp.instance
+        val flags = OptionA.flags(context)
         try {
-            run(db, videoId) { file ->
+            run(db, videoId) { file, vector ->
+                if (!OptionA.flagged(vector, flags)) return@run emptyList()
                 val picture = BitmapFactory.decodeFile(file.absolutePath) ?: throw IllegalStateException("picture ${file.name} cannot be read")
                 try { YoloeDetector.detect(context, picture) } finally { picture.recycle() }
             }
@@ -52,8 +56,9 @@ object VideoSmallObjects {
             arrayOf(videoId),
         ).use { c -> buildList { while (c.moveToNext()) add(Kept(c.getLong(0), c.getString(1), c.getString(2), c.getInt(3), c.getStringOrNull(4), c.getStringOrNull(5))) } }
 
+        val saved = VideoDedup.readVectors(File(videoFolder, VideoDedup.VECTORS_FILE))
         val start = System.nanoTime()
-        val found = kept.associate { it.id to findOwn(File(videosDir, it.path)) }
+        val found = kept.associate { it.id to findOwn(File(videosDir, it.path), saved[it.id]) }
         val ms = (System.nanoTime() - start) / 1_000_000
 
         db.beginTransaction()
@@ -71,7 +76,7 @@ object VideoSmallObjects {
         } finally {
             db.endTransaction()
         }
-        Log.i(TAG, "small_objects $videoId: YOLOE on ${kept.size} frames, ${found.values.sumOf { it.size }} found, in $ms ms")
+        Log.i(TAG, "small_objects $videoId: ${kept.size} frames looked at, ${found.values.sumOf { it.size }} found, in $ms ms")
     }
 
     private fun android.database.Cursor.getStringOrNull(i: Int): String? = if (isNull(i)) null else getString(i)

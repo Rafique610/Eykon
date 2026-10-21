@@ -4,7 +4,8 @@ The product code is on the phone (android/.../ml/vision/ObjectDetector.kt, video
 This script gives the phone what it needs and what it must reproduce:
 
 1. android/app/src/main/assets/scene_prompts.json: MobileCLIP-S2 text vectors for the place and
-   action prompts in Settings. The phone has no text encoder yet, so the fixed prompts are
+   action prompts in Settings (an action is stored under its caption name, with its phrase's vector), and
+   the two small-object flag phrases (card EYKO-63). The phone has no text encoder yet, so the fixed prompts are
    embedded here once.
 2. android/app/src/androidTest/assets/perception_golden.json: what the detector and the prompts
    give for the test picture on the laptop (the detector file named in Settings, YOLOX-Tiny).
@@ -22,12 +23,12 @@ import numpy as np
 import onnxruntime as ort
 import open_clip
 import torch
-from PIL import Image
 from timm.utils import reparameterize_model
 
 from src.config import Settings
 
 MODEL, PRETRAINED = "MobileCLIP-S2", "datacompdr"
+IMAGE_MODEL = "D:/eykon-cache/models/mobileclip_s2_image.onnx"  # task export-clip
 SIDE = 416
 NMS_IOU = 0.45
 PICTURE = Path("android/app/src/test/resources/perception/dog.jpg")
@@ -103,6 +104,7 @@ def probabilities(image_vec: np.ndarray, texts: np.ndarray) -> np.ndarray:
 
 
 def main() -> None:
+    from src.benchmarks.ego4d_pipeline import embed  # here, not at the top: ego4d_pipeline imports this module
     settings = Settings()
     assert len(LABELS) == 80, len(LABELS)
 
@@ -110,26 +112,30 @@ def main() -> None:
     detections = detect(session, cv2.imread(str(PICTURE)), settings.detector_conf)
     print(f"{PICTURE.name}:", [(d["label"], d["conf"]) for d in detections])
 
-    model, _, preprocess = open_clip.create_model_and_transforms(MODEL, pretrained=PRETRAINED, device="cpu")
+    model, _, _ = open_clip.create_model_and_transforms(MODEL, pretrained=PRETRAINED, device="cpu")
     model = reparameterize_model(model.eval())
     tokenizer = open_clip.get_tokenizer(MODEL)
     with torch.no_grad():
-        embed = lambda prompts: torch.nn.functional.normalize(model.encode_text(tokenizer(prompts)), dim=-1).numpy()  # noqa: E731
-        places, actions = embed(settings.scene_places), embed(settings.scene_actions)
-        picture = preprocess(Image.open(PICTURE).convert("RGB"))[None]
-        image_vec = torch.nn.functional.normalize(model.encode_image(picture), dim=-1).numpy()[0]
+        embed_text = lambda prompts: torch.nn.functional.normalize(model.encode_text(tokenizer(prompts)), dim=-1).numpy()  # noqa: E731
+        places, actions = embed_text(settings.scene_places), embed_text(list(settings.scene_actions.values()))
+        flags = embed_text(settings.small_object_flags)
+    # The picture goes through the phone's own path: the exported image ONNX file with a bilinear resize to 256
+    # and a centre crop (ImageEmbedder.kt; ego4d_pipeline.embed). open_clip's bicubic transform moved the
+    # 14 first-person action shares by up to 0.14 (card EYKO-60), while this path agrees with the phone within 0.01.
+    image_vec = embed(ort.InferenceSession(IMAGE_MODEL, providers=["CPUExecutionProvider"]), cv2.imread(str(PICTURE)))
 
     vectors = lambda prompts, m: {p: [round(float(x), 6) for x in v] for p, v in zip(prompts, m)}  # noqa: E731
     PROMPTS_OUT.parent.mkdir(parents=True, exist_ok=True)
     PROMPTS_OUT.write_text(
         json.dumps({"model": f"{MODEL}/{PRETRAINED}", "places": vectors(settings.scene_places, places),
-                    "actions": vectors(settings.scene_actions, actions)}) + "\n",
+                    "actions": vectors(list(settings.scene_actions), actions),
+                    "small_object_flags": vectors(settings.small_object_flags, flags)}) + "\n",
         encoding="utf-8",
     )
     print(f"prompts: {PROMPTS_OUT} ({PROMPTS_OUT.stat().st_size / 1e3:.0f} KB), {len(places)} places, {len(actions)} actions")
 
     scene = {}
-    for name, prompts, texts in (("place", settings.scene_places, places), ("action", settings.scene_actions, actions)):
+    for name, prompts, texts in (("place", settings.scene_places, places), ("action", list(settings.scene_actions), actions)):
         p = probabilities(image_vec, texts)
         best = int(p.argmax())
         scene[name] = prompts[best] if p[best] >= settings.scene_prompt_min else None

@@ -81,8 +81,9 @@ class SmallObjectsTest {
     @Test
     fun aVersionJumpRedoesFromTheEarliestChangedStage() {
         assertEquals("dedup", VideoPipeline.redoAfter(1))
-        assertEquals("scene", VideoPipeline.redoAfter(2))
-        assertEquals("scene", VideoPipeline.redoAfter(3))
+        assertEquals("dedup", VideoPipeline.redoAfter(2)) // version 5 (EYKO-60, 63) redoes from after dedup
+        assertEquals("dedup", VideoPipeline.redoAfter(3))
+        assertEquals("dedup", VideoPipeline.redoAfter(4))
         assertEquals(null, VideoPipeline.redoAfter(VideoPipeline.VERSION))
     }
 

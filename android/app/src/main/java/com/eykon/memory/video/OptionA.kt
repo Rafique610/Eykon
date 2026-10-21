@@ -71,6 +71,39 @@ object OptionA {
         }
     }
 
+    /** Kept frames this close in time share their action shares (card EYKO-60, src/config.py scene_action_smooth_s). */
+    const val ACTION_SMOOTH_S = 6.0
+
+    /**
+     * Each frame's action from the shares averaged over the kept frames within [ACTION_SMOOTH_S] of it,
+     * or nothing when the best averaged share is below [PROMPT_MIN]. [vectors] are the frames' picture
+     * vectors in [times] order; a frame without one keeps [fallback]'s action.
+     */
+    internal fun smoothActions(times: List<Double>, vectors: List<FloatArray?>, actions: Prompts, fallback: List<String?>): List<String?> {
+        val shares = vectors.map { v -> v?.let { probabilities(it, actions.vectors) } }
+        return times.indices.map { i ->
+            if (shares[i] == null) return@map fallback[i]
+            val near = times.indices.filter { j -> shares[j] != null && kotlin.math.abs(times[j] - times[i]) <= ACTION_SMOOTH_S }
+            val mean = FloatArray(actions.texts.size) { a -> near.sumOf { shares[it]!![a].toDouble() }.toFloat() / near.size }
+            val best = mean.indices.maxBy { mean[it] }
+            if (mean[best] >= PROMPT_MIN) actions.texts[best] else null
+        }
+    }
+
+    /** YOLOE only looks at a frame whose picture is at least this alike to "a photo of keys" or "a photo of earbuds" (card EYKO-63). */
+    const val FLAG_MIN = 0.15f
+
+    private var flags: List<FloatArray>? = null
+
+    @Synchronized
+    fun flags(context: Context): List<FloatArray> = flags ?: Json.parseToJsonElement(
+        context.assets.open(PROMPTS_ASSET).bufferedReader().use { it.readText() },
+    ).jsonObject["small_object_flags"]!!.jsonObject.values.map { v -> v.jsonArray.map { it.jsonPrimitive.float }.toFloatArray() }.also { flags = it }
+
+    /** Whether a frame with this picture vector should get YOLOE; no vector means yes. */
+    internal fun flagged(imageVector: FloatArray?, flags: List<FloatArray>): Boolean =
+        imageVector == null || flags.any { f -> imageVector.indices.sumOf { (imageVector[it] * f[it]).toDouble() } >= FLAG_MIN }
+
     /** YOLOX's things, plus D-FINE's unless YOLOX already has the same name for the same place (overlap above 0.5). */
     internal fun merge(yolox: List<Detection>, dfine: List<Detection>): List<Detection> =
         yolox + dfine.filter { d -> yolox.none { it.label == d.label && ObjectDetector.overlap(it.box, d.box) > 0.5f } }

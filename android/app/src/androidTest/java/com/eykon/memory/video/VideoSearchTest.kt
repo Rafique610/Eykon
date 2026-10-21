@@ -84,8 +84,11 @@ class VideoSearchTest {
         prepare("clip")
         val hits = VideoSearch.frames(db, "second picture", 20) { along(1) }
 
-        assertEquals(2, hits.size) // only two frames are stored
+        // Two frames are stored, 1 s apart: the other one (likeness 0) is inside the best one's window (card EYKO-58).
+        assertEquals(1, hits.size)
         val best = hits.first()
+        assertEquals(0.0, best.startS, 1e-9) // 1.0 s - 1.5 s, held at the start of the video
+        assertEquals(2.5, best.endS, 0.01)
         assertEquals(1f, best.score, 1e-6f)
         assertEquals("clip", best.videoId)
         assertEquals("2026-10-13T17:00:00Z", best.recordedAt)
@@ -93,7 +96,6 @@ class VideoSearchTest {
         assertEquals("000004.jpg", best.file.name)
         assertTrue("the frame file can be opened", best.file.exists())
         assertEquals("caption of 000004.jpg", best.caption)
-        assertEquals(0f, hits[1].score, 1e-6f)
     }
 
     @Test

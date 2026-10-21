@@ -64,7 +64,25 @@ class Settings(BaseSettings):
         "a kitchen", "a hallway", "a bedroom", "a living room", "an office",
         "a classroom", "a street", "inside a car", "a shop",
     ]
-    scene_actions: list[str] = [
-        "picking something up", "putting something down", "typing on a laptop", "cooking",
-        "walking", "talking to someone", "reading", "eating",
-    ]
+    # The name each action has in captions, and the first-person phrase MobileCLIP compares the frame with
+    # (card EYKO-60: chosen on Ego4D set A, src/benchmarks/ego4d_actions.py WEARER; MQ F1 A 10.8 -> 32.2, held-out B 15.4 -> 16.7)
+    scene_actions: dict[str, str] = {
+        "picking something up": "a first-person photo of my hand picking up an object",
+        "putting something down": "a first-person photo of my hand putting an object down on a surface",
+        "typing on a laptop": "a first-person photo of my hands typing on a laptop keyboard",
+        "cooking": "a first-person photo of my hands stirring food in a pan on a stove",
+        "walking": "a first-person photo while walking outside along a street",
+        "talking to someone": "a first-person photo of a person in front of me talking to me",
+        "reading": "a first-person photo of a book or paper held open in my hands",
+        "eating": "a first-person photo of me eating food",
+        "using a phone": "a first-person photo of a phone screen held in my hand",
+        "drinking": "a first-person photo of me drinking from a cup or bottle",
+        "cutting food": "a first-person photo of my hands cutting vegetables with a knife on a board",
+        "washing dishes": "a first-person photo of my hands washing dishes in a sink",
+        "writing": "a first-person photo of my hand writing with a pen on paper",
+        "climbing stairs": "a first-person photo of walking up or down stairs",
+    }
+    scene_action_smooth_s: float = 6.0  # each frame's action shares are averaged with kept frames this close (EYKO-60)
+    # YOLOE runs only on frames whose picture is at least this alike to one of these phrases (card EYKO-63)
+    small_object_flags: list[str] = ["a photo of keys", "a photo of earbuds"]
+    small_object_flag_min: float = 0.15
