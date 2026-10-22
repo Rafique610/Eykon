@@ -1,0 +1,156 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "eykon-walkthrough-flow/1",
+  "title": "Eykon walkthrough flow data, schema version 1",
+  "description": "Two file kinds share these definitions: one stage file per stage (flow/stages/<stage-id>.json) and one index (flow/index.json). Paths in 'doc' and 'stage_files' are relative to docs/walkthrough/; paths in 'files' are repo-relative. A field that does not apply holds 'n/a: <why>', never an empty string. validate_flow.py enforces the 'required' lists and the non-empty rule.",
+  "oneOf": [
+    { "$ref": "#/$defs/stage_file" },
+    { "$ref": "#/$defs/index_file" }
+  ],
+  "$defs": {
+    "text": { "type": "string", "minLength": 1 },
+    "node_id": {
+      "type": "string",
+      "pattern": "^s[0-9]{2}-[a-z0-9-]+(/[a-z0-9][a-z0-9._-]*)?$",
+      "description": "A stage id (s04-scene) or stage id + '/' + local id (s04-scene/model-yolox-tiny). Globally unique."
+    },
+    "stage_id": { "type": "string", "pattern": "^s[0-9]{2}-[a-z0-9-]+$" },
+    "flow": { "enum": ["runtime", "offline"] },
+    "tag": { "enum": ["DOCUMENTED", "INFERRED", "UNKNOWN"] },
+    "io": {
+      "type": "object",
+      "required": ["type", "shape", "format", "example"],
+      "additionalProperties": false,
+      "properties": {
+        "type": { "$ref": "#/$defs/text", "description": "What kind of thing: 'JPEG files + frames rows', 'float32 vector'." },
+        "shape": { "$ref": "#/$defs/text", "description": "Size, count, dimensions, units: '512', 'one row per kept frame', '≤ 640 px longer side'." },
+        "format": { "$ref": "#/$defs/text", "description": "Encoding / dtype / table and columns: 'float32 little-endian BLOB in image_vec.embedding'." },
+        "example": { "$ref": "#/$defs/text", "description": "A concrete value taken from code, tests, golden files or docs/results. Say where it comes from." }
+      }
+    },
+    "algorithm": {
+      "type": "object",
+      "required": ["name", "params"],
+      "additionalProperties": false,
+      "properties": {
+        "name": { "$ref": "#/$defs/text", "description": "Model or algorithm name with variant, or what the file does." },
+        "params": {
+          "type": "object",
+          "description": "Key parameter name -> value with its source, e.g. {\"HASH_MAX\": \"6 bits (VideoDedup.kt:23)\"}. May be empty when there are none.",
+          "additionalProperties": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "decision": {
+      "type": "object",
+      "required": ["summary", "tag", "source"],
+      "additionalProperties": false,
+      "properties": {
+        "summary": { "$ref": "#/$defs/text", "description": "The decision this node embodies, in one or two sentences." },
+        "tag": { "$ref": "#/$defs/tag" },
+        "source": { "$ref": "#/$defs/text", "description": "DOCUMENTED: the doc/comment/commit that says why. INFERRED: the code evidence. UNKNOWN: the open-question id (Q-s04-2)." }
+      }
+    },
+    "flag": {
+      "type": "object",
+      "required": ["kind", "text", "where"],
+      "additionalProperties": false,
+      "properties": {
+        "kind": { "enum": ["dead-code", "unused", "stub", "todo", "bug", "ambiguity", "doc-mismatch", "risk"] },
+        "text": { "$ref": "#/$defs/text" },
+        "where": { "$ref": "#/$defs/text", "description": "file:line or doc path." }
+      }
+    },
+    "node": {
+      "type": "object",
+      "required": ["id", "label", "type", "stage", "flow", "files", "purpose", "input", "output", "algorithm", "performance", "decision", "doc"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "$ref": "#/$defs/node_id" },
+        "label": { "$ref": "#/$defs/text", "description": "Short, shown on the node (≤ 32 characters is best)." },
+        "type": { "enum": ["stage", "file", "model", "algorithm", "data-store", "external"] },
+        "stage": { "$ref": "#/$defs/stage_id", "description": "Parent stage id. For a type 'stage' node, its own id." },
+        "flow": { "$ref": "#/$defs/flow" },
+        "key": { "type": "string", "pattern": "^[a-z0-9-]+$", "description": "Optional. Groups instances of the same model/algorithm across stages, e.g. 'mobileclip-s2-image'." },
+        "status": { "enum": ["active", "unused", "stub", "legacy", "planned"], "description": "Optional, default 'active'. Dead code is 'unused'." },
+        "files": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/text" }, "description": "Repo-relative paths. External and data-store nodes list the file that defines or reads them." },
+        "refs": { "type": "array", "items": { "$ref": "#/$defs/text" }, "description": "Optional. 'path:line-line' pointers to the exact code." },
+        "purpose": { "$ref": "#/$defs/text", "description": "One line." },
+        "input": { "$ref": "#/$defs/io" },
+        "output": { "$ref": "#/$defs/io" },
+        "algorithm": { "$ref": "#/$defs/algorithm" },
+        "performance": { "$ref": "#/$defs/text", "description": "Complexity, timings (only measured ones, with their docs/results file), batching, caching, threads, memory. 'n/a: <why>' when nothing applies." },
+        "decision": { "$ref": "#/$defs/decision" },
+        "doc": { "type": "string", "pattern": "^stages/s[0-9]{2}-[a-z0-9-]+\\.md#[a-z0-9_-]+$", "description": "Link to the matching section, e.g. 'stages/s04-scene.md#4-models-and-algorithms-used'. The anchor must exist (slug rule in validate_flow.py)." },
+        "flags": { "type": "array", "items": { "$ref": "#/$defs/flag" } },
+        "platform": { "enum": ["phone", "laptop", "both"], "description": "Stage nodes only." },
+        "entry": { "type": "array", "items": { "$ref": "#/$defs/node_id" }, "description": "Stage nodes only: where data enters the stage." },
+        "exit": { "type": "array", "items": { "$ref": "#/$defs/node_id" }, "description": "Stage nodes only: where data leaves the stage." },
+        "file": { "type": "string", "pattern": "^flow/stages/s[0-9]{2}-[a-z0-9-]+\\.json$", "description": "Index stage entries only: the stage file." }
+      }
+    },
+    "edge": {
+      "type": "object",
+      "required": ["from", "to", "label", "data", "flow"],
+      "additionalProperties": false,
+      "properties": {
+        "from": { "$ref": "#/$defs/node_id" },
+        "to": { "$ref": "#/$defs/node_id", "description": "May be a node of another stage (cross-stage edges live in the stage that produces the data)." },
+        "label": { "$ref": "#/$defs/text", "description": "Short text shown on the edge: what is passed." },
+        "data": {
+          "type": "object",
+          "required": ["type", "shape"],
+          "additionalProperties": false,
+          "properties": { "type": { "$ref": "#/$defs/text" }, "shape": { "$ref": "#/$defs/text" } }
+        },
+        "flow": { "$ref": "#/$defs/flow" }
+      }
+    },
+    "stage_file": {
+      "type": "object",
+      "required": ["schema_version", "stage", "nodes", "edges"],
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": { "const": 1 },
+        "stage": { "$ref": "#/$defs/node", "description": "type 'stage', with platform, entry and exit." },
+        "nodes": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/node" } },
+        "edges": { "type": "array", "items": { "$ref": "#/$defs/edge" } }
+      }
+    },
+    "trace": {
+      "type": "object",
+      "required": ["id", "label", "entry", "steps"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+        "label": { "$ref": "#/$defs/text" },
+        "description": { "type": "string" },
+        "entry": { "$ref": "#/$defs/node_id" },
+        "steps": { "type": "array", "minItems": 2, "items": { "$ref": "#/$defs/node_id" }, "description": "In order. Consecutive steps must be joined by an edge, or lie in two stages joined by an index edge." }
+      }
+    },
+    "index_file": {
+      "type": "object",
+      "required": ["schema_version", "project", "stages", "edges", "stage_files", "traces"],
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": { "const": 1 },
+        "project": {
+          "type": "object",
+          "required": ["name", "summary", "commit", "generated"],
+          "additionalProperties": false,
+          "properties": {
+            "name": { "$ref": "#/$defs/text" },
+            "summary": { "$ref": "#/$defs/text" },
+            "commit": { "$ref": "#/$defs/text" },
+            "generated": { "$ref": "#/$defs/text" }
+          }
+        },
+        "stages": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/node" }, "description": "The type 'stage' nodes, copied from the stage files, each with 'file'." },
+        "edges": { "type": "array", "items": { "$ref": "#/$defs/edge" }, "description": "Stage-to-stage edges (from/to are stage ids)." },
+        "stage_files": { "type": "array", "minItems": 1, "items": { "type": "string", "pattern": "^flow/stages/s[0-9]{2}-[a-z0-9-]+\\.json$" } },
+        "traces": { "type": "array", "items": { "$ref": "#/$defs/trace" } }
+      }
+    }
+  }
+}
