@@ -44,13 +44,26 @@ def target_override(agent: dict, tool: str) -> dict | str | None:
     return agent.get("targets", {}).get(tool)
 
 
+# Claude Code tool names are capitalized; multi-word ones aren't plain
+# Title Case (WebFetch, not Webfetch), so exceptions are spelled out here.
+CLAUDE_TOOL_NAMES = {
+    "webfetch": "WebFetch",
+    "websearch": "WebSearch",
+    "notebookedit": "NotebookEdit",
+}
+
+
+def claude_tool_name(tool: str) -> str:
+    return CLAUDE_TOOL_NAMES.get(tool, tool.capitalize())
+
+
 def render_claude(agent: dict) -> str:
     override = target_override(agent, "claude") or {}
     lines = [GENERATED_MARKER, "---", f"name: {agent['name']}", f"description: {agent['description']}"]
     if agent.get("model"):
         lines.append(f"model: {agent['model']}")
     if agent.get("tools"):
-        lines.append(f"tools: {', '.join(agent['tools'])}")
+        lines.append(f"tools: {', '.join(claude_tool_name(t) for t in agent['tools'])}")
     for key, value in override.items():
         lines.append(f"{key}: {value}")
     lines += ["---", "", agent["prompt"], ""]
