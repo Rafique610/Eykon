@@ -1,0 +1,4 @@
+{
+  "description": "Review code for silent failures, swallowed errors, bad fallbacks, and missing error propagation.",
+  "tools": ["read", "grep", "glob", "bash"]
+}
