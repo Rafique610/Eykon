@@ -1,0 +1,5 @@
+{'clip': '57c09157', 'video s': 480, 'kept phone': 156, 'kept laptop': 155, 'same second': 151, 'same caption': 57, 'same place': 148, 'same action': 144, 'object names overlap': 0.78, 'same people count': 113, 'phone min': 13.4, 'caption KB': 8.7}
+{'clip': 'ffc52dc7', 'video s': 229, 'kept phone': 34, 'kept laptop': 35, 'same second': 34, 'same caption': 19, 'same place': 34, 'same action': 33, 'object names overlap': 0.87, 'same people count': 33, 'phone min': 3.7, 'caption KB': 1.8}
+{'clip': 'f21ba0cf', 'video s': 480, 'kept phone': 69, 'kept laptop': 72, 'same second': 66, 'same caption': 41, 'same place': 66, 'same action': 66, 'object names overlap': 0.85, 'same people count': 60, 'phone min': 21.2, 'caption KB': 3.5}
+{'clip': 'c7873f07', 'video s': 480, 'kept phone': 113, 'kept laptop': 113, 'same second': 103, 'same caption': 61, 'same place': 103, 'same action': 97, 'object names overlap': 0.81, 'same people count': 100, 'phone min': 10.5, 'caption KB': 5.0}
+database MB 11.3

@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "synverk": {
+      "type": "http",
+      "url": "https://synverk.abdulhaque.dev/mcp"
+    }
+  }
+}

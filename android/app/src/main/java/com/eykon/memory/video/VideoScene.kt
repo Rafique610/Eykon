@@ -1,0 +1,128 @@
+package com.eykon.memory.video
+
+import android.util.Log
+import androidx.sqlite.db.SupportSQLiteDatabase
+import com.eykon.memory.MemoryApp
+import com.eykon.memory.ml.vision.Detection
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.float
+import kotlinx.serialization.json.jsonArray
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
+import kotlinx.serialization.json.buildJsonArray
+import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.put
+import java.io.File
+
+/** Describes one frame file; the second argument is the frame's saved MobileCLIP vector, when there is one. */
+typealias Describe = (File, FloatArray?) -> Perception
+
+/** Rewrites the perceptions once every frame is described, from the frames' times and saved picture vectors. */
+typealias Smooth = (List<Double>, List<FloatArray?>, List<Perception>) -> List<Perception>
+
+/**
+ * Stage "scene" (card EYKO-10): one scene_records row for every frame that is still kept:
+ * the objects, how many people, the place, the action, and a one-line caption in plain words.
+ * Whichever perception option runs, the row has the same fields, so later steps do not care.
+ */
+object VideoScene {
+
+    /** The option that describes frames. B and C join this map when their cards are built. */
+    const val SCENE_OPTION = "A"
+    val OPTIONS: Map<String, Describe> = mapOf(
+        "A" to { file, vector -> OptionA.describe(MemoryApp.instance, file, vector) },
+    )
+    private const val TAG = "EykonVideo"
+
+    /**
+     * Things a person carries and asks about ("where are my ...?"): card EYKO-32's own list, in the
+     * names YOLOX, D-FINE and YOLOE give them. A caption always names these, so furniture cannot crowd them out.
+     */
+    val PERSONAL = setOf("keys", "earbuds", "wallet", "glasses", "pen", "cell phone", "remote", "watch", "earphone", "handbag", "umbrella")
+
+    fun run(db: SupportSQLiteDatabase, videoId: String) =
+        run(db, videoId, SCENE_OPTION, OPTIONS.getValue(SCENE_OPTION), smooth = { times, vectors, seen ->
+            val actions = OptionA.smoothActions(times, vectors, OptionA.prompts(MemoryApp.instance).second, seen.map { it.action })
+            seen.mapIndexed { i, p -> p.copy(action = actions[i]) } // Option A's actions, card EYKO-60
+        })
+
+    /** [describe] is the option's function; tests pass their own. Nothing is smoothed. */
+    fun run(db: SupportSQLiteDatabase, videoId: String, source: String, describe: Describe) = run(db, videoId, source, describe, smooth = null)
+
+    private fun run(db: SupportSQLiteDatabase, videoId: String, source: String, describe: Describe, smooth: Smooth?) {
+        val videoFolder = db.query("SELECT file_path FROM videos WHERE video_id = ?", arrayOf(videoId)).use { cursor ->
+            if (!cursor.moveToFirst()) throw IllegalStateException("video $videoId is not in the database")
+            File(cursor.getString(0)).parentFile ?: throw IllegalStateException("video file has no folder")
+        }
+        val videosDir = videoFolder.parentFile ?: throw IllegalStateException("video folder has no parent")
+        val frames = db.query("SELECT id, path, t_s FROM frames WHERE video_id = ? AND kept = 1 ORDER BY t_s", arrayOf(videoId)).use { cursor ->
+            buildList { while (cursor.moveToNext()) add(Triple(cursor.getLong(0), cursor.getString(1), cursor.getDouble(2))) }
+        }
+        val saved = VideoDedup.readVectors(File(videoFolder, VideoDedup.VECTORS_FILE))
+
+        val start = System.nanoTime()
+        val described = frames.map { (id, path, _) -> describe(File(videosDir, path), saved[id]) }
+        val final = smooth?.invoke(frames.map { it.third }, frames.map { saved[it.first] }, described) ?: described
+        val seen = frames.map { it.first }.zip(final)
+        val ms = (System.nanoTime() - start) / 1_000_000
+
+        db.beginTransaction()
+        try {
+            // Idempotent: this video's records from an earlier run go first.
+            db.execSQL("DELETE FROM scene_records WHERE frame_id IN (SELECT id FROM frames WHERE video_id = ?)", arrayOf(videoId))
+            for ((id, p) in seen) {
+                db.execSQL(
+                    "INSERT INTO scene_records (frame_id, objects, action, place, people, caption, source) VALUES (?, ?, ?, ?, ?, ?, ?)",
+                    arrayOf(id, objectsJson(p), p.action, p.place, p.people, p.caption ?: buildCaption(p), source),
+                )
+            }
+            db.setTransactionSuccessful()
+        } finally {
+            db.endTransaction()
+        }
+        Log.i(TAG, "scene $videoId: ${seen.size} frames described by option $source in $ms ms, ${if (seen.isEmpty()) 0 else ms / seen.size} ms each")
+    }
+
+    /**
+     * Plain words from the fields, no model: every personal thing seen (YOLOE's finds and
+     * [PERSONAL], surest first), then other things up to three in all (surest first), then the
+     * people, the place and the action. What is unknown is left out.
+     */
+    fun buildCaption(p: Perception): String {
+        val names = p.objects.sortedByDescending { it.conf }.map { it.label to (it.source in VideoSmallObjects.SOURCES || it.label in PERSONAL) }.distinctBy { it.first }
+        val personal = names.filter { it.second }.map { it.first }
+        val labels = personal + names.filterNot { it.second }.map { it.first }.take(maxOf(0, 3 - personal.size))
+        val parts = ArrayList<String>()
+        when (labels.size) {
+            0 -> Unit
+            1, 2 -> parts.add(labels.joinToString(" and "))
+            else -> parts.add("${labels.dropLast(1).joinToString(", ")} and ${labels.last()}")
+        }
+        if (p.people > 0) parts.add(if (p.people == 1) "1 person" else "${p.people} people")
+        p.place?.let { parts.add(if (it.startsWith("inside ")) it else "in $it") } // "inside a car", not "in inside a car"
+        p.action?.let { parts.add(it) }
+        return parts.joinToString(", ").ifEmpty { "nothing recognised" }
+    }
+
+    /** The objects as JSON text: [{"label": ..., "conf": ..., "box": [left, top, right, bottom], "source": ...}]. */
+    internal fun objectsJson(p: Perception): String = buildJsonArray {
+        p.objects.forEach { found ->
+            add(buildJsonObject {
+                put("label", found.label)
+                put("conf", found.conf)
+                put("box", buildJsonArray { found.box.forEach { add(JsonPrimitive(it)) } })
+                put("source", found.source)
+            })
+        }
+    }.toString()
+
+    /** The reverse of [objectsJson]; rows written before "source" existed count as "detector". */
+    internal fun objectsFrom(json: String): List<Detection> = Json.parseToJsonElement(json).jsonArray.map { o ->
+        val thing = o.jsonObject
+        Detection(
+            thing["label"]!!.jsonPrimitive.content, thing["conf"]!!.jsonPrimitive.float,
+            thing["box"]!!.jsonArray.map { it.jsonPrimitive.float }, thing["source"]?.jsonPrimitive?.content ?: "detector",
+        )
+    }
+}

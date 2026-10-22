@@ -42,7 +42,11 @@ def get_engine(model_path: str | Path | None = None) -> Any:
 
     import litert_lm
     resolved = str(model_path or resolve_model_path())
-    _ENGINE_CACHE = litert_lm.Engine(model_path=resolved)
+    _ENGINE_CACHE = litert_lm.Engine(
+        model_path=resolved,
+        backend=litert_lm.Backend.CPU(),
+        vision_backend=litert_lm.Backend.CPU()
+    )
     return _ENGINE_CACHE
 
 

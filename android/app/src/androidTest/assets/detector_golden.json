@@ -1,0 +1,143 @@
+{
+ "picture": "detector_golden.jpg",
+ "size": [
+  640,
+  360
+ ],
+ "dfine": [
+  {
+   "label": "Desk",
+   "conf": 0.795,
+   "box_cxcywh": [
+    0.4698,
+    0.7014,
+    0.9412,
+    0.5942
+   ]
+  },
+  {
+   "label": "Person",
+   "conf": 0.6589,
+   "box_cxcywh": [
+    0.4536,
+    0.5185,
+    0.0737,
+    0.0939
+   ]
+  },
+  {
+   "label": "Blackboard/Whiteboard",
+   "conf": 0.5199,
+   "box_cxcywh": [
+    0.4717,
+    0.1264,
+    0.2883,
+    0.2522
+   ]
+  },
+  {
+   "label": "Cabinet/shelf",
+   "conf": 0.4828,
+   "box_cxcywh": [
+    0.7728,
+    0.2442,
+    0.2524,
+    0.4888
+   ]
+  },
+  {
+   "label": "Cabinet/shelf",
+   "conf": 0.4563,
+   "box_cxcywh": [
+    0.1855,
+    0.3232,
+    0.3712,
+    0.2342
+   ]
+  },
+  {
+   "label": "Board Eraser",
+   "conf": 0.3918,
+   "box_cxcywh": [
+    0.1291,
+    0.2216,
+    0.0169,
+    0.0174
+   ]
+  },
+  {
+   "label": "Person",
+   "conf": 0.3767,
+   "box_cxcywh": [
+    0.5653,
+    0.9586,
+    0.4153,
+    0.0825
+   ]
+  },
+  {
+   "label": "Stool",
+   "conf": 0.3716,
+   "box_cxcywh": [
+    0.7025,
+    0.9594,
+    0.1414,
+    0.081
+   ]
+  },
+  {
+   "label": "Board Eraser",
+   "conf": 0.3429,
+   "box_cxcywh": [
+    0.1104,
+    0.2225,
+    0.0183,
+    0.0157
+   ]
+  },
+  {
+   "label": "Blackboard/Whiteboard",
+   "conf": 0.3389,
+   "box_cxcywh": [
+    0.1729,
+    0.0992,
+    0.3461,
+    0.1979
+   ]
+  },
+  {
+   "label": "Person",
+   "conf": 0.338,
+   "box_cxcywh": [
+    0.5669,
+    0.9108,
+    0.4142,
+    0.1778
+   ]
+  },
+  {
+   "label": "Power outlet",
+   "conf": 0.3134,
+   "box_cxcywh": [
+    0.6192,
+    0.2076,
+    0.0118,
+    0.0227
+   ]
+  }
+ ],
+ "yoloe_best": {
+  "keys": 0.7475,
+  "wallet": 0.0079,
+  "glasses": 0.0041,
+  "earbuds": 0.0073,
+  "phone": 0.0244,
+  "pen": 0.0062
+ },
+ "yoloe_keys_box": [
+  267.3,
+  170.0,
+  313.0,
+  201.9
+ ]
+}

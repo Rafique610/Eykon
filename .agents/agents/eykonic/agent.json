@@ -1,0 +1,7 @@
+{
+  "description": "Primary orchestrator for Eykon. Owns classification, routing to specialist review agents/skills, supervision, and close-out, following AGENTS.md's one-step-at-a-time Synverk cadence. Implements the active card's step directly when no specialist agent fits, since this repo has no separate dev-loop worker. Use for any day-to-day ask; @eykonic or primary agent.",
+  "tools": ["read", "write", "edit", "bash", "grep", "glob", "task", "webfetch"],
+  "targets": {
+    "opencode": { "mode": "primary" }
+  }
+}
