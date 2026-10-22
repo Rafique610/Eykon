@@ -9,6 +9,14 @@ tasks:
     desc: Install all Python dependencies via uv
     cmd: uv sync
 
+  agents:sync:
+    desc: Regenerate per-tool agent files (.claude/agents, .opencode/agent, ...) from .agents/agents/
+    cmd: uv run python .agents/scripts/sync_agents.py
+
+  agents:check:
+    desc: Fail if generated agent files are stale vs .agents/agents/ (wire into CI)
+    cmd: uv run python .agents/scripts/sync_agents.py --check
+
   pull-model:
     desc: Download Google Gemma 4 E2B LiteRT-LM model from Hugging Face
     cmd: uv run python -c "from huggingface_hub import hf_hub_download; from src.config import Settings; s = Settings(); print('Downloading Gemma 4 E2B LiteRT-LM (2.4 GB)...'); p = hf_hub_download(s.LITERT_MODEL_REPO, s.LITERT_MODEL_FILE); print('Downloaded to:', p)"
