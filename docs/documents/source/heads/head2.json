@@ -1,0 +1,1459 @@
+{
+  "title": "Head 2 · Setup & storage decisions",
+  "subtitle": "Where vectors live, how the tables are shaped, and the ground rules that keep the laptop and the phone in step.",
+  "header": "Eykon · Head 2 · Setup & storage decisions",
+  "date": "3 Nov 2026",
+  "meta": [
+    [
+      "Status",
+      "Built; decision re-tested on two phones on 3 Nov 2026. Open questions and their cards are in section 2."
+    ],
+    [
+      "Covers",
+      "Vector storage (sqlite-vec vs float32 BLOBs), the video memory tables, raw SQL without an ORM, laptop–phone parity, tests, tooling and licences."
+    ],
+    [
+      "Cards",
+      "EYKO-1 (video memory tables + BLOB vector tables), EYKO-31 (vector storage spike), EYKO-30 (pytest)."
+    ],
+    [
+      "Synverk flow",
+      "Head 2 · Setup & storage decisions"
+    ],
+    [
+      "Main sources",
+      "docs/results/2026-10-12-eyko-31-vector-storage.md, src/video_memory/schema.py, docs/invariants/, docs/domain/eykon/index.md"
+    ]
+  ],
+  "sections": [
+    {
+      "title": "Summary",
+      "blocks": [
+        "Every later stage writes to and reads from the same SQLite database, so its shape had to be decided first. The open question was where the **vectors** (512 numbers per frame, 384 per caption) live. The first plan used **sqlite-vec**, a SQLite extension built for vector search. Before building on it, a short spike (EYKO-31) tested whether it works on Android at all.",
+        "It does not load on Android's platform SQLite. The fallback, plain **float32 BLOB columns loaded into memory once and searched by dot product**, met the limit set before the test (under 200 ms at 20,000 vectors on the slow phone: 81 ms). That became the design on both laptop and phone.",
+        {
+          "note": "**Rule fixed before the test:** if sqlite-vec fails to load on a phone, use BLOBs, provided a query takes under 200 ms at 20,000 vectors on the slow phone. Fixing the pass mark first means the result cannot be argued into a decision afterwards."
+        }
+      ]
+    },
+    {
+      "title": "Supervisor questions: answers and evidence",
+      "blocks": [
+        "The questions a strict examiner will ask about this head, with what we can show **today**. Status: **Answered** = evidence a person can check; **Partly** = some evidence, gaps named; **Open** = not tested yet. Every evidence path is in the repository unless it says otherwise.",
+        {
+          "note": "**How to update:** when a card closes, change that question's Status, rewrite its Answer with the new numbers, add the result file to Evidence, and set Last updated. Never delete an old finding: if a new run disagrees, say so in the Answer."
+        },
+        {
+          "table": {
+            "cols": [
+              "#",
+              "Question",
+              "Status",
+              "Closes with"
+            ],
+            "widths": [
+              0.5,
+              5,
+              1,
+              2
+            ],
+            "rows": [
+              [
+                "A1",
+                "Did you actually run sqlite-vec on the phone, or read about it? Show me the error.",
+                "Answered",
+                "EYKO-94"
+              ],
+              [
+                "A2",
+                "Is that a sqlite-vec problem or an Android problem?",
+                "Partly",
+                "EYKO-89, EYKO-100"
+              ],
+              [
+                "A3",
+                "Android apps can ship their own SQLite. Did you try that route?",
+                "Open",
+                "EYKO-89, EYKO-93"
+              ],
+              [
+                "A4",
+                "Did it fail only on one phone?",
+                "Partly",
+                "EYKO-94"
+              ],
+              [
+                "A5",
+                "Do sqlite-vec and your BLOB search return the same results, or is one just faster?",
+                "Open",
+                "EYKO-91, EYKO-93"
+              ],
+              [
+                "B1",
+                "One run? What is the spread?",
+                "Partly",
+                "EYKO-90, EYKO-95"
+              ],
+              [
+                "B2",
+                "Why only up to 20,000 vectors? When does a real user reach that?",
+                "Partly",
+                "EYKO-90, EYKO-95, EYKO-97"
+              ],
+              [
+                "B3",
+                "Random vectors are not real ones. Does it hold with real data?",
+                "Open",
+                "EYKO-91, EYKO-100"
+              ],
+              [
+                "B4",
+                "112 MB of memory for one table: what about all three tables, on a 4 GB phone?",
+                "Open",
+                "EYKO-100, EYKO-95"
+              ],
+              [
+                "B5",
+                "The phone is about 50x slower than the laptop. Is that the chip or your code?",
+                "Open",
+                "EYKO-100, EYKO-91"
+              ],
+              [
+                "B6",
+                "Does a hot phone or a low battery slow it down?",
+                "Open",
+                "EYKO-95, EYKO-90"
+              ],
+              [
+                "B7",
+                "Brute force will not scale. What is the plan past the limit?",
+                "Open",
+                "EYKO-89, EYKO-91, EYKO-97"
+              ],
+              [
+                "B8",
+                "Why was reading from disk twice as slow on the Pixel as on the cheaper A32?",
+                "Open",
+                "EYKO-95, EYKO-90, EYKO-83"
+              ],
+              [
+                "C1",
+                "Prove the phone and the laptop store the same thing.",
+                "Partly",
+                "EYKO-98"
+              ],
+              [
+                "C2",
+                "What does an hour of video cost in storage?",
+                "Partly",
+                "EYKO-96"
+              ],
+              [
+                "C3",
+                "What happens if the app is killed in the middle of writing?",
+                "Partly",
+                "EYKO-96"
+              ],
+              [
+                "C4",
+                "Why no ORM (Room entities)?",
+                "Partly",
+                "EYKO-98"
+              ],
+              [
+                "C5",
+                "You say the tests pass. How many, and what do they cover?",
+                "Partly",
+                "no card yet"
+              ],
+              [
+                "D1",
+                "MobileCLIP is research-only and YOLOE is AGPL. Can this ever ship?",
+                "Open",
+                "EYKO-88"
+              ],
+              [
+                "D2",
+                "Can someone other than you reproduce the setup?",
+                "Partly",
+                "EYKO-99, EYKO-92"
+              ]
+            ]
+          }
+        },
+        {
+          "h3": "A1 · Did you actually run sqlite-vec on the phone, or read about it? Show me the error."
+        },
+        {
+          "table": {
+            "cols": [
+              "Item",
+              "Detail"
+            ],
+            "widths": [
+              1.2,
+              6
+            ],
+            "rows": [
+              [
+                "Status",
+                "**Answered**"
+              ],
+              [
+                "Answer",
+                "We ran it, three times on two real phones: Samsung A32 on 12 Oct and again on 3 Nov, Pixel 9 Pro XL on 3 Nov. Every run gives the same two errors: \"no such module: vec0\" and \"no such function: load_extension\"."
+              ],
+              [
+                "How we tested",
+                "Install the app and test app from the phone kit (adb install -r), then: adb shell am instrument -w -e class com.eykon.memory.spike.VectorStorageSpikeTest com.eykon.memory.test/androidx.test.runner.AndroidJUnitRunner. Save the log unedited with adb logcat -d -s EYKO31."
+              ],
+              [
+                "Evidence",
+                "docs/results/vectors/proof/a32-2026-11-03-logcat.txt, pixel9proxl-2026-11-03-logcat.txt and their -device.txt sheets; first run: docs/results/2026-10-12-eyko-31-vector-storage.md (Raw phone output); test code: android/app/src/androidTest/.../spike/VectorStorageSpikeTest.kt; commit 79f3904."
+              ],
+              [
+                "Next / card",
+                "Add a screen recording and the Infinix run (EYKO-94)."
+              ],
+              [
+                "Last updated",
+                "3 Nov 2026"
+              ]
+            ]
+          }
+        },
+        {
+          "h3": "A2 · Is that a sqlite-vec problem or an Android problem?"
+        },
+        {
+          "table": {
+            "cols": [
+              "Item",
+              "Detail"
+            ],
+            "widths": [
+              1.2,
+              6
+            ],
+            "rows": [
+              [
+                "Status",
+                "**Partly**"
+              ],
+              [
+                "Answer",
+                "An Android problem. The phone's built-in SQLite has no load_extension function at all, so no extension of any kind can be loaded, not only sqlite-vec. It fails the same way on an old phone (Android 13, SQLite 3.32.2) and a new one (Android 17, SQLite 3.50.6), so it is not an old-version problem."
+              ],
+              [
+                "How we tested",
+                "Same test as A1 on two phones with different Android and SQLite versions; the test prints the SQLite version first."
+              ],
+              [
+                "Evidence",
+                "The two proof logs (A1); device sheets show the versions."
+              ],
+              [
+                "Next / card",
+                "Official Android source for why (EYKO-89); a dummy-extension and fts5 test on the phone (EYKO-100)."
+              ],
+              [
+                "Last updated",
+                "3 Nov 2026"
+              ]
+            ]
+          }
+        },
+        {
+          "h3": "A3 · Android apps can ship their own SQLite. Did you try that route?"
+        },
+        {
+          "table": {
+            "cols": [
+              "Item",
+              "Detail"
+            ],
+            "widths": [
+              1.2,
+              6
+            ],
+            "rows": [
+              [
+                "Status",
+                "**Open**"
+              ],
+              [
+                "Answer",
+                "Not yet. Only the built-in SQLite was tried. This is the main open point of the storage decision."
+              ],
+              [
+                "How we tested",
+                "Planned: add a bundled SQLite (androidx sqlite-bundled or requery sqlite-android) with an arm64 sqlite-vec build on a throwaway branch, then time it against BLOBs."
+              ],
+              [
+                "Evidence",
+                "—"
+              ],
+              [
+                "Next / card",
+                "EYKO-89 (which route), EYKO-93 (try it on the Pixel and A32)."
+              ],
+              [
+                "Last updated",
+                "3 Nov 2026"
+              ]
+            ]
+          }
+        },
+        {
+          "h3": "A4 · Did it fail only on one phone?"
+        },
+        {
+          "table": {
+            "cols": [
+              "Item",
+              "Detail"
+            ],
+            "widths": [
+              1.2,
+              6
+            ],
+            "rows": [
+              [
+                "Status",
+                "**Partly**"
+              ],
+              [
+                "Answer",
+                "Two phones so far: Samsung A32 (low-end, Helio G80) and Pixel 9 Pro XL (high-end, Tensor G4). Same failure on both."
+              ],
+              [
+                "How we tested",
+                "Same as A1."
+              ],
+              [
+                "Evidence",
+                "Proof logs and device sheets for both phones."
+              ],
+              [
+                "Next / card",
+                "Third phone: Zara's Infinix (EYKO-94)."
+              ],
+              [
+                "Last updated",
+                "3 Nov 2026"
+              ]
+            ]
+          }
+        },
+        {
+          "h3": "A5 · Do sqlite-vec and your BLOB search return the same results, or is one just faster?"
+        },
+        {
+          "table": {
+            "cols": [
+              "Item",
+              "Detail"
+            ],
+            "widths": [
+              1.2,
+              6
+            ],
+            "rows": [
+              [
+                "Status",
+                "**Open**"
+              ],
+              [
+                "Answer",
+                "Both are exact search by design (no approximation), so they should return the same top 20. This has not been checked yet."
+              ],
+              [
+                "How we tested",
+                "Planned: compare the top 20 of every method with exact numpy search (recall@20)."
+              ],
+              [
+                "Evidence",
+                "—"
+              ],
+              [
+                "Next / card",
+                "EYKO-91 (laptop), EYKO-93 (phone, bundled sqlite-vec)."
+              ],
+              [
+                "Last updated",
+                "3 Nov 2026"
+              ]
+            ]
+          }
+        },
+        {
+          "h3": "B1 · One run? What is the spread?"
+        },
+        {
+          "table": {
+            "cols": [
+              "Item",
+              "Detail"
+            ],
+            "widths": [
+              1.2,
+              6
+            ],
+            "rows": [
+              [
+                "Status",
+                "**Partly**"
+              ],
+              [
+                "Answer",
+                "The A32 was run twice, three weeks apart: 20,000 vectors searched in memory took 81.0 ms (12 Oct) and 83.5 ms (3 Nov), about 3 % apart. Each run is still a single run of 20 queries, so there is no proper spread yet."
+              ],
+              [
+                "How we tested",
+                "Same test, same phone, two dates."
+              ],
+              [
+                "Evidence",
+                "2026-10-12 result file and a32-2026-11-03-logcat.txt."
+              ],
+              [
+                "Next / card",
+                "5 runs with a warm-up, median and p95 (EYKO-90 on Pixel and A32, EYKO-95 on the Infinix)."
+              ],
+              [
+                "Last updated",
+                "3 Nov 2026"
+              ]
+            ]
+          }
+        },
+        {
+          "h3": "B2 · Why only up to 20,000 vectors? When does a real user reach that?"
+        },
+        {
+          "table": {
+            "cols": [
+              "Item",
+              "Detail"
+            ],
+            "widths": [
+              1.2,
+              6
+            ],
+            "rows": [
+              [
+                "Status",
+                "**Partly**"
+              ],
+              [
+                "Answer",
+                "Estimate: the app keeps about 13.4 frames per minute of video (Ego4D on the Pixel: 372 kept in 27.8 min). One hour of video a day is about 800 frame vectors a day, so 20,000 is reached in about 25 days. Nothing above 20,000 has been measured yet."
+              ],
+              [
+                "How we tested",
+                "Kept-frame rate from the Ego4D phone run (Head 8); simple arithmetic."
+              ],
+              [
+                "Evidence",
+                "docs/results/2026-10-20-ego4d-baseline.md (On the phone)."
+              ],
+              [
+                "Next / card",
+                "Sweep 1k to 300k (EYKO-90, EYKO-95) and the days-until-too-slow model (EYKO-97)."
+              ],
+              [
+                "Last updated",
+                "3 Nov 2026"
+              ]
+            ]
+          }
+        },
+        {
+          "h3": "B3 · Random vectors are not real ones. Does it hold with real data?"
+        },
+        {
+          "table": {
+            "cols": [
+              "Item",
+              "Detail"
+            ],
+            "widths": [
+              1.2,
+              6
+            ],
+            "rows": [
+              [
+                "Status",
+                "**Open**"
+              ],
+              [
+                "Answer",
+                "All runs so far use random unit vectors."
+              ],
+              [
+                "How we tested",
+                "Planned: use the real image_vec and text_vec from the Pixel database."
+              ],
+              [
+                "Evidence",
+                "—"
+              ],
+              [
+                "Next / card",
+                "EYKO-91 (laptop), EYKO-100 (phone)."
+              ],
+              [
+                "Last updated",
+                "3 Nov 2026"
+              ]
+            ]
+          }
+        },
+        {
+          "h3": "B4 · 112 MB of memory for one table: what about all three tables, on a 4 GB phone?"
+        },
+        {
+          "table": {
+            "cols": [
+              "Item",
+              "Detail"
+            ],
+            "widths": [
+              1.2,
+              6
+            ],
+            "rows": [
+              [
+                "Status",
+                "**Open**"
+              ],
+              [
+                "Answer",
+                "At 20,000 vectors one table used 106 MB (Pixel) to 112 MB (A32) of Java heap, but that figure includes the test's own copies, so it overstates. Three tables and a 4 GB phone have not been measured."
+              ],
+              [
+                "How we tested",
+                "Java heap read inside the test after loading."
+              ],
+              [
+                "Evidence",
+                "Proof logs (memory lines)."
+              ],
+              [
+                "Next / card",
+                "Honest PSS with all tables (EYKO-100); PSS from dumpsys during the sweep (EYKO-95)."
+              ],
+              [
+                "Last updated",
+                "3 Nov 2026"
+              ]
+            ]
+          }
+        },
+        {
+          "h3": "B5 · The phone is about 50x slower than the laptop. Is that the chip or your code?"
+        },
+        {
+          "table": {
+            "cols": [
+              "Item",
+              "Detail"
+            ],
+            "widths": [
+              1.2,
+              6
+            ],
+            "rows": [
+              [
+                "Status",
+                "**Open**"
+              ],
+              [
+                "Answer",
+                "Not known yet. In memory at 20,000: laptop 1.5 ms (numpy), Pixel 40.5 ms, A32 83.5 ms (plain Kotlin loop). Part of the gap is likely the loop, not the chip."
+              ],
+              [
+                "How we tested",
+                "Planned: a faster Kotlin loop on the phone, a plain-Python loop on the laptop."
+              ],
+              [
+                "Evidence",
+                "—"
+              ],
+              [
+                "Next / card",
+                "EYKO-100 (phone), EYKO-91 (laptop)."
+              ],
+              [
+                "Last updated",
+                "3 Nov 2026"
+              ]
+            ]
+          }
+        },
+        {
+          "h3": "B6 · Does a hot phone or a low battery slow it down?"
+        },
+        {
+          "table": {
+            "cols": [
+              "Item",
+              "Detail"
+            ],
+            "widths": [
+              1.2,
+              6
+            ],
+            "rows": [
+              [
+                "Status",
+                "**Open**"
+              ],
+              [
+                "Answer",
+                "Not measured. The 3 Nov Pixel run was charging at 36 °C, so it is not a clean baseline."
+              ],
+              [
+                "How we tested",
+                "Planned: cool, hot (10 min load) and low-battery runs under a fixed protocol."
+              ],
+              [
+                "Evidence",
+                "Pixel device sheet (conditions)."
+              ],
+              [
+                "Next / card",
+                "EYKO-95 (protocol and Infinix), EYKO-90 (Pixel, A32)."
+              ],
+              [
+                "Last updated",
+                "3 Nov 2026"
+              ]
+            ]
+          }
+        },
+        {
+          "h3": "B7 · Brute force will not scale. What is the plan past the limit?"
+        },
+        {
+          "table": {
+            "cols": [
+              "Item",
+              "Detail"
+            ],
+            "widths": [
+              1.2,
+              6
+            ],
+            "rows": [
+              [
+                "Status",
+                "**Open**"
+              ],
+              [
+                "Answer",
+                "The size where in-memory search passes 200 ms is not measured yet. Candidates: int8 vectors, an approximate index (usearch, hnswlib) or bundled sqlite-vec."
+              ],
+              [
+                "How we tested",
+                "Planned: research the options, test one on the laptop for speed and recall."
+              ],
+              [
+                "Evidence",
+                "—"
+              ],
+              [
+                "Next / card",
+                "EYKO-89, EYKO-91, EYKO-97."
+              ],
+              [
+                "Last updated",
+                "3 Nov 2026"
+              ]
+            ]
+          }
+        },
+        {
+          "h3": "B8 · Why was reading from disk twice as slow on the Pixel as on the cheaper A32?"
+        },
+        {
+          "table": {
+            "cols": [
+              "Item",
+              "Detail"
+            ],
+            "widths": [
+              1.2,
+              6
+            ],
+            "rows": [
+              [
+                "Status",
+                "**Open**"
+              ],
+              [
+                "Answer",
+                "Found on 3 Nov: 20,000 vectors read from SQLite took 3,068 ms on the Pixel and 1,521 ms on the A32. Not explained. The Pixel was 97 % full, charging and at 36 °C. It does not change the decision, because the app searches from memory."
+              ],
+              [
+                "How we tested",
+                "Same test, same day, both phones."
+              ],
+              [
+                "Evidence",
+                "Both proof logs and device sheets."
+              ],
+              [
+                "Next / card",
+                "Controlled sweep (EYKO-95, EYKO-90) after freeing Pixel storage (EYKO-83)."
+              ],
+              [
+                "Last updated",
+                "3 Nov 2026"
+              ]
+            ]
+          }
+        },
+        {
+          "h3": "C1 · Prove the phone and the laptop store the same thing."
+        },
+        {
+          "table": {
+            "cols": [
+              "Item",
+              "Detail"
+            ],
+            "widths": [
+              1.2,
+              6
+            ],
+            "rows": [
+              [
+                "Status",
+                "**Partly**"
+              ],
+              [
+                "Answer",
+                "One table design (src/video_memory/schema.py) is copied into the phone (VideoSchema.kt). On 4 Ego4D clips the phone and laptop kept the same frames (354 of 372 at the same second) with 99 % same place and 96 % same action. There is no automatic test that the two schemas are identical."
+              ],
+              [
+                "How we tested",
+                "Ego4D phone comparison (task ego4d-phone-compare)."
+              ],
+              [
+                "Evidence",
+                "docs/results/2026-10-20-ego4d-baseline.md (On the phone)."
+              ],
+              [
+                "Next / card",
+                "Schema parity test on both sides (EYKO-98)."
+              ],
+              [
+                "Last updated",
+                "3 Nov 2026"
+              ]
+            ]
+          }
+        },
+        {
+          "h3": "C2 · What does an hour of video cost in storage?"
+        },
+        {
+          "table": {
+            "cols": [
+              "Item",
+              "Detail"
+            ],
+            "widths": [
+              1.2,
+              6
+            ],
+            "rows": [
+              [
+                "Status",
+                "**Partly**"
+              ],
+              [
+                "Answer",
+                "One measured point: the database grew about 7 MB for 27.8 minutes of video, with every vector. Frame pictures were 8.8 MB per minute before dropped frames were deleted (EYKO-59)."
+              ],
+              [
+                "How we tested",
+                "Database size before and after the Ego4D phone run."
+              ],
+              [
+                "Evidence",
+                "docs/results/2026-10-20-ego4d-baseline.md."
+              ],
+              [
+                "Next / card",
+                "At least 4 points on the Infinix (EYKO-96)."
+              ],
+              [
+                "Last updated",
+                "3 Nov 2026"
+              ]
+            ]
+          }
+        },
+        {
+          "h3": "C3 · What happens if the app is killed in the middle of writing?"
+        },
+        {
+          "table": {
+            "cols": [
+              "Item",
+              "Detail"
+            ],
+            "widths": [
+              1.2,
+              6
+            ],
+            "rows": [
+              [
+                "Status",
+                "**Partly**"
+              ],
+              [
+                "Answer",
+                "By design the job saves the stage it reached and resumes there, and the link check fails the job if anything is missing. This is covered by tests on the laptop and phone, but nobody has killed the app mid-stage on a real phone and checked."
+              ],
+              [
+                "How we tested",
+                "JVM and on-device tests of the queue and the link check."
+              ],
+              [
+                "Evidence",
+                "android/app/src/test, src/androidTest (queue and link tests)."
+              ],
+              [
+                "Next / card",
+                "9 force-stops at 3 stages on the Infinix (EYKO-96)."
+              ],
+              [
+                "Last updated",
+                "3 Nov 2026"
+              ]
+            ]
+          }
+        },
+        {
+          "h3": "C4 · Why no ORM (Room entities)?"
+        },
+        {
+          "table": {
+            "cols": [
+              "Item",
+              "Detail"
+            ],
+            "widths": [
+              1.2,
+              6
+            ],
+            "rows": [
+              [
+                "Status",
+                "**Partly**"
+              ],
+              [
+                "Answer",
+                "So the same SQL runs on the laptop (sqlite3) and the phone (SupportSQLiteDatabase) and the two cannot drift. Written down in this document but not as an ADR, and there is no timing."
+              ],
+              [
+                "How we tested",
+                "Decision record only."
+              ],
+              [
+                "Evidence",
+                "docs/domain/eykon/index.md (Tech Stack), this document (Decisions)."
+              ],
+              [
+                "Next / card",
+                "ADR with an insert / read timing (EYKO-98)."
+              ],
+              [
+                "Last updated",
+                "3 Nov 2026"
+              ]
+            ]
+          }
+        },
+        {
+          "h3": "C5 · You say the tests pass. How many, and what do they cover?"
+        },
+        {
+          "table": {
+            "cols": [
+              "Item",
+              "Detail"
+            ],
+            "widths": [
+              1.2,
+              6
+            ],
+            "rows": [
+              [
+                "Status",
+                "**Partly**"
+              ],
+              [
+                "Answer",
+                "109 JVM tests and 104 on-device tests at the 2 Nov gap review. No coverage figure and no CI run log."
+              ],
+              [
+                "How we tested",
+                "Count from the gap review."
+              ],
+              [
+                "Evidence",
+                "docs/plans/gap-review-2026-11/00-gap-register.md."
+              ],
+              [
+                "Next / card",
+                "No card yet: coverage figure and a CI log."
+              ],
+              [
+                "Last updated",
+                "3 Nov 2026"
+              ]
+            ]
+          }
+        },
+        {
+          "h3": "D1 · MobileCLIP is research-only and YOLOE is AGPL. Can this ever ship?"
+        },
+        {
+          "table": {
+            "cols": [
+              "Item",
+              "Detail"
+            ],
+            "widths": [
+              1.2,
+              6
+            ],
+            "rows": [
+              [
+                "Status",
+                "**Open**"
+              ],
+              [
+                "Answer",
+                "Allowed while the project is academic. A licence list with a swap-out plan for each model has not been written."
+              ],
+              [
+                "How we tested",
+                "—"
+              ],
+              [
+                "Evidence",
+                "docs/invariants/tooling.md (rule)."
+              ],
+              [
+                "Next / card",
+                "EYKO-88 (licences)."
+              ],
+              [
+                "Last updated",
+                "3 Nov 2026"
+              ]
+            ]
+          }
+        },
+        {
+          "h3": "D2 · Can someone other than you reproduce the setup?"
+        },
+        {
+          "table": {
+            "cols": [
+              "Item",
+              "Detail"
+            ],
+            "widths": [
+              1.2,
+              6
+            ],
+            "rows": [
+              [
+                "Status",
+                "**Partly**"
+              ],
+              [
+                "Answer",
+                "The phone kit installs and runs from its README alone, with only adb, on two phones (A32 fresh install, Pixel update). Not yet done by another person or on another laptop."
+              ],
+              [
+                "How we tested",
+                "Phone kit used step by step on both phones; three README fixes made from that use."
+              ],
+              [
+                "Evidence",
+                "docs/phone-kit/README.md, kit folder D:\\eykon-cache\\phone-kit-2026-11-03 (SHA256SUMS.txt), proof device sheets; EYKO-99 comment."
+              ],
+              [
+                "Next / card",
+                "Zara on her Infinix (EYKO-99), clean laptop clone (EYKO-92)."
+              ],
+              [
+                "Last updated",
+                "3 Nov 2026"
+              ]
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "title": "Approach",
+      "blocks": [
+        {
+          "h3": "The vector storage spike (EYKO-31)"
+        },
+        {
+          "steps": [
+            "Generate 5,000 and 20,000 random 512-dimension unit vectors (fixed seed) and 20 query vectors; ask for the top 20 each time.",
+            "Laptop: Python 3.10.6, SQLite 3.37.2, numpy 2.2.6, sqlite-vec 0.1.9 (task spike-laptop-vectors).",
+            "Phone: Samsung A32 (Helio G80, 6 GB RAM, Android 13), standing in for the Infinix Note 12, which was not available (task spike-android-vectors).",
+            "Try sqlite-vec on the phone through the same platform SQLite that Room 2.6.1 uses.",
+            "Time three ways of searching: BLOBs read from SQLite on every query, BLOBs loaded into memory once, and sqlite-vec.",
+            "Record file size, insert time and Java / native heap."
+          ],
+          "ref": "spike"
+        },
+        {
+          "h3": "The tables (EYKO-1)"
+        },
+        "One table design, written down once in src/video_memory/schema.py and copied into the phone's VideoSchema.kt. Each kept frame is tied to its video and its second, so every search result can show the exact moment.",
+        {
+          "table": {
+            "cols": [
+              "Table",
+              "What one row holds",
+              "Written by"
+            ],
+            "widths": [
+              1.5,
+              4,
+              1.8
+            ],
+            "rows": [
+              [
+                "videos",
+                "One recorded clip: id, file path, recorded time, duration, GPS, status (processing / ready / failed)",
+                "Intake (EYKO-2)"
+              ],
+              [
+                "jobs",
+                "The background job for a video: stage reached, attempts, status, last error",
+                "Queue (EYKO-3)"
+              ],
+              [
+                "frames",
+                "Every pulled frame: second in the video, file path, kept or dropped and why, dHash",
+                "split, filter, dedup"
+              ],
+              [
+                "scene_records",
+                "One per kept frame: objects, people count, place, action, caption",
+                "scene, small_objects"
+              ],
+              [
+                "video_texts",
+                "Captions (and transcripts later) with a keyword index",
+                "embed_texts"
+              ],
+              [
+                "image_vec",
+                "512-d MobileCLIP vector per kept frame (float32 BLOB)",
+                "embed_images"
+              ],
+              [
+                "text_vec",
+                "384-d bge-small vector per text (float32 BLOB)",
+                "embed_texts"
+              ],
+              [
+                "object_sightings",
+                "Each detected object with its crop vector and whether it is the latest sighting",
+                "latest"
+              ],
+              [
+                "transcript_chunks, audio_windows, audio_vec",
+                "Speech and sound (tables exist, nothing writes them yet)",
+                "Speech head (later)"
+              ]
+            ]
+          }
+        },
+        {
+          "h3": "Ground rules set at the same time"
+        },
+        {
+          "bullets": [
+            "**Raw SQL, no ORM:** the laptop uses sqlite3 directly; the phone runs plain SQL on SupportSQLiteDatabase. The same statements work on both.",
+            "**Parity:** same ONNX model files, same filter maths, same constants on laptop and phone. Golden frames must give the same result on both, checked by tests.",
+            "**Tests:** pytest as a dev dependency on the laptop (task test, task smoke); JVM unit tests and on-device tests on the phone.",
+            "**Tooling:** uv for Python packages, Taskfile for every repeatable command, models and datasets on D:\\eykon-cache, never in git.",
+            "**Licences:** AGPL (YOLOE) allowed while the project is academic; MobileCLIP is research-only and never shipped inside the app package."
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Options considered",
+      "blocks": [
+        {
+          "table": {
+            "cols": [
+              "Option",
+              "What it is",
+              "Result",
+              "Verdict"
+            ],
+            "widths": [
+              1.8,
+              2.6,
+              3.6,
+              1.2
+            ],
+            "rows": [
+              [
+                "sqlite-vec",
+                "SQLite extension with a vec0 virtual table",
+                "Laptop 31 ms at 20k. Phone: no such module vec0; no such function load_extension",
+                "Rejected"
+              ],
+              [
+                "sqlite-vec via bundled SQLite driver",
+                "Ship our own SQLite with a native sqlite-vec per chip type",
+                "Not attempted: needs a Room upgrade and a native build; no official Android package found",
+                "Not tried"
+              ],
+              [
+                "BLOBs read per query",
+                "Read every vector from SQLite on each search",
+                "Phone 1.38 s at 20k (laptop 92 ms)",
+                "Rejected"
+              ],
+              [
+                "BLOBs in memory",
+                "Load each vector table once, dot product in Kotlin / numpy",
+                "Phone 81 ms at 20k (laptop 1.5 ms)",
+                "Adopted"
+              ],
+              [
+                "Room entities / ORM",
+                "Map tables to Kotlin classes",
+                "Would diverge from the laptop's sqlite3 code",
+                "Rejected"
+              ]
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "title": "Decisions",
+      "blocks": [
+        {
+          "table": {
+            "cols": [
+              "#",
+              "Decision",
+              "When",
+              "Why (evidence)"
+            ],
+            "widths": [
+              0.4,
+              3.2,
+              1.1,
+              4
+            ],
+            "rows": [
+              [
+                "1",
+                "Vectors are float32 BLOBs in plain SQLite tables on both sides; each table is loaded into memory once and searched by dot product. sqlite-vec is not used.",
+                "12 Oct 2026 (confirmed by the user)",
+                "sqlite-vec does not load on Android; in-memory BLOB search 81 ms at 20k, under the 200 ms limit"
+              ],
+              [
+                "2",
+                "src/video_memory/schema.py is the single table contract; the phone copies it",
+                "12 Oct 2026",
+                "One design, two languages, no drift"
+              ],
+              [
+                "3",
+                "No ORM; raw SQL",
+                "Roadmap §8",
+                "Same SQL on laptop and phone"
+              ],
+              [
+                "4",
+                "pytest as dev dependency (EYKO-30)",
+                "12 Oct 2026",
+                "One test runner, task test / task smoke"
+              ],
+              [
+                "5",
+                "AGPL allowed while academic only; re-decide before any release",
+                "14 Oct 2026",
+                "Needed for YOLOE (see Head 5); recorded in docs/invariants/tooling.md"
+              ]
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "title": "Tests and evidence",
+      "blocks": [
+        "Times are per query in milliseconds, median / worst.",
+        {
+          "table": {
+            "cols": [
+              "Method",
+              "Laptop 5,000",
+              "Laptop 20,000",
+              "Phone 5,000",
+              "Phone 20,000"
+            ],
+            "widths": [
+              3,
+              1.4,
+              1.4,
+              1.4,
+              1.4
+            ],
+            "rows": [
+              [
+                "BLOB, read from SQLite every query",
+                "24.1 / 33.6",
+                "91.8 / 103.3",
+                "245.8 / 525.0",
+                "1379.3 / 1460.0"
+              ],
+              [
+                "BLOB, vectors already in memory",
+                "0.23 / 0.48",
+                "1.49 / 1.74",
+                "15.6 / 49.6",
+                "**81.0 / 127.0**"
+              ],
+              [
+                "sqlite-vec",
+                "8.4 / 9.6",
+                "31.0 / 35.0",
+                "does not load",
+                "does not load"
+              ]
+            ]
+          }
+        },
+        {
+          "table": {
+            "cols": [
+              "Other measurement",
+              "5,000 vectors",
+              "20,000 vectors"
+            ],
+            "widths": [
+              3,
+              2,
+              2
+            ],
+            "rows": [
+              [
+                "Database file, BLOB",
+                "20.5 MB (laptop), 20.6 MB (phone)",
+                "82.1 MB, 82.2 MB"
+              ],
+              [
+                "Database file, sqlite-vec (laptop)",
+                "10.6 MB",
+                "42.5 MB"
+              ],
+              [
+                "Phone: insert all rows",
+                "1,326 ms",
+                "3,711 ms"
+              ],
+              [
+                "Phone: Java heap after the run",
+                "45 MB",
+                "112 MB"
+              ],
+              [
+                "Phone: native heap",
+                "10 MB",
+                "10 MB"
+              ]
+            ]
+          }
+        },
+        {
+          "h3": "Re-run on 3 November 2026 (phone kit, two phones)"
+        },
+        {
+          "table": {
+            "cols": [
+              "",
+              "Samsung A32",
+              "Pixel 9 Pro XL"
+            ],
+            "widths": [
+              3,
+              2,
+              2
+            ],
+            "rows": [
+              [
+                "Android / platform SQLite",
+                "13 / 3.32.2",
+                "17 / 3.50.6"
+              ],
+              [
+                "sqlite-vec (vec0)",
+                "no such module",
+                "no such module"
+              ],
+              [
+                "load_extension",
+                "no such function",
+                "no such function"
+              ],
+              [
+                "20k, BLOB in memory (median / worst ms)",
+                "83.5 / 114.8 (12 Oct: 81.0 / 127.0)",
+                "40.5 / 148.4"
+              ],
+              [
+                "20k, BLOB read from SQLite (median ms)",
+                "1,521",
+                "3,068 (unexplained, see B8)"
+              ],
+              [
+                "5k, BLOB in memory (median ms)",
+                "16.4",
+                "8.9"
+              ],
+              [
+                "Conditions",
+                "28 % battery, USB, 27.8 °C, fresh install",
+                "57 %, charging, 36 °C, storage 97 % full"
+              ]
+            ]
+          }
+        },
+        "Raw logs and device sheets: docs/results/vectors/proof/ (commit 79f3904).",
+        {
+          "bullets": [
+            "Real use since then: on the Pixel, the frame-vector search takes about 0.1 s (first search about 1 s while vectors load); storing a frame vector takes under 1 ms (Head 6).",
+            "Ego4D on the Pixel: the database grew about 7 MB for 27.8 minutes of video, with every vector (Head 8)."
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Results",
+      "blocks": [
+        {
+          "bullets": [
+            "One SQLite file per device holds the whole video memory: rows, captions, keyword index and every vector.",
+            "Search is a plain loop over a FloatArray in memory: fast enough on the slow phone at 20,000 vectors.",
+            "The same table design and the same constants on laptop and phone, so laptop experiments carry over."
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Limits: how these numbers could mislead",
+      "blocks": [
+        {
+          "bullets": [
+            "One run on one phone, not repeated, so there is no spread.",
+            "A cool, idle phone on a desk on USB power is the best case.",
+            "Random vectors, not real ones; real search also filters by video status, which adds a join.",
+            "The Pixel 9 Pro XL was not run in the spike; only the A32.",
+            "Memory is the cost to watch: 112 MB of Java heap for one table of 20,000 vectors, and the design has three vector tables (image, text, audio).",
+            "BLOB files are about twice the size of sqlite-vec files."
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Gaps and open items",
+      "blocks": [
+        "Gaps from the November 2026 gap review that belong to this head. Fill the Resolution column as each card closes.",
+        {
+          "table": {
+            "cols": [
+              "Gap",
+              "What is missing",
+              "Card",
+              "Sev.",
+              "Resolution (to fill)"
+            ],
+            "widths": [
+              0.6,
+              4,
+              0.9,
+              0.7,
+              2.2
+            ],
+            "rows": [
+              [
+                "G9",
+                "The retrieval rule (phone = BM25 + dense + RRF) and the video search (dense only) disagree; the decision lives in a result file, not in the rule. Needs an ADR.",
+                "EYKO-81 (waits for EYKO-75)",
+                "Medium",
+                ""
+              ],
+              [
+                "G13",
+                "The low-end phone (A32) only ran this spike, never the video pipeline.",
+                "EYKO-84",
+                "Medium",
+                ""
+              ],
+              [
+                "G17",
+                "Two broken tools: frame_report pull needs Python 3.12; task test-android / build-android call bare gradlew.bat.",
+                "EYKO-70",
+                "Low",
+                ""
+              ],
+              [
+                "G19",
+                "Licences to re-decide before any release: MobileCLIP research-only, YOLOE AGPL.",
+                "EYKO-88",
+                "Low",
+                ""
+              ],
+              [
+                "G12",
+                "Speech tables (transcript_chunks, audio_windows, audio_vec) exist but nothing writes them.",
+                "EYKO-86",
+                "Low",
+                ""
+              ]
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "title": "References",
+      "blocks": [
+        {
+          "bullets": [
+            "Spike write-up: docs/results/2026-10-12-eyko-31-vector-storage.md",
+            "Table contract: src/video_memory/schema.py; phone: android/.../video/VideoSchema.kt, VideoVectors.kt",
+            "Rules: docs/invariants/core.md (parity), security.md (DB), tooling.md (uv, licences)",
+            "Gap review: docs/plans/gap-review-2026-11/00-gap-register.md"
+          ]
+        }
+      ]
+    }
+  ]
+}

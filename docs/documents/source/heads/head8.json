@@ -1,0 +1,129 @@
+{
+  "title": "Head 8 · Evaluation",
+  "subtitle": "Scoring the phone pipeline on outside data (Ego4D), checking the phone matches the laptop, and testing six changes on a held-out set.",
+  "header": "Eykon · Head 8 · Evaluation",
+  "date": "2 November 2026",
+  "meta": [
+    ["Status", "Built: baseline, phone run, held-out set and six changes done (19–21 October 2026)."],
+    ["Covers", "Why Ego4D, licence and download, set A, the laptop copy of the phone pipeline, scoring rules, baseline scores, the Pixel run and parity, held-out set B, the six changes, limits."],
+    ["Cards", "EYKO-54 (licence + subsets), EYKO-55 (baseline), EYKO-56 (Pixel cost + parity), EYKO-57 (held-out set B), EYKO-58 to 63 (changes)."],
+    ["Synverk flow", "Head 8 · Evaluation: scoring the pipeline on Ego4D"],
+    ["Main sources", "docs/results/2026-10-19-ego4d-subset.md, 2026-10-20-ego4d-baseline.md, 2026-10-21-ego4d-improvements.md, docs/results/ego4d/"]
+  ],
+  "sections": [
+    {"title": "Summary", "blocks": [
+      "Our own test clips are few and mostly labelled by the AI assistant. To get an outside score, the pipeline was run on **Ego4D episodic memory**: head-camera video with labels made by other people for three of Eykon's questions:",
+      {"table": {"cols": ["Ego4D task", "Eykon question", "How we answer it"], "widths": [2, 3, 4], "rows": [
+        ["NLQ (typed question → time window)", "Where did I put X?", "The app's picture search (Head 7)"],
+        ["VQ (photo of an object → last time seen)", "When did I last see this?", "Object crops and the 0.87 same-object rule (Head 6)"],
+        ["MQ (action → start and end)", "What was I doing?", "MobileCLIP action phrases (Head 5)"]
+      ]}},
+      "The baseline showed search finds the right moment far above chance but pins its edges poorly, last seen depends on the detectors cropping the object, and actions are the weakest area. Six changes were then chosen on set A and checked on a held-out set B; five were kept and one dropped."
+    ]},
+    {"title": "Approach", "blocks": [
+      {"h3": "Licence and download (EYKO-54)"},
+      {"bullets": [
+        "Academic licence, valid until 1 November 2026; data never in git (no redistribution).",
+        "Only the episodic-memory annotations (0.14 GB) and 24 validation clips (1.6 GB) were downloaded, to D:\\eykon-cache\\ego4d. The CLI prints the size and waits for yes, so nothing downloads unseen."
+      ]},
+      {"h3": "Choosing set A"},
+      {"steps": [
+        "From the 80 source videos that appear in all three tasks, take the 8 MQ clips with the most of our action labels.",
+        "From the same 7 source videos, take the 8 NLQ clips with the most questions and the 8 VQ clips with the most valid queries."
+      ], "ref": "seta"},
+      "Set A: 24 clips, 177 minutes; 78 object + 12 people NLQ questions, 39 VQ queries, 100 MQ labels.",
+      {"h3": "Running and scoring (EYKO-55)"},
+      {"bullets": [
+        "task ego4d-pipeline runs the phone's stages on the laptop with the phone's ONNX files and constants (3 fps, 9-frame slots, filters, dHash and MobileCLIP dedup, YOLOX-Tiny + D-FINE S + YOLOE-11L, place and action prompts, caption rule, object crops). 24 clips in 46.4 min, 4 at a time; 1,878 frames kept.",
+        "task ego4d-eval scores the result. **The scoring rules are written at the top of the script and were fixed before any score was read.**"
+      ]},
+      {"h3": "The real app (EYKO-56)"},
+      "4 clips (27.8 min) were added through the app's own picker on the Pixel 9 Pro XL and compared with the laptop copy (task ego4d-phone-compare).",
+      {"h3": "Held-out set B (EYKO-57)"},
+      "24 new validation clips from 5 other source videos (194 min), picked by the same rule (task ego4d-select -- B A). Every change was chosen on set A by a rule fixed in its script; set B was never used to choose anything, so only set B numbers are unbiased."
+    ]},
+    {"title": "Baseline results (set A)", "blocks": [
+      {"table": {"cols": ["Area", "Measure", "Ours", "Reference"], "widths": [2, 3.4, 1.4, 2], "rows": [
+        ["Objects (NLQ, 78)", "hit@1 (top frame inside answer ± 1.5 s)", "**24.4 %**", "random 3.4 %"],
+        ["", "hit@5", "47.4 %", ""],
+        ["", "R@1, tIoU ≥ 0.3 / 0.5", "10.3 / 6.4 %", ""],
+        ["", "R@5, tIoU ≥ 0.3 / 0.5", "19.2 / 10.3 %", ""],
+        ["People (NLQ, 12)", "hit@1", "8.3 %", "random 5.2 %"],
+        ["Last seen (VQ, 39)", "success", "**33.3 %**", ""],
+        ["", "object ever cropped by our detectors", "12.8 %", ""],
+        ["Actions (MQ)", "talking: precision", "35.1 %", ""],
+        ["", "walking (stairs) found", "100 %", ""],
+        ["", "reading, eating precision", "0 %", ""],
+        ["", "use phone (23 instances)", "no prompt", ""]
+      ]}}
+    ]},
+    {"title": "The phone run and parity (EYKO-56)", "blocks": [
+      {"table": {"cols": ["Check", "Result"], "widths": [3, 5], "rows": [
+        ["Kept frames, phone / laptop", "372 / 375"],
+        ["Same second", "354"],
+        ["Same place", "351 (99 %)"],
+        ["Same action", "340 (96 %)"],
+        ["Same people count", "306 (86 %)"],
+        ["Object names overlap", "0.78–0.87"],
+        ["Same caption", "178 (50 %)"]
+      ]}},
+      "Frame choice, place and action carry over almost exactly, so the NLQ and MQ scores are the app's. Objects differ at the edges: the phone's hardware decoder and the laptop's FFmpeg give slightly different pixels, detector scores move by up to about 0.1, and objects near a cut-off appear on one side only.",
+      {"table": {"cols": ["Cost on the Pixel", "Value"], "widths": [3, 5], "rows": [
+        ["Processing time", "About 1.4 min per minute of video; YOLOE about half of it (2.5 s a frame)"],
+        ["Caption text", "0.7 KB per minute"],
+        ["Database growth", "About 7 MB for 27.8 min, with every vector"],
+        ["Frame JPEGs", "8.8 MB per minute, mostly dropped frames (fixed by EYKO-59)"],
+        ["Phone temperature", "28.0 → 36.4 °C"]
+      ]}}
+    ]},
+    {"title": "Six changes, chosen on A, checked on B", "blocks": [
+      {"table": {"cols": ["Change", "Card", "Set A", "Set B", "Verdict"], "widths": [2.6, 0.9, 2.4, 2.4, 1.3], "rows": [
+        ["Search windows (0.85, 10 s)", "EYKO-58", "R@1 0.5: 6.4 → 9.0", "6.2 → 15.6", "Keep (on phone)"],
+        ["Delete dropped JPEGs", "EYKO-59", "storage only", "", "Keep (on phone)"],
+        ["First-person actions, ±6 s smoothing", "EYKO-60", "MQ F1 10.8 → 32.2", "15.4 → 16.7", "Keep (on phone), small gain"],
+        ["Hybrid caption search with RRF", "EYKO-61", "hit@1 24.4 → 15–21", "pictures + bge better, keywords worse", "Drop for now"],
+        ["Any-object crops for last seen", "EYKO-62", "VQ 35.9 → 46.2", "22.9 → 34.3", "Keep (laptop; phone timing EYKO-64)"],
+        ["YOLOE only where MobileCLIP flags", "EYKO-63", "YOLOE on 15.2 % of frames", "19.6 %", "Keep (on phone)"]
+      ]}}
+    ]},
+    {"title": "Decisions", "blocks": [
+      {"table": {"cols": ["#", "Decision", "Why"], "widths": [0.4, 4, 4], "rows": [
+        ["1", "Use Ego4D episodic memory as the outside test, small subsets only", "Labels by other people for our three questions; licence allows academic use"],
+        ["2", "Score with our own scripts, rules fixed before reading", "The Ego4D server needs the test split; fixed rules keep scores honest"],
+        ["3", "Run a laptop copy for accuracy, the real app on 4 clips for cost and parity", "177 min on the phone would take hours; parity shows the copy is fair"],
+        ["4", "Choose on set A, report set B", "Avoids tuning to the test"],
+        ["5", "Keep 5 of 6 changes; drop hybrid", "Set B numbers above"]
+      ]}}
+    ]},
+    {"title": "Limits", "blocks": [
+      {"bullets": [
+        "Small samples: 78 + 12 NLQ, 39 VQ, 50 MQ instances from 7 videos on set A; 32 + 4 NLQ on set B. A direction, not a final score.",
+        "Validation clips scored with our own scripts, not the Ego4D server.",
+        "Social covers only the conversation class.",
+        "The laptop copy is not the app; parity was checked on 4 clips and one phone.",
+        "Published numbers (OSGNet NLQ R@1 28.5 / 20.1; RELOCATE VQ 60.1) come from large GPU video models on other splits: for scale only."
+      ]}
+    ]},
+    {"title": "Gaps and open items", "blocks": [
+      "Fill the Resolution column as each card closes.",
+      {"table": {"cols": ["Gap", "What is missing", "Card", "Sev.", "Resolution (to fill)"], "widths": [0.6, 4, 0.9, 0.7, 2.2], "rows": [
+        ["G5", "Four earlier results rest on AI-written labels; a person checks them, then re-score.", "EYKO-72", "High", ""],
+        ["G6", "Too little of our own footage (only S1-01 and S1-02 exist).", "EYKO-82, EYKO-50", "High", ""],
+        ["D3", "Recording scope: all of sets 8 and 9, or only what public data cannot give.", "EYKO-76", "Decision", ""],
+        ["G13", "The low-end phone never ran the video pipeline; run once on a second phone.", "EYKO-84", "Medium", ""],
+        ["G14", "Phone–laptop parity re-check after filter, dedup and detector changes.", "EYKO-87", "Low", ""],
+        ["G18", "Free phone storage so the app can be reinstalled.", "EYKO-83", "Medium", ""],
+        ["—", "Clean timing of the new build and of any-object crops on the Pixel.", "EYKO-64", "—", ""],
+        ["—", "Question set + cost and accuracy harness: cheap path vs VLM.", "EYKO-33", "—", ""],
+        ["—", "Phone parity gate on two phones.", "EYKO-34", "—", ""]
+      ]}}
+    ]},
+    {"title": "References", "blocks": [
+      {"bullets": [
+        "Results: docs/results/2026-10-19-ego4d-subset.md, 2026-10-20-ego4d-baseline.md, 2026-10-21-ego4d-improvements.md, docs/results/ego4d/",
+        "Code: src/benchmarks/ego4d_pipeline.py, ego4d_eval.py, ego4d_actions.py, ego4d_hybrid.py, ego4d_lastseen.py, ego4d_gate.py",
+        "Selection: D:/eykon-cache/ego4d/selection/ (clip_uids.txt, ego_pick2.py)"
+      ]}
+    ]}
+  ]
+}

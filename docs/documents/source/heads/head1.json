@@ -1,0 +1,160 @@
+{
+  "title": "Head 1 · Project start",
+  "subtitle": "From a text memory app to a phone video memory built on cheap, specialised models.",
+  "header": "Eykon · Head 1 · Project start",
+  "date": "2 November 2026",
+  "meta": [
+    ["Status", "Built. Phases 1 and 2 complete; Phase 3 (VLM video path) built and kept as the comparison baseline."],
+    ["Covers", "Phase 1 (text memory on the laptop), Phase 1.1 (retrieval improvement), Phase 2 (Android app), Phase 3 (VLM video pipeline), and the 12 October 2026 change of direction."],
+    ["Cards", "EYKO-33 (cheap path vs VLM, still to run), EYKO-35 (Phase 3 audit and defense package), EYKO-36 to 43 (withdrawn: covered by the main cards)."],
+    ["Synverk flow", "Head 1 · Project start: from text memory to cheap models"],
+    ["Main sources", "docs/plans/done/, docs/plans/phase 2/, docs/plans/phase-3-vision/, docs/plans/00-roadmap.md, docs/domain/eykon/index.md"]
+  ],
+  "sections": [
+    {
+      "title": "Summary",
+      "blocks": [
+        "Eykon is a **second brain for a phone**: a persistent, local-first memory. It reads what the user records (video and its sound), keeps the moments worth remembering with their context in SQLite, and later answers questions with proof: the frame, the time, the quote. Nothing leaves the device at runtime.",
+        "This head documents how the project got to its current shape. It started as a typed-notes memory on a laptop (Phase 1), was made accurate by a three-stage retrieval pipeline (Phase 1.1), was ported to Android with on-device answers and voice (Phase 2), and was then extended to video by captioning every frame with a vision-language model (Phase 3).",
+        "Phase 3 worked but was **too heavy for a phone**: about 13 s per frame on the laptop CPU and 4.68 W average on the Infinix Note 12. On 12 October 2026 the project changed direction: small specialised models describe frames instead (Option A), the VLM is kept only as an optional last resort and a comparison baseline, and the product is built once, on the phone.",
+        {"note": "**Priority order of what Eykon must do:** (1) find objects: \"where are my keys?\", \"where were they yesterday?\"; (2) speech and actions: \"what did I say about X?\", \"what was I doing?\"; (3) sounds without words, meetings and lectures (important, later)."}
+      ]
+    },
+    {
+      "title": "Approach: how each phase was built",
+      "blocks": [
+        {"h3": "Phase 1 · Text memory on the laptop"},
+        "Goal: prove the core loop. The user types a memory, the app stores it, the user asks a question, the app retrieves the right memory and a local LLM writes a grounded answer.",
+        {"table": {"cols": ["Layer", "Choice", "Why"], "widths": [1, 2, 3], "rows": [
+          ["Language / packages", "Python 3.10+, uv", "Project rule; uv locks dependencies"],
+          ["UI", "Streamlit", "Fastest way to a usable product screen"],
+          ["Embeddings", "BAAI/bge-small-en-v1.5 (384-d)", "512-token context, about 45 MB, strong MTEB accuracy"],
+          ["Storage", "SQLite through raw sqlite3", "Simple, no vector database needed at this scale"],
+          ["Search", "numpy brute-force cosine + BM25", "Exact and fast enough for hundreds of memories"],
+          ["Answer", "Gemma 4 E2B on LiteRT-LM", "Same model and runtime planned for the phone"],
+          ["Config", "Pydantic Settings (MEMORY_ prefix)", "No direct environment variables"]
+        ]}},
+        "Memories are chunked at 256 tokens with 40 tokens of overlap (ceiling 400), embedded, and stored with a keyword index. Search returns the top 5.",
+        {"h3": "Phase 1.1 · Making retrieval strong"},
+        "The baseline was weak on abstract questions (\"Am I financially comfortable?\" against a stored \"15,000 rupees… 2,000 left by month end\"): semantic Hit@1 was only 20 %. Three steps were added, each measured on its own:",
+        {"steps": [
+          "**Query expansion (step 09):** a zero-latency dictionary maps abstract words to concrete ones (\"stress\" to \"exam, deadline, sleep\") before embedding. No LLM needed.",
+          "**Widen the pool (step 10):** take the top 20 from dense vectors and the top 20 from BM25, fuse them with Reciprocal Rank Fusion (k = 60), keep 20 candidates.",
+          "**Cross-encoder re-ranking (step 11):** ms-marco-MiniLM-L-6-v2 (22 M parameters) re-orders the 20 candidates against the original question and returns the top 5."
+        ], "ref": "p11"},
+        "All three were switched on by default for the demo (TOP_K 5, POOL_K 20, EXPAND_QUERY on, RERANK on).",
+        {"h3": "Phase 2 · The Android app"},
+        "Goal: port the validated Phase 1 loop (capture, embed, store, retrieve, generate) to a native, fully offline Android app and add voice as a second way to capture.",
+        {"steps": [
+          "Android project in Kotlin + Jetpack Compose; the Phase 1 storage ported to Room (SQLite).",
+          "Typed text capture through the same path as the laptop.",
+          "Gemma 4 E2B (.litertlm) through the LiteRT-LM Kotlin API for on-device answers; the 2.4 GB model downloads on first launch with a checksum.",
+          "On-device embedding and retrieval with ONNX Runtime.",
+          "Voice capture: Whisper transcribes on the phone and the text follows the typed-text path."
+        ], "ref": "p2"},
+        "Steps 06 (full UI) and 07 (integration test) were dropped as written: the app was repurposed for video and those checks moved into the phone gate (EYKO-34).",
+        {"h3": "Phase 3 · Video through a vision-language model"},
+        "Goal: remember recorded video. Frames are sampled from a video (1 every 5 s by default), a VLM writes a caption for each frame, and the captions go into the same memory and search as text notes.",
+        {"bullets": [
+          "Primary VLM: Gemma 4 E2B-it, the same model already used for answers, so no extra RAM for a second model.",
+          "Comparison VLMs: Moondream2 (GGUF) and SmolVLM / PaliGemma.",
+          "Mobile budget enforced on the laptop: all AI models together within 4 GB of RAM; benchmarks run CPU-only to imitate a phone.",
+          "Built: literature review, environment, frame extraction, VLM captioning, video orchestrator, memory integration, Streamlit video UI, benchmark suite, experiments A1 to A3, soak test (steps 01 to 10)."
+        ]}
+      ]
+    },
+    {
+      "title": "Options considered",
+      "blocks": [
+        {"table": {"cols": ["Question", "Option", "What happened", "Verdict"], "widths": [2, 2, 4, 1.4], "rows": [
+          ["Retrieval for notes", "Dense vectors only", "Semantic Hit@1 20 %, overall Hit@1 53 %", "Rejected"],
+          ["", "Dense + BM25 + RRF + expansion + re-rank", "Overall Hit@1 76.7 %, Hit@5 93.3 %, MRR 0.83; about 1.2 s per query", "Adopted"],
+          ["How to describe video", "VLM caption on every frame (Phase 3)", "Works, but about 13 s per frame on the laptop CPU; 4.68 W average on the Infinix Note 12", "Kept only as baseline (Option C)"],
+          ["", "Small specialised models (detectors + MobileCLIP)", "Hundreds of ms per frame on the Pixel; captions are lists, not sentences", "Adopted (Option A)"],
+          ["", "Clip-level action model", "Only needed if Option A misses actions", "Later (Option B, EYKO-25)"],
+          ["Where the product lives", "Laptop app (Streamlit) with the phone as a later port", "Two products to keep in step; the phone is the real target", "Rejected"],
+          ["", "Phone app is the product; laptop only a lab", "One product; laptop scripts pick and export models", "Adopted"]
+        ]}}
+      ]
+    },
+    {
+      "title": "Decisions",
+      "blocks": [
+        {"table": {"cols": ["#", "Decision", "When", "Why (evidence)"], "widths": [0.4, 3, 1.2, 4], "rows": [
+          ["1", "Use the three-stage retrieval (expand, widen + RRF, re-rank) as the default", "Phase 1.1", "Hit@5 76.7 % to 93.3 %; exact questions 100 % Hit@1 (step 12 report)"],
+          ["2", "Answers come from Gemma 4 E2B on LiteRT-LM, grounded only in retrieved memories", "Phase 1 / 2", "Same model and runtime on laptop and phone"],
+          ["3", "Cheap specialised models first; the VLM is optional and a baseline", "12 Oct 2026", "Phase 3 cost: 13 s per frame, 4.68 W on the Infinix"],
+          ["4", "Option A, B and C all write one scene record, so they can be swapped and compared", "12 Oct 2026", "Lets cost and accuracy be measured on the same videos (EYKO-33)"],
+          ["5", "The product is built once, on the phone; the laptop is a lab", "12 Oct 2026", "Avoids two products; laptop answers model questions only"],
+          ["6", "The Synverk board (project Eykon) is the task list; old phase plans are background method", "12 Oct 2026", "Cards are worked one at a time, in order"],
+          ["7", "Work order: objects first, then speech and actions, then sounds and meetings", "12 Oct 2026", "Agreed product priority"],
+          ["8", "Phone retrieval must equal the laptop's (BM25 + dense + RRF + expansion + re-rank)", "13 Oct 2026", "Rule in docs/invariants/core.md; video search is an open exception (see Head 7, gap G9)"]
+        ]}}
+      ]
+    },
+    {
+      "title": "Tests and evidence",
+      "blocks": [
+        {"table": {"cols": ["Test", "Setup", "Result", "Source"], "widths": [2, 3, 3, 2.2], "rows": [
+          ["Phase 1 baseline", "499 memories (50 gold + 449 noise), 30 questions, hybrid search", "Hit@1 53.3 %, Hit@5 76.7 %, MRR 0.65, about 40 ms", "done/✅ 12-step12-final-eval.md"],
+          ["+ query expansion", "Same set", "Hit@1 56.7 %, Hit@5 86.7 %, MRR 0.69", "same"],
+          ["+ pool of 20", "Same set", "Hit@1 63.3 %, Hit@5 93.3 %, MRR 0.74, about 45 ms", "same"],
+          ["+ cross-encoder", "Same set", "Hit@1 76.7 %, Hit@5 93.3 %, MRR 0.83, about 1.2 s", "same"],
+          ["By question type (final)", "Exact / multi-hop / semantic", "Hit@1 100 / 90 / 40 %; Hit@5 100 / 100 / 80 %", "same"],
+          ["Phase 3 A1 to A3", "Quantisation, sampling rate, caption style; 3 short clips, 9 QA pairs", "Smoke tests only, not evidence (re-labelled in the roadmap)", "phase-3-vision/09"],
+          ["Phase 3 A4 soak test", "VLM pipeline 30+ min on the laptop CPU, looped video", "About 13 s per frame; a laptop stability result, not a phone thermal result", "phase-3-vision/10"],
+          ["Phone power", "VLM path on the Infinix Note 12", "4.68 W average", "docs/domain/eykon/index.md"]
+        ]}}
+      ]
+    },
+    {
+      "title": "Results: where this left the project",
+      "blocks": [
+        {"bullets": [
+          "A proven text memory loop with strong retrieval (Hit@5 93.3 %) on the laptop and an Android app that captures text and voice and answers on the device.",
+          "A working VLM video path that is too slow and power-hungry for continuous use on a phone, kept in src/vision/ as the Option C reference.",
+          "A new plan: the 88-card Synverk board, starting with EYKO-1 (tables) and EYKO-2 (pick a video), built in the Android app with cheap models."
+        ]},
+        {"note": "The text notes path (Ask tab: notes in Room, keyword search, Gemma answers) still runs in the app, separate from video. Joining the two is the \"Ask & answer\" head (EYKO-17 to 24)."}
+      ]
+    },
+    {
+      "title": "Limits: how these numbers could mislead",
+      "blocks": [
+        {"bullets": [
+          "Phase 1 was scored on 30 questions over a synthetic corpus written for the test; real notes will be messier.",
+          "Query expansion uses a hand-written concept map, tuned while looking at the same 30 questions.",
+          "Phase 3 experiments A1 to A3 used 3 short clips and 9 questions: smoke tests, not evidence.",
+          "The 13 s per frame figure is a laptop CPU number; the phone was only measured for power, not per-frame speed, on this path.",
+          "The cross-encoder adds about 1 s per query on the laptop; its cost on a phone has not been measured."
+        ]}
+      ]
+    },
+    {
+      "title": "Gaps and open items",
+      "blocks": [
+        "Gaps found in the November 2026 gap review that belong to this head. The Resolution column is left empty and will be filled in as each card closes.",
+        {"table": {"cols": ["Gap", "What is missing", "Card", "Sev.", "Resolution (to fill)"], "widths": [0.6, 4, 0.9, 0.7, 2.2], "rows": [
+          ["G8", "Deleting or editing a text memory likely fails on the phone: MemoryDatabase.kt uses FTS5's ('delete', …) insert on an fts4 table. Not re-tested.", "EYKO-67", "High", ""],
+          ["G15", "README is three weeks behind: still describes Phase 2 / 3 steps, no D-FINE, YOLOE, windows or gate.", "EYKO-68", "High", ""],
+          ["G16", "Domain index is stale: \"next milestone 15 October\", EYKO-1 and 2 \"awaiting a phone test\".", "EYKO-69", "Medium", ""],
+          ["—", "Phase 3 audit, citation check and re-defense package (old steps 11 to 16) not done.", "EYKO-35", "—", ""],
+          ["—", "Cheap path vs VLM never measured on the same videos and questions.", "EYKO-33", "—", ""]
+        ]}}
+      ]
+    },
+    {
+      "title": "References",
+      "blocks": [
+        {"bullets": [
+          "Phase 1 plan and steps: docs/plans/done/01-phase1-implementation.md, 02-phase1.1-retrieval-improvement.md, ✅ 12-step12-final-eval.md",
+          "Phase 2 plan and steps: docs/plans/phase 2/00-phase2-implementation.md and steps 01 to 05",
+          "Phase 3 plan and steps: docs/plans/phase-3-vision/00-phase3-vision-pipeline.md and steps 01 to 10",
+          "Direction change and roadmap: docs/plans/00-roadmap.md (12 October annotation), docs/domain/eykon/index.md",
+          "Gap review: docs/plans/gap-review-2026-11/00-gap-register.md",
+          "Code: src/memories/ (text RAG), src/assistant/ (LLM), src/vision/ (VLM reference), android/ (phone app)"
+        ]}
+      ]
+    }
+  ]
+}

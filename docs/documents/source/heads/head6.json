@@ -1,0 +1,124 @@
+{
+  "title": "Head 6 · Indexing & memory",
+  "subtitle": "Stages embed_images, embed_texts, link, latest and finish: making each frame searchable, proving the data is whole, and remembering where each object was last seen.",
+  "header": "Eykon · Head 6 · Indexing & memory",
+  "date": "2 November 2026",
+  "meta": [
+    ["Status", "Built and in use on the Pixel 9 Pro XL. \"Crop any object\" for last seen is proven on the laptop only."],
+    ["Covers", "Frame vectors, caption keywords and vectors, the link check, latest sighting per object and its 0.87 cut-off, any-object crops and DINOv2 (tried), finish."],
+    ["Cards", "EYKO-11 (image vectors), EYKO-12 (text vectors + keywords), EYKO-14 (link), EYKO-15 (latest sighting), EYKO-16 (finish), EYKO-62 (any-object crops, laptop), EYKO-64 (phone timing, open)."],
+    ["Synverk flow", "Head 6 · Indexing & memory: storing what each frame holds"],
+    ["Main sources", "docs/results/2026-10-13-eyko-15-crop-threshold.md, 2026-10-21-ego4d-improvements.md (section 4), 2026-10-20-ego4d-baseline.md"]
+  ],
+  "sections": [
+    {"title": "Summary", "blocks": [
+      "Once a frame is described, five stages make it part of the memory:",
+      {"bullets": [
+        "**embed_images** stores the frame's 512-d MobileCLIP vector (already made in dedup) so it can be searched by picture;",
+        "**embed_texts** stores the caption with a keyword index and a 384-d bge-small vector;",
+        "**link** runs ten SQL counts that must all be zero, proving every kept frame has everything it needs;",
+        "**latest** crops each detected object, matches it with earlier sightings and marks the newest one as latest;",
+        "**finish** deletes dropped pictures, marks the video ready and tells the person."
+      ]}
+    ]},
+    {"title": "Approach", "blocks": [
+      {"h3": "embed_images (EYKO-11)"},
+      "Each kept frame's 512-d MobileCLIP vector, saved by the dedup stage, is written to image_vec as a float32 BLOB. No second model run: under 1 ms per frame.",
+      {"h3": "embed_texts (EYKO-12)"},
+      {"bullets": [
+        "Every caption (and every transcript chunk once speech lands) goes into video_texts with a keyword index.",
+        "bge-small-en-v1.5 runs on the phone from the repository's own ONNX file (133 MB) with a WordPiece tokenizer written in Kotlin. 26 ms per caption; cosine 1.0 against the laptop.",
+        "The 384-d vector is written to text_vec.",
+        "The phone's SQLite has FTS4, not FTS5, so the keyword index cannot rank with BM25 yet."
+      ]},
+      {"h3": "link (EYKO-14): a check, not a repair"},
+      "Ten SQL counts must be zero: every kept frame has its hash, scene record and vector; every time is inside the video; no row points at a missing video. If any count is not zero, the job fails with the reason. The stage never fixes data, so bugs show up instead of being hidden.",
+      {"h3": "latest (EYKO-15)"},
+      {"steps": [
+        "Every object box of at least 16 px in a scene record is cropped (a square around the box) and turned into a MobileCLIP vector.",
+        "It is compared with earlier sightings of the same name in other frames and videos.",
+        "Same name and crop cosine ≥ **0.87** means the same object.",
+        "The newest sighting of each object is marked latest in object_sightings."
+      ], "ref": "latest"},
+      {"h3": "finish (EYKO-16, EYKO-59)"},
+      "Deletes the JPEG files of dropped frames, marks the video ready, shows a notice. Retry restarts a failed stage."
+    ]},
+    {"title": "Options considered", "blocks": [
+      {"table": {"cols": ["Question", "Option", "Result", "Verdict"], "widths": [1.8, 2.8, 3.8, 1.2], "rows": [
+        ["Frame vectors", "Run the image model again in embed_images", "Doubles the most expensive model call", "Rejected"],
+        ["", "Reuse dedup's vector", "Under 1 ms", "Adopted"],
+        ["Data check", "Repair missing rows", "Hides bugs", "Rejected"],
+        ["", "Fail the job with the reason", "Bugs visible; Retry after a fix", "Adopted"],
+        ["Same-object cut-off", "0.75 / 0.80 / 0.85 / 0.87 / 0.90", "Fewest wrong calls at 0.86–0.87 (18 of 336)", "0.87 adopted"],
+        ["What to crop for last seen", "Only boxes the app's detectors name", "Ego4D VQ success 35.9 % (A), 22.9 % (B)", "In the app today"],
+        ["", "Any object: YOLOE-11S prompt-free, 10 boxes ≥ 0.10", "46.2 % (A), 34.3 % (B)", "Kept; laptop only"],
+        ["Crop vector model", "MobileCLIP (already on the phone)", "Best answer on both sets with any-object crops", "Adopted"],
+        ["", "DINOv2-S (RELOCATE-style)", "38.5 % (A), 31.4 % (B): not better", "Rejected"]
+      ]}}
+    ]},
+    {"title": "Decisions", "blocks": [
+      {"table": {"cols": ["#", "Decision", "When", "Why (evidence)"], "widths": [0.4, 3.2, 1.1, 4], "rows": [
+        ["1", "Reuse the dedup vector for search", "EYKO-11", "No second image-model run"],
+        ["2", "bge-small on the phone with a Kotlin tokenizer", "EYKO-12", "Cosine 1.0 with the laptop, 26 ms per caption"],
+        ["3", "Link check fails the job, never repairs", "EYKO-14", "Errors are visible and traceable"],
+        ["4", "Same object = same name + crop cosine ≥ 0.87", "13 Oct 2026", "Fewest wrong calls over both pair lists (rule fixed before the run)"],
+        ["5", "Keep MobileCLIP for crops; drop DINOv2-S", "21 Oct 2026", "DINOv2 did not beat MobileCLIP; no new model needed"],
+        ["6", "Any-object crops are worth porting, after phone timing", "21 Oct 2026", "+10 to +11 points on both Ego4D sets; cost 1.9–2.3 s a frame on the laptop"]
+      ]}}
+    ]},
+    {"title": "Tests and evidence", "blocks": [
+      {"h3": "The 0.87 cut-off (13 Oct, Pixel, six clips)"},
+      "90 object crops; the AI assistant grouped 54 of them into 24 physical things. 48 same-object pairs and 288 different-object pairs with the same detector name.",
+      {"table": {"cols": ["Cut-off", "Same pairs called different (of 48)", "Different pairs called same (of 288)"], "widths": [1.5, 3, 3], "rows": [
+        ["0.75", "0", "133"],
+        ["0.80", "1", "65"],
+        ["0.85", "9", "12"],
+        ["**0.87 (chosen)**", "**15**", "**3**"],
+        ["0.90", "20", "2"]
+      ]}},
+      "The two groups overlap between 0.77 and 0.92. About 540–567 ms per crop on the Pixel.",
+      {"h3": "Last seen on Ego4D (VQ)"},
+      {"table": {"cols": ["Crops / vectors", "Set A success", "Set A seen", "Set B success", "Set B seen"], "widths": [3, 1.3, 1.2, 1.3, 1.2], "rows": [
+        ["App crops / MobileCLIP 0.87", "35.9", "20.5", "22.9", "11.4"],
+        ["App crops / DINOv2-S 0.6", "35.9", "28.2", "17.1", "5.7"],
+        ["**Any object / MobileCLIP 0.87**", "**46.2**", "25.6", "**34.3**", "22.9"],
+        ["Any object / DINOv2-S 0.6", "38.5", "30.8", "31.4", "22.9"]
+      ]}},
+      "Baseline (EYKO-55): success 33.3 %, but the object was ever cropped by our detectors only 12.8 % of the time; most hits came from the closest crop, not the 0.87 rule.",
+      {"h3": "Storage cost (Ego4D on the Pixel, 27.8 min)"},
+      "Captions 19 KB (0.7 KB per minute; VLM captions 3.6–5 KB). Database grew about 7 MB with every vector. Frame JPEGs were 8.8 MB per minute before EYKO-59."
+    ]},
+    {"title": "Results", "blocks": [
+      {"bullets": [
+        "Every kept frame is searchable by picture (image_vec) and by caption (keywords + text_vec).",
+        "A finished video is proven whole by the link check.",
+        "Each detected object has a latest sighting across videos, the basis for \"where did I last see my keys?\"."
+      ]}
+    ]},
+    {"title": "Limits", "blocks": [
+      {"bullets": [
+        "The same-object pairs were the easy kind and their grouping was AI-made, not checked by a person; real use will be worse.",
+        "The app only remembers objects its detectors name; Ego4D asks about any object.",
+        "Any-object crops and DINOv2 were measured on the laptop with a script that re-decodes frames by seeking; compare changes only within one script.",
+        "FTS4 keyword index: no BM25 ranking yet."
+      ]}
+    ]},
+    {"title": "Gaps and open items", "blocks": [
+      "Fill the Resolution column as each card closes.",
+      {"table": {"cols": ["Gap", "What is missing", "Card", "Sev.", "Resolution (to fill)"], "widths": [0.6, 4, 0.9, 0.7, 2.2], "rows": [
+        ["—", "Port any-object crops (YOLOE-11S prompt-free) after timing it on the Pixel.", "EYKO-64", "—", ""],
+        ["G5", "The 0.87 cut-off rests on AI-grouped crops; re-score after a person checks them.", "EYKO-72", "High", ""],
+        ["G8", "The text-memory side has an fts4 trigger bug (FTS5 syntax); the same bug was fixed for video texts on 12 Oct.", "EYKO-67", "High", ""],
+        ["G12", "Speech tables (transcript_chunks, audio_windows, audio_vec) exist, nothing writes them.", "EYKO-86", "Low", ""],
+        ["—", "BM25 keyword search over the index.", "EYKO-21", "—", ""],
+        ["—", "Sound vectors with CLAP (optional).", "EYKO-13", "—", ""]
+      ]}}
+    ]},
+    {"title": "References", "blocks": [
+      {"bullets": [
+        "Results: docs/results/2026-10-13-eyko-15-crop-threshold.md, docs/results/latest/, 2026-10-21-ego4d-improvements.md (section 4), 2026-10-20-ego4d-baseline.md",
+        "Code: VideoEmbedImages.kt, VideoEmbedTexts.kt, VideoVectors.kt, VideoLink.kt, VideoLatest.kt, VideoPipeline.kt (finish); laptop src/benchmarks/ego4d_lastseen.py, crop_pairs.py"
+      ]}
+    ]}
+  ]
+}

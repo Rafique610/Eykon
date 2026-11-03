@@ -1,0 +1,102 @@
+{
+  "title": "Head 7 · Search",
+  "subtitle": "From a typed phrase to a result card: searching frames by picture, growing hits into time windows, and the hybrid search that was tried and dropped.",
+  "header": "Eykon · Head 7 · Search",
+  "date": "2 November 2026",
+  "meta": [
+    ["Status", "Built and in use on the Pixel 9 Pro XL (Video tab). Question parsing, date filter and answer writing are not built yet (Ask & answer head)."],
+    ["Covers", "MobileCLIP text-to-frame search, time windows, the result card, the search probe, hybrid caption search (EYKO-61, dropped), and the open retrieval decision."],
+    ["Cards", "EYKO-19 (core: text to frames), EYKO-58 (time windows), EYKO-61 (hybrid, tested and dropped), EYKO-75 / 81 (retrieval decision, open)."],
+    ["Synverk flow", "Head 7 · Search: from a typed phrase to a result card"],
+    ["Main sources", "docs/results/2026-10-13-frame-search-probe.md, 2026-10-20-ego4d-baseline.md, 2026-10-21-ego4d-improvements.md (sections 1 and 3)"]
+  ],
+  "sections": [
+    {"title": "Summary", "blocks": [
+      "On the Video tab the person types what to look for (\"keys\"). The phrase is turned into a MobileCLIP text vector in the same space as the frame vectors, and every kept frame of every ready video is scored by cosine. The best frames grow into **time windows** over neighbouring frames that still match, so a result covers a stretch of the video rather than one instant. The top 20 windows are shown as result cards.",
+      "Search uses the **pictures, not the captions**. That lets it find things the detectors have no name for. A hybrid that added caption keywords and caption vectors with RRF was tested on Ego4D and made results worse, so it was dropped for now."
+    ]},
+    {"title": "Approach", "blocks": [
+      {"steps": [
+        "**Encode the phrase:** a CLIP BPE tokenizer written in Kotlin makes 77 tokens; the MobileCLIP-S2 text encoder (ONNX, 254 MB, about 130 ms) returns a 512-d unit vector.",
+        "**Score every frame:** image_vec is held in memory; the dot product of unit vectors is the cosine. Only kept frames of ready videos count.",
+        "**Grow windows (EYKO-58):** from each hit, neighbouring kept frames of the same video join while they score at least 0.85 × the hit and are no more than 10 s apart; the window is widened by 1.5 s each side (each kept frame stands for its 3 s slot).",
+        "**One hit per window:** a frame inside an earlier window is not returned again. The best 20 are kept (Phase 1's pool size).",
+        "**Result card:** frame picture, date, time, \"at 48.0 s\", the window, the likeness score, and the stored caption (shown only, not used to rank)."
+      ], "ref": "search"},
+      {"note": "Speed on the Pixel: about 0.1 s per search; the first search about 1 s while the vectors load into memory."}
+    ]},
+    {"title": "Options considered", "blocks": [
+      {"table": {"cols": ["Option", "What it is", "Result", "Verdict"], "widths": [2, 3, 3.6, 1.2], "rows": [
+        ["Captions only", "Keyword or vector search over captions", "Captions only name what detectors know; a helmet frame was captioned \"2 people, in an office\"", "Rejected"],
+        ["Picture search", "MobileCLIP text vector vs frame vectors", "Finds the helmet (0.223); top frame inside the answer 24.4 % on Ego4D (random 3.4 %)", "Adopted"],
+        ["Single frames", "Return the best frames as instants", "R@1 at tIoU 0.5 only 6.4 % on Ego4D", "Replaced"],
+        ["Time windows", "Grow hits over matching neighbours (0.85, 10 s)", "Set A 6.4 → 9.0 %; held-out set B 6.2 → 15.6 %", "Adopted"],
+        ["Hybrid (EYKO-61)", "BM25 + bge over 15 / 30 s caption windows, fused with picture search by RRF", "Worse in every mix on set A (hit@1 24.4 → 15–21 %); on set B pictures + bge 15 s better, keywords worse", "Dropped for now"],
+        ["\"a photo of\" prefix", "Template in front of the phrase", "Average precision changed by at most 0.05", "No change"]
+      ]}}
+    ]},
+    {"title": "Decisions", "blocks": [
+      {"table": {"cols": ["#", "Decision", "When", "Why (evidence)"], "widths": [0.4, 3.2, 1.1, 4], "rows": [
+        ["1", "Search frames by picture with MobileCLIP", "13 Oct 2026", "Finds things with no detector name; works for scene-filling things"],
+        ["2", "Return windows, not instants (0.85, 10 s, ±1.5 s)", "21 Oct 2026", "Chosen on set A by the mean of four R@k numbers; confirmed on held-out set B"],
+        ["3", "Drop hybrid caption search for now", "21 Oct 2026", "Detector-list captions rarely share words with questions; retry with richer captions (Option C)"],
+        ["4", "Open: the phone retrieval rule says BM25 + dense + RRF; video search is dense only", "Open (D2)", "Needs an ADR: a video exception backed by EYKO-61, or hybrid back later"]
+      ]}}
+    ]},
+    {"title": "Tests and evidence", "blocks": [
+      {"h3": "Search probe on our 44 frames (13 Oct, laptop)"},
+      {"table": {"cols": ["Phrase", "Frames showing it", "Chance", "Avg precision", "Detector found"], "widths": [2.4, 1.4, 1, 1.4, 1.6], "rows": [
+        ["sheets of paper", "28", "0.64", "0.97", "no such class"],
+        ["a table tennis table", "4", "0.09", "1.00", "no such class"],
+        ["a car", "1", "0.02", "1.00", "1 of 1"],
+        ["a laptop", "9", "0.20", "0.76", "7 of 9"],
+        ["a backpack", "6", "0.14", "0.58", "0 of 6"],
+        ["a computer monitor", "7", "0.16", "0.52", "5 of 7"],
+        ["a chair", "17", "0.39", "0.51", "13 of 17"],
+        ["a phone", "16", "0.36", "0.43", "5 of 16"]
+      ]}},
+      "Picture search is very good for things that fill the scene and close to chance for a small phone on a desk. It always returns something: \"a dog\" scores 0.14 with no dog present. On the phone, keys, glasses, wallet and earbuds put the right frame at rank 1 in ~0.1 s (4 of 4).",
+      {"h3": "Ego4D NLQ objects (where did I put X?)"},
+      {"table": {"cols": ["Measure", "Baseline (A)", "Windows (A)", "Baseline (B)", "Windows (B)"], "widths": [2.6, 1.3, 1.3, 1.3, 1.3], "rows": [
+        ["R@1, tIoU ≥ 0.3", "10.3", "16.7", "12.5", "25.0"],
+        ["R@1, tIoU ≥ 0.5", "6.4", "9.0", "6.2", "15.6"],
+        ["R@5, tIoU ≥ 0.3", "20.5", "32.1", "28.1", "37.5"],
+        ["R@5, tIoU ≥ 0.5", "10.3", "20.5", "15.6", "25.0"]
+      ]}},
+      "Baseline hit@1 (top frame inside the answer window ± 1.5 s): 24.4 %, random kept frame 3.4 %; hit@5 47.4 %. People questions stay near zero: search cannot tell people apart.",
+      {"h3": "Published numbers, for scale only"},
+      "OSGNet 2025 NLQ R@1 28.50 / 20.05 (tIoU 0.3 / 0.5). Large GPU video models on the test split, not a ranking."
+    ]},
+    {"title": "Results", "blocks": [
+      {"bullets": [
+        "Typed search over all ready videos returns moments as windows in about 0.1 s on the Pixel.",
+        "On held-out Ego4D data, windows more than doubled R@1 at tIoU 0.5 (6.2 → 15.6 %).",
+        "The Ask tab (notes answered by Gemma) is still a separate path; joining it to video is the next head."
+      ]}
+    ]},
+    {"title": "Limits", "blocks": [
+      {"bullets": [
+        "Search probe labels were AI-written, not checked by a person (G5).",
+        "Ego4D question counts are small, especially on set B (32 + 4 NLQ).",
+        "Search always returns something; there is no \"not found\" cut-off yet.",
+        "No date filter, no question rewording, no latest-only option yet."
+      ]}
+    ]},
+    {"title": "Gaps and open items", "blocks": [
+      "Fill the Resolution column as each card closes.",
+      {"table": {"cols": ["Gap", "What is missing", "Card", "Sev.", "Resolution (to fill)"], "widths": [0.6, 4, 0.9, 0.7, 2.2], "rows": [
+        ["G9", "The retrieval rule and the video search disagree; write the decision as an ADR.", "EYKO-81", "Medium", ""],
+        ["D2", "Decide: video exception to the parity rule, or hybrid comes back with better captions.", "EYKO-75", "Decision", ""],
+        ["G5", "Search probe labels need a person's check.", "EYKO-72", "High", ""],
+        ["—", "Typed or spoken question; date filter + HyDE; keyword and text-vector search; RRF fusion; answer with proof.", "EYKO-17, 18, 20, 21, 23, 24", "—", ""],
+        ["—", "Text to sounds (CLAP).", "EYKO-22", "—", ""]
+      ]}}
+    ]},
+    {"title": "References", "blocks": [
+      {"bullets": [
+        "Results: docs/results/2026-10-13-frame-search-probe.md, 2026-10-20-ego4d-baseline.md, 2026-10-21-ego4d-improvements.md",
+        "Code: VideoSearch.kt, SearchWindows.kt, ml/vision/TextEmbedder.kt, ui/screens/VideoScreen.kt; laptop src/benchmarks/ego4d_eval.py (windows), ego4d_hybrid.py"
+      ]}
+    ]}
+  ]
+}
