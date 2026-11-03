@@ -3,8 +3,9 @@
 Everything a teammate needs to run Eykon and its tests on their own phone with **only `adb`**:
 no Android Studio, no Gradle, no Java. Card: EYKO-99.
 
-The kit itself (about 1.2 GB) is **not in git**. It is shared as a folder; this README is the
-copy kept in the repository. The folder holds:
+The kit itself (about 1.2 GB) is **not in git**. It is shared as a folder
+([Google Drive, kit 2026-11-03](https://drive.google.com/drive/folders/15BnjvvLgvfXMMAFwNkGgJu4fqZMlKVef?usp=sharing));
+this README is the copy kept in the repository. The folder holds:
 
 | Path | What |
 |---|---|
@@ -89,6 +90,30 @@ adb logcat -d -s EYKO31 > <device>-<date>-logcat.txt
 
 The log file is the raw evidence: do not edit it. The first lines show the device, the
 SQLite version and the sqlite-vec error.
+
+## 5b · Speed sweep, sizes 1k to 300k (EYKO-90 / EYKO-95)
+
+Follow the EYKO-95 protocol (battery, temperature, unplugged) before each run. `<commit>` is the
+hash in `KIT-VERSION.txt`.
+
+```
+adb logcat -G 16M
+adb logcat -c
+adb shell am instrument -w -e class com.eykon.memory.spike.VectorStorageSpikeTest#blobColumnWithBruteForceSearch -e sizes 1k,5k,20k,50k,100k,300k -e commit <commit> com.eykon.memory.test/androidx.test.runner.AndroidJUnitRunner
+adb logcat -d -s EYKO31 > <device>-<date>-sweep-logcat.txt
+```
+
+- Other arguments: `-e runs 5` (default 5), `-e diskMax 20k` (largest size for the slow
+  read-from-SQLite method; default 20k). For the hot and low-battery runs use `-e sizes 20k,100k`.
+- It takes about 8 minutes on the A32 and needs about 1.3 GB free storage at 300k (the test
+  database is deleted afterwards).
+- It writes one CSV (shared format) and prints its path at the end of the log; pull it with the
+  `adb pull ...` line from the log, e.g.
+  `adb pull /storage/emulated/0/Android/data/com.eykon.memory/files/results/<file>.csv`.
+- `logcat -G 16M` makes the log buffer big enough for the whole run (on the Pixel the default
+  buffer dropped the first sizes). The CSV is the main evidence either way: it has every row.
+- An `OutOfMemoryError` row is a result (the phone cannot hold that many vectors in memory), not
+  a broken test.
 
 ## 6 · Logs and measurements
 
