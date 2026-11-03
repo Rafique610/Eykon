@@ -1,0 +1,12 @@
+--------- beginning of main
+11-03 17:17:06.350 25017 25032 I EYKO31  : device Google Pixel 9 Pro XL, Android 17, platform sqlite 3.50.6
+11-03 17:17:06.351 25017 25032 I EYKO31  : option 1: CREATE VIRTUAL TABLE ... USING vec0 failed: no such module: vec0 (code 1 SQLITE_ERROR)
+11-03 17:17:06.352 25017 25032 I EYKO31  : option 1: load_extension('vec0') failed: no such function: load_extension (code 1 SQLITE_ERROR): , while compiling: SELECT load_extension('vec0')
+11-03 17:17:07.378 25017 25032 I EYKO31  : n=5000 insert all: 310 ms, file 20.6 MB
+11-03 17:17:12.392 25017 25032 I EYKO31  : n=5000 BLOB read from SQLite + dot: median 249.57 ms, worst 387.92 ms
+11-03 17:17:12.925 25017 25032 I EYKO31  : n=5000 BLOB already in memory, dot only: median 8.86 ms, worst 110.70 ms
+11-03 17:17:12.925 25017 25032 I EYKO31  : n=5000 memory: java heap used 66 MB, native heap 10 MB
+11-03 17:17:16.664 25017 25032 I EYKO31  : n=20000 insert all: 1336 ms, file 82.2 MB
+11-03 17:18:19.219 25017 25032 I EYKO31  : n=20000 BLOB read from SQLite + dot: median 3067.77 ms, worst 3352.80 ms
+11-03 17:18:23.385 25017 25032 I EYKO31  : n=20000 BLOB already in memory, dot only: median 40.49 ms, worst 148.37 ms
+11-03 17:18:23.385 25017 25032 I EYKO31  : n=20000 memory: java heap used 106 MB, native heap 10 MB

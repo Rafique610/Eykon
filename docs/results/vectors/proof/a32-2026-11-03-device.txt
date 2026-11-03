@@ -1,0 +1,14 @@
+Device sheet for a32-2026-11-03-logcat.txt (raw adb output, recorded by the lead's agent)
+date:            2026-11-03 17:12 (phone clock)
+manufacturer:    samsung
+model:           SM-A325F (Galaxy A32)
+soc:             MT6769V/CT (mt6768, Helio G80)
+android:         13 (SDK 33)
+platform sqlite: 3.32.2 (printed by the test)
+ram:             MemTotal 5791276 kB
+free storage:    55 GB of 107 GB (/data)
+battery:         28 %, USB powered, 27.8 °C at start
+app:             fresh install from phone kit 2026-11-03 (APKs from commit d11382d), models pushed with push-models.bat
+command:         adb -s RF8T20H8G5W shell am instrument -w -e class com.eykon.memory.spike.VectorStorageSpikeTest com.eykon.memory.test/androidx.test.runner.AndroidJUnitRunner
+result:          OK (2 tests), 48.5 s
+earlier run:     2026-10-12, same phone, docs/results/2026-10-12-eyko-31-vector-storage.md (same two errors; 20k in-memory 81.0 ms then, 83.5 ms now)
