@@ -1,0 +1,723 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Eykon pipeline map</title>
+<!-- Template for build_flow.py. flow.html is generated from it: edit this file, then run the build. -->
+<style>
+:root {
+  color-scheme: light;
+  --bg: #f6f7f9; --panel: #ffffff; --ink: #1b2130; --muted: #5a6475; --line: #dde2ea; --soft: #eef1f5;
+  --canvas: #f0f2f5; --dot: #d9dee6; --accent: #3b5bdb;
+  --runtime: #4a5568; --offline: #c05621; --hl: #e8590c;
+  --stage: #4c51bf; --file: #2b6cb0; --model: #805ad5; --algorithm: #2c7a7b; --data-store: #b7791f; --external: #718096;
+  --inf: #b7791f; --unk: #c53030; --doc: #2f855a;
+  --font: system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", Arial, sans-serif;
+  --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #0f1218; --panel: #161a22; --ink: #e3e7ee; --muted: #9aa4b5; --line: #2a303c; --soft: #1d232e;
+  --canvas: #0c0f14; --dot: #1b2029; --accent: #8da2fb;
+  --runtime: #a0aec0; --offline: #f6ad55; --hl: #ff922b;
+  --stage: #8c9bf7; --file: #63b3ed; --model: #b794f4; --algorithm: #4fd1c5; --data-store: #f6c35b; --external: #a0aec0;
+  --inf: #f6c35b; --unk: #fc8181; --doc: #68d391;
+}
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body { margin: 0; font: 14px/1.45 var(--font); background: var(--bg); color: var(--ink); display: grid; grid-template-rows: auto 1fr; overflow: hidden; }
+button, input, select { font: inherit; color: inherit; }
+a { color: var(--accent); }
+code, pre { font-family: var(--mono); font-size: 12px; }
+.muted { color: var(--muted); }
+
+header.top { display: flex; align-items: center; gap: 10px; padding: 8px 12px; background: var(--panel); border-bottom: 1px solid var(--line); min-width: 0; }
+.brand { white-space: nowrap; font-size: 15px; }
+.brand strong { letter-spacing: .02em; }
+#crumbs { display: flex; align-items: center; gap: 6px; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--muted); }
+#crumbs a { text-decoration: none; }
+#crumbs b { color: var(--ink); font-weight: 600; overflow: hidden; text-overflow: ellipsis; }
+.spacer { flex: 1; }
+.btn { background: var(--soft); border: 1px solid var(--line); border-radius: 7px; padding: 5px 10px; cursor: pointer; white-space: nowrap; }
+.btn:hover { border-color: var(--accent); }
+.btn[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--panel); }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--panel); }
+.btn.link { background: none; border: none; color: var(--accent); padding: 5px 4px; }
+.icon-btn { display: none; }
+.search { position: relative; }
+#q { width: 300px; padding: 6px 10px; border: 1px solid var(--line); border-radius: 7px; background: var(--bg); }
+#q:focus { outline: 2px solid var(--accent); outline-offset: 0; }
+#results { position: absolute; right: 0; top: calc(100% + 4px); width: 420px; max-height: 60vh; overflow: auto; z-index: 20; background: var(--panel); border: 1px solid var(--line); border-radius: 9px; box-shadow: 0 10px 30px rgba(0,0,0,.18); padding: 4px; }
+#results button { display: block; width: 100%; text-align: left; border: 0; background: none; padding: 6px 8px; border-radius: 6px; cursor: pointer; }
+#results button:hover, #results button:focus { background: var(--soft); outline: none; }
+#results .r-meta { display: block; color: var(--muted); font-size: 12px; }
+#results .empty { padding: 8px; color: var(--muted); }
+
+main { display: grid; grid-template-columns: 270px minmax(0, 1fr) 410px; min-height: 0; }
+#side, #panel { overflow: auto; background: var(--panel); min-height: 0; }
+#side { border-right: 1px solid var(--line); padding: 10px 14px 24px; }
+#panel { border-left: 1px solid var(--line); padding: 14px 18px 30px; }
+#side h2 { font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin: 14px 0 8px; }
+#side section:first-child h2 { margin-top: 4px; }
+#side select { width: 100%; padding: 5px 6px; border: 1px solid var(--line); border-radius: 7px; background: var(--bg); }
+fieldset { border: 0; padding: 0; margin: 0 0 10px; }
+legend { font-weight: 600; margin-bottom: 4px; }
+.check { display: flex; align-items: center; gap: 7px; padding: 2px 0; cursor: pointer; }
+.sw { width: 12px; height: 12px; border-radius: 3px; display: inline-block; flex: none; }
+.radio-row { display: flex; gap: 12px; flex-wrap: wrap; }
+#trace-ctl { display: flex; align-items: center; gap: 6px; margin: 8px 0; flex-wrap: wrap; }
+#trace-pos { color: var(--muted); font-size: 12px; min-width: 64px; text-align: center; }
+#steps { list-style: none; padding: 0; margin: 6px 0 0; }
+#steps li { border: 1px solid var(--line); border-radius: 8px; margin-bottom: 6px; background: var(--bg); }
+#steps li.cur { border-color: var(--hl); box-shadow: inset 3px 0 0 var(--hl); }
+#steps button { display: flex; gap: 7px; width: 100%; text-align: left; border: 0; background: none; padding: 6px 8px 2px; cursor: pointer; font-weight: 600; }
+#steps .n { color: var(--hl); min-width: 18px; }
+#steps .io { padding: 0 8px 6px 33px; font-size: 12px; color: var(--muted); }
+#steps .io span { color: var(--ink); }
+.legend-row { display: flex; align-items: center; gap: 8px; padding: 2px 0; font-size: 13px; }
+.legend-row svg { flex: none; }
+
+#canvas { position: relative; overflow: hidden; background-color: var(--canvas); background-image: radial-gradient(var(--dot) 1px, transparent 1px); background-size: 22px 22px; min-height: 0; }
+#svg { width: 100%; height: 100%; display: block; cursor: grab; touch-action: none; }
+#svg.dragging { cursor: grabbing; }
+#hint { position: absolute; left: 12px; bottom: 10px; font-size: 12px; color: var(--muted); background: var(--panel); border: 1px solid var(--line); border-radius: 7px; padding: 4px 9px; pointer-events: none; max-width: calc(100% - 24px); }
+
+.node { cursor: pointer; }
+.node .body { fill: var(--panel); stroke: var(--c); stroke-width: 1.5; }
+.node .bar { fill: var(--c); }
+.node.f-offline .body { stroke-dasharray: 6 3; }
+.node.ghost { opacity: .6; }
+.node.ghost .body { fill: var(--soft); stroke-dasharray: 2 3; }
+.node.st-unused .body, .node.st-stub .body, .node.st-legacy .body, .node.st-planned .body { fill: url(#hatch); }
+.node.sel .body { stroke: var(--accent); stroke-width: 3.5; }
+.node.cur .body { stroke: var(--hl); stroke-width: 3.5; }
+.node:focus { outline: none; }
+.node:focus-visible .body { stroke: var(--accent); stroke-width: 3.5; }
+.node.dim { opacity: .17; }
+.node .lbl { font: 600 13px var(--font); fill: var(--ink); }
+.node .sub, .node .cnt { font: 11.5px var(--font); fill: var(--muted); }
+.t-stage { --c: var(--stage); } .t-file { --c: var(--file); } .t-model { --c: var(--model); }
+.t-algorithm { --c: var(--algorithm); } .t-data-store { --c: var(--data-store); } .t-external { --c: var(--external); }
+.badge rect { stroke: none; }
+.badge text { font: 700 10px var(--font); fill: var(--panel); }
+.b-inf rect { fill: var(--inf); } .b-unk rect { fill: var(--unk); } .b-st rect { fill: var(--muted); } .b-flag rect { fill: var(--offline); }
+.stepdot circle { fill: var(--hl); } .stepdot text { font: 700 11px var(--font); fill: var(--panel); }
+.hatch-bg { fill: var(--panel); } .hatch-line { stroke: var(--line); stroke-width: 3; }
+.edge { fill: none; stroke-width: 1.6; }
+.edge.f-runtime { stroke: var(--runtime); }
+.edge.f-offline { stroke: var(--offline); stroke-dasharray: 8 5; }
+.edge.hl { stroke: var(--hl); stroke-width: 3; }
+.edge.dim { opacity: .1; }
+.elabel rect { fill: var(--panel); stroke: var(--line); }
+.elabel text { font: 11px var(--font); fill: var(--muted); }
+.elabel.hl text { fill: var(--ink); font-weight: 600; }
+.elabel.hl rect { stroke: var(--hl); }
+.elabel.dim { opacity: .15; }
+.m-runtime { fill: var(--runtime); } .m-offline { fill: var(--offline); } .m-hl { fill: var(--hl); }
+.lane-label { font: 600 12px var(--font); fill: var(--muted); letter-spacing: .05em; text-transform: uppercase; }
+
+#panel h2 { font-size: 19px; line-height: 1.25; margin: 6px 0 6px; }
+#panel h3 { font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin: 18px 0 6px; }
+#panel p { margin: 0 0 8px; }
+.kicker { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; font-size: 12px; }
+.pill { display: inline-block; border-radius: 999px; padding: 1px 8px; font-size: 11.5px; font-weight: 600; border: 1px solid var(--line); background: var(--soft); white-space: nowrap; }
+.pill.type { color: var(--panel); border-color: transparent; }
+.pill.flow-offline { border-style: dashed; color: var(--offline); }
+.pill.tag-INFERRED { background: var(--inf); color: var(--panel); border-color: transparent; }
+.pill.tag-UNKNOWN { background: var(--unk); color: var(--panel); border-color: transparent; }
+.pill.tag-DOCUMENTED { color: var(--doc); border-color: var(--doc); background: none; }
+.badges { display: flex; flex-wrap: wrap; gap: 6px; margin: 4px 0 10px; }
+.purpose { font-size: 15px; }
+dl.io { display: grid; grid-template-columns: 74px 1fr; gap: 3px 10px; margin: 0; }
+dl.io dt { color: var(--muted); font-size: 12.5px; }
+dl.io dd { margin: 0; overflow-wrap: anywhere; }
+table.params { border-collapse: collapse; width: 100%; font-size: 13px; }
+table.params td { border-top: 1px solid var(--line); padding: 4px 6px 4px 0; vertical-align: top; overflow-wrap: anywhere; }
+table.params td:first-child { font-family: var(--mono); font-size: 12px; white-space: nowrap; color: var(--muted); }
+ul.plain { list-style: none; padding: 0; margin: 0; }
+ul.plain li { padding: 3px 0; overflow-wrap: anywhere; }
+.conn { display: block; width: 100%; text-align: left; border: 1px solid var(--line); background: var(--bg); border-radius: 7px; padding: 5px 8px; margin-bottom: 5px; cursor: pointer; }
+.conn:hover { border-color: var(--accent); }
+.conn .c-meta { display: block; font-size: 12px; color: var(--muted); }
+.src { color: var(--muted); font-size: 13px; overflow-wrap: anywhere; }
+pre.md { white-space: pre-wrap; overflow-wrap: anywhere; background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 10px; max-height: 420px; overflow: auto; }
+details summary { cursor: pointer; color: var(--accent); margin: 6px 0; }
+.stat { display: grid; grid-template-columns: 1fr auto; gap: 2px 12px; font-size: 13px; }
+.stat span:nth-child(even) { text-align: right; font-variant-numeric: tabular-nums; }
+
+@media (max-width: 1180px) {
+  main { grid-template-columns: minmax(0, 1fr) 360px; }
+  .icon-btn { display: inline-block; }
+  #side { display: none; position: absolute; z-index: 15; top: 47px; left: 0; bottom: 0; width: 290px; box-shadow: 8px 0 24px rgba(0,0,0,.18); }
+  #side.open { display: block; }
+  #q { width: 200px; }
+}
+@media (max-width: 760px) {
+  main { grid-template-columns: 1fr; grid-template-rows: minmax(0, 1fr) 42vh; }
+  #panel { border-left: 0; border-top: 1px solid var(--line); }
+  .brand, #labels { display: none; }
+  #q { width: 140px; }
+  #results { width: 88vw; }
+}
+</style>
+</head>
+<body>
+<header class="top">
+  <button id="menu" class="btn icon-btn" aria-label="Filters, trace and legend" aria-expanded="false">☰</button>
+  <div class="brand"><strong>Eykon</strong> pipeline map</div>
+  <nav id="crumbs" aria-label="Breadcrumb"></nav>
+  <div class="spacer"></div>
+  <div class="search">
+    <input id="q" type="search" placeholder="Search nodes, files, models  ( / )" aria-label="Search the pipeline" autocomplete="off">
+    <div id="results" hidden></div>
+  </div>
+  <button id="labels" class="btn" aria-pressed="false" title="Show every edge label in a stage view">Edge labels</button>
+  <button id="fit" class="btn" title="Fit the graph to the screen (F)">Fit</button>
+  <button id="theme" class="btn" title="Switch between light and dark">Dark</button>
+</header>
+<main>
+  <aside id="side" aria-label="Trace, filters and legend">
+    <section>
+      <h2>Trace an input</h2>
+      <select id="trace" aria-label="Choose an entry point to trace"><option value="">Choose an entry point…</option></select>
+      <div id="trace-ctl" hidden>
+        <button id="prev" class="btn" aria-label="Previous step">◀</button>
+        <span id="trace-pos"></span>
+        <button id="next" class="btn" aria-label="Next step">▶</button>
+        <button id="trace-off" class="btn link">Stop</button>
+      </div>
+      <ol id="steps"></ol>
+    </section>
+    <section>
+      <h2>Filter</h2>
+      <fieldset id="types"><legend>Node type</legend></fieldset>
+      <fieldset><legend>Flow</legend>
+        <div class="radio-row" id="flows"></div>
+      </fieldset>
+      <fieldset><legend>Stage</legend>
+        <select id="stage-filter" aria-label="Stage"><option value="all">All stages</option></select>
+      </fieldset>
+    </section>
+    <section>
+      <h2>Legend</h2>
+      <div id="legend"></div>
+    </section>
+  </aside>
+  <div id="canvas">
+    <svg id="svg" role="img" aria-label="Pipeline graph">
+      <defs>
+        <marker id="arr-runtime" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="m-runtime"/></marker>
+        <marker id="arr-offline" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="m-offline"/></marker>
+        <marker id="arr-hl" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="m-hl"/></marker>
+        <pattern id="hatch" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="8" height="8" class="hatch-bg"/><line x1="0" y1="0" x2="0" y2="8" class="hatch-line"/></pattern>
+      </defs>
+      <g id="vp"><g id="g-lanes"></g><g id="g-edges"></g><g id="g-labels"></g><g id="g-nodes"></g></g>
+    </svg>
+    <div id="hint"></div>
+  </div>
+  <aside id="panel" aria-live="polite" aria-label="Details"></aside>
+</main>
+<script id="flow-data" type="application/json">__FLOW_DATA__</script>
+<script>
+(() => {
+"use strict";
+const DATA = JSON.parse(document.getElementById("flow-data").textContent);
+const NODES = DATA.nodes;
+const STAGES = DATA.stages;
+const STAGE = Object.fromEntries(STAGES.map(s => [s.id, s]));
+const TYPES = ["stage", "file", "model", "algorithm", "data-store", "external"];
+const TYPE_NAME = { stage: "Stage", file: "Source file", model: "Model", algorithm: "Algorithm", "data-store": "Data store", external: "External" };
+const STATUS = { unused: "UNUSED", stub: "STUB", legacy: "LEGACY", planned: "PLANNED" };
+const NS = "http://www.w3.org/2000/svg";
+const $ = s => document.querySelector(s);
+const svg = $("#svg"), vp = $("#vp"), gLanes = $("#g-lanes"), gE = $("#g-edges"), gL = $("#g-labels"), gN = $("#g-nodes");
+const stageOf = id => id.split("/")[0];
+const num = sid => sid.slice(0, 3);
+const OUT = {}, IN = {};
+for (const e of DATA.edges) { (OUT[e.from] = OUT[e.from] || []).push(e); (IN[e.to] = IN[e.to] || []).push(e); }
+const SOUT = {}, SIN = {};
+for (const e of DATA.stageEdges) { (SOUT[e.from] = SOUT[e.from] || []).push(e); (SIN[e.to] = SIN[e.to] || []).push(e); }
+
+const state = { view: null, sel: null, types: new Set(TYPES), flow: "all", stage: "all", allLabels: false, trace: null, step: -1 };
+let graph = null;
+const T = { x: 0, y: 0, k: 1 };
+
+function svgEl(tag, attrs, parent) {
+  const n = document.createElementNS(NS, tag);
+  for (const [k, v] of Object.entries(attrs || {})) if (v !== undefined && v !== null) n.setAttribute(k, v);
+  if (parent) parent.appendChild(n);
+  return n;
+}
+function h(tag, attrs, ...kids) {
+  const n = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs || {})) {
+    if (v === undefined || v === null || v === false) continue;
+    if (k === "class") n.className = v;
+    else if (k.startsWith("on")) n.addEventListener(k.slice(2), v);
+    else n.setAttribute(k, v === true ? "" : v);
+  }
+  for (const kid of kids.flat(Infinity)) if (kid !== null && kid !== undefined && kid !== false) n.append(kid.nodeType ? kid : String(kid));
+  return n;
+}
+function trunc(text, max) { text = String(text); return text.length > max ? text.slice(0, Math.max(1, max - 1)) + "…" : text; }
+function missing(id) {
+  const io = { type: "unknown", shape: "unknown", format: "unknown", example: "unknown" };
+  return { id, label: id, type: "external", stage: stageOf(id), flow: "runtime", files: [], purpose: "This id is used by an edge but not defined in the flow data.",
+           input: io, output: io, algorithm: { name: "unknown", params: {} }, performance: "unknown",
+           decision: { summary: "Not defined.", tag: "UNKNOWN", source: "missing node" }, doc: "" };
+}
+const node = id => NODES[id] || STAGE[id] || missing(id);
+
+// ---------- graphs ----------
+function counts(sid) {
+  const c = {};
+  for (const n of Object.values(NODES)) if (n.stage === sid && n.type !== "stage") c[n.type] = (c[n.type] || 0) + 1;
+  return c;
+}
+function overviewGraph() {
+  const nodes = STAGES.map(s => {
+    const c = counts(s.id);
+    const line = ["file", "model", "algorithm", "data-store"].filter(t => c[t]).map(t => `${c[t]} ${t === "data-store" ? "store" : t}${c[t] > 1 ? "s" : ""}`).join(" · ");
+    return { id: s.id, n: s, label: `${num(s.id)} ${s.label}`, sub: `${s.platform || ""} · ${s.flow}`, cnt: line, type: "stage", flow: s.flow };
+  });
+  return { nodes, edges: DATA.stageEdges, big: true };
+}
+function stageGraph(sid) {
+  const own = Object.values(NODES).filter(n => n.stage === sid && n.type !== "stage");
+  const ids = new Set(own.map(n => n.id));
+  const edges = DATA.edges.filter(e => ids.has(e.from) || ids.has(e.to));
+  const ghosts = new Set();
+  for (const e of edges) for (const end of [e.from, e.to]) if (!ids.has(end)) ghosts.add(end);
+  const nodes = own.map(n => ({ id: n.id, n, label: n.label, sub: n.key || TYPE_NAME[n.type], type: n.type, flow: n.flow, ghost: false }))
+    .concat([...ghosts].map(id => { const n = node(id); return { id, n, label: n.label, sub: `↗ ${num(n.stage)} · ${TYPE_NAME[n.type] || n.type}`, type: n.type, flow: n.flow, ghost: true }; }));
+  return { nodes, edges, big: false };
+}
+
+// ---------- layered left-to-right layout ----------
+function layout(g) {
+  const W = g.W, H = g.H, colGap = g.big ? 200 : 135, rowGap = g.big ? 46 : 22;
+  const n = g.nodes.length, at = new Map(g.nodes.map((v, i) => [v.id, i]));
+  const pairs = [];
+  for (const e of g.edges) { const a = at.get(e.from), b = at.get(e.to); if (a !== undefined && b !== undefined && a !== b) pairs.push([a, b]); }
+  const succ = g.nodes.map(() => []), pred = g.nodes.map(() => []);
+  for (const [a, b] of pairs) { succ[a].push(b); pred[b].push(a); }
+  const mark = new Array(n).fill(0), back = new Set();
+  const visit = u => { mark[u] = 1; for (const v of succ[u]) { if (mark[v] === 1) back.add(u + ">" + v); else if (!mark[v]) visit(v); } mark[u] = 2; };
+  [...Array(n).keys()].sort((a, b) => pred[a].length - pred[b].length || a - b).forEach(i => { if (!mark[i]) visit(i); });
+  const fwd = pairs.map(([a, b]) => back.has(a + ">" + b) ? [b, a] : [a, b]);
+  const out = g.nodes.map(() => []), inn = g.nodes.map(() => []), deg = new Array(n).fill(0), layer = new Array(n).fill(0);
+  for (const [a, b] of fwd) { out[a].push(b); inn[b].push(a); deg[b]++; }
+  const queue = [...Array(n).keys()].filter(i => !deg[i]);
+  while (queue.length) { const u = queue.shift(); for (const v of out[u]) { layer[v] = Math.max(layer[v], layer[u] + 1); if (--deg[v] === 0) queue.push(v); } }
+  for (let i = 0; i < n; i++) if (!inn[i].length && out[i].length) layer[i] = Math.max(0, Math.min(...out[i].map(v => layer[v])) - 1);
+  const linked = i => out[i].length || inn[i].length;
+  const layers = [];
+  for (let i = 0; i < n; i++) if (linked(i)) (layers[layer[i]] = layers[layer[i]] || []).push(i);
+  const filled = layers.filter(Boolean);
+  const pos = new Array(n).fill(0);
+  const typeRank = t => TYPES.indexOf(t);
+  filled.forEach(L => { L.sort((a, b) => typeRank(g.nodes[a].type) - typeRank(g.nodes[b].type) || g.nodes[a].label.localeCompare(g.nodes[b].label)); L.forEach((i, k) => pos[i] = k - (L.length - 1) / 2); });
+  for (let it = 0; it < 8; it++) {
+    const down = it % 2 === 0, seq = down ? filled : [...filled].reverse();
+    for (const L of seq) {
+      const bary = i => { const nb = down ? inn[i] : out[i]; return nb.length ? nb.reduce((s, j) => s + pos[j], 0) / nb.length : pos[i]; };
+      const b = new Map(L.map(i => [i, bary(i)]));
+      L.sort((x, y) => b.get(x) - b.get(y));
+      L.forEach((i, k) => pos[i] = k - (L.length - 1) / 2);
+    }
+  }
+  filled.forEach((L, l) => L.forEach(i => { g.nodes[i].x = l * (W + colGap); g.nodes[i].y = pos[i] * (H + rowGap); }));
+  const lone = [...Array(n).keys()].filter(i => !linked(i));
+  const placed = g.nodes.filter((_, i) => linked(i));
+  const maxY = placed.length ? Math.max(...placed.map(v => v.y)) : -H;
+  const minY = placed.length ? Math.min(...placed.map(v => v.y)) : 0;
+  const cols = Math.max(1, Math.min(lone.length, Math.max(filled.length, 3)));
+  g.lone = null;
+  if (lone.length) {
+    const top = maxY + H + rowGap * 3 + 26;
+    lone.forEach((i, k) => { g.nodes[i].x = (k % cols) * (W + 40); g.nodes[i].y = top + Math.floor(k / cols) * (H + rowGap); });
+    g.lone = { x: 0, y: top - 14 };
+  }
+  g.box = { x0: Math.min(...g.nodes.map(v => v.x)), y0: Math.min(minY, ...g.nodes.map(v => v.y)) - 24,
+            x1: Math.max(...g.nodes.map(v => v.x)) + W, y1: Math.max(...g.nodes.map(v => v.y)) + H + 40 };
+}
+
+// ---------- drawing ----------
+function bez(p0, p1, p2, p3) { return [0, 1].map(k => 0.125 * p0[k] + 0.375 * p1[k] + 0.375 * p2[k] + 0.125 * p3[k]); }
+function draw() {
+  graph = state.view === "overview" ? overviewGraph() : stageGraph(state.view);
+  graph.W = graph.big ? 236 : 214; graph.H = graph.big ? 74 : 54;
+  layout(graph);
+  graph.at = Object.fromEntries(graph.nodes.map(v => [v.id, v]));
+  graph.drawn = [];
+  for (const g of [gLanes, gE, gL, gN]) g.replaceChildren();
+  if (graph.lone) svgEl("text", { x: graph.lone.x, y: graph.lone.y, class: "lane-label" }, gLanes).textContent = "Not on a data path in this view";
+  graph.edges.forEach(drawEdge);
+  graph.nodes.forEach(drawNode);
+}
+function drawEdge(e) {
+  const a = graph.at[e.from], b = graph.at[e.to];
+  if (!a || !b || a === b) return;
+  const W = graph.W, H = graph.H, x1 = a.x + W, y1 = a.y + H / 2, x2 = b.x, y2 = b.y + H / 2;
+  let c1, c2;
+  if (x2 > x1 + 8) { const dx = Math.max(40, (x2 - x1) / 2); c1 = [x1 + dx, y1]; c2 = [x2 - dx, y2]; }
+  else { const drop = H + 50; c1 = [x1 + 110, y1 + drop]; c2 = [x2 - 110, y2 + drop]; }
+  const path = svgEl("path", { d: `M${x1},${y1} C${c1[0]},${c1[1]} ${c2[0]},${c2[1]} ${x2},${y2}`, class: `edge f-${e.flow}`, "marker-end": `url(#arr-${e.flow})` }, gE);
+  svgEl("title", {}, path).textContent = `${e.label}\n${e.data.type} · ${e.data.shape}\n${e.flow}`;
+  const mid = bez([x1, y1], c1, c2, [x2, y2]);
+  const label = svgEl("g", { class: "elabel", transform: `translate(${mid[0].toFixed(1)},${mid[1].toFixed(1)})` }, gL);
+  const text = trunc(e.label, graph.big ? 36 : 30), w = text.length * 6.2 + 12;
+  svgEl("rect", { x: -w / 2, y: -10, width: w, height: 19, rx: 5 }, label);
+  svgEl("text", { x: 0, y: 4, "text-anchor": "middle" }, label).textContent = text;
+  svgEl("title", {}, label).textContent = `${e.label}\n${e.data.type} · ${e.data.shape}`;
+  graph.drawn.push({ e, path, label });
+}
+function badgesOf(n) {
+  const out = [];
+  if (n.decision && n.decision.tag === "INFERRED") out.push(["INF", "b-inf", "Why is INFERRED from the code"]);
+  if (n.decision && n.decision.tag === "UNKNOWN") out.push(["UNK", "b-unk", "Why is UNKNOWN: open question"]);
+  if (n.status && STATUS[n.status]) out.push([STATUS[n.status], "b-st", `Status: ${n.status}`]);
+  if (n.flags && n.flags.length) out.push([`⚑${n.flags.length}`, "b-flag", `${n.flags.length} flag(s)`]);
+  return out;
+}
+function drawNode(v) {
+  const W = graph.W, H = graph.H, n = v.n;
+  const cls = ["node", `t-${v.type}`, `f-${v.flow}`, v.ghost ? "ghost" : "", n.status && n.status !== "active" ? `st-${n.status}` : ""].join(" ");
+  const g = svgEl("g", { class: cls, transform: `translate(${v.x},${v.y})`, tabindex: 0, role: "button",
+                         "aria-label": `${TYPE_NAME[v.type] || v.type}: ${v.label}${v.ghost ? ", from another stage" : ""}` }, gN);
+  svgEl("title", {}, g).textContent = `${v.label}\n${n.purpose || ""}`;
+  svgEl("rect", { class: "body", width: W, height: H, rx: 9 }, g);
+  svgEl("rect", { class: "bar", width: 6, height: H, rx: 3 }, g);
+  let right = W - 7;
+  for (const [txt, kind, tip] of badgesOf(n).reverse()) {
+    const w = txt.length * 6.6 + 9;
+    right -= w;
+    const b = svgEl("g", { class: `badge ${kind}`, transform: `translate(${right},6)` }, g);
+    svgEl("rect", { width: w, height: 15, rx: 7.5 }, b);
+    svgEl("text", { x: w / 2, y: 11, "text-anchor": "middle" }, b).textContent = txt;
+    svgEl("title", {}, b).textContent = tip;
+    right -= 4;
+  }
+  const room = right - 16, top = graph.big ? 27 : 22;
+  const label = svgEl("text", { class: "lbl", x: 16, y: top }, g);
+  label.textContent = trunc(v.label, Math.max(6, Math.floor(room / 7.3)));
+  svgEl("text", { class: "sub", x: 16, y: top + 17 }, g).textContent = trunc(v.sub, Math.floor((W - 24) / 6.3));
+  if (v.cnt) svgEl("text", { class: "cnt", x: 16, y: top + 34 }, g).textContent = trunc(v.cnt, Math.floor((W - 24) / 6.3));
+  g.addEventListener("click", ev => { ev.stopPropagation(); clickNode(v); });
+  g.addEventListener("dblclick", ev => { ev.stopPropagation(); if (v.ghost) go(v.n.stage, v.id); });
+  g.addEventListener("keydown", ev => { if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); clickNode(v); } });
+  v.g = g;
+}
+function clickNode(v) {
+  if (graph.big) go(v.id);
+  else go(state.view, v.id);
+}
+
+// ---------- highlight, filters, trace ----------
+function traceInfo() {
+  const t = state.trace;
+  if (!t) return null;
+  const steps = t.steps, cur = state.step >= 0 ? steps[state.step] : null;
+  if (graph.big) {
+    const seq = [];
+    for (const id of steps) { const s = stageOf(id); if (seq[seq.length - 1] !== s) seq.push(s); }
+    const order = {}, pairs = new Set();
+    seq.forEach((s, i) => { (order[s] = order[s] || []).push(i + 1); if (i) pairs.add(seq[i - 1] + ">" + s); });
+    return { nums: id => order[id], on: e => pairs.has(e.from + ">" + e.to), cur: id => cur && stageOf(cur) === id };
+  }
+  const order = {}, pairs = new Set();
+  steps.forEach((id, i) => { (order[id] = order[id] || []).push(i + 1); if (i) pairs.add(steps[i - 1] + ">" + id); });
+  return { nums: id => order[id], on: e => pairs.has(e.from + ">" + e.to), cur: id => id === cur };
+}
+function passes(v) {
+  const flowOk = state.flow === "all" || v.flow === state.flow;
+  if (graph.big) return flowOk && (state.stage === "all" || v.id === state.stage);
+  return flowOk && state.types.has(v.type);
+}
+function restyle() {
+  if (!graph) return;
+  const tr = traceInfo();
+  const sel = state.sel && graph.at[state.sel] ? state.sel : null;
+  const near = new Set();
+  if (sel) { near.add(sel); for (const d of graph.drawn) if (d.e.from === sel || d.e.to === sel) { near.add(d.e.from); near.add(d.e.to); } }
+  for (const v of graph.nodes) {
+    const g = v.g; if (!g) continue;
+    const inTrace = tr && tr.nums(v.id);
+    const lit = tr ? (inTrace || near.has(v.id)) : (!sel || near.has(v.id));
+    g.classList.toggle("dim", !passes(v) || !lit);
+    g.classList.toggle("sel", v.id === sel);
+    g.classList.toggle("cur", !!tr && !!tr.cur(v.id));
+    const old = g.querySelector(".stepdot"); if (old) old.remove();
+    if (inTrace) {
+      const txt = inTrace.length > 1 ? `${inTrace[0]}+` : String(inTrace[0]);
+      const dot = svgEl("g", { class: "stepdot", transform: "translate(0,0)" }, g);
+      svgEl("circle", { cx: 0, cy: 0, r: txt.length > 2 ? 13 : 11 }, dot);
+      svgEl("text", { x: 0, y: 4, "text-anchor": "middle" }, dot).textContent = txt;
+    }
+  }
+  for (const d of graph.drawn) {
+    const ok = state.flow === "all" || d.e.flow === state.flow;
+    const touch = !!sel && (d.e.from === sel || d.e.to === sel);
+    const on = !!tr && tr.on(d.e);
+    const dim = !ok || (tr ? !(on || touch) : (!!sel && !touch));
+    d.path.classList.toggle("dim", dim);
+    d.path.classList.toggle("hl", touch || on);
+    d.path.setAttribute("marker-end", `url(#arr-${touch || on ? "hl" : d.e.flow})`);
+    d.label.classList.toggle("hl", touch || on);
+    d.label.classList.toggle("dim", dim);
+    d.label.style.display = graph.big || state.allLabels || touch || on ? "" : "none";
+  }
+}
+
+// ---------- pan and zoom ----------
+function apply() { vp.setAttribute("transform", `translate(${T.x.toFixed(1)},${T.y.toFixed(1)}) scale(${T.k.toFixed(4)})`); }
+function fit() {
+  if (!graph) return;
+  const r = svg.getBoundingClientRect(), b = graph.box, pad = 40;
+  const bw = b.x1 - b.x0 + 2 * pad, bh = b.y1 - b.y0 + 2 * pad;
+  T.k = Math.max(0.22, Math.min(1.15, Math.min(r.width / bw, r.height / bh)));
+  T.x = (r.width - (b.x1 - b.x0) * T.k) / 2 - b.x0 * T.k;
+  T.y = (r.height - (b.y1 - b.y0) * T.k) / 2 - b.y0 * T.k;
+  apply();
+}
+function reveal(id) {
+  const v = graph && graph.at[id]; if (!v) return;
+  const r = svg.getBoundingClientRect();
+  const sx = T.x + (v.x + graph.W / 2) * T.k, sy = T.y + (v.y + graph.H / 2) * T.k;
+  if (sx < 60 || sx > r.width - 60 || sy < 60 || sy > r.height - 60) {
+    T.x += r.width / 2 - sx; T.y += r.height / 2 - sy; apply();
+  }
+}
+let drag = null;
+svg.addEventListener("pointerdown", ev => {
+  if (ev.button !== 0 || ev.target.closest(".node")) return;
+  drag = { x: ev.clientX, y: ev.clientY, tx: T.x, ty: T.y, moved: false };
+  svg.setPointerCapture(ev.pointerId); svg.classList.add("dragging");
+});
+svg.addEventListener("pointermove", ev => {
+  if (!drag) return;
+  const dx = ev.clientX - drag.x, dy = ev.clientY - drag.y;
+  if (Math.abs(dx) + Math.abs(dy) > 3) drag.moved = true;
+  T.x = drag.tx + dx; T.y = drag.ty + dy; apply();
+});
+svg.addEventListener("pointerup", () => {
+  if (drag && !drag.moved && state.sel && state.view !== "overview") go(state.view);
+  drag = null; svg.classList.remove("dragging");
+});
+svg.addEventListener("wheel", ev => {
+  ev.preventDefault();
+  const r = svg.getBoundingClientRect(), mx = ev.clientX - r.left, my = ev.clientY - r.top;
+  const k = Math.max(0.15, Math.min(3, T.k * Math.exp(-ev.deltaY * 0.0015)));
+  T.x = mx - (mx - T.x) * (k / T.k); T.y = my - (my - T.y) * (k / T.k); T.k = k; apply();
+}, { passive: false });
+
+// ---------- side panel ----------
+function typePill(t) { return h("span", { class: "pill type", style: `background: var(--${t})` }, TYPE_NAME[t] || t); }
+function tagPill(tag) { return h("span", { class: `pill tag-${tag}`, title: tag === "INFERRED" ? "Reasoned from the code, not written down by the author" : tag === "UNKNOWN" ? "Not determined: see the open questions" : "Stated in a doc, comment or commit" }, `[${tag}]`); }
+function section(title, ...body) { return h("section", {}, h("h3", {}, title), ...body); }
+function ioList(x) {
+  return h("dl", { class: "io" }, ["type", "shape", "format", "example"].map(k => [h("dt", {}, k[0].toUpperCase() + k.slice(1)), h("dd", {}, k === "example" ? h("code", {}, x[k]) : x[k])]));
+}
+function params(p) {
+  const keys = Object.keys(p || {});
+  if (!keys.length) return h("p", { class: "muted" }, "No parameters.");
+  return h("table", { class: "params" }, h("tbody", {}, keys.map(k => h("tr", {}, h("td", {}, k), h("td", {}, p[k])))));
+}
+function connections(id) {
+  const isStage = node(id).type === "stage";
+  const ins = isStage ? (SIN[id] || []) : (IN[id] || []), outs = isStage ? (SOUT[id] || []) : (OUT[id] || []);
+  const row = (e, other, dir) => h("button", { class: "conn", onclick: () => jump(other) },
+    `${dir} ${node(other).label}`,
+    h("span", { class: "c-meta" }, `${e.label} · ${e.data.type} · ${e.data.shape} · ${e.flow}`));
+  const body = [];
+  if (ins.length) body.push(h("p", { class: "muted" }, "Receives"), ins.map(e => row(e, e.from, "←")));
+  if (outs.length) body.push(h("p", { class: "muted" }, "Sends"), outs.map(e => row(e, e.to, "→")));
+  return body.length ? body : [h("p", { class: "muted" }, "No connections.")];
+}
+function jump(id) {
+  const n = node(id);
+  if (n.type === "stage") go(n.id);
+  else go(state.view === n.stage || (graph && graph.at[id]) ? state.view : n.stage, id);
+}
+function detail(n) {
+  const sameView = state.view === n.stage || (n.type === "stage" && state.view === n.id);
+  const stageName = STAGE[n.stage] ? `${num(n.stage)} ${STAGE[n.stage].label}` : n.stage;
+  const top = h("div", { class: "kicker" }, typePill(n.type), h("span", { class: `pill flow-${n.flow}` }, n.flow),
+    n.type === "stage" ? h("span", { class: "pill" }, n.platform || "") : h("span", { class: "muted" }, stageName));
+  const marks = [tagPill(n.decision.tag)];
+  if (n.status && n.status !== "active") marks.push(h("span", { class: "pill" }, `status: ${n.status}`));
+  if (n.key) marks.push(h("span", { class: "pill" }, `key: ${n.key}`));
+  const out = [top, h("h2", {}, n.label), h("div", { class: "badges" }, marks), h("p", { class: "purpose" }, n.purpose)];
+  if (n.type === "stage" && state.view !== n.id) out.push(h("button", { class: "btn primary", onclick: () => go(n.id) }, "Open this stage →"));
+  if (n.type !== "stage" && !sameView) out.push(h("button", { class: "btn", onclick: () => go(n.stage, n.id) }, `Go to ${stageName} →`));
+  out.push(section("Input", ioList(n.input)), section("Output", ioList(n.output)),
+    section(n.type === "model" ? "Model and key parameters" : "Algorithm and key parameters", h("p", {}, h("strong", {}, n.algorithm.name)), params(n.algorithm.params)),
+    section("Complexity and performance", h("p", {}, n.performance)),
+    section("Why: design decision", h("p", {}, tagPill(n.decision.tag), " ", n.decision.summary), h("p", { class: "src" }, "Source: ", n.decision.source)));
+  if (n.flags && n.flags.length) out.push(section(`Flags (${n.flags.length})`, h("ul", { class: "plain" }, n.flags.map(f => h("li", {}, h("span", { class: "pill" }, f.kind), " ", f.text, " ", h("code", {}, f.where))))));
+  if (n.type === "stage") out.push(section("Entry and exit", h("p", {}, "Data enters at: ", (n.entry || []).map(id => node(id).label).join(", ") || "—"), h("p", {}, "Data leaves from: ", (n.exit || []).map(id => node(id).label).join(", ") || "—")));
+  out.push(section("Files", h("ul", { class: "plain" }, n.files.map(f => h("li", {}, h("a", { href: "../../" + f, target: "_blank", rel: "noopener" }, f))))));
+  if (n.refs && n.refs.length) out.push(section("Code references", h("ul", { class: "plain" }, n.refs.map(r => h("li", {}, h("code", {}, r))))));
+  out.push(section("Connections", connections(n.id)));
+  const text = DATA.docs[n.doc];
+  out.push(section("Documentation", h("p", {}, h("a", { href: n.doc, target: "_blank", rel: "noopener" }, n.doc)),
+    text ? h("details", {}, h("summary", {}, "Show this section here"), h("pre", { class: "md" }, text)) : null));
+  return out;
+}
+function overviewPanel() {
+  const all = Object.values(NODES).filter(n => n.type !== "stage");
+  const by = k => { const c = {}; for (const n of all) c[k(n)] = (c[k(n)] || 0) + 1; return c; };
+  const types = by(n => n.type), tags = by(n => n.decision.tag);
+  const flags = all.reduce((s, n) => s + ((n.flags && n.flags.length) || 0), 0);
+  const runtime = DATA.edges.filter(e => e.flow === "runtime").length;
+  const stat = rows => h("div", { class: "stat" }, rows.map(([a, b]) => [h("span", {}, a), h("span", {}, b)]));
+  return [h("div", { class: "kicker" }, h("span", { class: "pill" }, `commit ${DATA.project.commit}`), h("span", { class: "muted" }, `generated ${DATA.project.generated}`)),
+    h("h2", {}, DATA.project.name), h("p", { class: "purpose" }, DATA.project.summary),
+    section("How to read this map", h("ul", { class: "plain" },
+      h("li", {}, "Click a stage to open it; the breadcrumb leads back."),
+      h("li", {}, "Click any box for everything known about it; faded boxes in a stage view belong to another stage (double-click to go there)."),
+      h("li", {}, "Solid lines: runtime data. Dashed lines and boxes: offline lab work."),
+      h("li", {}, "INF and UNK badges: the reason for a choice is inferred from the code, or unknown."),
+      h("li", {}, "Trace an input (left) walks one input through every step, with its input and output."))),
+    section("In this map", stat([["Stages", STAGES.length], ...TYPES.slice(1).map(t => [TYPE_NAME[t] + "s", types[t] || 0]),
+      ["Edges: runtime / offline", `${runtime} / ${DATA.edges.length - runtime}`], ["Reasons documented", tags.DOCUMENTED || 0],
+      ["Reasons inferred", tags.INFERRED || 0], ["Reasons unknown", tags.UNKNOWN || 0], ["Flags", flags]]))];
+}
+function renderPanel() {
+  const p = $("#panel");
+  p.replaceChildren(...(state.sel ? detail(node(state.sel)) : overviewPanel()));
+}
+function renderCrumbs() {
+  const c = $("#crumbs");
+  if (state.view === "overview") c.replaceChildren(h("b", {}, "Overview"));
+  else c.replaceChildren(h("a", { href: "#overview" }, "Overview"), "›", h("b", {}, `${num(state.view)} ${STAGE[state.view].label}`));
+  $("#hint").textContent = state.view === "overview"
+    ? "Click a stage to open it · drag to pan · scroll to zoom · / to search"
+    : "Faded boxes come from other stages (double-click to go there) · Esc clears the selection";
+}
+
+// ---------- navigation ----------
+function go(view, sel) { const hash = "#" + encodeURIComponent(view) + (sel ? "~" + encodeURIComponent(sel) : ""); if (location.hash !== hash) location.hash = hash; else route(); }
+function route() {
+  const [v, s] = location.hash.slice(1).split("~").map(x => decodeURIComponent(x || ""));
+  const view = STAGE[v] ? v : "overview";
+  const fresh = view !== state.view;
+  state.view = view;
+  state.sel = s && (NODES[s] || STAGE[s]) ? s : (view !== "overview" ? view : null);
+  if (fresh) { draw(); fit(); }
+  restyle(); renderPanel(); renderCrumbs();
+  if (!fresh && state.sel) reveal(state.sel);
+  $("#stage-filter").value = state.stage;
+}
+window.addEventListener("hashchange", route);
+window.addEventListener("resize", () => fit());
+
+// ---------- trace ----------
+function renderSteps() {
+  const t = state.trace, list = $("#steps");
+  $("#trace-ctl").hidden = !t;
+  list.replaceChildren();
+  if (!t) return;
+  $("#trace-pos").textContent = state.step < 0 ? `${t.steps.length} steps` : `step ${state.step + 1} of ${t.steps.length}`;
+  if (t.description) list.append(h("p", { class: "muted" }, t.description));
+  t.steps.forEach((id, i) => {
+    const n = node(id);
+    list.append(h("li", { class: i === state.step ? "cur" : "" },
+      h("button", { onclick: () => stepTo(i) }, h("span", { class: "n" }, i + 1), h("span", {}, n.label, " ", h("span", { class: "muted" }, num(n.stage)))),
+      h("div", { class: "io" }, h("div", {}, "in: ", h("span", {}, `${n.input.type} · ${n.input.shape}`)), h("div", {}, "out: ", h("span", {}, `${n.output.type} · ${n.output.shape}`)))));
+  });
+  const cur = list.querySelector("li.cur");
+  if (cur) cur.scrollIntoView({ block: "nearest" });
+}
+function stepTo(i) {
+  const t = state.trace; if (!t) return;
+  state.step = Math.max(-1, Math.min(t.steps.length - 1, i));
+  renderSteps();
+  if (state.step < 0) go("overview");
+  else { const id = t.steps[state.step]; go(node(id).stage, id); }
+}
+$("#trace").addEventListener("change", ev => {
+  state.trace = DATA.traces.find(t => t.id === ev.target.value) || null;
+  state.step = -1; renderSteps(); go("overview"); restyle();
+});
+$("#prev").addEventListener("click", () => stepTo(state.step - 1));
+$("#next").addEventListener("click", () => stepTo(state.step + 1));
+$("#trace-off").addEventListener("click", () => { state.trace = null; state.step = -1; $("#trace").value = ""; renderSteps(); restyle(); });
+
+// ---------- search ----------
+const INDEX = Object.values(NODES).map(n => ({ n, text: [n.id, n.label, n.purpose, n.key || "", n.algorithm.name, ...(n.files || [])].join(" ").toLowerCase() }));
+const q = $("#q"), results = $("#results");
+function search() {
+  const words = q.value.trim().toLowerCase().split(/\s+/).filter(Boolean);
+  if (!words.length) { results.hidden = true; return; }
+  const hits = INDEX.filter(x => (state.stage === "all" || x.n.stage === state.stage) && words.every(w => x.text.includes(w))).slice(0, 40);
+  results.replaceChildren(...(hits.length ? hits.map(({ n }) => h("button", { onclick: () => { results.hidden = true; q.blur(); n.type === "stage" ? go(n.id) : go(n.stage, n.id); } },
+    n.label, h("span", { class: "r-meta" }, `${TYPE_NAME[n.type]} · ${num(n.stage)} ${STAGE[n.stage] ? STAGE[n.stage].label : ""}`)))
+    : [h("div", { class: "empty" }, "No match.")]));
+  results.hidden = false;
+}
+q.addEventListener("input", search);
+q.addEventListener("keydown", ev => {
+  if (ev.key === "Enter") { const b = results.querySelector("button"); if (b) b.click(); }
+  if (ev.key === "Escape") { results.hidden = true; q.blur(); }
+  if (ev.key === "ArrowDown") { const b = results.querySelector("button"); if (b) { ev.preventDefault(); b.focus(); } }
+});
+results.addEventListener("keydown", ev => {
+  const items = [...results.querySelectorAll("button")], i = items.indexOf(document.activeElement);
+  if (ev.key === "ArrowDown" && i < items.length - 1) { ev.preventDefault(); items[i + 1].focus(); }
+  if (ev.key === "ArrowUp") { ev.preventDefault(); (i > 0 ? items[i - 1] : q).focus(); }
+  if (ev.key === "Escape") { results.hidden = true; q.focus(); }
+});
+document.addEventListener("click", ev => { if (!ev.target.closest(".search")) results.hidden = true; });
+document.addEventListener("keydown", ev => {
+  const typing = /^(INPUT|SELECT|TEXTAREA)$/.test(document.activeElement.tagName);
+  if (ev.key === "/" && !typing) { ev.preventDefault(); q.focus(); q.select(); }
+  else if ((ev.key === "f" || ev.key === "F") && !typing) fit();
+  else if (ev.key === "Escape" && !typing && state.sel && state.view !== "overview" && state.sel !== state.view) go(state.view);
+});
+
+// ---------- filters, legend, toolbar ----------
+for (const t of TYPES) {
+  const box = h("input", { type: "checkbox", checked: true, onchange: ev => { ev.target.checked ? state.types.add(t) : state.types.delete(t); restyle(); } });
+  $("#types").append(h("label", { class: "check" }, box, h("span", { class: "sw", style: `background: var(--${t})` }), TYPE_NAME[t]));
+}
+for (const [value, text] of [["all", "All"], ["runtime", "Runtime"], ["offline", "Offline"]]) {
+  $("#flows").append(h("label", { class: "check" }, h("input", { type: "radio", name: "flow", value, checked: value === "all", onchange: () => { state.flow = value; restyle(); } }), text));
+}
+for (const s of STAGES) $("#stage-filter").append(h("option", { value: s.id }, `${num(s.id)} ${s.label}`));
+$("#stage-filter").addEventListener("change", ev => { state.stage = ev.target.value; if (state.stage !== "all" && state.view !== "overview") go(state.stage); else restyle(); search(); });
+for (const t of DATA.traces) $("#trace").append(h("option", { value: t.id }, t.label));
+function legendLine(cls, text, dash) {
+  const s = svgEl("svg", { width: 40, height: 12 });
+  svgEl("line", { x1: 2, y1: 6, x2: 38, y2: 6, class: cls, "stroke-dasharray": dash || null, style: "stroke-width:2.2" }, s);
+  return h("div", { class: "legend-row" }, s, text);
+}
+$("#legend").append(
+  ...TYPES.map(t => h("div", { class: "legend-row" }, h("span", { class: "sw", style: `background: var(--${t})` }), TYPE_NAME[t])),
+  legendLine("edge f-runtime", "Runtime data (app, prototype)"),
+  legendLine("edge f-offline", "Offline lab work (dashed)"),
+  legendLine("edge hl", "Selected or traced path"),
+  h("div", { class: "legend-row" }, h("span", { class: "pill tag-INFERRED" }, "INF"), "Reason inferred from code"),
+  h("div", { class: "legend-row" }, h("span", { class: "pill tag-UNKNOWN" }, "UNK"), "Reason unknown (open question)"),
+  h("div", { class: "legend-row" }, h("span", { class: "pill" }, "UNUSED"), "Hatched box: unused, stub or legacy"),
+  h("div", { class: "legend-row" }, h("span", { class: "pill" }, "⚑2"), "Flags: bugs, gaps, mismatches"),
+  h("div", { class: "legend-row" }, h("span", { class: "pill", style: "opacity:.6" }, "↗ s03"), "Faded box: from another stage"));
+$("#labels").addEventListener("click", ev => { state.allLabels = !state.allLabels; ev.currentTarget.setAttribute("aria-pressed", String(state.allLabels)); restyle(); });
+$("#fit").addEventListener("click", fit);
+$("#menu").addEventListener("click", ev => { const open = $("#side").classList.toggle("open"); ev.currentTarget.setAttribute("aria-expanded", String(open)); });
+function setTheme(t) {
+  document.documentElement.dataset.theme = t;
+  $("#theme").textContent = t === "dark" ? "Light" : "Dark";
+  try { localStorage.setItem("eykon-flow-theme", t); } catch (e) { /* storage may be blocked on file:// */ }
+}
+let saved = null;
+try { saved = localStorage.getItem("eykon-flow-theme"); } catch (e) { saved = null; }
+setTheme(saved === "dark" || saved === "light" ? saved : (window.matchMedia && matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"));
+$("#theme").addEventListener("click", () => setTheme(document.documentElement.dataset.theme === "dark" ? "light" : "dark"));
+
+route();
+})();
+</script>
+</body>
+</html>

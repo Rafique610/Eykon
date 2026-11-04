@@ -377,3 +377,56 @@ be grouped (for example every MobileCLIP image-encoder node has
 | `s14-ego4d-eval/ext-ego4d` | Ego4D episodic-memory validation subset, `D:/eykon-cache/ego4d` | s14 |
 | `s13-component-benchmarks/ext-own-clips` | the team's own recorded clips and hand labels | s13 |
 | `s13-component-benchmarks/ext-epic-kitchens` | EPIC-KITCHENS-100 subset | s13 |
+
+### Fixed file-node ids
+
+Cross-stage edges (the worker calling each stage, the Video tab calling
+capture, a benchmark result setting a constant) need ids that both sides know
+before either is written. The owning stage must define each of these as a
+`file` node whose `files` include the named file; others may point edges at
+them.
+
+| Node id | File (what it holds) | Defined in |
+|---|---|---|
+| `s01-intake/file-videocapture` | `VideoCapture.kt` (pick and store) | s01 |
+| `s01-intake/file-videoworker` | `VideoWorker.kt` (runs the stages) | s01 |
+| `s01-intake/file-videorepository` | `VideoRepository.kt` (video list with counts) | s01 |
+| `s02-split/file-videosplit` | `VideoSplit.kt` (stage runner) | s02 |
+| `s03-keyframes/file-videofilter` | `VideoFilter.kt` (stage runner) | s03 |
+| `s03-keyframes/file-framefilters` | `FrameFilters.kt` (filter maths, `SLOT_FRAMES`) | s03 |
+| `s03-keyframes/file-videodedup` | `VideoDedup.kt` (stage runner) | s03 |
+| `s03-keyframes/file-imageembedder` | `ImageEmbedder.kt` (MobileCLIP image encoder) | s03 |
+| `s04-scene/file-videoscene` | `VideoScene.kt` (stage runner, captions) | s04 |
+| `s04-scene/file-optiona` | `OptionA.kt` (prompts, cut-offs, smoothing, flags) | s04 |
+| `s04-scene/file-objectdetector` | `ObjectDetector.kt` (YOLOX-Tiny) | s04 |
+| `s04-scene/file-dfinedetector` | `DfineDetector.kt` (D-FINE S) | s04 |
+| `s05-small-objects/file-videosmallobjects` | `VideoSmallObjects.kt` (stage runner) | s05 |
+| `s05-small-objects/file-yoloedetector` | `YoloeDetector.kt` (YOLOE-11L) | s05 |
+| `s06-index/file-videoembedimages` | `VideoEmbedImages.kt` (stage runner) | s06 |
+| `s06-index/file-videoembedtexts` | `VideoEmbedTexts.kt` (stage runner) | s06 |
+| `s06-index/file-videovectors` | `VideoVectors.kt` (BLOB vectors, in-memory search) | s06 |
+| `s06-index/file-bgeembedder` | `BgeEmbedder.kt` (bge-small on the phone) | s06 |
+| `s07-finalise/file-videolink` | `VideoLink.kt` (stage runner) | s07 |
+| `s07-finalise/file-videolatest` | `VideoLatest.kt` (stage runner) | s07 |
+| `s07-finalise/file-videofinish` | `VideoPipeline.kt`, the `VideoFinish` object (stage runner) | s07 |
+| `s08-video-search/file-videosearch` | `VideoSearch.kt` (moment search) | s08 |
+| `s08-video-search/file-searchwindows` | `SearchWindows.kt` (window growth) | s08 |
+| `s08-video-search/file-textembedder` | `TextEmbedder.kt` (MobileCLIP text encoder) | s08 |
+| `s08-video-search/file-videoviewmodel` | `VideoViewModel.kt` (Video tab logic) | s08 |
+| `s09-phone-text-memory/file-mainactivity` | `MainActivity.kt` (wires the three tabs) | s09 |
+| `s09-phone-text-memory/file-searchservice` | `SearchService.kt` (phone text retrieval) | s09 |
+| `s09-phone-text-memory/file-litertgenerator` | `LiteRTGenerator.kt` (Gemma on the phone) | s09 |
+| `s10-laptop-text-rag/file-app` | `src/ui/app.py` (Streamlit pages) | s10 |
+| `s10-laptop-text-rag/file-embedder` | `src/memories/embedder.py` (bge-small, sentence-transformers) | s10 |
+| `s10-laptop-text-rag/file-service` | `src/memories/service.py` (chunking, memory records) | s10 |
+| `s10-laptop-text-rag/file-search` | `src/memories/search.py` (hybrid search) | s10 |
+| `s10-laptop-text-rag/file-llm` | `src/assistant/llm.py` (Gemma through LiteRT-LM) | s10 |
+| `s11-laptop-vlm-video/file-processor` | `src/vision/processor.py` (video to captions) | s11 |
+| `s11-laptop-vlm-video/file-captioner` | `src/vision/captioner.py` (VLM call) | s11 |
+
+Naming for every other node (not enforced, but keep to it): `file-<file
+name, lower case, no extension>` (add the parent folder on a clash, for
+example `file-memories-init`), `model-<key>`, `algo-<name>`,
+`db-<table>` for tables, `store-<name>` for other stored files, `ext-<name>`
+for people, datasets and outside services, `tests-<group>` for grouped tests,
+`results-<name>` for result documents.

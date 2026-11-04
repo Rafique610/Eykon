@@ -91,7 +91,7 @@ Tests get the same entry, shorter: what they check and against what data. -->
 - **Decision:** what was chosen.
 - **Where in code:** path and symbol.
 - **Why:** [DOCUMENTED] ... (source) / [INFERRED] ... (evidence) /
-  [UNKNOWN] see Q-<stage-id>-<n>.
+  [UNKNOWN] see Q-sNN-n (for example Q-s04-2).
 - **Alternatives not chosen:** each realistic alternative with its
   trade-off (accuracy, latency, memory, complexity, ecosystem,
   constraints). Mark whether the project measured it (cite) or not.
@@ -102,7 +102,7 @@ Tests get the same entry, shorter: what they check and against what data. -->
 ### 8.1 Questions for the author
 
 <!-- Specific questions only the author can answer, each with an id:
-- **Q-<stage-id>-1:** ... (context: path:line) -->
+- **Q-sNN-1:** ... (context: path:line). Ids: "Q-" + the stage number + "-" + a running number, e.g. Q-s04-1. -->
 
 ### 8.2 Flags
 

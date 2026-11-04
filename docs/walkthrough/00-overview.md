@@ -455,7 +455,7 @@ should know before Phase 1:
 
 - Stage doc: [`stages/_TEMPLATE.md`](stages/_TEMPLATE.md). The eight numbered
   sections of `ANALYSIS.md`, a fixed anchor rule, one `###` heading per
-  file in §6, question ids `Q-<stage>-<n>`, flags in §8.2.
+  file in §6, question ids `Q-sNN-n` (for example `Q-s04-2`), flags in §8.2.
 - Stage JSON: [`flow/schema.json`](flow/schema.json). Nodes carry the fields
   `ANALYSIS.md` asks for (id, label, type, parent stage, files, purpose,
   input and output each with type / shape / format / example, algorithm

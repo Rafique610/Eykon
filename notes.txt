@@ -1,0 +1,2 @@
+the clusters should have the single laplacian
+the clusters should be based ont he similarity of the dhashes.
