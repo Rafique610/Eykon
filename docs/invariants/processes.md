@@ -88,12 +88,17 @@ kept as something that can be opened in a meeting in under a minute:
 ## Head documents are filled while the work runs
 
 Each pipeline head has a Word document in `docs/documents/`, generated from
-`docs/documents/source/heads/head<N>.json` (see that folder's README). It is
-the record we open in a supervisor meeting, so it's kept current as we go,
-not written up afterwards.
+`docs/documents/source/` (see that folder's README). It is the record we
+open in a supervisor meeting, so it's kept current as we go, not written up
+afterwards.
 
+- **Defense doc format.** A head that is up for review gets a defense doc
+  (Parts A–E: the card, the story, hard questions, evidence, words and
+  gaps), following `docs/documents/HEAD-DOC-TEMPLATE.md` exactly; Head 2
+  is the example. Heads without one keep their record doc
+  (`heads/head<N>.json`) until their turn.
 - **Same step, same time.** When a run or test on a head produces a finding,
-  update that head's JSON and rebuild the document in the same step as the
+  update that head's source and rebuild the document in the same step as the
   card comment. A card doesn't go to review until its head document shows
   the result.
 - **Every part covers:** the approach (what we tried and why, and the options
@@ -115,7 +120,8 @@ not written up afterwards.
   so reading a document from top to bottom follows the pipeline. Dates go
   only in each part's "Last updated" line and in the change history, never
   in the section order. A later finding goes into the part it belongs to,
-  not at the end.
+  not at the end. One exception: a defense doc's Part B (the story) is in
+  the order things happened, because it tells how the work went.
 - **Explain every name you use.** If a result names a method, variant or
   setting ("faster loop", "blob_disk_dot", "diskMax"), the same document
   says what it is in plain words, how it differs from the alternative
