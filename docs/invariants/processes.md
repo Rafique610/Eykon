@@ -85,6 +85,40 @@ kept as something that can be opened in a meeting in under a minute:
   one click away. A result that exists only in chat or someone's memory
   doesn't count.
 
+## Head documents are filled while the work runs
+
+Each pipeline head has a Word document in `docs/documents/`, generated from
+`docs/documents/source/heads/head<N>.json` (see that folder's README). It is
+the record we open in a supervisor meeting, so it's kept current as we go,
+not written up afterwards.
+
+- **Same step, same time.** When a run or test on a head produces a finding,
+  update that head's JSON and rebuild the document in the same step as the
+  card comment. A card doesn't go to review until its head document shows
+  the result.
+- **Every part covers:** the approach (what we tried and why, and the options
+  we ruled out), what we did (steps, exact commands, devices, commit), the
+  outcome (a table of the numbers, a graph, screenshots, links to the raw
+  files in `docs/results/`, and a one-line verdict, good or bad), and what's
+  next (the card that follows).
+- **Data stays with the evidence.** Raw files go in `docs/results/<area>/`;
+  the document shows the table made from them and links the file. Each graph
+  is kept with the script and data that drew it, so it can be redrawn.
+- **Graphs are redrawn, not stacked.** When new data comes in (a rerun, a
+  new phone, a protocol run replacing a trial run), rerun the figure script:
+  it writes the same file name, so the document picks up the new image and
+  the old one is gone. The caption says which runs the graph shows. A run
+  that's dropped from a graph is named in the part's text as superseded,
+  and why.
+- **Order by pipeline position, not by date.** Parts sit where they fit in
+  the flow (setup → storage → intake → processing → … → search → output),
+  so reading a document from top to bottom follows the pipeline. Dates go
+  only in each part's "Last updated" line and in the change history, never
+  in the section order. A later finding goes into the part it belongs to,
+  not at the end.
+- **Never overwrite a finding.** If a new run disagrees with an older one,
+  keep both and say which is current and why.
+
 ## Session memory log — `.memory/`
 
 Shared memory for the agent AND the user. This is what makes progress
