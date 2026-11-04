@@ -112,8 +112,22 @@ adb logcat -d -s EYKO31 > <device>-<date>-sweep-logcat.txt
   `adb pull /storage/emulated/0/Android/data/com.eykon.memory/files/results/<file>.csv`.
 - `logcat -G 16M` makes the log buffer big enough for the whole run (on the Pixel the default
   buffer dropped the first sizes). The CSV is the main evidence either way: it has every row.
+- `-e source real` (EYKO-100) uses real vectors from our own clips (90 image vectors in the test
+  APK, padded with small noise) instead of random ones; the CSV then starts with `eyko100-sweep-real`
+  and also has the `blob_memory_fast` method (a faster loop, same answers: the note column says
+  how many of the top-20 results match the app's loop).
 - An `OutOfMemoryError` row is a result (the phone cannot hold that many vectors in memory), not
   a broken test.
+
+## 5c · Memory with all three vector tables (EYKO-100)
+
+```
+adb shell am instrument -w -e class com.eykon.memory.spike.VectorStorageSpikeTest#memoryWithAllThreeTables -e commit <commit> com.eykon.memory.test/androidx.test.runner.AndroidJUnitRunner
+```
+
+Loads the image, text and audio-sized tables together (5k, 20k, 50k, 100k rows each) and writes
+total memory (PSS) before and after into an `eyko100-memory-...csv` (note column). Needs about
+1.2 GB free storage at 100k.
 
 ## 6 · Logs and measurements
 

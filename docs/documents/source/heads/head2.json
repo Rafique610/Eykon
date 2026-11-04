@@ -6,7 +6,7 @@
   "meta": [
     [
       "Status",
-      "Built; decision re-tested on two phones (3 Nov) and swept from 1k to 300k vectors (EYKO-90). Open questions and their cards are in section 2."
+      "Built; re-tested on two phones (3 Nov), swept 1k–300k (EYKO-90) and fully tested with real vectors, a faster loop, all three tables and any extension (EYKO-100, 4 Nov). Open questions and their cards are in section 2."
     ],
     [
       "Covers",
@@ -67,7 +67,7 @@
               [
                 "A2",
                 "Is that a sqlite-vec problem or an Android problem?",
-                "Partly",
+                "Answered",
                 "EYKO-89, EYKO-100"
               ],
               [
@@ -103,7 +103,7 @@
               [
                 "B3",
                 "Random vectors are not real ones. Does it hold with real data?",
-                "Open",
+                "Answered",
                 "EYKO-91, EYKO-100"
               ],
               [
@@ -115,7 +115,7 @@
               [
                 "B5",
                 "The phone is about 50x slower than the laptop. Is that the chip or your code?",
-                "Open",
+                "Partly",
                 "EYKO-100, EYKO-91"
               ],
               [
@@ -238,27 +238,27 @@
             "rows": [
               [
                 "Status",
-                "**Partly**"
+                "**Answered**"
               ],
               [
                 "Answer",
-                "An Android problem. The phone's built-in SQLite has no load_extension function at all, so no extension of any kind can be loaded, not only sqlite-vec. It fails the same way on an old phone (Android 13, SQLite 3.32.2) and a new one (Android 17, SQLite 3.50.6), so it is not an old-version problem."
+                "An Android problem. On both phones (Android 13 / SQLite 3.32.2 and Android 17 / SQLite 3.50.6) load_extension itself does not exist: it fails the same way for sqlite-vec and for a made-up extension name. Only modules compiled into the platform SQLite work, and of fts4, fts5 and rtree only fts4 does. So no loadable extension can run on the platform SQLite of either phone."
               ],
               [
                 "How we tested",
-                "Same test as A1 on two phones with different Android and SQLite versions; the test prints the SQLite version first."
+                "EYKO-100 extension check on the A32 and the Pixel, 4 Nov (section 6, \"Full test\")."
               ],
               [
                 "Evidence",
-                "The two proof logs (A1); device sheets show the versions."
+                "docs/results/vectors/proof/a32-2026-11-04-extensions-logcat.txt and pixel9proxl-2026-11-04-extensions-logcat.txt; table in section 6."
               ],
               [
                 "Next / card",
-                "Official Android source for why (EYKO-89); a dummy-extension and fts5 test on the phone (EYKO-100)."
+                "Android's official reason (EYKO-89); a bundled SQLite is the only route left for sqlite-vec (EYKO-93)."
               ],
               [
                 "Last updated",
-                "3 Nov 2026"
+                "4 Nov 2026"
               ]
             ]
           }
@@ -484,27 +484,27 @@
             "rows": [
               [
                 "Status",
-                "**Open**"
+                "**Answered**"
               ],
               [
                 "Answer",
-                "All runs so far use random unit vectors."
+                "For speed, yes. With real vectors from our own clips the times match the random ones (20k: A32 82 ms vs 80 ms random; Pixel 37 ms vs 40 ms). That is expected: an exact dot product does the same work whatever the numbers are. Whether search returns the right frames with real data is a retrieval question (Heads 7 and 8), not a storage one."
               ],
               [
                 "How we tested",
-                "Planned: use the real image_vec and text_vec from the Pixel database."
+                "EYKO-100 sweep with -e source real on both phones (90 real vectors per table, padded with small noise)."
               ],
               [
                 "Evidence",
-                "—"
+                "docs/results/vectors/*-2026-11-04-sweep-real.csv; Figure 4."
               ],
               [
                 "Next / card",
-                "EYKO-91 (laptop), EYKO-100 (phone)."
+                "—"
               ],
               [
                 "Last updated",
-                "3 Nov 2026"
+                "4 Nov 2026"
               ]
             ]
           }
@@ -529,19 +529,19 @@
               ],
               [
                 "Answer",
-                "The vectors need one block of n × 512 × 4 bytes (205 MB at 100k, 614 MB at 300k). Android gives the app a 268 MB Java heap on both phones, even the Pixel with 16 GB of RAM, so 100k ran and 300k failed with OutOfMemoryError. The measured Java heap is noisy (it counts garbage not yet collected), so it is not used as the answer. All three tables together and a 4 GB phone are still not measured."
+                "Measured with all three tables loaded together (image 512, text 384, audio-sized 512; same rows each, the worst case). 20k rows each: app PSS 53 → 160 MB (A32) and 57 → 164 MB (Pixel), fits. 50k: out of memory while loading the third table on both phones; 100k: only the first table fits. The limit is the 268 MB Java heap Android gives the app, the same on the 6 GB A32 and the 16 GB Pixel. A 4 GB phone is not measured yet."
               ],
               [
                 "How we tested",
-                "EYKO-90 sweep: memory columns in the CSV and the out-of-memory error text."
+                "EYKO-100 memory test (Debug.getMemoryInfo after a garbage collection, before and after loading)."
               ],
               [
                 "Evidence",
-                "Sweep CSVs (300k rows, note column); Figure 3."
+                "docs/results/vectors/*-2026-11-04-memory.csv; Figure 5."
               ],
               [
                 "Next / card",
-                "All three tables with real vectors, PSS (EYKO-100); Infinix (EYKO-95)."
+                "Infinix (EYKO-95, kit section 5c); the design answer in EYKO-98."
               ],
               [
                 "Last updated",
@@ -566,27 +566,27 @@
             "rows": [
               [
                 "Status",
-                "**Open**"
+                "**Partly**"
               ],
               [
                 "Answer",
-                "Not known yet. In memory at 20,000: laptop 1.5 ms (numpy), Pixel 40.5 ms, A32 83.5 ms (plain Kotlin loop). Part of the gap is likely the loop, not the chip."
+                "Mostly our code. A faster loop (four running sums, keep the best 20 instead of sorting every row) returns the same top 20 on all 400 checks and is 5.9× faster on the A32 at 100k (537 → 91 ms); on the Pixel the gain is similar. The laptop has not been run with the same faster loop, so the remaining phone-vs-laptop gap is not measured yet."
               ],
               [
                 "How we tested",
-                "Planned: a faster Kotlin loop on the phone, a plain-Python loop on the laptop."
+                "EYKO-100: both loops on the same vectors and queries, same run."
               ],
               [
                 "Evidence",
-                "—"
+                "Sweep-real CSVs (blob_memory_dot vs blob_memory_fast, note column); Figure 4."
               ],
               [
                 "Next / card",
-                "EYKO-100 (phone), EYKO-91 (laptop)."
+                "Same loop on the laptop (EYKO-91); moving the loop into the app is a lead decision."
               ],
               [
                 "Last updated",
-                "3 Nov 2026"
+                "4 Nov 2026"
               ]
             ]
           }
@@ -652,19 +652,19 @@
               ],
               [
                 "Answer",
-                "The limit is now measured: 200 ms is passed at 20k–50k vectors (A32) and 50k–100k (Pixel), and a hard memory wall comes at about 100k–130k vectors per table. The plan past it is still open. Candidates: int8 vectors (a quarter of the memory), splitting the table into blocks, an approximate index (usearch, hnswlib) or bundled sqlite-vec."
+                "Measured limits: with the faster loop, speed stays under 200 ms past 100k vectors on both phones, so speed is no longer the first limit. Memory is: with all three tables in memory the app runs out between 20k and 50k rows. The plan past that is open. Candidates: int8 or float16 vectors (a quarter or half the memory), keeping only the image table in memory, loading in blocks, an approximate index (usearch, hnswlib) or bundled sqlite-vec."
               ],
               [
                 "How we tested",
-                "EYKO-90 sweep (section 6). Options not tested yet."
+                "EYKO-90 sweep and EYKO-100 (section 6). Options not tested yet."
               ],
               [
                 "Evidence",
-                "Figures 1 and 3."
+                "Figures 1, 4 and 5."
               ],
               [
                 "Next / card",
-                "EYKO-89 and EYKO-91 (options), EYKO-93 (bundled sqlite-vec), EYKO-98 (decision)."
+                "EYKO-89 and EYKO-91 (options), EYKO-93 (bundled sqlite-vec), EYKO-101 (when a user gets there), EYKO-98 (decision)."
               ],
               [
                 "Last updated",
@@ -1436,7 +1436,173 @@
         {
           "note": "**Outcome (good and bad):** the runs are stable (5 run medians within about 10 %), and the old 20k number holds (A32 80 ms now, 81 ms on 12 Oct). But in-memory search passes 200 ms between **20k and 50k on the A32** and between **50k and 100k on the Pixel**, and above roughly 100k–130k vectors the table **cannot be held in memory at all** with the current design. The design is fine for small libraries and has a hard ceiling for large ones."
         },
-        "**Not yet protocol runs:** both phones were charging at low battery; the Infinix and the protocol runs (cool, hot, low battery) come from EYKO-95. **Next:** how many vectors a real user reaches (EYKO-101), real vectors and honest memory with all three tables (EYKO-100), and the storage decision v2 (EYKO-98). Graphs: uv run docs/documents/source/figures/vector_sweep.py redraws them from every sweep CSV."
+        "**Not yet protocol runs:** both phones were charging at low battery; the Infinix and the protocol runs (cool, hot, low battery) come from EYKO-95. **Next:** how many vectors a real user reaches (EYKO-101), real vectors and honest memory with all three tables (EYKO-100), and the storage decision v2 (EYKO-98). Graphs: uv run docs/documents/source/figures/vector_sweep.py redraws them from every sweep CSV.",
+        {
+          "h3": "Full test: real vectors, a faster loop, all three tables, any extension (EYKO-100)"
+        },
+        "**Why:** the size sweep left four supervisor questions open: A2 (is it sqlite-vec or Android?), B3 (random vectors are not real ones), B4 (memory with all tables) and B5 (is the slowness the chip or our code?). **Approach:** one change per question, on the same two phones, same day.",
+        {
+          "steps": [
+            "**Any extension (A2):** besides vec0, the test calls load_extension on a made-up name, tries the fts5, fts4 and rtree modules, and reads PRAGMA compile_options.",
+            "**Real vectors (B3):** 90 image and 90 text vectors from our own recordings (12–22 Oct, incl. the two kit clips; no Ego4D) are built into the test APK (src/benchmarks/export_own_vectors.py) and padded to each size with small noise. Queries are our frames with more noise.",
+            "**Faster loop (B5):** next to the app's loop (one running sum, then sort every row) the test runs a second loop: four running sums, and a 20-slot min-heap instead of a full sort. On every query it checks both give the same top 20.",
+            "**All three tables (B4):** image (512), text (384) and an audio-sized (512) table with the same number of rows each (the worst case) are loaded together the way the app loads them; total PSS (Debug.getMemoryInfo) after a garbage collection, before and after.",
+            "Commands: phone kit README sections 5b (-e source real) and 5c. The raw logs of both phones are in docs/results/vectors/proof/."
+          ],
+          "ref": "eyko100"
+        },
+        {
+          "table": {
+            "cols": [
+              "Check (A2)",
+              "Samsung A32 (Android 13, SQLite 3.32.2)",
+              "Pixel 9 Pro XL (Android 17, SQLite 3.50.6)"
+            ],
+            "widths": [
+              3,
+              3,
+              3
+            ],
+            "rows": [
+              [
+                "sqlite-vec: CREATE … USING vec0",
+                "no such module: vec0",
+                "no such module: vec0"
+              ],
+              [
+                "load_extension('vec0')",
+                "no such function: load_extension",
+                "no such function: load_extension"
+              ],
+              [
+                "load_extension of a made-up name",
+                "**no such function: load_extension**",
+                "**no such function: load_extension**"
+              ],
+              [
+                "fts4 / fts5 / rtree (built in or not)",
+                "fts4 works; fts5 and rtree: no such module",
+                "fts4 works; fts5 and rtree: no such module"
+              ],
+              [
+                "PRAGMA compile_options (extension, fts, rtree)",
+                "none listed",
+                "none listed"
+              ]
+            ]
+          }
+        },
+        "Speed with real vectors, median of the 5 run medians (each run 20 queries); the faster loop returned the same top 20 as the app's loop on all 400 checks at every size, on both phones:",
+        {
+          "table": {
+            "cols": [
+              "Vectors",
+              "A32: app's loop",
+              "A32: faster loop",
+              "Pixel: app's loop",
+              "Pixel: faster loop"
+            ],
+            "widths": [
+              2,
+              2,
+              3,
+              2,
+              3
+            ],
+            "rows": [
+              [
+                "1k",
+                "3.1 ms",
+                "**1.2 ms** (2.7×)",
+                "1.6 ms",
+                "**0.6 ms** (2.8×)"
+              ],
+              [
+                "5k",
+                "16 ms",
+                "**4.9 ms** (3.3×)",
+                "8.6 ms",
+                "**2.5 ms** (3.4×)"
+              ],
+              [
+                "20k",
+                "82 ms",
+                "**19 ms** (4.4×)",
+                "37 ms",
+                "**7.9 ms** (4.7×)"
+              ],
+              [
+                "50k",
+                "246 ms",
+                "**46 ms** (5.4×)",
+                "102 ms",
+                "**20 ms** (5.2×)"
+              ],
+              [
+                "100k",
+                "537 ms",
+                "**91 ms** (5.9×)",
+                "262 ms",
+                "**39 ms** (6.7×)"
+              ]
+            ]
+          }
+        },
+        {
+          "image": "figures/head2-vector-fast-loop.png",
+          "caption": "Figure 4. Real vectors: the app's search loop today vs the faster loop, same answers. The bar on each point is the range of the 5 runs. Data: docs/results/vectors/*-sweep-real.csv."
+        },
+        "Memory with all three tables loaded together (total PSS of the app before → after loading):",
+        {
+          "table": {
+            "cols": [
+              "Rows per table",
+              "Vectors need",
+              "A32",
+              "Pixel 9 Pro XL"
+            ],
+            "widths": [
+              2,
+              2,
+              4,
+              4
+            ],
+            "rows": [
+              [
+                "5k",
+                "28 MB",
+                "53 → 80 MB; all 3 tables loaded",
+                "57 → 84 MB; all 3 tables loaded"
+              ],
+              [
+                "20k",
+                "113 MB",
+                "53 → 160 MB; all 3 tables loaded",
+                "57 → 164 MB; all 3 tables loaded"
+              ],
+              [
+                "50k",
+                "282 MB",
+                "53 → 224 MB; **out of memory**, 2 of 3 tables loaded",
+                "57 → 228 MB; **out of memory**, 2 of 3 tables loaded"
+              ],
+              [
+                "100k",
+                "563 MB",
+                "53 → 248 MB; **out of memory**, 1 of 3 tables loaded",
+                "57 → 252 MB; **out of memory**, 1 of 3 tables loaded"
+              ]
+            ]
+          }
+        },
+        {
+          "image": "figures/head2-vector-all-tables.png",
+          "caption": "Figure 5. All three vector tables in memory. 20k rows each (113 MB) fit on both phones; at 50k the third table, at 100k the second table no longer fits in the 268 MB Java heap. Data: docs/results/vectors/*-memory.csv."
+        },
+        {
+          "note": "**Outcome (good and bad):** (1) **A2 answered:** both phones refuse load_extension itself, even for a made-up name, so the platform blocks every loadable extension; it is not a sqlite-vec problem. Only compiled-in modules work, and only fts4 of the three (our keyword index uses fts4, so it is safe). (2) **B3:** real vectors take the same time as random ones (20k: A32 82 ms, Pixel 37 ms vs 80 and 40 ms random), as expected for an exact dot product. (3) **B5: most of the time was our code.** The faster loop gives the same answers 5.9× faster on the A32 at 100k (537 → 91 ms), so speed stays under 200 ms past 100k on both phones. (4) **B4, the bad news:** with all three tables in memory the app runs out between **20k and 50k rows** on both phones. **Memory, not speed, is now the limit.**"
+        },
+        "**Not yet protocol runs:** both phones were plugged in by cable. **Next:** the faster loop is only in the test so far; moving it into the app is a proposal for the lead to decide (VideoVectors.knn). The memory ceiling needs a design answer (int8 or float16 vectors, loading only the image table, or not holding every table in memory), decided in EYKO-98 with Taha's options (EYKO-89, EYKO-91) and the user-growth estimate (EYKO-101)."
       ]
     },
     {
@@ -1445,9 +1611,9 @@
         {
           "bullets": [
             "One SQLite file per device holds the whole video memory: rows, captions, keyword index and every vector.",
-            "Search is a plain loop over a FloatArray in memory: under 200 ms up to about 20k vectors on the slow phone and about 50k on the Pixel (EYKO-90 sweep).",
+            "Search is a plain loop over a FloatArray in memory: under 200 ms up to about 20k vectors on the slow phone with the app's loop today, and past 100k on both phones with the faster loop tested in EYKO-100 (same answers).",
             "The same table design and the same constants on laptop and phone, so laptop experiments carry over.",
-            "**Ceiling found:** above roughly 100k vectors in one table the vectors no longer fit in the 268 MB Java heap, on both phones (300k failed). The design needs a plan for large libraries (B7)."
+            "**Ceiling found:** memory, not speed. With all three vector tables in memory the app runs out between 20k and 50k rows per table on both phones (268 MB Java heap); one table alone fits up to about 100k. The design needs a plan for large libraries (B7)."
           ]
         }
       ]
@@ -1490,9 +1656,16 @@
             "rows": [
               [
                 "G20",
-                "In-memory float32 vectors hit the 268 MB heap limit between 100k and 300k vectors per table; 200 ms is passed earlier (A32 20k–50k). No plan yet for larger libraries.",
+                "Vectors in memory hit the 268 MB Java heap: with all three tables, between 20k and 50k rows per table (one table alone: about 100k). No plan yet for larger libraries.",
                 "EYKO-98, EYKO-100, EYKO-101",
                 "High",
+                ""
+              ],
+              [
+                "G21",
+                "The app still uses the slow search loop; a loop with the same answers and 5–6× the speed exists only in the test (EYKO-100).",
+                "proposal (lead)",
+                "Medium",
                 ""
               ],
               [

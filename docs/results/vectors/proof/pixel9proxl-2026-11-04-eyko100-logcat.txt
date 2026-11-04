@@ -1,0 +1,98 @@
+Wed Nov  4 16:06:30 PST 2026
+OK (1 test)
+Wed Nov  4 16:10:14 PST 2026
+OK (1 test)
+Wed Nov  4 16:13:30 PST 2026
+
+EYKO31  : device sheet: Google Pixel 9 Pro XL, Android 17 (API 37), sqlite 3.50.6, commit 290c200-eyko100, date 2026-11-04
+EYKO31  : device sheet: RAM 16.3 GB, java heap limit 268 MB, free storage 3.4 GB, vectors real_own_clips_90+noise
+EYKO31  : sweep: sizes [1000, 5000, 20000, 50000, 100000], runs 5, diskMax 5000, source real
+EYKO31  : n=1000 insert all: 432 ms, file 4.1 MB
+EYKO31  : n=1000 blob_disk_dot run 1: median 18.88 ms, worst 29.11 ms
+EYKO31  : n=1000 blob_disk_dot run 2: median 17.55 ms, worst 31.42 ms
+EYKO31  : n=1000 blob_disk_dot run 3: median 19.10 ms, worst 61.44 ms
+EYKO31  : n=1000 blob_disk_dot run 4: median 15.43 ms, worst 18.43 ms
+EYKO31  : n=1000 blob_disk_dot run 5: median 15.31 ms, worst 26.89 ms
+EYKO31  : n=1000 blob_memory_dot run 1: median 1.58 ms, worst 1.73 ms
+EYKO31  : n=1000 blob_memory_dot run 2: median 1.63 ms, worst 1.77 ms
+EYKO31  : n=1000 blob_memory_dot run 3: median 1.67 ms, worst 1.82 ms
+EYKO31  : n=1000 blob_memory_dot run 4: median 1.70 ms, worst 2.02 ms
+EYKO31  : n=1000 blob_memory_dot run 5: median 1.57 ms, worst 1.82 ms
+EYKO31  : n=1000 fast top-20 equals the app's: 400 of 400
+EYKO31  : n=1000 blob_memory_fast run 1: median 0.53 ms, worst 0.70 ms
+EYKO31  : n=1000 blob_memory_fast run 2: median 0.55 ms, worst 0.66 ms
+EYKO31  : n=1000 blob_memory_fast run 3: median 0.58 ms, worst 0.66 ms
+EYKO31  : n=1000 blob_memory_fast run 4: median 0.61 ms, worst 0.77 ms
+EYKO31  : n=1000 blob_memory_fast run 5: median 0.59 ms, worst 0.70 ms
+EYKO31  : n=5000 insert all: 1025 ms, file 20.6 MB
+EYKO31  : n=5000 blob_disk_dot run 1: median 237.91 ms, worst 256.26 ms
+EYKO31  : n=5000 blob_disk_dot run 2: median 239.74 ms, worst 321.42 ms
+EYKO31  : n=5000 blob_disk_dot run 3: median 238.06 ms, worst 262.72 ms
+EYKO31  : n=5000 blob_disk_dot run 4: median 235.99 ms, worst 272.93 ms
+EYKO31  : n=5000 blob_disk_dot run 5: median 238.10 ms, worst 265.00 ms
+EYKO31  : n=5000 blob_memory_dot run 1: median 8.59 ms, worst 8.84 ms
+EYKO31  : n=5000 blob_memory_dot run 2: median 8.57 ms, worst 8.71 ms
+EYKO31  : n=5000 blob_memory_dot run 3: median 8.58 ms, worst 8.80 ms
+EYKO31  : n=5000 blob_memory_dot run 4: median 8.57 ms, worst 8.73 ms
+EYKO31  : n=5000 blob_memory_dot run 5: median 8.64 ms, worst 8.83 ms
+EYKO31  : n=5000 fast top-20 equals the app's: 400 of 400
+EYKO31  : n=5000 blob_memory_fast run 1: median 2.10 ms, worst 2.19 ms
+EYKO31  : n=5000 blob_memory_fast run 2: median 2.55 ms, worst 2.86 ms
+EYKO31  : n=5000 blob_memory_fast run 3: median 2.50 ms, worst 2.89 ms
+EYKO31  : n=5000 blob_memory_fast run 4: median 2.56 ms, worst 2.89 ms
+EYKO31  : n=5000 blob_memory_fast run 5: median 2.51 ms, worst 2.87 ms
+EYKO31  : n=20000 insert all: 3235 ms, file 82.2 MB
+EYKO31  : n=20000 blob_disk_dot: skipped: over diskMax 5000
+EYKO31  : n=20000 blob_memory_dot run 1: median 37.73 ms, worst 167.90 ms
+EYKO31  : n=20000 blob_memory_dot run 2: median 37.93 ms, worst 70.11 ms
+EYKO31  : n=20000 blob_memory_dot run 3: median 37.46 ms, worst 74.47 ms
+EYKO31  : n=20000 blob_memory_dot run 4: median 37.27 ms, worst 51.49 ms
+EYKO31  : n=20000 blob_memory_dot run 5: median 37.34 ms, worst 53.94 ms
+EYKO31  : n=20000 fast top-20 equals the app's: 400 of 400
+EYKO31  : n=20000 blob_memory_fast run 1: median 7.94 ms, worst 8.50 ms
+EYKO31  : n=20000 blob_memory_fast run 2: median 7.90 ms, worst 8.47 ms
+EYKO31  : n=20000 blob_memory_fast run 3: median 7.94 ms, worst 8.57 ms
+EYKO31  : n=20000 blob_memory_fast run 4: median 7.98 ms, worst 8.49 ms
+EYKO31  : n=20000 blob_memory_fast run 5: median 7.89 ms, worst 8.25 ms
+EYKO31  : n=50000 insert all: 9240 ms, file 205.6 MB
+EYKO31  : n=50000 blob_disk_dot: skipped: over diskMax 5000
+EYKO31  : n=50000 blob_memory_dot run 1: median 102.72 ms, worst 269.78 ms
+EYKO31  : n=50000 blob_memory_dot run 2: median 101.44 ms, worst 117.50 ms
+EYKO31  : n=50000 blob_memory_dot run 3: median 101.58 ms, worst 203.45 ms
+EYKO31  : n=50000 blob_memory_dot run 4: median 100.79 ms, worst 118.13 ms
+EYKO31  : n=50000 blob_memory_dot run 5: median 101.70 ms, worst 237.40 ms
+EYKO31  : n=50000 fast top-20 equals the app's: 400 of 400
+EYKO31  : n=50000 blob_memory_fast run 1: median 19.65 ms, worst 20.19 ms
+EYKO31  : n=50000 blob_memory_fast run 2: median 19.65 ms, worst 19.99 ms
+EYKO31  : n=50000 blob_memory_fast run 3: median 19.60 ms, worst 20.51 ms
+EYKO31  : n=50000 blob_memory_fast run 4: median 19.57 ms, worst 20.02 ms
+EYKO31  : n=50000 blob_memory_fast run 5: median 19.45 ms, worst 19.88 ms
+EYKO31  : n=100000 insert all: 17315 ms, file 411.1 MB
+EYKO31  : n=100000 blob_disk_dot: skipped: over diskMax 5000
+EYKO31  : n=100000 blob_memory_dot run 1: median 302.33 ms, worst 505.43 ms
+EYKO31  : n=100000 blob_memory_dot run 2: median 288.73 ms, worst 488.94 ms
+EYKO31  : n=100000 blob_memory_dot run 3: median 254.09 ms, worst 461.00 ms
+EYKO31  : n=100000 blob_memory_dot run 4: median 261.59 ms, worst 431.07 ms
+EYKO31  : n=100000 blob_memory_dot run 5: median 239.46 ms, worst 314.53 ms
+EYKO31  : n=100000 fast top-20 equals the app's: 400 of 400
+EYKO31  : n=100000 blob_memory_fast run 1: median 39.33 ms, worst 42.40 ms
+EYKO31  : n=100000 blob_memory_fast run 2: median 38.81 ms, worst 43.39 ms
+EYKO31  : n=100000 blob_memory_fast run 3: median 39.06 ms, worst 43.33 ms
+EYKO31  : n=100000 blob_memory_fast run 4: median 38.28 ms, worst 39.05 ms
+EYKO31  : n=100000 blob_memory_fast run 5: median 38.26 ms, worst 51.95 ms
+EYKO31  : csv written: /storage/emulated/0/Android/data/com.eykon.memory/files/results/eyko100-sweep-real-Pixel_9_Pro_XL-20261104-1606.csv
+EYKO31  : pull it with: adb pull /storage/emulated/0/Android/data/com.eykon.memory/files/results/eyko100-sweep-real-Pixel_9_Pro_XL-20261104-1606.csv
+EYKO31  : device sheet: Google Pixel 9 Pro XL, Android 17 (API 37), sqlite 3.50.6, commit 290c200-eyko100, date 2026-11-04
+EYKO31  : device sheet: RAM 16.3 GB, java heap limit 268 MB, free storage 3.4 GB, vectors real_own_clips_90+noise
+EYKO31  : n=5000 all tables: PSS 57 -> 84 MB, vectors held 28 MB 
+EYKO31  : n=5000 memory_all_tables: pss_before_mb=57; pss_after_mb=84; vectors_held_mb=28; tables_loaded=3 of 3
+EYKO31  : n=20000 all tables: PSS 57 -> 164 MB, vectors held 113 MB 
+EYKO31  : n=20000 memory_all_tables: pss_before_mb=57; pss_after_mb=164; vectors_held_mb=113; tables_loaded=3 of 3
+EYKO31  : n=50000 all tables: PSS 57 -> 228 MB, vectors held 179 MB OutOfMemoryError while loading audio_vec: Failed to allocate a 102400016 byte allocation with 86719776 free bytes and 82MB until OOM, target footprint 268435456, growth limit 268435456
+EYKO31  : n=50000 memory_all_tables: pss_before_mb=57; pss_after_mb=228; vectors_held_mb=179; tables_loaded=2 of 3; OutOfMemoryError while loading audio_vec: Failed to allocate a 102400016 byte allocation with 86719776 free bytes and 82MB until OOM, target footprint 268435456, growth limit 268435456
+EYKO31  : n=100000 all tables: PSS 57 -> 252 MB, vectors held 205 MB OutOfMemoryError while loading text_vec: Failed to allocate a 153600016 byte allocation with 61123872 free bytes and 58MB until OOM, target footprint 268435456, growth limit 268435456
+EYKO31  : n=100000 memory_all_tables: pss_before_mb=57; pss_after_mb=252; vectors_held_mb=205; tables_loaded=1 of 3; OutOfMemoryError while loading text_vec: Failed to allocate a 153600016 byte allocation with 61123872 free bytes and 58MB until OOM, target footprint 268435456, growth limit 268435456
+EYKO31  : csv written: /storage/emulated/0/Android/data/com.eykon.memory/files/results/eyko100-memory-Pixel_9_Pro_XL-20261104-1610.csv
+EYKO31  : pull it with: adb pull /storage/emulated/0/Android/data/com.eykon.memory/files/results/eyko100-memory-Pixel_9_Pro_XL-20261104-1610.csv
+
+[exited with code 0]

@@ -2,9 +2,10 @@
 # requires-python = ">=3.11,<3.14"
 # dependencies = ["matplotlib==3.9.2"]
 # ///
-"""Head 2 graphs from the phone vector sweep (EYKO-90 / EYKO-95).
+"""Head 2 graphs from the phone vector tests (EYKO-90, EYKO-95, EYKO-100).
 
-Reads every docs/results/vectors/*-sweep.csv and redraws the same three PNGs next to this file,
+Reads docs/results/vectors/*-sweep.csv (random vectors), *-sweep-real.csv and *-memory.csv
+(EYKO-100) and redraws the same five PNGs next to this file,
 so a new phone or a rerun replaces the old images. When one phone has several sweep files, the
 newest file wins and the older ones are printed as superseded.
 
@@ -34,10 +35,10 @@ SPARE = [("#1baf7a", "^"), ("#6250d6", "D"), ("#e87ba4", "v")]
 INK, MUTED, GRID = "#0b0b0b", "#52514e", "#e4e3df"
 
 
-def load():
-    """{device: rows} from the newest sweep file of each device."""
+def load(pattern="*-sweep.csv"):
+    """{device: rows} from the newest file of each device matching pattern."""
     newest = {}
-    for path in sorted(RESULTS.glob("*-sweep.csv")):
+    for path in sorted(RESULTS.glob(pattern)):
         rows = list(csv.DictReader(path.open(encoding="utf-8")))
         if not rows:
             continue
@@ -188,6 +189,66 @@ def fig_heap(data):
     save(fig, "head2-vector-heap.png")
 
 
+def fig_fast_loop(data):
+    """EYKO-100: the app's loop vs the faster loop, real vectors, one panel per phone."""
+    fig, panels = plt.subplots(1, len(data), figsize=(7.2, 3.6), dpi=200, sharey=True)
+    panels = panels if len(data) > 1 else [panels]
+    for i, (ax, (device, rows)) in enumerate(zip(panels, data.items())):
+        label, colour, marker = style(device, i)
+        app, _ = by_size(rows, "blob_memory_dot", "median_ms")
+        fast, _ = by_size(rows, "blob_memory_fast", "median_ms")
+        a = line(ax, list(app), list(app.values()), MUTED, marker, "app's loop today")
+        b = line(ax, list(fast), list(fast.values()), colour, marker, "faster loop (same top 20)")
+        last = list(app)[-1]
+        ax.annotate(f"{a[-1]:.0f} ms", (last, a[-1]), xytext=(6, -3), textcoords="offset points", fontsize=8, color=INK)
+        ax.annotate(f"{b[-1]:.0f} ms", (last, b[-1]), xytext=(6, -3), textcoords="offset points", fontsize=8, color=INK)
+        limit_line(ax, LIMIT_MS, f"{LIMIT_MS} ms")
+        axes(ax, "ms per query (median of 20)" if i == 0 else "")
+        ax.set_xticks(list(app), [f"{n // 1000}k" for n in app])
+        ax.set_xlim(700, 200_000)
+        ax.set_ylim(0, 600)
+        ax.set_title(label, color=INK, fontsize=9, loc="left")
+        ax.legend(frameon=False, fontsize=7, loc="upper left")
+    fig.suptitle("Search from memory with real vectors: the app's loop vs a faster loop", color=INK, fontsize=10, x=0.01, ha="left")
+    save(fig, "head2-vector-fast-loop.png")
+
+
+def fig_all_tables(data):
+    """EYKO-100: three tables (image 512, text 384, audio-sized 512) loaded together, n rows each."""
+    fig, ax = plt.subplots(figsize=(7.2, 3.8), dpi=200)
+    sizes = sorted({int(r["n"]) for rows in data.values() for r in rows})
+    need = {n: n * (512 + 384 + 512) * 4 / 1e6 for n in sizes}
+    ax.plot(sizes, [need[n] for n in sizes], color=GRID, linewidth=6, solid_capstyle="round", zorder=1)
+    ax.annotate("memory all three tables need", (sizes[1], need[sizes[1]]), xytext=(-8, 8),
+                textcoords="offset points", ha="right", color=MUTED, fontsize=8)
+    count = len(data)
+    for i, (device, rows) in enumerate(data.items()):
+        label, colour, marker = style(device, i)
+        shift = 1 + (i - (count - 1) / 2) * 0.06
+        for r in rows:
+            n = int(r["n"])
+            note = dict(part.strip().split("=", 1) for part in r["note"].split(";") if "=" in part)
+            held, loaded = float(note["vectors_held_mb"]), note["tables_loaded"]
+            ok = loaded.startswith("3")
+            ax.scatter([n * shift], [held], color=colour, marker=marker if ok else "x", s=46 if ok else 60,
+                       linewidths=1 if ok else 2, edgecolors="white" if ok else None, zorder=3,
+                       label=f"{label}: all 3 loaded" if ok else f"{label}: out of memory")
+            if not ok and i == count - 1:
+                ax.annotate(f"only {loaded} tables fit", (n, held), xytext=(10, -4), textcoords="offset points",
+                            color=INK, fontsize=8)
+    handles, labels = ax.get_legend_handles_labels()
+    unique = dict(zip(labels, handles))
+    limit_line(ax, HEAP_LIMIT_MB, f"Java heap limit Android gives the app: {HEAP_LIMIT_MB} MB")
+    axes(ax, "MB of vectors in memory")
+    ax.set_xlabel("Rows in each table (image 512 + text 384 + audio 512 numbers per row)", color=MUTED)
+    ax.set_xticks(sizes, [f"{n // 1000}k" for n in sizes])
+    ax.set_xlim(3_500, 150_000)
+    ax.set_ylim(0, 600)
+    ax.legend(unique.values(), unique.keys(), frameon=False, loc="upper left", fontsize=7.5)
+    ax.set_title("All three vector tables in memory: where the app runs out", color=INK, fontsize=10, loc="left")
+    save(fig, "head2-vector-all-tables.png")
+
+
 def save(fig, name):
     fig.tight_layout()
     fig.savefig(HERE / name, facecolor="#fcfcfb")
@@ -201,3 +262,5 @@ if __name__ == "__main__":
     fig_memory(sweeps)
     fig_methods(sweeps)
     fig_heap(sweeps)
+    fig_fast_loop(load("*-sweep-real.csv"))
+    fig_all_tables(load("*-memory.csv"))
