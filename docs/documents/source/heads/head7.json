@@ -491,7 +491,7 @@
           ]
         },
         {
-          "note": "**Outcome (good and bad):** the search is 4.3× faster on the A32 and 4.1× on the Pixel at 20k kept frames, with identical hits. But it is still over 200 ms on the A32 from about 20k (302 ms) and on both phones at 50k (A32 745 ms, Pixel 440 ms). **The first search after opening the app is the bigger problem:** it loads every vector from SQLite and takes 2.0 s (A32) and 3.6 s (Pixel) at 20k, and 7.8 s and 22.2 s at 50k. This change does not touch that (G22)."
+          "note": "**Outcome (good and bad):** the search is 4.3× faster on the A32 and 4.1× on the Pixel at 20k kept frames, with identical hits. It still takes 302 ms on the A32 at 20k, and 745 ms (A32) / 440 ms (Pixel) at 50k. **The first search after opening the app is the bigger problem:** it loads every vector from SQLite and takes 2.0 s (A32) and 3.6 s (Pixel) at 20k, and 7.8 s and 22.2 s at 50k. This change does not touch that (G22)."
         },
         "**Not protocol runs:** both phones plugged in by cable. Raw logs: docs/results/vectors/proof/*-2026-11-04-search-{before,after}-logcat.txt; hits: docs/results/vectors/search/*-hits-*.txt.",
         {
@@ -556,7 +556,7 @@
               ],
               [
                 "G23",
-                "Even after EYKO-102 the search is over 200 ms on the A32 from about 20k kept frames (302 ms) and on both phones at 50k. The frames query reads every frame row (12 dropped per kept).",
+                "Even after EYKO-102 the search takes 302 ms on the A32 at 20k kept frames, and 745 ms (A32) / 440 ms (Pixel) at 50k. The frames query reads every frame row (12 dropped per kept).",
                 "EYKO-103 (parked until Head 7)",
                 "Medium",
                 ""

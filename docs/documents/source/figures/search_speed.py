@@ -6,6 +6,7 @@
 
 Reads docs/results/vectors/search/*-search-before.csv and *-search-after.csv and redraws the same
 PNGs next to this file. A phone without an "after" file is drawn with its "before" line only.
+No speed limit line is drawn: the 200 ms target has no source yet (EYKO-101).
 
 Run from the repo root:  uv run docs/documents/source/figures/search_speed.py
 """
@@ -21,7 +22,6 @@ import matplotlib.pyplot as plt  # noqa: E402
 
 HERE = Path(__file__).parent
 RESULTS = HERE.parents[2] / "results" / "vectors" / "search"
-LIMIT_MS = 200
 PHONES = {"samsung SM-A325F": ("Samsung A32", "#2a78d6", "o"), "Google Pixel 9 Pro XL": ("Pixel 9 Pro XL", "#eb6834", "s")}
 INK, MUTED, GRID = "#0b0b0b", "#52514e", "#e4e3df"
 
@@ -76,9 +76,6 @@ def fig_before_after(data):
             value = m[last]
             ax.annotate(f"{value / 1000:.1f} s" if value >= 1000 else f"{value:.0f} ms", (last, value), xytext=(6, -3),
                         textcoords="offset points", fontsize=8, color=INK)
-        ax.axhline(LIMIT_MS, color=MUTED, linestyle=(0, (4, 3)), linewidth=1)
-        ax.annotate(f"{LIMIT_MS} ms", (0.01, LIMIT_MS), xycoords=("axes fraction", "data"), xytext=(0, 4),
-                    textcoords="offset points", color=MUTED, fontsize=8)
         style_axes(ax, "ms per search (median of 20 queries)" if i == 0 else "")
         sizes = list(medians(kinds["before"], "app_search_frames"))
         ax.set_xticks(sizes, [f"{n // 1000}k" for n in sizes])
