@@ -550,14 +550,14 @@
               [
                 "G22",
                 "The first search after opening the app loads every vector from SQLite: 2.0 s (A32) / 3.6 s (Pixel) at 20k kept frames, 7.8 s / 22.2 s at 50k.",
-                "proposal (lead)",
+                "EYKO-103 (parked until Head 7)",
                 "High",
                 ""
               ],
               [
                 "G23",
                 "Even after EYKO-102 the search is over 200 ms on the A32 from about 20k kept frames (302 ms) and on both phones at 50k. The frames query reads every frame row (12 dropped per kept).",
-                "proposal (lead)",
+                "EYKO-103 (parked until Head 7)",
                 "Medium",
                 ""
               ],
