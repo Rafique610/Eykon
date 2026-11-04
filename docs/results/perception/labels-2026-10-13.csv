@@ -1,0 +1,45 @@
+frame,main_object,other_object,place,marked_by
+clip1_000001,person,chair,a classroom,ai
+clip1_000012,person,cell phone,a classroom,ai
+clip1_000022,person,cell phone,a classroom,ai
+clip1_000035,person,cell phone,a classroom,ai
+clip1_000037,person,cell phone,a classroom,ai
+clip1_000050,person,none,a classroom,ai
+clip1_000061,person,none,a classroom,ai
+clip1_000065,person,none,a classroom,ai
+clip1_000081,person,cell phone,a classroom,ai
+clip1_000099,person,none,a classroom,ai
+clip1_000108,person,none,a classroom,ai
+clip1_000120,person,none,a classroom,ai
+clip1_000133,person,none,a classroom,ai
+clip1_000142,person,cell phone,a classroom,ai
+clip1_000158,person,cell phone,a classroom,ai
+clip1_000163,person,cell phone,a classroom,ai
+clip1_000180,person,none,a classroom,ai
+clip1_000191,person,none,a classroom,ai
+clip2_000001,person,cell phone,none,ai
+clip2_000014,person,cell phone,none,ai
+clip2_000025,person,chair,none,ai
+clip2_000030,person,cell phone,none,ai
+clip2_000037,person,cell phone,none,ai
+clip3_000009,person,laptop,a hallway,ai
+clip3_000026,person,laptop,a hallway,ai
+clip3_000032,person,laptop,a hallway,ai
+clip3_000043,person,laptop,a hallway,ai
+clip3_000047,person,laptop,a hallway,ai
+clip4_000001,person,laptop,a classroom,ai
+clip4_000012,person,chair,a classroom,ai
+clip4_000019,person,tv,a classroom,ai
+clip4_000030,person,tv,a classroom,ai
+clip4_000043,person,chair,a classroom,ai
+clip4_000052,person,laptop,a classroom,ai
+clip4_000061,person,backpack,a classroom,ai
+clip4_000065,backpack,backpack,a classroom,ai
+clip5_000004,person,chair,none,ai
+clip5_000010,person,chair,none,ai
+clip5_000019,person,chair,none,ai
+clip5_000032,person,chair,none,ai
+clip5_000040,person,none,none,ai
+clip6_000001,car,car,a street,ai
+clip6_000016,none,none,a street,ai
+clip6_000022,none,none,a street,ai

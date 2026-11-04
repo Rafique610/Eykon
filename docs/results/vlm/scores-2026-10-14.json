@@ -1,0 +1,230 @@
+{
+ "rows": [
+  {
+   "model": "option_a",
+   "found": 30,
+   "present": 88,
+   "named_absent": 15,
+   "absent": 264,
+   "place_hit": 23,
+   "place_n": 34,
+   "median_s": 0.2440512695,
+   "worst_s": 0.320292033,
+   "load_s": null,
+   "peak_mb": null,
+   "median_words": 8.5
+  },
+  {
+   "model": "gemma4_e2b",
+   "found": 40,
+   "present": 88,
+   "named_absent": 1,
+   "absent": 264,
+   "place_hit": 27,
+   "place_n": 34,
+   "median_s": 8.393,
+   "worst_s": 157.167,
+   "load_s": 1.0,
+   "peak_mb": 2983,
+   "median_words": 41.0
+  },
+  {
+   "model": "lfm25vl_450m",
+   "found": 51,
+   "present": 88,
+   "named_absent": 11,
+   "absent": 264,
+   "place_hit": 27,
+   "place_n": 34,
+   "median_s": 3.729,
+   "worst_s": 4.452,
+   "load_s": 3.1,
+   "peak_mb": 963,
+   "median_words": 42.0
+  },
+  {
+   "model": "qwen2vl_2b",
+   "found": 52,
+   "present": 88,
+   "named_absent": 15,
+   "absent": 264,
+   "place_hit": 24,
+   "place_n": 34,
+   "median_s": 29.7605,
+   "worst_s": 34.573,
+   "load_s": 8.0,
+   "peak_mb": 2898,
+   "median_words": 61.0
+  }
+ ],
+ "per_thing": {
+  "option_a": {
+   "phone": [
+    5,
+    16,
+    0
+   ],
+   "laptop": [
+    8,
+    9,
+    5
+   ],
+   "chair": [
+    13,
+    17,
+    10
+   ],
+   "backpack": [
+    0,
+    6,
+    0
+   ],
+   "car": [
+    1,
+    1,
+    0
+   ],
+   "monitor": [
+    3,
+    7,
+    0
+   ],
+   "papers": [
+    0,
+    28,
+    0
+   ],
+   "table_tennis": [
+    0,
+    4,
+    0
+   ]
+  },
+  "gemma4_e2b": {
+   "phone": [
+    4,
+    16,
+    0
+   ],
+   "laptop": [
+    3,
+    9,
+    0
+   ],
+   "chair": [
+    4,
+    17,
+    0
+   ],
+   "backpack": [
+    1,
+    6,
+    0
+   ],
+   "car": [
+    1,
+    1,
+    1
+   ],
+   "monitor": [
+    3,
+    7,
+    0
+   ],
+   "papers": [
+    24,
+    28,
+    0
+   ],
+   "table_tennis": [
+    0,
+    4,
+    0
+   ]
+  },
+  "lfm25vl_450m": {
+   "phone": [
+    9,
+    16,
+    1
+   ],
+   "laptop": [
+    7,
+    9,
+    2
+   ],
+   "chair": [
+    7,
+    17,
+    5
+   ],
+   "backpack": [
+    3,
+    6,
+    0
+   ],
+   "car": [
+    1,
+    1,
+    1
+   ],
+   "monitor": [
+    3,
+    7,
+    1
+   ],
+   "papers": [
+    21,
+    28,
+    1
+   ],
+   "table_tennis": [
+    0,
+    4,
+    0
+   ]
+  },
+  "qwen2vl_2b": {
+   "phone": [
+    9,
+    16,
+    2
+   ],
+   "laptop": [
+    7,
+    9,
+    1
+   ],
+   "chair": [
+    11,
+    17,
+    7
+   ],
+   "backpack": [
+    2,
+    6,
+    1
+   ],
+   "car": [
+    1,
+    1,
+    1
+   ],
+   "monitor": [
+    4,
+    7,
+    2
+   ],
+   "papers": [
+    17,
+    28,
+    1
+   ],
+   "table_tennis": [
+    1,
+    4,
+    0
+   ]
+  }
+ }
+}

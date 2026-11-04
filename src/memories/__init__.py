@@ -16,6 +16,7 @@ from src.memories.search import SearchResult, search_memories
 from src.memories.service import (
     chunk_text_by_tokens,
     create_memories_from_text,
+    create_memories_from_video,
     create_memory_from_text,
 )
 
@@ -25,6 +26,7 @@ __all__ = [
     "Embedder",
     "create_memory_from_text",
     "create_memories_from_text",
+    "create_memories_from_video",
     "chunk_text_by_tokens",
     "search_memories",
     "init_db",
@@ -38,5 +40,4 @@ __all__ = [
     "count_memories",
     "clear_all_memories",
 ]
-
 

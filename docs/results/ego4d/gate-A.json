@@ -1,0 +1,65 @@
+{
+ "own50 frames": 50,
+ "own50 right finds": 18,
+ "own50 wrong finds": 3,
+ "Ego4D A frames": 1878,
+ "Ego4D A finds": 3,
+ "by C": {
+  "0.0": {
+   "own50 frames run %": 100.0,
+   "own50 right finds kept": 18,
+   "own50 wrong finds kept": 3,
+   "Ego4D A frames run %": 100.0,
+   "Ego4D A finds kept": 3
+  },
+  "0.15": {
+   "own50 frames run %": 96.0,
+   "own50 right finds kept": 18,
+   "own50 wrong finds kept": 3,
+   "Ego4D A frames run %": 15.2,
+   "Ego4D A finds kept": 0
+  },
+  "0.18": {
+   "own50 frames run %": 52.0,
+   "own50 right finds kept": 14,
+   "own50 wrong finds kept": 0,
+   "Ego4D A frames run %": 0.7,
+   "Ego4D A finds kept": 0
+  },
+  "0.2": {
+   "own50 frames run %": 38.0,
+   "own50 right finds kept": 11,
+   "own50 wrong finds kept": 0,
+   "Ego4D A frames run %": 0.3,
+   "Ego4D A finds kept": 0
+  },
+  "0.22": {
+   "own50 frames run %": 12.0,
+   "own50 right finds kept": 3,
+   "own50 wrong finds kept": 0,
+   "Ego4D A frames run %": 0.2,
+   "Ego4D A finds kept": 0
+  },
+  "0.24": {
+   "own50 frames run %": 4.0,
+   "own50 right finds kept": 0,
+   "own50 wrong finds kept": 0,
+   "Ego4D A frames run %": 0.0,
+   "Ego4D A finds kept": 0
+  },
+  "0.26": {
+   "own50 frames run %": 0.0,
+   "own50 right finds kept": 0,
+   "own50 wrong finds kept": 0,
+   "Ego4D A frames run %": 0.0,
+   "Ego4D A finds kept": 0
+  },
+  "0.28": {
+   "own50 frames run %": 0.0,
+   "own50 right finds kept": 0,
+   "own50 wrong finds kept": 0,
+   "Ego4D A frames run %": 0.0,
+   "Ego4D A finds kept": 0
+  }
+ }
+}

@@ -1,0 +1,1582 @@
+[
+ {
+  "owl_min": 0.1,
+  "union": false,
+  "picker": "none",
+  "sent": 0,
+  "frames": 94,
+  "ours44": {
+   "found": 39,
+   "false": 24,
+   "present": 88,
+   "per_thing": {
+    "phone": [
+     5,
+     3
+    ],
+    "laptop": [
+     8,
+     1
+    ],
+    "chair": [
+     14,
+     10
+    ],
+    "backpack": [
+     5,
+     9
+    ],
+    "car": [
+     1,
+     0
+    ],
+    "monitor": [
+     6,
+     1
+    ],
+    "papers": [
+     0,
+     0
+    ],
+    "table_tennis": [
+     0,
+     0
+    ]
+   }
+  },
+  "own50": {
+   "found": 37,
+   "false": 12,
+   "present": 87,
+   "per_thing": {
+    "keys": [
+     0,
+     0
+    ],
+    "wallet": [
+     10,
+     0
+    ],
+    "glasses": [
+     9,
+     0
+    ],
+    "earbuds": [
+     0,
+     0
+    ],
+    "phone": [
+     8,
+     12
+    ],
+    "pen": [
+     10,
+     0
+    ]
+   }
+  },
+  "share": 0.0,
+  "pixel_s_per_clip": 0
+ },
+ {
+  "owl_min": 0.1,
+  "union": false,
+  "picker": "all",
+  "sent": 94,
+  "frames": 94,
+  "ours44": {
+   "found": 71,
+   "false": 35,
+   "present": 88,
+   "per_thing": {
+    "phone": [
+     5,
+     3
+    ],
+    "laptop": [
+     8,
+     1
+    ],
+    "chair": [
+     14,
+     10
+    ],
+    "backpack": [
+     5,
+     9
+    ],
+    "car": [
+     1,
+     0
+    ],
+    "monitor": [
+     6,
+     1
+    ],
+    "papers": [
+     28,
+     8
+    ],
+    "table_tennis": [
+     4,
+     3
+    ]
+   }
+  },
+  "own50": {
+   "found": 68,
+   "false": 41,
+   "present": 87,
+   "per_thing": {
+    "keys": [
+     22,
+     18
+    ],
+    "wallet": [
+     10,
+     0
+    ],
+    "glasses": [
+     9,
+     0
+    ],
+    "earbuds": [
+     9,
+     11
+    ],
+    "phone": [
+     8,
+     12
+    ],
+    "pen": [
+     10,
+     0
+    ]
+   }
+  },
+  "share": 1.0,
+  "pixel_s_per_clip": 117
+ },
+ {
+  "owl_min": 0.1,
+  "union": false,
+  "picker": "third",
+  "sent": 32,
+  "frames": 94,
+  "ours44": {
+   "found": 50,
+   "false": 28,
+   "present": 88,
+   "per_thing": {
+    "phone": [
+     5,
+     3
+    ],
+    "laptop": [
+     8,
+     1
+    ],
+    "chair": [
+     14,
+     10
+    ],
+    "backpack": [
+     5,
+     9
+    ],
+    "car": [
+     1,
+     0
+    ],
+    "monitor": [
+     6,
+     1
+    ],
+    "papers": [
+     10,
+     3
+    ],
+    "table_tennis": [
+     1,
+     1
+    ]
+   }
+  },
+  "own50": {
+   "found": 48,
+   "false": 20,
+   "present": 87,
+   "per_thing": {
+    "keys": [
+     7,
+     5
+    ],
+    "wallet": [
+     10,
+     0
+    ],
+    "glasses": [
+     9,
+     0
+    ],
+    "earbuds": [
+     4,
+     3
+    ],
+    "phone": [
+     8,
+     12
+    ],
+    "pen": [
+     10,
+     0
+    ]
+   }
+  },
+  "share": 0.34,
+  "pixel_s_per_clip": 40
+ },
+ {
+  "owl_min": 0.1,
+  "union": false,
+  "picker": "dfine",
+  "sent": 77,
+  "frames": 94,
+  "ours44": {
+   "found": 66,
+   "false": 31,
+   "present": 88,
+   "per_thing": {
+    "phone": [
+     5,
+     3
+    ],
+    "laptop": [
+     8,
+     1
+    ],
+    "chair": [
+     14,
+     10
+    ],
+    "backpack": [
+     5,
+     9
+    ],
+    "car": [
+     1,
+     0
+    ],
+    "monitor": [
+     6,
+     1
+    ],
+    "papers": [
+     26,
+     6
+    ],
+    "table_tennis": [
+     1,
+     1
+    ]
+   }
+  },
+  "own50": {
+   "found": 63,
+   "false": 41,
+   "present": 87,
+   "per_thing": {
+    "keys": [
+     17,
+     18
+    ],
+    "wallet": [
+     10,
+     0
+    ],
+    "glasses": [
+     9,
+     0
+    ],
+    "earbuds": [
+     9,
+     11
+    ],
+    "phone": [
+     8,
+     12
+    ],
+    "pen": [
+     10,
+     0
+    ]
+   }
+  },
+  "share": 0.82,
+  "pixel_s_per_clip": 96
+ },
+ {
+  "owl_min": 0.1,
+  "union": false,
+  "picker": "clip",
+  "sent": 32,
+  "frames": 94,
+  "ours44": {
+   "found": 43,
+   "false": 32,
+   "present": 88,
+   "per_thing": {
+    "phone": [
+     5,
+     3
+    ],
+    "laptop": [
+     8,
+     1
+    ],
+    "chair": [
+     14,
+     10
+    ],
+    "backpack": [
+     5,
+     9
+    ],
+    "car": [
+     1,
+     0
+    ],
+    "monitor": [
+     6,
+     1
+    ],
+    "papers": [
+     3,
+     7
+    ],
+    "table_tennis": [
+     1,
+     1
+    ]
+   }
+  },
+  "own50": {
+   "found": 53,
+   "false": 18,
+   "present": 87,
+   "per_thing": {
+    "keys": [
+     13,
+     1
+    ],
+    "wallet": [
+     10,
+     0
+    ],
+    "glasses": [
+     9,
+     0
+    ],
+    "earbuds": [
+     3,
+     5
+    ],
+    "phone": [
+     8,
+     12
+    ],
+    "pen": [
+     10,
+     0
+    ]
+   }
+  },
+  "share": 0.34,
+  "pixel_s_per_clip": 40
+ },
+ {
+  "owl_min": 0.1,
+  "union": true,
+  "picker": "none",
+  "sent": 0,
+  "frames": 94,
+  "ours44": {
+   "found": 39,
+   "false": 24,
+   "present": 88,
+   "per_thing": {
+    "phone": [
+     5,
+     3
+    ],
+    "laptop": [
+     8,
+     1
+    ],
+    "chair": [
+     14,
+     10
+    ],
+    "backpack": [
+     5,
+     9
+    ],
+    "car": [
+     1,
+     0
+    ],
+    "monitor": [
+     6,
+     1
+    ],
+    "papers": [
+     0,
+     0
+    ],
+    "table_tennis": [
+     0,
+     0
+    ]
+   }
+  },
+  "own50": {
+   "found": 37,
+   "false": 12,
+   "present": 87,
+   "per_thing": {
+    "keys": [
+     0,
+     0
+    ],
+    "wallet": [
+     10,
+     0
+    ],
+    "glasses": [
+     9,
+     0
+    ],
+    "earbuds": [
+     0,
+     0
+    ],
+    "phone": [
+     8,
+     12
+    ],
+    "pen": [
+     10,
+     0
+    ]
+   }
+  },
+  "share": 0.0,
+  "pixel_s_per_clip": 0
+ },
+ {
+  "owl_min": 0.1,
+  "union": true,
+  "picker": "all",
+  "sent": 94,
+  "frames": 94,
+  "ours44": {
+   "found": 86,
+   "false": 117,
+   "present": 88,
+   "per_thing": {
+    "phone": [
+     14,
+     23
+    ],
+    "laptop": [
+     9,
+     23
+    ],
+    "chair": [
+     17,
+     21
+    ],
+    "backpack": [
+     6,
+     27
+    ],
+    "car": [
+     1,
+     0
+    ],
+    "monitor": [
+     7,
+     12
+    ],
+    "papers": [
+     28,
+     8
+    ],
+    "table_tennis": [
+     4,
+     3
+    ]
+   }
+  },
+  "own50": {
+   "found": 81,
+   "false": 68,
+   "present": 87,
+   "per_thing": {
+    "keys": [
+     22,
+     18
+    ],
+    "wallet": [
+     16,
+     2
+    ],
+    "glasses": [
+     13,
+     1
+    ],
+    "earbuds": [
+     9,
+     11
+    ],
+    "phone": [
+     9,
+     15
+    ],
+    "pen": [
+     12,
+     21
+    ]
+   }
+  },
+  "share": 1.0,
+  "pixel_s_per_clip": 117
+ },
+ {
+  "owl_min": 0.1,
+  "union": true,
+  "picker": "third",
+  "sent": 32,
+  "frames": 94,
+  "ours44": {
+   "found": 56,
+   "false": 62,
+   "present": 88,
+   "per_thing": {
+    "phone": [
+     9,
+     10
+    ],
+    "laptop": [
+     8,
+     9
+    ],
+    "chair": [
+     15,
+     14
+    ],
+    "backpack": [
+     6,
+     19
+    ],
+    "car": [
+     1,
+     0
+    ],
+    "monitor": [
+     6,
+     6
+    ],
+    "papers": [
+     10,
+     3
+    ],
+    "table_tennis": [
+     1,
+     1
+    ]
+   }
+  },
+  "own50": {
+   "found": 53,
+   "false": 31,
+   "present": 87,
+   "per_thing": {
+    "keys": [
+     7,
+     5
+    ],
+    "wallet": [
+     13,
+     1
+    ],
+    "glasses": [
+     11,
+     1
+    ],
+    "earbuds": [
+     4,
+     3
+    ],
+    "phone": [
+     8,
+     14
+    ],
+    "pen": [
+     10,
+     7
+    ]
+   }
+  },
+  "share": 0.34,
+  "pixel_s_per_clip": 40
+ },
+ {
+  "owl_min": 0.1,
+  "union": true,
+  "picker": "dfine",
+  "sent": 77,
+  "frames": 94,
+  "ours44": {
+   "found": 79,
+   "false": 92,
+   "present": 88,
+   "per_thing": {
+    "phone": [
+     14,
+     16
+    ],
+    "laptop": [
+     9,
+     18
+    ],
+    "chair": [
+     16,
+     21
+    ],
+    "backpack": [
+     6,
+     22
+    ],
+    "car": [
+     1,
+     0
+    ],
+    "monitor": [
+     6,
+     8
+    ],
+    "papers": [
+     26,
+     6
+    ],
+    "table_tennis": [
+     1,
+     1
+    ]
+   }
+  },
+  "own50": {
+   "found": 76,
+   "false": 64,
+   "present": 87,
+   "per_thing": {
+    "keys": [
+     17,
+     18
+    ],
+    "wallet": [
+     16,
+     2
+    ],
+    "glasses": [
+     13,
+     1
+    ],
+    "earbuds": [
+     9,
+     11
+    ],
+    "phone": [
+     9,
+     15
+    ],
+    "pen": [
+     12,
+     17
+    ]
+   }
+  },
+  "share": 0.82,
+  "pixel_s_per_clip": 96
+ },
+ {
+  "owl_min": 0.1,
+  "union": true,
+  "picker": "clip",
+  "sent": 32,
+  "frames": 94,
+  "ours44": {
+   "found": 49,
+   "false": 52,
+   "present": 88,
+   "per_thing": {
+    "phone": [
+     7,
+     10
+    ],
+    "laptop": [
+     9,
+     6
+    ],
+    "chair": [
+     16,
+     12
+    ],
+    "backpack": [
+     5,
+     14
+    ],
+    "car": [
+     1,
+     0
+    ],
+    "monitor": [
+     7,
+     2
+    ],
+    "papers": [
+     3,
+     7
+    ],
+    "table_tennis": [
+     1,
+     1
+    ]
+   }
+  },
+  "own50": {
+   "found": 55,
+   "false": 27,
+   "present": 87,
+   "per_thing": {
+    "keys": [
+     13,
+     1
+    ],
+    "wallet": [
+     10,
+     1
+    ],
+    "glasses": [
+     9,
+     0
+    ],
+    "earbuds": [
+     3,
+     5
+    ],
+    "phone": [
+     9,
+     13
+    ],
+    "pen": [
+     11,
+     7
+    ]
+   }
+  },
+  "share": 0.34,
+  "pixel_s_per_clip": 40
+ },
+ {
+  "owl_min": 0.4,
+  "union": false,
+  "picker": "none",
+  "sent": 0,
+  "frames": 94,
+  "ours44": {
+   "found": 39,
+   "false": 24,
+   "present": 88,
+   "per_thing": {
+    "phone": [
+     5,
+     3
+    ],
+    "laptop": [
+     8,
+     1
+    ],
+    "chair": [
+     14,
+     10
+    ],
+    "backpack": [
+     5,
+     9
+    ],
+    "car": [
+     1,
+     0
+    ],
+    "monitor": [
+     6,
+     1
+    ],
+    "papers": [
+     0,
+     0
+    ],
+    "table_tennis": [
+     0,
+     0
+    ]
+   }
+  },
+  "own50": {
+   "found": 37,
+   "false": 12,
+   "present": 87,
+   "per_thing": {
+    "keys": [
+     0,
+     0
+    ],
+    "wallet": [
+     10,
+     0
+    ],
+    "glasses": [
+     9,
+     0
+    ],
+    "earbuds": [
+     0,
+     0
+    ],
+    "phone": [
+     8,
+     12
+    ],
+    "pen": [
+     10,
+     0
+    ]
+   }
+  },
+  "share": 0.0,
+  "pixel_s_per_clip": 0
+ },
+ {
+  "owl_min": 0.4,
+  "union": false,
+  "picker": "all",
+  "sent": 94,
+  "frames": 94,
+  "ours44": {
+   "found": 66,
+   "false": 26,
+   "present": 88,
+   "per_thing": {
+    "phone": [
+     5,
+     3
+    ],
+    "laptop": [
+     8,
+     1
+    ],
+    "chair": [
+     14,
+     10
+    ],
+    "backpack": [
+     5,
+     9
+    ],
+    "car": [
+     1,
+     0
+    ],
+    "monitor": [
+     6,
+     1
+    ],
+    "papers": [
+     26,
+     2
+    ],
+    "table_tennis": [
+     1,
+     0
+    ]
+   }
+  },
+  "own50": {
+   "found": 58,
+   "false": 12,
+   "present": 87,
+   "per_thing": {
+    "keys": [
+     21,
+     0
+    ],
+    "wallet": [
+     10,
+     0
+    ],
+    "glasses": [
+     9,
+     0
+    ],
+    "earbuds": [
+     0,
+     0
+    ],
+    "phone": [
+     8,
+     12
+    ],
+    "pen": [
+     10,
+     0
+    ]
+   }
+  },
+  "share": 1.0,
+  "pixel_s_per_clip": 117
+ },
+ {
+  "owl_min": 0.4,
+  "union": false,
+  "picker": "third",
+  "sent": 32,
+  "frames": 94,
+  "ours44": {
+   "found": 48,
+   "false": 24,
+   "present": 88,
+   "per_thing": {
+    "phone": [
+     5,
+     3
+    ],
+    "laptop": [
+     8,
+     1
+    ],
+    "chair": [
+     14,
+     10
+    ],
+    "backpack": [
+     5,
+     9
+    ],
+    "car": [
+     1,
+     0
+    ],
+    "monitor": [
+     6,
+     1
+    ],
+    "papers": [
+     9,
+     0
+    ],
+    "table_tennis": [
+     0,
+     0
+    ]
+   }
+  },
+  "own50": {
+   "found": 44,
+   "false": 12,
+   "present": 87,
+   "per_thing": {
+    "keys": [
+     7,
+     0
+    ],
+    "wallet": [
+     10,
+     0
+    ],
+    "glasses": [
+     9,
+     0
+    ],
+    "earbuds": [
+     0,
+     0
+    ],
+    "phone": [
+     8,
+     12
+    ],
+    "pen": [
+     10,
+     0
+    ]
+   }
+  },
+  "share": 0.34,
+  "pixel_s_per_clip": 40
+ },
+ {
+  "owl_min": 0.4,
+  "union": false,
+  "picker": "dfine",
+  "sent": 77,
+  "frames": 94,
+  "ours44": {
+   "found": 63,
+   "false": 26,
+   "present": 88,
+   "per_thing": {
+    "phone": [
+     5,
+     3
+    ],
+    "laptop": [
+     8,
+     1
+    ],
+    "chair": [
+     14,
+     10
+    ],
+    "backpack": [
+     5,
+     9
+    ],
+    "car": [
+     1,
+     0
+    ],
+    "monitor": [
+     6,
+     1
+    ],
+    "papers": [
+     24,
+     2
+    ],
+    "table_tennis": [
+     0,
+     0
+    ]
+   }
+  },
+  "own50": {
+   "found": 53,
+   "false": 12,
+   "present": 87,
+   "per_thing": {
+    "keys": [
+     16,
+     0
+    ],
+    "wallet": [
+     10,
+     0
+    ],
+    "glasses": [
+     9,
+     0
+    ],
+    "earbuds": [
+     0,
+     0
+    ],
+    "phone": [
+     8,
+     12
+    ],
+    "pen": [
+     10,
+     0
+    ]
+   }
+  },
+  "share": 0.82,
+  "pixel_s_per_clip": 96
+ },
+ {
+  "owl_min": 0.4,
+  "union": false,
+  "picker": "clip",
+  "sent": 32,
+  "frames": 94,
+  "ours44": {
+   "found": 43,
+   "false": 26,
+   "present": 88,
+   "per_thing": {
+    "phone": [
+     5,
+     3
+    ],
+    "laptop": [
+     8,
+     1
+    ],
+    "chair": [
+     14,
+     10
+    ],
+    "backpack": [
+     5,
+     9
+    ],
+    "car": [
+     1,
+     0
+    ],
+    "monitor": [
+     6,
+     1
+    ],
+    "papers": [
+     3,
+     2
+    ],
+    "table_tennis": [
+     1,
+     0
+    ]
+   }
+  },
+  "own50": {
+   "found": 50,
+   "false": 12,
+   "present": 87,
+   "per_thing": {
+    "keys": [
+     13,
+     0
+    ],
+    "wallet": [
+     10,
+     0
+    ],
+    "glasses": [
+     9,
+     0
+    ],
+    "earbuds": [
+     0,
+     0
+    ],
+    "phone": [
+     8,
+     12
+    ],
+    "pen": [
+     10,
+     0
+    ]
+   }
+  },
+  "share": 0.34,
+  "pixel_s_per_clip": 40
+ },
+ {
+  "owl_min": 0.4,
+  "union": true,
+  "picker": "none",
+  "sent": 0,
+  "frames": 94,
+  "ours44": {
+   "found": 39,
+   "false": 24,
+   "present": 88,
+   "per_thing": {
+    "phone": [
+     5,
+     3
+    ],
+    "laptop": [
+     8,
+     1
+    ],
+    "chair": [
+     14,
+     10
+    ],
+    "backpack": [
+     5,
+     9
+    ],
+    "car": [
+     1,
+     0
+    ],
+    "monitor": [
+     6,
+     1
+    ],
+    "papers": [
+     0,
+     0
+    ],
+    "table_tennis": [
+     0,
+     0
+    ]
+   }
+  },
+  "own50": {
+   "found": 37,
+   "false": 12,
+   "present": 87,
+   "per_thing": {
+    "keys": [
+     0,
+     0
+    ],
+    "wallet": [
+     10,
+     0
+    ],
+    "glasses": [
+     9,
+     0
+    ],
+    "earbuds": [
+     0,
+     0
+    ],
+    "phone": [
+     8,
+     12
+    ],
+    "pen": [
+     10,
+     0
+    ]
+   }
+  },
+  "share": 0.0,
+  "pixel_s_per_clip": 0
+ },
+ {
+  "owl_min": 0.4,
+  "union": true,
+  "picker": "all",
+  "sent": 94,
+  "frames": 94,
+  "ours44": {
+   "found": 75,
+   "false": 36,
+   "present": 88,
+   "per_thing": {
+    "phone": [
+     10,
+     5
+    ],
+    "laptop": [
+     9,
+     5
+    ],
+    "chair": [
+     16,
+     10
+    ],
+    "backpack": [
+     6,
+     9
+    ],
+    "car": [
+     1,
+     0
+    ],
+    "monitor": [
+     6,
+     5
+    ],
+    "papers": [
+     26,
+     2
+    ],
+    "table_tennis": [
+     1,
+     0
+    ]
+   }
+  },
+  "own50": {
+   "found": 71,
+   "false": 16,
+   "present": 87,
+   "per_thing": {
+    "keys": [
+     21,
+     0
+    ],
+    "wallet": [
+     16,
+     2
+    ],
+    "glasses": [
+     13,
+     0
+    ],
+    "earbuds": [
+     0,
+     0
+    ],
+    "phone": [
+     9,
+     13
+    ],
+    "pen": [
+     12,
+     1
+    ]
+   }
+  },
+  "share": 1.0,
+  "pixel_s_per_clip": 117
+ },
+ {
+  "owl_min": 0.4,
+  "union": true,
+  "picker": "third",
+  "sent": 32,
+  "frames": 94,
+  "ours44": {
+   "found": 51,
+   "false": 28,
+   "present": 88,
+   "per_thing": {
+    "phone": [
+     7,
+     3
+    ],
+    "laptop": [
+     8,
+     3
+    ],
+    "chair": [
+     14,
+     10
+    ],
+    "backpack": [
+     6,
+     9
+    ],
+    "car": [
+     1,
+     0
+    ],
+    "monitor": [
+     6,
+     3
+    ],
+    "papers": [
+     9,
+     0
+    ],
+    "table_tennis": [
+     0,
+     0
+    ]
+   }
+  },
+  "own50": {
+   "found": 49,
+   "false": 13,
+   "present": 87,
+   "per_thing": {
+    "keys": [
+     7,
+     0
+    ],
+    "wallet": [
+     13,
+     1
+    ],
+    "glasses": [
+     11,
+     0
+    ],
+    "earbuds": [
+     0,
+     0
+    ],
+    "phone": [
+     8,
+     12
+    ],
+    "pen": [
+     10,
+     0
+    ]
+   }
+  },
+  "share": 0.34,
+  "pixel_s_per_clip": 40
+ },
+ {
+  "owl_min": 0.4,
+  "union": true,
+  "picker": "dfine",
+  "sent": 77,
+  "frames": 94,
+  "ours44": {
+   "found": 71,
+   "false": 31,
+   "present": 88,
+   "per_thing": {
+    "phone": [
+     10,
+     4
+    ],
+    "laptop": [
+     9,
+     2
+    ],
+    "chair": [
+     15,
+     10
+    ],
+    "backpack": [
+     6,
+     9
+    ],
+    "car": [
+     1,
+     0
+    ],
+    "monitor": [
+     6,
+     4
+    ],
+    "papers": [
+     24,
+     2
+    ],
+    "table_tennis": [
+     0,
+     0
+    ]
+   }
+  },
+  "own50": {
+   "found": 66,
+   "false": 16,
+   "present": 87,
+   "per_thing": {
+    "keys": [
+     16,
+     0
+    ],
+    "wallet": [
+     16,
+     2
+    ],
+    "glasses": [
+     13,
+     0
+    ],
+    "earbuds": [
+     0,
+     0
+    ],
+    "phone": [
+     9,
+     13
+    ],
+    "pen": [
+     12,
+     1
+    ]
+   }
+  },
+  "share": 0.82,
+  "pixel_s_per_clip": 96
+ },
+ {
+  "owl_min": 0.4,
+  "union": true,
+  "picker": "clip",
+  "sent": 32,
+  "frames": 94,
+  "ours44": {
+   "found": 48,
+   "false": 26,
+   "present": 88,
+   "per_thing": {
+    "phone": [
+     7,
+     3
+    ],
+    "laptop": [
+     9,
+     1
+    ],
+    "chair": [
+     16,
+     10
+    ],
+    "backpack": [
+     5,
+     9
+    ],
+    "car": [
+     1,
+     0
+    ],
+    "monitor": [
+     6,
+     1
+    ],
+    "papers": [
+     3,
+     2
+    ],
+    "table_tennis": [
+     1,
+     0
+    ]
+   }
+  },
+  "own50": {
+   "found": 52,
+   "false": 13,
+   "present": 87,
+   "per_thing": {
+    "keys": [
+     13,
+     0
+    ],
+    "wallet": [
+     10,
+     1
+    ],
+    "glasses": [
+     9,
+     0
+    ],
+    "earbuds": [
+     0,
+     0
+    ],
+    "phone": [
+     9,
+     12
+    ],
+    "pen": [
+     11,
+     0
+    ]
+   }
+  },
+  "share": 0.34,
+  "pixel_s_per_clip": 40
+ }
+]

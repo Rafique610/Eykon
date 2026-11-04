@@ -1,0 +1,1774 @@
+{
+ "data": "EPIC-KITCHENS-100, 8 videos",
+ "objects": [
+  "a glass",
+  "a pan",
+  "a plate",
+  "a spoon",
+  "a bowl",
+  "a spatula",
+  "a knife",
+  "a chopping board",
+  "a box"
+ ],
+ "frames": 138,
+ "hand_finder_ms_per_frame_laptop": 14.7,
+ "results": {
+  "whole frame": {
+   "minimum": 0.55,
+   "crops_per_frame": 1.0,
+   "held_out": {
+    "found": 3,
+    "events": 20,
+    "false_alarms": 19,
+    "no_object": 54,
+    "names_reported": 29,
+    "precision": 0.103,
+    "recall": 0.15,
+    "f1": 0.122
+   },
+   "tuning": {
+    "found": 8,
+    "events": 24,
+    "false_alarms": 22,
+    "no_object": 40,
+    "names_reported": 38,
+    "precision": 0.211,
+    "recall": 0.333,
+    "f1": 0.258
+   },
+   "per_object_held_out": {
+    "a glass": {
+     "found": 0,
+     "events": 5,
+     "reported_wrongly": 2
+    },
+    "a pan": {
+     "found": 0,
+     "events": 0,
+     "reported_wrongly": 3
+    },
+    "a plate": {
+     "found": 2,
+     "events": 3,
+     "reported_wrongly": 6
+    },
+    "a spoon": {
+     "found": 0,
+     "events": 2,
+     "reported_wrongly": 0
+    },
+    "a bowl": {
+     "found": 0,
+     "events": 4,
+     "reported_wrongly": 0
+    },
+    "a spatula": {
+     "found": 0,
+     "events": 0,
+     "reported_wrongly": 3
+    },
+    "a knife": {
+     "found": 0,
+     "events": 2,
+     "reported_wrongly": 0
+    },
+    "a chopping board": {
+     "found": 1,
+     "events": 3,
+     "reported_wrongly": 2
+    },
+    "a box": {
+     "found": 0,
+     "events": 1,
+     "reported_wrongly": 10
+    }
+   }
+  },
+  "grid, 3 tiles": {
+   "minimum": 0.95,
+   "crops_per_frame": 3.0,
+   "held_out": {
+    "found": 3,
+    "events": 20,
+    "false_alarms": 6,
+    "no_object": 54,
+    "names_reported": 13,
+    "precision": 0.231,
+    "recall": 0.15,
+    "f1": 0.182
+   },
+   "tuning": {
+    "found": 5,
+    "events": 24,
+    "false_alarms": 14,
+    "no_object": 40,
+    "names_reported": 22,
+    "precision": 0.227,
+    "recall": 0.208,
+    "f1": 0.217
+   }
+  },
+  "grid, 18 tiles": {
+   "minimum": 0.95,
+   "crops_per_frame": 18.0,
+   "held_out": {
+    "found": 6,
+    "events": 20,
+    "false_alarms": 27,
+    "no_object": 54,
+    "names_reported": 47,
+    "precision": 0.128,
+    "recall": 0.3,
+    "f1": 0.179
+   },
+   "tuning": {
+    "found": 8,
+    "events": 24,
+    "false_alarms": 25,
+    "no_object": 40,
+    "names_reported": 61,
+    "precision": 0.131,
+    "recall": 0.333,
+    "f1": 0.188
+   },
+   "per_object_held_out": {
+    "a glass": {
+     "found": 3,
+     "events": 5,
+     "reported_wrongly": 4
+    },
+    "a pan": {
+     "found": 0,
+     "events": 0,
+     "reported_wrongly": 6
+    },
+    "a plate": {
+     "found": 1,
+     "events": 3,
+     "reported_wrongly": 8
+    },
+    "a spoon": {
+     "found": 0,
+     "events": 2,
+     "reported_wrongly": 0
+    },
+    "a bowl": {
+     "found": 0,
+     "events": 4,
+     "reported_wrongly": 0
+    },
+    "a spatula": {
+     "found": 0,
+     "events": 0,
+     "reported_wrongly": 0
+    },
+    "a knife": {
+     "found": 0,
+     "events": 2,
+     "reported_wrongly": 1
+    },
+    "a chopping board": {
+     "found": 1,
+     "events": 3,
+     "reported_wrongly": 3
+    },
+    "a box": {
+     "found": 1,
+     "events": 1,
+     "reported_wrongly": 19
+    }
+   }
+  },
+  "grid, 3 + 18 tiles": {
+   "minimum": 0.95,
+   "crops_per_frame": 21.0,
+   "held_out": {
+    "found": 7,
+    "events": 20,
+    "false_alarms": 27,
+    "no_object": 54,
+    "names_reported": 50,
+    "precision": 0.14,
+    "recall": 0.35,
+    "f1": 0.2
+   },
+   "tuning": {
+    "found": 8,
+    "events": 24,
+    "false_alarms": 28,
+    "no_object": 40,
+    "names_reported": 64,
+    "precision": 0.125,
+    "recall": 0.333,
+    "f1": 0.182
+   },
+   "per_object_held_out": {
+    "a glass": {
+     "found": 3,
+     "events": 5,
+     "reported_wrongly": 4
+    },
+    "a pan": {
+     "found": 0,
+     "events": 0,
+     "reported_wrongly": 6
+    },
+    "a plate": {
+     "found": 2,
+     "events": 3,
+     "reported_wrongly": 10
+    },
+    "a spoon": {
+     "found": 0,
+     "events": 2,
+     "reported_wrongly": 0
+    },
+    "a bowl": {
+     "found": 0,
+     "events": 4,
+     "reported_wrongly": 0
+    },
+    "a spatula": {
+     "found": 0,
+     "events": 0,
+     "reported_wrongly": 0
+    },
+    "a knife": {
+     "found": 0,
+     "events": 2,
+     "reported_wrongly": 1
+    },
+    "a chopping board": {
+     "found": 1,
+     "events": 3,
+     "reported_wrongly": 3
+    },
+    "a box": {
+     "found": 1,
+     "events": 1,
+     "reported_wrongly": 19
+    }
+   }
+  },
+  "hands, crop 1.5 x hand": {
+   "minimum": 0.95,
+   "crops_per_frame": 0.49,
+   "held_out": {
+    "found": 0,
+    "events": 20,
+    "false_alarms": 1,
+    "no_object": 54,
+    "names_reported": 3,
+    "precision": 0.0,
+    "recall": 0.0,
+    "f1": 0.0
+   },
+   "tuning": {
+    "found": 0,
+    "events": 24,
+    "false_alarms": 0,
+    "no_object": 40,
+    "names_reported": 0,
+    "precision": 0.0,
+    "recall": 0.0,
+    "f1": 0.0
+   }
+  },
+  "hands, crop 2.0 x hand": {
+   "minimum": 0.85,
+   "crops_per_frame": 0.49,
+   "held_out": {
+    "found": 1,
+    "events": 20,
+    "false_alarms": 1,
+    "no_object": 54,
+    "names_reported": 6,
+    "precision": 0.167,
+    "recall": 0.05,
+    "f1": 0.077
+   },
+   "tuning": {
+    "found": 1,
+    "events": 24,
+    "false_alarms": 4,
+    "no_object": 40,
+    "names_reported": 6,
+    "precision": 0.167,
+    "recall": 0.042,
+    "f1": 0.067
+   },
+   "per_object_held_out": {
+    "a glass": {
+     "found": 0,
+     "events": 5,
+     "reported_wrongly": 0
+    },
+    "a pan": {
+     "found": 0,
+     "events": 0,
+     "reported_wrongly": 1
+    },
+    "a plate": {
+     "found": 0,
+     "events": 3,
+     "reported_wrongly": 4
+    },
+    "a spoon": {
+     "found": 0,
+     "events": 2,
+     "reported_wrongly": 0
+    },
+    "a bowl": {
+     "found": 1,
+     "events": 4,
+     "reported_wrongly": 0
+    },
+    "a spatula": {
+     "found": 0,
+     "events": 0,
+     "reported_wrongly": 0
+    },
+    "a knife": {
+     "found": 0,
+     "events": 2,
+     "reported_wrongly": 0
+    },
+    "a chopping board": {
+     "found": 0,
+     "events": 3,
+     "reported_wrongly": 0
+    },
+    "a box": {
+     "found": 0,
+     "events": 1,
+     "reported_wrongly": 0
+    }
+   }
+  },
+  "hands, crop 3.0 x hand": {
+   "minimum": 0.95,
+   "crops_per_frame": 0.49,
+   "held_out": {
+    "found": 0,
+    "events": 20,
+    "false_alarms": 1,
+    "no_object": 54,
+    "names_reported": 2,
+    "precision": 0.0,
+    "recall": 0.0,
+    "f1": 0.0
+   },
+   "tuning": {
+    "found": 1,
+    "events": 24,
+    "false_alarms": 1,
+    "no_object": 40,
+    "names_reported": 2,
+    "precision": 0.5,
+    "recall": 0.042,
+    "f1": 0.077
+   }
+  },
+  "hands 2.0 x, plus the whole frame": {
+   "minimum": 0.7,
+   "crops_per_frame": 1.49,
+   "held_out": {
+    "found": 3,
+    "events": 20,
+    "false_alarms": 15,
+    "no_object": 54,
+    "names_reported": 25,
+    "precision": 0.12,
+    "recall": 0.15,
+    "f1": 0.133
+   },
+   "tuning": {
+    "found": 7,
+    "events": 24,
+    "false_alarms": 22,
+    "no_object": 40,
+    "names_reported": 35,
+    "precision": 0.2,
+    "recall": 0.292,
+    "f1": 0.237
+   }
+  },
+  "eager hands, crop 2.0 x hand": {
+   "minimum": 0.85,
+   "crops_per_frame": 0.72,
+   "held_out": {
+    "found": 1,
+    "events": 20,
+    "false_alarms": 2,
+    "no_object": 54,
+    "names_reported": 5,
+    "precision": 0.2,
+    "recall": 0.05,
+    "f1": 0.08
+   },
+   "tuning": {
+    "found": 1,
+    "events": 24,
+    "false_alarms": 4,
+    "no_object": 40,
+    "names_reported": 7,
+    "precision": 0.143,
+    "recall": 0.042,
+    "f1": 0.065
+   }
+  },
+  "eager hands, crop 3.0 x hand": {
+   "minimum": 0.3,
+   "crops_per_frame": 0.72,
+   "held_out": {
+    "found": 3,
+    "events": 20,
+    "false_alarms": 15,
+    "no_object": 54,
+    "names_reported": 25,
+    "precision": 0.12,
+    "recall": 0.15,
+    "f1": 0.133
+   },
+   "tuning": {
+    "found": 3,
+    "events": 24,
+    "false_alarms": 20,
+    "no_object": 40,
+    "names_reported": 28,
+    "precision": 0.107,
+    "recall": 0.125,
+    "f1": 0.115
+   }
+  }
+ },
+ "all_events_by_minimum": {
+  "whole frame": {
+   "0.3": {
+    "found": 12,
+    "names_per_frame": 0.75,
+    "times_chance": 3.26
+   },
+   "0.5": {
+    "found": 11,
+    "names_per_frame": 0.53,
+    "times_chance": 4.25
+   },
+   "0.7": {
+    "found": 9,
+    "names_per_frame": 0.37,
+    "times_chance": 4.98
+   },
+   "0.9": {
+    "found": 5,
+    "names_per_frame": 0.16,
+    "times_chance": 6.42
+   }
+  },
+  "grid, 3 tiles": {
+   "0.3": {
+    "found": 15,
+    "names_per_frame": 1.25,
+    "times_chance": 2.45
+   },
+   "0.5": {
+    "found": 13,
+    "names_per_frame": 0.91,
+    "times_chance": 2.91
+   },
+   "0.7": {
+    "found": 12,
+    "names_per_frame": 0.64,
+    "times_chance": 3.81
+   },
+   "0.9": {
+    "found": 8,
+    "names_per_frame": 0.3,
+    "times_chance": 5.51
+   }
+  },
+  "grid, 18 tiles": {
+   "0.3": {
+    "found": 33,
+    "names_per_frame": 4.27,
+    "times_chance": 1.58
+   },
+   "0.5": {
+    "found": 31,
+    "names_per_frame": 3.14,
+    "times_chance": 2.02
+   },
+   "0.7": {
+    "found": 27,
+    "names_per_frame": 2.14,
+    "times_chance": 2.58
+   },
+   "0.9": {
+    "found": 20,
+    "names_per_frame": 1.15,
+    "times_chance": 3.55
+   }
+  },
+  "grid, 3 + 18 tiles": {
+   "0.3": {
+    "found": 33,
+    "names_per_frame": 4.36,
+    "times_chance": 1.55
+   },
+   "0.5": {
+    "found": 31,
+    "names_per_frame": 3.2,
+    "times_chance": 1.98
+   },
+   "0.7": {
+    "found": 27,
+    "names_per_frame": 2.21,
+    "times_chance": 2.5
+   },
+   "0.9": {
+    "found": 20,
+    "names_per_frame": 1.2,
+    "times_chance": 3.4
+   }
+  },
+  "hands, crop 1.5 x hand": {
+   "0.3": {
+    "found": 1,
+    "names_per_frame": 0.12,
+    "times_chance": 1.66
+   },
+   "0.5": {
+    "found": 1,
+    "names_per_frame": 0.1,
+    "times_chance": 2.02
+   },
+   "0.7": {
+    "found": 1,
+    "names_per_frame": 0.05,
+    "times_chance": 4.03
+   },
+   "0.9": {
+    "found": 1,
+    "names_per_frame": 0.03,
+    "times_chance": 7.06
+   }
+  },
+  "hands, crop 2.0 x hand": {
+   "0.3": {
+    "found": 2,
+    "names_per_frame": 0.22,
+    "times_chance": 1.82
+   },
+   "0.5": {
+    "found": 2,
+    "names_per_frame": 0.21,
+    "times_chance": 1.95
+   },
+   "0.7": {
+    "found": 2,
+    "names_per_frame": 0.12,
+    "times_chance": 3.53
+   },
+   "0.9": {
+    "found": 1,
+    "names_per_frame": 0.04,
+    "times_chance": 4.7
+   }
+  },
+  "hands, crop 3.0 x hand": {
+   "0.3": {
+    "found": 3,
+    "names_per_frame": 0.26,
+    "times_chance": 2.35
+   },
+   "0.5": {
+    "found": 2,
+    "names_per_frame": 0.2,
+    "times_chance": 2.02
+   },
+   "0.7": {
+    "found": 1,
+    "names_per_frame": 0.12,
+    "times_chance": 1.76
+   },
+   "0.9": {
+    "found": 1,
+    "names_per_frame": 0.04,
+    "times_chance": 5.65
+   }
+  },
+  "hands 2.0 x, plus the whole frame": {
+   "0.3": {
+    "found": 13,
+    "names_per_frame": 0.86,
+    "times_chance": 3.11
+   },
+   "0.5": {
+    "found": 12,
+    "names_per_frame": 0.62,
+    "times_chance": 3.94
+   },
+   "0.7": {
+    "found": 10,
+    "names_per_frame": 0.43,
+    "times_chance": 4.7
+   },
+   "0.9": {
+    "found": 6,
+    "names_per_frame": 0.18,
+    "times_chance": 6.77
+   }
+  },
+  "eager hands, crop 2.0 x hand": {
+   "0.3": {
+    "found": 3,
+    "names_per_frame": 0.34,
+    "times_chance": 1.8
+   },
+   "0.5": {
+    "found": 3,
+    "names_per_frame": 0.24,
+    "times_chance": 2.57
+   },
+   "0.7": {
+    "found": 2,
+    "names_per_frame": 0.15,
+    "times_chance": 2.69
+   },
+   "0.9": {
+    "found": 1,
+    "names_per_frame": 0.04,
+    "times_chance": 5.65
+   }
+  },
+  "eager hands, crop 3.0 x hand": {
+   "0.3": {
+    "found": 6,
+    "names_per_frame": 0.38,
+    "times_chance": 3.2
+   },
+   "0.5": {
+    "found": 4,
+    "names_per_frame": 0.3,
+    "times_chance": 2.75
+   },
+   "0.7": {
+    "found": 2,
+    "names_per_frame": 0.21,
+    "times_chance": 1.95
+   },
+   "0.9": {
+    "found": 1,
+    "names_per_frame": 0.07,
+    "times_chance": 2.82
+   }
+  }
+ },
+ "frame_list": [
+  {
+   "video": "P02_119",
+   "t": 34.32,
+   "object": "a glass",
+   "what": "put down glass",
+   "hands": 0,
+   "eager_hands": 0
+  },
+  {
+   "video": "P02_119",
+   "t": 37.8,
+   "object": "a spoon",
+   "what": "pick up spoon",
+   "hands": 0,
+   "eager_hands": 0
+  },
+  {
+   "video": "P02_119",
+   "t": 6.075,
+   "object": "a glass",
+   "what": "pick up glass",
+   "hands": 0,
+   "eager_hands": 1
+  },
+  {
+   "video": "P02_119",
+   "t": 8.56,
+   "object": "a glass",
+   "what": "put down glass",
+   "hands": 0,
+   "eager_hands": 0
+  },
+  {
+   "video": "P02_119",
+   "t": 28.115000000000002,
+   "object": "a glass",
+   "what": "pick up glass",
+   "hands": 0,
+   "eager_hands": 1
+  },
+  {
+   "video": "P03_06",
+   "t": 2.955,
+   "object": "a spatula",
+   "what": "pick up spatula",
+   "hands": 0,
+   "eager_hands": 0
+  },
+  {
+   "video": "P03_06",
+   "t": 21.205,
+   "object": "a pan",
+   "what": "pick up pan",
+   "hands": 1,
+   "eager_hands": 1
+  },
+  {
+   "video": "P03_06",
+   "t": 22.53,
+   "object": "a pan",
+   "what": "put pan",
+   "hands": 0,
+   "eager_hands": 0
+  },
+  {
+   "video": "P03_06",
+   "t": 26.89,
+   "object": "a spoon",
+   "what": "pick up spoon",
+   "hands": 0,
+   "eager_hands": 1
+  },
+  {
+   "video": "P03_06",
+   "t": 35.370000000000005,
+   "object": "a pan",
+   "what": "pick up pan",
+   "hands": 0,
+   "eager_hands": 0
+  },
+  {
+   "video": "P03_06",
+   "t": 61.78,
+   "object": "a pan",
+   "what": "put down pan",
+   "hands": 0,
+   "eager_hands": 1
+  },
+  {
+   "video": "P03_06",
+   "t": 67.05,
+   "object": "a spatula",
+   "what": "put spatula",
+   "hands": 0,
+   "eager_hands": 0
+  },
+  {
+   "video": "P03_06",
+   "t": 67.06,
+   "object": "a spatula",
+   "what": "pick up spatula",
+   "hands": 0,
+   "eager_hands": 0
+  },
+  {
+   "video": "P03_06",
+   "t": 70.63,
+   "object": "a pan",
+   "what": "pick up pan",
+   "hands": 0,
+   "eager_hands": 0
+  },
+  {
+   "video": "P03_06",
+   "t": 99.225,
+   "object": "a pan",
+   "what": "put down pan",
+   "hands": 0,
+   "eager_hands": 0
+  },
+  {
+   "video": "P03_06",
+   "t": 102.99,
+   "object": "a knife",
+   "what": "take knives",
+   "hands": 0,
+   "eager_hands": 1
+  },
+  {
+   "video": "P03_06",
+   "t": 13.48,
+   "object": "a glass",
+   "what": "pick up glass",
+   "hands": 1,
+   "eager_hands": 2
+  },
+  {
+   "video": "P03_06",
+   "t": 15.855,
+   "object": "a plate",
+   "what": "pick up plate",
+   "hands": 1,
+   "eager_hands": 1
+  },
+  {
+   "video": "P03_06",
+   "t": 18.56,
+   "object": "a plate",
+   "what": "put plate",
+   "hands": 0,
+   "eager_hands": 0
+  },
+  {
+   "video": "P26_11",
+   "t": 6.58,
+   "object": "a plate",
+   "what": "pick up plates",
+   "hands": 0,
+   "eager_hands": 0
+  },
+  {
+   "video": "P26_11",
+   "t": 17.12,
+   "object": "a spoon",
+   "what": "pick up teaspoon",
+   "hands": 2,
+   "eager_hands": 2
+  },
+  {
+   "video": "P26_11",
+   "t": 24.509999999999998,
+   "object": "a spoon",
+   "what": "put down teaspoon",
+   "hands": 0,
+   "eager_hands": 0
+  },
+  {
+   "video": "P26_11",
+   "t": 33.585,
+   "object": "a plate",
+   "what": "put down plate",
+   "hands": 0,
+   "eager_hands": 1
+  },
+  {
+   "video": "P26_11",
+   "t": 10.565,
+   "object": "a plate",
+   "what": "put plates on the table",
+   "hands": 0,
+   "eager_hands": 0
+  },
+  {
+   "video": "P26_11",
+   "t": 11.094999999999999,
+   "object": "a glass",
+   "what": "pick up glasses",
+   "hands": 1,
+   "eager_hands": 2
+  },
+  {
+   "video": "P26_11",
+   "t": 12.655000000000001,
+   "object": "a glass",
+   "what": "put glasses",
+   "hands": 0,
+   "eager_hands": 0
+  },
+  {
+   "video": "P30_01",
+   "t": 65.4,
+   "object": "a chopping board",
+   "what": "take chopping board",
+   "hands": 0,
+   "eager_hands": 0
+  },
+  {
+   "video": "P30_01",
+   "t": 67.42,
+   "object": "a knife",
+   "what": "take knife",
+   "hands": 0,
+   "eager_hands": 0
+  },
+  {
+   "video": "P30_01",
+   "t": 68.66,
+   "object": "a knife",
+   "what": "put knife",
+   "hands": 0,
+   "eager_hands": 0
+  },
+  {
+   "video": "P30_01",
+   "t": 13.754999999999999,
+   "object": "a box",
+   "what": "take box",
+   "hands": 0,
+   "eager_hands": 0
+  },
+  {
+   "video": "P07_13",
+   "t": 4.915,
+   "object": "a plate",
+   "what": "pick up plate",
+   "hands": 0,
+   "eager_hands": 0
+  },
+  {
+   "video": "P07_13",
+   "t": 5.83,
+   "object": "a spoon",
+   "what": "pick up spoon",
+   "hands": 0,
+   "eager_hands": 0
+  },
+  {
+   "video": "P07_13",
+   "t": 7.475,
+   "object": "a bowl",
+   "what": "place bowl on counter",
+   "hands": 1,
+   "eager_hands": 2
+  },
+  {
+   "video": "P07_13",
+   "t": 9.745000000000001,
+   "object": "a box",
+   "what": "pick up cereal box",
+   "hands": 0,
+   "eager_hands": 0
+  },
+  {
+   "video": "P07_13",
+   "t": 27.455,
+   "object": "a box",
+   "what": "place box on top of fridge",
+   "hands": 0,
+   "eager_hands": 1
+  },
+  {
+   "video": "P11_24",
+   "t": 13.98,
+   "object": "a chopping board",
+   "what": "pick up chopping block",
+   "hands": 1,
+   "eager_hands": 1
+  },
+  {
+   "video": "P11_24",
+   "t": 18.825,
+   "object": "a chopping board",
+   "what": "put away chopping block",
+   "hands": 0,
+   "eager_hands": 1
+  },
+  {
+   "video": "P11_24",
+   "t": 23.96,
+   "object": "a bowl",
+   "what": "pick up bowl",
+   "hands": 1,
+   "eager_hands": 1
+  },
+  {
+   "video": "P11_24",
+   "t": 26.035,
+   "object": "a bowl",
+   "what": "put away bowl",
+   "hands": 1,
+   "eager_hands": 1
+  },
+  {
+   "video": "P11_24",
+   "t": 6.215,
+   "object": "a glass",
+   "what": "pick up wine glass",
+   "hands": 0,
+   "eager_hands": 0
+  },
+  {
+   "video": "P11_24",
+   "t": 7.48,
+   "object": "a glass",
+   "what": "put down wine glass",
+   "hands": 1,
+   "eager_hands": 1
+  },
+  {
+   "video": "P11_24",
+   "t": 9.685,
+   "object": "a glass",
+   "what": "put away wine glass",
+   "hands": 1,
+   "eager_hands": 1
+  },
+  {
+   "video": "P11_24",
+   "t": 10.879999999999999,
+   "object": "a bowl",
+   "what": "pick up bowl",
+   "hands": 1,
+   "eager_hands": 1
+  },
+  {
+   "video": "P11_24",
+   "t": 12.92,
+   "object": "a bowl",
+   "what": "put away bowl",
+   "hands": 0,
+   "eager_hands": 0
+  },
+  {
+   "video": "P02_119",
+   "t": 3.455,
+   "object": null,
+   "what": "put down paper",
+   "hands": 0,
+   "eager_hands": 0
+  },
+  {
+   "video": "P02_119",
+   "t": 4.815,
+   "object": null,
+   "what": "open cupboard",
+   "hands": 1,
+   "eager_hands": 1
+  },
+  {
+   "video": "P02_119",
+   "t": 36.57,
+   "object": null,
+   "what": "open drawer",
+   "hands": 0,
+   "eager_hands": 0
+  },
+  {
+   "video": "P02_119",
+   "t": 43.35,
+   "object": null,
+   "what": "soften butter using spoon",
+   "hands": 1,
+   "eager_hands": 2
+  },
+  {
+   "video": "P02_119",
+   "t": 10.945,
+   "object": null,
+   "what": "open sugar jar",
+   "hands": 0,
+   "eager_hands": 2
+  },
+  {
+   "video": "P02_119",
+   "t": 20.43,
+   "object": null,
+   "what": "pour sugar from jar into glass",
+   "hands": 2,
+   "eager_hands": 2
+  },
+  {
+   "video": "P02_119",
+   "t": 26.475,
+   "object": null,
+   "what": "put down sugar jar",
+   "hands": 0,
+   "eager_hands": 0
+  },
+  {
+   "video": "P02_119",
+   "t": 30.0,
+   "object": null,
+   "what": "pour sugar into bowl",
+   "hands": 1,
+   "eager_hands": 2
+  },
+  {
+   "video": "P03_06",
+   "t": 6.2299999999999995,
+   "object": null,
+   "what": "stir food",
+   "hands": 1,
+   "eager_hands": 1
+  },
+  {
+   "video": "P03_06",
+   "t": 25.86,
+   "object": null,
+   "what": "open drawer",
+   "hands": 1,
+   "eager_hands": 1
+  },
+  {
+   "video": "P03_06",
+   "t": 51.07,
+   "object": null,
+   "what": "close drawer",
+   "hands": 0,
+   "eager_hands": 1
+  },
+  {
+   "video": "P03_06",
+   "t": 31.5,
+   "object": null,
+   "what": "stir rice",
+   "hands": 0,
+   "eager_hands": 1
+  },
+  {
+   "video": "P03_06",
+   "t": 37.480000000000004,
+   "object": null,
+   "what": "spoon rice",
+   "hands": 0,
+   "eager_hands": 0
+  },
+  {
+   "video": "P03_06",
+   "t": 53.195,
+   "object": null,
+   "what": "continue spooning rice",
+   "hands": 1,
+   "eager_hands": 2
+  },
+  {
+   "video": "P03_06",
+   "t": 9.56,
+   "object": null,
+   "what": "turn off hob",
+   "hands": 1,
+   "eager_hands": 1
+  },
+  {
+   "video": "P03_06",
+   "t": 74.285,
+   "object": null,
+   "what": "spoon food",
+   "hands": 1,
+   "eager_hands": 1
+  },
+  {
+   "video": "P03_06",
+   "t": 82.745,
+   "object": null,
+   "what": "continue spooning food",
+   "hands": 1,
+   "eager_hands": 1
+  },
+  {
+   "video": "P03_06",
+   "t": 101.58,
+   "object": null,
+   "what": "open drawer",
+   "hands": 0,
+   "eager_hands": 0
+  },
+  {
+   "video": "P03_06",
+   "t": 10.36,
+   "object": null,
+   "what": "pick up lid",
+   "hands": 1,
+   "eager_hands": 1
+  },
+  {
+   "video": "P03_06",
+   "t": 106.91999999999999,
+   "object": null,
+   "what": "close drawer",
+   "hands": 0,
+   "eager_hands": 0
+  },
+  {
+   "video": "P03_06",
+   "t": 14.77,
+   "object": null,
+   "what": "open cupboard",
+   "hands": 0,
+   "eager_hands": 0
+  },
+  {
+   "video": "P03_06",
+   "t": 17.45,
+   "object": null,
+   "what": "close cupboard",
+   "hands": 0,
+   "eager_hands": 0
+  },
+  {
+   "video": "P04_14",
+   "t": 5.58,
+   "object": null,
+   "what": "sweep rice",
+   "hands": 1,
+   "eager_hands": 1
+  },
+  {
+   "video": "P04_14",
+   "t": 26.475,
+   "object": null,
+   "what": "still sweeping rice",
+   "hands": 2,
+   "eager_hands": 2
+  },
+  {
+   "video": "P04_14",
+   "t": 36.31,
+   "object": null,
+   "what": "move around",
+   "hands": 1,
+   "eager_hands": 1
+  },
+  {
+   "video": "P04_14",
+   "t": 46.215,
+   "object": null,
+   "what": "sweep rice",
+   "hands": 1,
+   "eager_hands": 2
+  },
+  {
+   "video": "P04_14",
+   "t": 59.055,
+   "object": null,
+   "what": "move around",
+   "hands": 1,
+   "eager_hands": 1
+  },
+  {
+   "video": "P04_14",
+   "t": 64.07,
+   "object": null,
+   "what": "sweep rice",
+   "hands": 1,
+   "eager_hands": 2
+  },
+  {
+   "video": "P04_14",
+   "t": 80.395,
+   "object": null,
+   "what": "stand up",
+   "hands": 1,
+   "eager_hands": 1
+  },
+  {
+   "video": "P04_14",
+   "t": 83.405,
+   "object": null,
+   "what": "open bin",
+   "hands": 0,
+   "eager_hands": 0
+  },
+  {
+   "video": "P04_14",
+   "t": 84.50999999999999,
+   "object": null,
+   "what": "tip rice into bin",
+   "hands": 0,
+   "eager_hands": 0
+  },
+  {
+   "video": "P16_02",
+   "t": 1.415,
+   "object": null,
+   "what": "walk into the kitchen",
+   "hands": 0,
+   "eager_hands": 0
+  },
+  {
+   "video": "P16_02",
+   "t": 3.895,
+   "object": null,
+   "what": "open the refrigerator",
+   "hands": 0,
+   "eager_hands": 1
+  },
+  {
+   "video": "P16_02",
+   "t": 8.79,
+   "object": null,
+   "what": "close the refrigerator",
+   "hands": 1,
+   "eager_hands": 1
+  },
+  {
+   "video": "P16_02",
+   "t": 50.075,
+   "object": null,
+   "what": "pour the milk into the bowl",
+   "hands": 2,
+   "eager_hands": 2
+  },
+  {
+   "video": "P26_11",
+   "t": 3.405,
+   "object": null,
+   "what": "open door",
+   "hands": 1,
+   "eager_hands": 1
+  },
+  {
+   "video": "P26_11",
+   "t": 19.305,
+   "object": null,
+   "what": "pick up cutlery",
+   "hands": 1,
+   "eager_hands": 2
+  },
+  {
+   "video": "P26_11",
+   "t": 19.47,
+   "object": null,
+   "what": "pick up pesto",
+   "hands": 2,
+   "eager_hands": 2
+  },
+  {
+   "video": "P26_11",
+   "t": 20.95,
+   "object": null,
+   "what": "close fridge",
+   "hands": 0,
+   "eager_hands": 1
+  },
+  {
+   "video": "P26_11",
+   "t": 22.695,
+   "object": null,
+   "what": "close drawer",
+   "hands": 0,
+   "eager_hands": 0
+  },
+  {
+   "video": "P26_11",
+   "t": 25.865000000000002,
+   "object": null,
+   "what": "open lid",
+   "hands": 1,
+   "eager_hands": 1
+  },
+  {
+   "video": "P26_11",
+   "t": 28.439999999999998,
+   "object": null,
+   "what": "close lid",
+   "hands": 0,
+   "eager_hands": 0
+  },
+  {
+   "video": "P26_11",
+   "t": 8.254999999999999,
+   "object": null,
+   "what": "put down cheese",
+   "hands": 0,
+   "eager_hands": 0
+  },
+  {
+   "video": "P26_11",
+   "t": 30.78,
+   "object": null,
+   "what": "open door",
+   "hands": 0,
+   "eager_hands": 0
+  },
+  {
+   "video": "P26_11",
+   "t": 32.05,
+   "object": null,
+   "what": "pick up pasta",
+   "hands": 0,
+   "eager_hands": 0
+  },
+  {
+   "video": "P26_11",
+   "t": 14.695,
+   "object": null,
+   "what": "close door",
+   "hands": 0,
+   "eager_hands": 0
+  },
+  {
+   "video": "P26_11",
+   "t": 15.44,
+   "object": null,
+   "what": "open drawer",
+   "hands": 0,
+   "eager_hands": 1
+  },
+  {
+   "video": "P26_11",
+   "t": 15.780000000000001,
+   "object": null,
+   "what": "open drawer",
+   "hands": 0,
+   "eager_hands": 0
+  },
+  {
+   "video": "P30_01",
+   "t": 6.625,
+   "object": null,
+   "what": "open freezer",
+   "hands": 0,
+   "eager_hands": 0
+  },
+  {
+   "video": "P30_01",
+   "t": 7.790000000000001,
+   "object": null,
+   "what": "open drawer",
+   "hands": 1,
+   "eager_hands": 1
+  },
+  {
+   "video": "P30_01",
+   "t": 27.54,
+   "object": null,
+   "what": "open drawer",
+   "hands": 0,
+   "eager_hands": 0
+  },
+  {
+   "video": "P30_01",
+   "t": 32.025000000000006,
+   "object": null,
+   "what": "take food",
+   "hands": 0,
+   "eager_hands": 1
+  },
+  {
+   "video": "P30_01",
+   "t": 34.15,
+   "object": null,
+   "what": "put food",
+   "hands": 1,
+   "eager_hands": 1
+  },
+  {
+   "video": "P30_01",
+   "t": 38.06,
+   "object": null,
+   "what": "take food",
+   "hands": 0,
+   "eager_hands": 0
+  },
+  {
+   "video": "P30_01",
+   "t": 45.74,
+   "object": null,
+   "what": "close drawer",
+   "hands": 0,
+   "eager_hands": 0
+  },
+  {
+   "video": "P30_01",
+   "t": 46.5,
+   "object": null,
+   "what": "open drawer",
+   "hands": 0,
+   "eager_hands": 0
+  },
+  {
+   "video": "P30_01",
+   "t": 47.495,
+   "object": null,
+   "what": "put food in drawer",
+   "hands": 0,
+   "eager_hands": 1
+  },
+  {
+   "video": "P30_01",
+   "t": 49.39,
+   "object": null,
+   "what": "take food from drawer",
+   "hands": 1,
+   "eager_hands": 1
+  },
+  {
+   "video": "P30_01",
+   "t": 53.1,
+   "object": null,
+   "what": "put food in drawer",
+   "hands": 1,
+   "eager_hands": 1
+  },
+  {
+   "video": "P30_01",
+   "t": 53.785,
+   "object": null,
+   "what": "take food from drawer",
+   "hands": 0,
+   "eager_hands": 0
+  },
+  {
+   "video": "P30_01",
+   "t": 11.645,
+   "object": null,
+   "what": "take fish",
+   "hands": 0,
+   "eager_hands": 0
+  },
+  {
+   "video": "P30_01",
+   "t": 55.17,
+   "object": null,
+   "what": "put food in drawer",
+   "hands": 1,
+   "eager_hands": 1
+  },
+  {
+   "video": "P30_01",
+   "t": 55.980000000000004,
+   "object": null,
+   "what": "close drawer",
+   "hands": 1,
+   "eager_hands": 1
+  },
+  {
+   "video": "P30_01",
+   "t": 57.095,
+   "object": null,
+   "what": "close freezer",
+   "hands": 0,
+   "eager_hands": 0
+  },
+  {
+   "video": "P30_01",
+   "t": 60.435,
+   "object": null,
+   "what": "open bread bin",
+   "hands": 0,
+   "eager_hands": 0
+  },
+  {
+   "video": "P30_01",
+   "t": 62.065,
+   "object": null,
+   "what": "take bread",
+   "hands": 0,
+   "eager_hands": 1
+  },
+  {
+   "video": "P30_01",
+   "t": 63.025000000000006,
+   "object": null,
+   "what": "close bread bin",
+   "hands": 1,
+   "eager_hands": 1
+  },
+  {
+   "video": "P30_01",
+   "t": 12.745000000000001,
+   "object": null,
+   "what": "put fish",
+   "hands": 1,
+   "eager_hands": 1
+  },
+  {
+   "video": "P30_01",
+   "t": 15.05,
+   "object": null,
+   "what": "close drawer",
+   "hands": 0,
+   "eager_hands": 0
+  },
+  {
+   "video": "P30_01",
+   "t": 16.215,
+   "object": null,
+   "what": "open drawer",
+   "hands": 0,
+   "eager_hands": 0
+  },
+  {
+   "video": "P30_01",
+   "t": 18.0,
+   "object": null,
+   "what": "close drawer",
+   "hands": 0,
+   "eager_hands": 1
+  },
+  {
+   "video": "P30_01",
+   "t": 19.195,
+   "object": null,
+   "what": "open drawer",
+   "hands": 0,
+   "eager_hands": 1
+  },
+  {
+   "video": "P30_01",
+   "t": 26.384999999999998,
+   "object": null,
+   "what": "close drawer",
+   "hands": 1,
+   "eager_hands": 1
+  },
+  {
+   "video": "P07_13",
+   "t": 35.07,
+   "object": null,
+   "what": "open milk",
+   "hands": 1,
+   "eager_hands": 2
+  },
+  {
+   "video": "P07_13",
+   "t": 36.96,
+   "object": null,
+   "what": "pour milk in bowl",
+   "hands": 2,
+   "eager_hands": 2
+  },
+  {
+   "video": "P07_13",
+   "t": 40.14,
+   "object": null,
+   "what": "close milk",
+   "hands": 2,
+   "eager_hands": 2
+  },
+  {
+   "video": "P07_13",
+   "t": 49.715,
+   "object": null,
+   "what": "close refrigerator",
+   "hands": 0,
+   "eager_hands": 0
+  },
+  {
+   "video": "P07_13",
+   "t": 52.175,
+   "object": null,
+   "what": "pour milk in bowl",
+   "hands": 0,
+   "eager_hands": 0
+  },
+  {
+   "video": "P07_13",
+   "t": 11.760000000000002,
+   "object": null,
+   "what": "open cereal",
+   "hands": 1,
+   "eager_hands": 1
+  },
+  {
+   "video": "P07_13",
+   "t": 21.58,
+   "object": null,
+   "what": "pour cereal in bowl",
+   "hands": 0,
+   "eager_hands": 1
+  },
+  {
+   "video": "P07_13",
+   "t": 23.95,
+   "object": null,
+   "what": "pour cereal in bowl",
+   "hands": 0,
+   "eager_hands": 1
+  },
+  {
+   "video": "P07_13",
+   "t": 25.880000000000003,
+   "object": null,
+   "what": "close cereal",
+   "hands": 0,
+   "eager_hands": 0
+  },
+  {
+   "video": "P11_24",
+   "t": 1.125,
+   "object": null,
+   "what": "pick up pot",
+   "hands": 1,
+   "eager_hands": 1
+  },
+  {
+   "video": "P11_24",
+   "t": 2.455,
+   "object": null,
+   "what": "pick up pot lids",
+   "hands": 1,
+   "eager_hands": 1
+  },
+  {
+   "video": "P11_24",
+   "t": 28.09,
+   "object": null,
+   "what": "pick up mug",
+   "hands": 1,
+   "eager_hands": 1
+  },
+  {
+   "video": "P11_24",
+   "t": 30.575000000000003,
+   "object": null,
+   "what": "put away mug",
+   "hands": 1,
+   "eager_hands": 1
+  },
+  {
+   "video": "P11_24",
+   "t": 40.56,
+   "object": null,
+   "what": "move mug",
+   "hands": 1,
+   "eager_hands": 1
+  },
+  {
+   "video": "P11_24",
+   "t": 44.9,
+   "object": null,
+   "what": "close cupboards",
+   "hands": 0,
+   "eager_hands": 0
+  },
+  {
+   "video": "P11_24",
+   "t": 45.83,
+   "object": null,
+   "what": "put away scissors",
+   "hands": 1,
+   "eager_hands": 1
+  },
+  {
+   "video": "P11_24",
+   "t": 3.74,
+   "object": null,
+   "what": "put down pot and lids",
+   "hands": 2,
+   "eager_hands": 2
+  },
+  {
+   "video": "P11_24",
+   "t": 52.965,
+   "object": null,
+   "what": "pick up bag",
+   "hands": 1,
+   "eager_hands": 1
+  },
+  {
+   "video": "P11_24",
+   "t": 63.45,
+   "object": null,
+   "what": "open bag",
+   "hands": 2,
+   "eager_hands": 2
+  },
+  {
+   "video": "P11_24",
+   "t": 71.02000000000001,
+   "object": null,
+   "what": "open bag",
+   "hands": 0,
+   "eager_hands": 0
+  },
+  {
+   "video": "P11_24",
+   "t": 76.595,
+   "object": null,
+   "what": "put bag in bin",
+   "hands": 1,
+   "eager_hands": 1
+  }
+ ]
+}

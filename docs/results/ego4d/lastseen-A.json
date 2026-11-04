@@ -1,0 +1,124 @@
+{
+ "queries": 39,
+ "seconds per frame (YOLOE-PF + both vectors, laptop)": 1.87,
+ "app mobileclip T0.75": {
+  "success": 35.9,
+  "seen": 38.5
+ },
+ "app mobileclip T0.8": {
+  "success": 33.3,
+  "seen": 30.8
+ },
+ "app mobileclip T0.85": {
+  "success": 35.9,
+  "seen": 25.6
+ },
+ "app mobileclip T0.87": {
+  "success": 35.9,
+  "seen": 20.5
+ },
+ "app mobileclip T0.9": {
+  "success": 35.9,
+  "seen": 15.4
+ },
+ "app dinov2 T0.4": {
+  "success": 35.9,
+  "seen": 46.2
+ },
+ "app dinov2 T0.5": {
+  "success": 33.3,
+  "seen": 35.9
+ },
+ "app dinov2 T0.6": {
+  "success": 35.9,
+  "seen": 28.2
+ },
+ "app dinov2 T0.7": {
+  "success": 35.9,
+  "seen": 12.8
+ },
+ "app dinov2 T0.8": {
+  "success": 35.9,
+  "seen": 5.1
+ },
+ "anything mobileclip T0.75": {
+  "success": 33.3,
+  "seen": 48.7
+ },
+ "anything mobileclip T0.8": {
+  "success": 41.0,
+  "seen": 46.2
+ },
+ "anything mobileclip T0.85": {
+  "success": 43.6,
+  "seen": 38.5
+ },
+ "anything mobileclip T0.87": {
+  "success": 46.2,
+  "seen": 25.6
+ },
+ "anything mobileclip T0.9": {
+  "success": 46.2,
+  "seen": 17.9
+ },
+ "anything dinov2 T0.4": {
+  "success": 30.8,
+  "seen": 51.3
+ },
+ "anything dinov2 T0.5": {
+  "success": 33.3,
+  "seen": 43.6
+ },
+ "anything dinov2 T0.6": {
+  "success": 38.5,
+  "seen": 30.8
+ },
+ "anything dinov2 T0.7": {
+  "success": 38.5,
+  "seen": 12.8
+ },
+ "anything dinov2 T0.8": {
+  "success": 38.5,
+  "seen": 5.1
+ },
+ "app+anything mobileclip T0.75": {
+  "success": 30.8,
+  "seen": 48.7
+ },
+ "app+anything mobileclip T0.8": {
+  "success": 38.5,
+  "seen": 46.2
+ },
+ "app+anything mobileclip T0.85": {
+  "success": 41.0,
+  "seen": 41.0
+ },
+ "app+anything mobileclip T0.87": {
+  "success": 41.0,
+  "seen": 28.2
+ },
+ "app+anything mobileclip T0.9": {
+  "success": 43.6,
+  "seen": 23.1
+ },
+ "app+anything dinov2 T0.4": {
+  "success": 30.8,
+  "seen": 53.8
+ },
+ "app+anything dinov2 T0.5": {
+  "success": 33.3,
+  "seen": 43.6
+ },
+ "app+anything dinov2 T0.6": {
+  "success": 38.5,
+  "seen": 35.9
+ },
+ "app+anything dinov2 T0.7": {
+  "success": 38.5,
+  "seen": 15.4
+ },
+ "app+anything dinov2 T0.8": {
+  "success": 38.5,
+  "seen": 7.7
+ }
+}

@@ -1,0 +1,118 @@
+{
+ "date": "2026-10-20",
+ "nlq": {
+  "objects": {
+   "R@1 tIoU>=0.3": 10.3,
+   "R@1 tIoU>=0.5": 6.4,
+   "R@5 tIoU>=0.3": 19.2,
+   "R@5 tIoU>=0.5": 10.3,
+   "hit@1": 24.4,
+   "hit@5": 47.4,
+   "chance@1": 3.4,
+   "n": 78
+  },
+  "people": {
+   "R@1 tIoU>=0.3": 0.0,
+   "R@1 tIoU>=0.5": 0.0,
+   "R@5 tIoU>=0.3": 8.3,
+   "R@5 tIoU>=0.5": 0.0,
+   "hit@1": 8.3,
+   "hit@5": 33.3,
+   "chance@1": 5.2,
+   "n": 12
+  }
+ },
+ "vq": {
+  "objects (last seen)": {
+   "success": 33.3,
+   "seen": 12.8,
+   "n": 39
+  }
+ },
+ "mq": {
+  "classes": {
+   "use_phone": {
+    "area": "actions",
+    "ours": "not covered",
+    "n": 23,
+    "found": null,
+    "R@1 tIoU>=0.5": null
+   },
+   "converse_/_interact_with_someone": {
+    "area": "social",
+    "ours": "talking to someone",
+    "n": 8,
+    "found": 25.0,
+    "R@1 tIoU>=0.5": 0.0
+   },
+   "read_a_book_/_magazine_/_shopping_list_etc.": {
+    "area": "actions",
+    "ours": "reading",
+    "n": 5,
+    "found": 0.0,
+    "R@1 tIoU>=0.5": 0.0
+   },
+   "walk_down_stairs_/_walk_up_stairs": {
+    "area": "mobility",
+    "ours": "walking",
+    "n": 4,
+    "found": 100.0,
+    "R@1 tIoU>=0.5": 25.0
+   },
+   "drink_beverage": {
+    "area": "actions",
+    "ours": "not covered",
+    "n": 3,
+    "found": null,
+    "R@1 tIoU>=0.5": null
+   },
+   "\"cut_/_chop_/_slice_a_vegetable,_fruit,_or_meat\"": {
+    "area": "actions",
+    "ours": "not covered",
+    "n": 3,
+    "found": null,
+    "R@1 tIoU>=0.5": null
+   },
+   "use_a_laptop_/_computer": {
+    "area": "actions",
+    "ours": "typing on a laptop",
+    "n": 2,
+    "found": 100.0,
+    "R@1 tIoU>=0.5": 0.0
+   },
+   "stir_/_mix_ingredients_in_a_bowl_or_pan_(before_cooking)": {
+    "area": "actions",
+    "ours": "cooking",
+    "n": 2,
+    "found": 50.0,
+    "R@1 tIoU>=0.5": 0.0
+   }
+  },
+  "precision by action": {
+   "cooking": {
+    "labelled frames": 77,
+    "precision": 2.6
+   },
+   "eating": {
+    "labelled frames": 49,
+    "precision": 0.0
+   },
+   "walking": {
+    "labelled frames": 62,
+    "precision": 8.1
+   },
+   "reading": {
+    "labelled frames": 89,
+    "precision": 0.0
+   },
+   "talking to someone": {
+    "labelled frames": 57,
+    "precision": 35.1
+   },
+   "typing on a laptop": {
+    "labelled frames": 28,
+    "precision": 3.6
+   }
+  }
+ }
+}

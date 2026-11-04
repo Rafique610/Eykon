@@ -1,0 +1,3 @@
+# Streamlit's own upload cap in MB. Keep it equal to MEMORY_VIDEO_MAX_MB (video_max_mb in src/config.py).
+[server]
+maxUploadSize = 500

@@ -9,10 +9,25 @@ tasks:
     desc: Install all Python dependencies via uv
     cmd: uv sync
 
+  agents:sync:
+    desc: Regenerate per-tool agent files (.claude/agents, .opencode/agent, ...) from .agents/agents/
+    cmd: uv run python .agents/scripts/sync_agents.py
+
+  agents:check:
+    desc: Fail if generated agent files are stale vs .agents/agents/ (wire into CI)
+    cmd: uv run python .agents/scripts/sync_agents.py --check
+
   pull-model:
     desc: Download Google Gemma 4 E2B LiteRT-LM model from Hugging Face
     cmd: uv run python -c "from huggingface_hub import hf_hub_download; from src.config import Settings; s = Settings(); print('Downloading Gemma 4 E2B LiteRT-LM (2.4 GB)...'); p = hf_hub_download(s.LITERT_MODEL_REPO, s.LITERT_MODEL_FILE); print('Downloaded to:', p)"
 
+  pull-vlm:
+    desc: Download VLM GGUF model and mmproj for video captioning (mobile-compatible format)
+    cmd: uv run python -c "from huggingface_hub import hf_hub_download; from src.config import Settings; s = Settings(); print('Downloading VLM Model...'); p = hf_hub_download(s.VLM_MODEL_REPO, s.VLM_MODEL_FILE); print('Model downloaded to:', p); mmproj = getattr(s, 'VLM_MMPROJ_FILE', None); mmproj_path = hf_hub_download(s.VLM_MODEL_REPO, mmproj) if mmproj else None; print('MMProj downloaded to:', mmproj_path)"
+
+  check-vlm:
+    desc: Verify VLM model is downloaded and llama.cpp can load it
+    cmd: uv run python -c "from llama_cpp import Llama; from huggingface_hub import hf_hub_download; from src.config import Settings; s = Settings(); p = hf_hub_download(s.VLM_MODEL_REPO, s.VLM_MODEL_FILE); print(f'Loading {p} on CPU...'); Llama(model_path=p, n_ctx=s.VLM_CONTEXT_SIZE, n_gpu_layers=s.VLM_N_GPU_LAYERS); print('Success!')"
 
   check-config:
     desc: Verify and print resolved configuration
@@ -23,6 +38,10 @@ tasks:
     cmd: uv run python src/benchmarks/run.py
 
   test:
+    desc: Run the pytest suite in tests/ (uses temporary databases, never data/memories.db)
+    cmd: uv run pytest -q
+
+  smoke:
     desc: Run storage layer, embedder, chunking, capture, search, and config verification tests
     cmd: uv run python -c "from src.config import Settings; from src.memories import init_db, count_memories, Embedder, create_memories_from_text, save_memories, search_memories; init_db(); emb = Embedder(); hits = search_memories('dentist', emb, top_k=1); print('All OK | Total in DB:', count_memories(), '| Top Hit:', hits[0][0].text, '| Fused:', round(hits[0][1], 4), '| Match:', hits[0].match_type, '| Sem:', round(hits[0].semantic_score, 4), '| BM25:', round(hits[0].bm25_score, 4))"
 
@@ -60,3 +79,189 @@ tasks:
       print('------------------------')
       print(f'Result: {len(checks)-failed}/{len(checks)} passed' + (' OK' if failed == 0 else f' ({failed} failed)'))
       "
+
+  test-android:
+    desc: Run Android unit tests (TypeConverter serialization & float round-trip)
+    dir: android
+    env:
+      JAVA_HOME: 'C:\Users\rafique_\AppData\Roaming\.minecraft\runtime\java-runtime-delta\windows\java-runtime-delta'
+    cmd: cmd.exe /c gradlew.bat test
+
+  build-android:
+    desc: Build debug APK for Android app
+    dir: android
+    env:
+      JAVA_HOME: 'C:\Users\rafique_\AppData\Roaming\.minecraft\runtime\java-runtime-delta\windows\java-runtime-delta'
+    cmd: cmd.exe /c gradlew.bat assembleDebug
+
+  check-video-db:
+    desc: Create the video memory tables if missing and list each table with its row count
+    cmd: uv run python -m src.video_memory.schema
+
+  eval-keyframes:
+    desc: "EYKO-45 — score every keyframe method against the marked moments (give the phone results json files; needs PySceneDetect, fetched for this run)"
+    cmd: uv run --with scenedetect python src/benchmarks/keyframe_eval.py {{.CLI_ARGS}}
+
+  tune-keyframes:
+    desc: "EYKO-45 — try threshold settings for our keyframe layers on the tuning clips (give the MobileCLIP onnx file and a phone results json)"
+    cmd: uv run --with scenedetect --with onnxruntime python src/benchmarks/keyframe_tune.py {{.CLI_ARGS}}
+
+  eval-keyframes-public:
+    desc: "EYKO-45 — the keyframe comparison on an outside dataset (give the clips folder, moments csv, MobileCLIP onnx file, cache folder and optional groups csv)"
+    cmd: uv run --with scenedetect --with onnxruntime python src/benchmarks/keyframe_public.py {{.CLI_ARGS}}
+
+  eval-keyframes-motion:
+    desc: "EYKO-45 — laptop trial of motion-paced keyframes against evenly spaced frames (give the clips folder, moments csv, cache folder and a comma-separated list of video names without .mp4)"
+    cmd: uv run python src/benchmarks/keyframe_motion.py {{.CLI_ARGS}}
+
+  export-clip:
+    desc: "EYKO-6 — export MobileCLIP-S2's image encoder to models/mobileclip_s2_image.onnx and check it (downloads about 2 GB of tools and weights; research-only licence)"
+    cmd: uv run --with open_clip_torch --with onnx --with onnxruntime --with onnxscript python src/benchmarks/export_clip.py {{.CLI_ARGS}}
+
+  pull-detector:
+    desc: "EYKO-9 — download the official YOLOX-Tiny ONNX file (Apache-2.0, 20 MB) into models/"
+    cmd: uv run python -c "import urllib.request; from src.config import Settings; s = Settings(); s.detector_model.parent.mkdir(exist_ok=True); urllib.request.urlretrieve(s.detector_url, s.detector_model); print(s.detector_model, s.detector_model.stat().st_size, 'bytes')"
+
+  golden-perception:
+    desc: "EYKO-9 — write the place / action prompt vectors the phone loads and the laptop's reference answer for the test picture (needs task pull-detector; fetches the MobileCLIP tools, research-only licence)"
+    cmd: uv run --with open_clip_torch --with onnxruntime python -m src.benchmarks.perception_golden
+
+  ego4d-select:
+    desc: "EYKO-57 — pick a new set of 24 Ego4D val clips by set A's rule, from unused videos (give the set name and the earlier sets, e.g. B A)"
+    cmd: uv run python -m src.benchmarks.ego4d_select {{.CLI_ARGS}}
+
+  ego4d-pipeline:
+    desc: "EYKO-55 — run the laptop copy of the phone pipeline on the Ego4D clips (default: all 24 in D:/eykon-cache/ego4d/selection; or give clip uids)"
+    cmd: uv run --with open_clip_torch --with onnxruntime python -m src.benchmarks.ego4d_pipeline {{.CLI_ARGS}}
+
+  ego4d-eval:
+    desc: "EYKO-55 — score the ego4d-pipeline run per area (NLQ objects / people, VQ last seen, MQ actions / social / mobility)"
+    cmd: uv run --with open_clip_torch --with onnxruntime python -m src.benchmarks.ego4d_eval
+
+  ego4d-actions:
+    desc: "EYKO-60 — action prompt variants (app / wearer / ensemble, smoothing, floor) scored on MQ from stored frame vectors (give A or B)"
+    cmd: uv run --with open_clip_torch --with onnxruntime python -m src.benchmarks.ego4d_actions {{.CLI_ARGS}}
+
+  ego4d-hybrid:
+    desc: "EYKO-61 — hybrid search (MobileCLIP frames + BM25 + bge over caption windows, RRF) scored on NLQ (give A or B)"
+    cmd: uv run --with open_clip_torch --with onnxruntime --with tokenizers python -m src.benchmarks.ego4d_hybrid {{.CLI_ARGS}}
+
+  ego4d-lastseen:
+    desc: "EYKO-62 — last seen with prompt-free YOLOE-11S crops and DINOv2-S vs MobileCLIP vectors, scored on VQ (give A or B; AGPL model, academic use)"
+    cmd: uv run --with open_clip_torch --with onnxruntime --with ultralytics --with transformers python -m src.benchmarks.ego4d_lastseen {{.CLI_ARGS}}
+
+  ego4d-gate:
+    desc: "EYKO-63 — how many frames YOLOE still runs on, and which finds survive, when MobileCLIP must flag keys or earbuds first (give A or B)"
+    cmd: uv run --with open_clip_torch --with onnxruntime python -m src.benchmarks.ego4d_gate {{.CLI_ARGS}}
+
+  ego4d-phone-compare:
+    desc: "EYKO-56 — compare the Pixel's run of the Ego4D sample with the laptop copy (give the pulled memories.db and the phone-video-to-clip map.json)"
+    cmd: uv run --with open_clip_torch --with onnxruntime python -m src.benchmarks.ego4d_phone_compare {{.CLI_ARGS}}
+
+  eval-perception:
+    desc: "EYKO-9 — score the phone's perception results against the hand labels (give perception_bench.json and the labels csv)"
+    cmd: uv run python src/benchmarks/perception_score.py {{.CLI_ARGS}}
+
+  probe-frame-search:
+    desc: "Ahead of EYKO-19 — on the laptop, rank frames against typed phrases with MobileCLIP vectors and score against presence labels (give the frames folder, the presence csv and optionally a phone perception json)"
+    cmd: uv run --with open_clip_torch python src/benchmarks/frame_search_probe.py {{.CLI_ARGS}}
+
+  eval-small-objects:
+    desc: "EYKO-32 — on the laptop, compare hand crops (MediaPipe Hands) with grid tiles for naming small objects, on EPIC-KITCHENS take / put events (give the epic100 folder, hand_landmarker.task and optionally an output json)"
+    cmd: uv run --with open_clip_torch --with mediapipe python src/benchmarks/small_objects_eval.py {{.CLI_ARGS}}
+
+  vlm-bench:
+    desc: "EYKO-26 — on the laptop, caption the 44 kept frames with one small VLM and score all models against Option A (frames | run <model> | score)"
+    cmd: uv run python -m src.benchmarks.vlm_bench {{.CLI_ARGS}}
+
+  detector-bench:
+    desc: "EYKO-9 — on the laptop, compare YOLOX-Tiny with RF-DETR Nano and open-vocabulary detectors on our frames and own clips (run <model> | score)"
+    cmd: uv run --with open_clip_torch --with onnxruntime --with rfdetr --with ultralytics python -m src.benchmarks.detector_bench {{.CLI_ARGS}}
+
+  detector-hybrid:
+    desc: "EYKO-32 — on the laptop, score D-FINE on every frame plus OWLv2 on frames picked by a cheap signal, from the saved detector-bench results"
+    cmd: uv run --with open_clip_torch python -m src.benchmarks.detector_hybrid
+
+  export-clip-text:
+    desc: "EYKO-19 — export MobileCLIP-S2's text encoder to ONNX for the phone (optional: where to write it), and write the tokenizer rules and reference numbers the phone tests use (research-only licence)"
+    cmd: uv run --with open_clip_torch --with onnx --with onnxruntime --with onnxscript python src/benchmarks/export_clip_text.py {{.CLI_ARGS}}
+
+  export-bge:
+    desc: "EYKO-12 — fetch bge-small-en-v1.5's ONNX file for the phone (optional: where to put it), check it against the laptop's embedder, and write the vocabulary and reference numbers the phone tests use"
+    cmd: uv run --with onnxruntime python -m src.benchmarks.export_bge {{.CLI_ARGS}}
+
+  crop-pairs:
+    desc: "EYKO-15 — compare crop vectors of same-object and different-object pairs and print the threshold with the fewest wrong calls (give the phone's object crops json and the identity csv)"
+    cmd: uv run python src/benchmarks/crop_pairs.py {{.CLI_ARGS}}
+
+  golden-filters:
+    desc: "EYKO-5 — write the frame-filter test pictures and OpenCV's reference numbers that the phone code is tested against"
+    cmd: uv run python src/benchmarks/filters_golden.py
+
+  spike-laptop-vectors:
+    desc: "EYKO-31 spike — on the laptop, time sqlite-vec against BLOB brute-force vector search (sqlite-vec is fetched for this run only)"
+    cmd: uv run --with sqlite-vec python src/benchmarks/vector_storage_spike.py
+
+  spike-android-vectors:
+    desc: "EYKO-31 spike — on the connected phone, test sqlite-vec loading and time BLOB brute-force vector search (results print from logcat)"
+    dir: android
+    env:
+      JAVA_HOME: 'C:\Users\rafique_\AppData\Roaming\.minecraft\runtime\java-runtime-delta\windows\java-runtime-delta'
+      ADB: 'C:\Users\rafique_\AppData\Local\Android\Sdk\platform-tools\adb.exe'
+    cmds:
+      - cmd.exe /c gradlew.bat connectedDebugAndroidTest "-Pandroid.testInstrumentationRunnerArguments.class=com.eykon.memory.spike.VectorStorageSpikeTest"
+      - cmd.exe /c "%ADB%" logcat -d -s EYKO31:I
+
+  test-vision-integration:
+    desc: Process a test video, store as memories, then query them
+    cmd: |
+      uv run python -c "
+      from src.memories import init_db, Embedder, save_memories, search_memories
+      from src.memories.service import create_memories_from_video
+      from src.vision import process_video
+      init_db()
+      embedder = Embedder()
+      frames = process_video('test_video.mp4', interval_seconds=10)
+      records = create_memories_from_video(frames, 'test_video.mp4', embedder)
+      ids = save_memories(records)
+      print(f'Stored {len(ids)} video memories')
+      results = search_memories('where did I put my keys', embedder, top_k=3)
+      for r in results:
+          print(f'  [{r.score:.4f}] {r.record.text[:80]}')
+      "
+
+  benchmark-vision:
+    desc: Run VLM pipeline benchmark (CPU-only, mobile simulation)
+    env:
+      PYTHONIOENCODING: utf-8
+    cmd: uv run python src/benchmarks/vision_bench.py --video test_video.mp4
+
+  experiment:
+    desc: Run vision experiments A1-A3 (CPU-only, mobile simulation)
+    env:
+      PYTHONIOENCODING: utf-8
+    cmd: uv run python src/benchmarks/experiments.py --experiment all --video data/test_video.mp4
+
+  experiment-a5:
+    desc: "A5 — Cross-pipeline regression: add video memories, check retrieval doesn't degrade"
+    env:
+      PYTHONIOENCODING: utf-8
+    cmd: uv run python src/benchmarks/cross_pipeline.py --experiment a5 --videos data/a5_video_1.mp4 data/a5_video_2.mp4 data/a5_video_3.mp4 data/a5_video_4.mp4 data/a5_video_5.mp4
+
+  experiment-a6:
+    desc: "A6 — Shared model test: SmolVLM vs Moondream2 vs Gemma 4 E2B (vision)"
+    env:
+      PYTHONIOENCODING: utf-8
+    cmd: uv run python src/benchmarks/cross_pipeline.py --experiment a6 --video data/a5_video_1.mp4 --frames 20
+
+  hybrid-phone:
+    desc: "EYKO-32 — write the Pixel inputs for the mixed detectors (inputs), then score the pulled phone result like the laptop (score)"
+    cmd: uv run --with open_clip_torch --with onnxruntime --with rfdetr python -m src.benchmarks.hybrid_phone {{.CLI_ARGS}}
+
+  phone-detector-assets:
+    desc: "EYKO-32 — write the app's D-FINE labels and YOLOE words, and the laptop answer the phone's detector test must match (needs task hybrid-phone -- inputs)"
+    cmd: uv run --with open_clip_torch --with onnxruntime --with rfdetr --with ultralytics python -m src.benchmarks.phone_detector_assets
+
+  yoloe-phone:
+    desc: "EYKO-32 — YOLOE-11L (AGPL, academic) on the Pixel: export and write inputs (inputs), then score the pulled phone result (score)"
+    cmd: uv run --with ultralytics --with onnx --with onnxslim --with onnxruntime python -m src.benchmarks.yoloe_phone {{.CLI_ARGS}}
