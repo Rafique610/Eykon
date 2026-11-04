@@ -1,0 +1,60 @@
+RF8T20H8G5W	device
+
+Success
+Success
+== VideoSearchTest
+OK (6 tests)
+== VideoEmbedImagesTest
+OK (8 tests)
+== VideoEmbedTextsTest
+OK (9 tests)
+== VideoFinishTest
+OK (8 tests)
+Wed Nov  4 17:56:55 PST 2026
+OK (1 test)
+Wed Nov  4 18:02:33 PST 2026
+
+EYKO102 : device sheet: samsung SM-A325F, Android 13 (API 33), sqlite 3.32.2, commit 108d315-eyko102-after, date 2026-11-04
+EYKO102 : device sheet: RAM 5.9 GB, java heap limit 268 MB, free storage 57.4 GB, vectors real_own_clips_90+noise
+EYKO102 : search: sizes [5000, 20000, 50000], runs 5, dropped per kept 12, label after
+EYKO102 : n=5000 built: 10144 ms, file 24.9 MB, 65000 frame rows
+EYKO102 : n=5000 app_search_first run : median 423.59 ms, worst 423.59 ms
+EYKO102 : n=5000 app_search_frames run 1: median 107.78 ms, worst 156.29 ms
+EYKO102 : n=5000 app_search_frames run 2: median 82.76 ms, worst 119.86 ms
+EYKO102 : n=5000 app_search_frames run 3: median 82.79 ms, worst 124.53 ms
+EYKO102 : n=5000 app_search_frames run 4: median 82.61 ms, worst 103.62 ms
+EYKO102 : n=5000 app_search_frames run 5: median 82.34 ms, worst 121.46 ms
+EYKO102 : n=5000 app_knn_all run 1: median 39.41 ms, worst 40.50 ms
+EYKO102 : n=5000 app_knn_all run 2: median 32.44 ms, worst 74.47 ms
+EYKO102 : n=5000 app_knn_all run 3: median 32.45 ms, worst 33.42 ms
+EYKO102 : n=5000 app_knn_all run 4: median 32.61 ms, worst 78.02 ms
+EYKO102 : n=5000 app_knn_all run 5: median 32.46 ms, worst 32.98 ms
+EYKO102 : n=20000 built: 37212 ms, file 100.0 MB, 260000 frame rows
+EYKO102 : n=20000 app_search_first run : median 2009.17 ms, worst 2009.17 ms
+EYKO102 : n=20000 app_search_frames run 1: median 301.95 ms, worst 354.34 ms
+EYKO102 : n=20000 app_search_frames run 2: median 302.03 ms, worst 352.38 ms
+EYKO102 : n=20000 app_search_frames run 3: median 303.13 ms, worst 419.32 ms
+EYKO102 : n=20000 app_search_frames run 4: median 302.78 ms, worst 349.19 ms
+EYKO102 : n=20000 app_search_frames run 5: median 302.27 ms, worst 341.75 ms
+EYKO102 : n=20000 app_knn_all run 1: median 123.53 ms, worst 185.86 ms
+EYKO102 : n=20000 app_knn_all run 2: median 123.20 ms, worst 166.49 ms
+EYKO102 : n=20000 app_knn_all run 3: median 123.35 ms, worst 169.11 ms
+EYKO102 : n=20000 app_knn_all run 4: median 123.30 ms, worst 162.86 ms
+EYKO102 : n=20000 app_knn_all run 5: median 123.29 ms, worst 166.83 ms
+EYKO102 : n=50000 built: 91405 ms, file 250.5 MB, 650000 frame rows
+EYKO102 : n=50000 app_search_first run : median 7816.91 ms, worst 7816.91 ms
+EYKO102 : n=50000 app_search_frames run 1: median 745.28 ms, worst 802.57 ms
+EYKO102 : n=50000 app_search_frames run 2: median 744.01 ms, worst 798.89 ms
+EYKO102 : n=50000 app_search_frames run 3: median 744.36 ms, worst 804.31 ms
+EYKO102 : n=50000 app_search_frames run 4: median 744.98 ms, worst 794.22 ms
+EYKO102 : n=50000 app_search_frames run 5: median 745.16 ms, worst 826.31 ms
+EYKO102 : n=50000 app_knn_all run 1: median 308.52 ms, worst 354.28 ms
+EYKO102 : n=50000 app_knn_all run 2: median 308.85 ms, worst 351.39 ms
+EYKO102 : n=50000 app_knn_all run 3: median 308.88 ms, worst 352.09 ms
+EYKO102 : n=50000 app_knn_all run 4: median 310.63 ms, worst 350.72 ms
+EYKO102 : n=50000 app_knn_all run 5: median 308.67 ms, worst 368.58 ms
+EYKO102 : csv written: /storage/emulated/0/Android/data/com.eykon.memory/files/results/eyko102-search-after-SM_A325F-20261104-1756.csv
+EYKO102 : pull it with: adb pull /storage/emulated/0/Android/data/com.eykon.memory/files/results/eyko102-search-after-SM_A325F-20261104-1756.csv
+EYKO102 : hits files: adb pull /storage/emulated/0/Android/data/com.eykon.memory/files/results/ (eyko102-hits-after-*.txt)
+
+[exited with code 0]

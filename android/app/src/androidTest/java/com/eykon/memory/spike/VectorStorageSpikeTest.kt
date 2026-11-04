@@ -1,11 +1,7 @@
 package com.eykon.memory.spike
 
-import android.app.ActivityManager
 import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
 import android.database.sqlite.SQLiteDatabase
-import android.os.BatteryManager
 import android.os.Build
 import android.os.Debug
 import android.util.Log
@@ -14,22 +10,16 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import org.junit.Test
 import org.junit.runner.RunWith
-import java.io.File
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
-import java.text.SimpleDateFormat
-import java.util.Date
 import java.util.Locale
-import java.util.Random
-import kotlin.math.ceil
-import kotlin.math.sqrt
 
 /**
  * EYKO-31 spike (throwaway): can the phone's SQLite use sqlite-vec, and how fast is the
  * plain alternative (float32 BLOB column + brute-force dot product)?
  * Results go to logcat under the tag EYKO31, and (EYKO-90 / EYKO-100) the sweep and the memory
  * test also write a CSV to the app's files/results folder. Run with `task spike-android-vectors`
- * or the phone kit commands.
+ * or the phone kit commands. Vectors, CSV and battery helpers: BenchKit.kt.
  */
 @RunWith(AndroidJUnit4::class)
 class VectorStorageSpikeTest {
@@ -39,42 +29,7 @@ class VectorStorageSpikeTest {
     private val queryCount = 20
     private val topK = 20
 
-    private fun unit(v: FloatArray): FloatArray {
-        val norm = sqrt(v.fold(0.0) { acc, x -> acc + x * x }).toFloat()
-        for (i in v.indices) v[i] /= norm
-        return v
-    }
-
-    /**
-     * Endless unit vectors of [size] numbers. "random": Gaussian, fixed seed. "real" (EYKO-100):
-     * the vectors of our own clips in the test assets (90 per table), first as they are, then
-     * repeated with small noise (0.01 per number, about 0.97 cosine to the original).
-     */
-    private fun vectors(source: String, size: Int, seed: Long): () -> FloatArray {
-        val random = Random(seed)
-        if (source != "real") return { unit(FloatArray(size) { random.nextGaussian().toFloat() }) }
-        val base = realVectors(size)
-        var i = 0
-        return {
-            val b = base[i % base.size]
-            i++
-            if (i <= base.size) b.copyOf() else unit(FloatArray(size) { b[it] + 0.01f * random.nextGaussian().toFloat() })
-        }
-    }
-
-    private fun realVectors(size: Int): List<FloatArray> {
-        val name = if (size == 512) "vectors/own_image_512.f32" else "vectors/own_text_384.f32"
-        val bytes = InstrumentationRegistry.getInstrumentation().context.assets.open(name).use { it.readBytes() }
-        val floats = ByteBuffer.wrap(bytes).order(ByteOrder.LITTLE_ENDIAN).asFloatBuffer()
-        return List(floats.remaining() / size) { FloatArray(size).also { v -> floats.get(v) } }
-    }
-
-    private fun sourceLabel(source: String) = if (source == "real") "real_own_clips_90+noise" else "random_unit_seed31"
-
-    private fun toBlob(v: FloatArray): ByteArray =
-        ByteBuffer.allocate(v.size * 4).order(ByteOrder.LITTLE_ENDIAN).apply { asFloatBuffer().put(v) }.array()
-
-    /** The app's search (VideoVectors.knn): dot product per row, then sort every row. */
+    /** The app's search (VideoVectors.knn before EYKO-102): dot product per row, then sort every row. */
     private fun topK(matrix: FloatArray, rows: Int, query: FloatArray): List<Int> {
         val scores = FloatArray(rows)
         for (r in 0 until rows) {
@@ -148,22 +103,11 @@ class VectorStorageSpikeTest {
         val statement = db.compileStatement("INSERT INTO $table VALUES (?, ?)")
         for (i in 0 until n) {
             statement.bindLong(1, i.toLong())
-            statement.bindBlob(2, toBlob(next()))
+            statement.bindBlob(2, TestVectors.toBlob(next()))
             statement.executeInsert()
         }
         db.setTransactionSuccessful()
         db.endTransaction()
-    }
-
-    private fun timeMs(block: () -> Unit): Double {
-        val start = System.nanoTime()
-        block()
-        return (System.nanoTime() - start) / 1e6
-    }
-
-    private fun report(label: String, times: List<Double>) {
-        val sorted = times.sorted()
-        Log.i(tag, "%s: median %.2f ms, worst %.2f ms".format(label, sorted[sorted.size / 2], sorted.last()))
     }
 
     @Test
@@ -230,18 +174,17 @@ class VectorStorageSpikeTest {
         val runs = args.getString("runs")?.toInt() ?: 5
         val diskMax = parseSize(args.getString("diskMax") ?: "20k")
         val source = args.getString("source") ?: "random"
-        val sheet = Sheet(context, if (source == "real") "eyko100-sweep-real" else "eyko90", args.getString("commit") ?: "unknown", sourceLabel(source))
+        val sheet = BenchSheet(context, tag, if (source == "real") "eyko100-sweep-real" else "eyko90", args.getString("commit") ?: "unknown", TestVectors.label(source))
         Log.i(tag, "sweep: sizes $sizes, runs $runs, diskMax $diskMax, source $source")
 
-        // The first query is the warm-up. Random queries are the same ones EYKO-90 used (seed 90).
-        val queries = if (source == "real") realQueries() else vectors(source, dim, 90).let { next -> List(queryCount + 1) { next() } }
+        val queries = TestVectors.queries(source, dim, queryCount + 1) // the first one is the warm-up
         for (n in sizes) {
             val file = context.getDatabasePath("eyko90_sweep_$n.db")
             file.parentFile?.mkdirs()
             file.delete()
             val db = SQLiteDatabase.openOrCreateDatabase(file, null)
             try {
-                val insertMs = timeMs { insert(db, "image_vec", n, vectors(source, dim, 31)) }
+                val insertMs = timeMs { insert(db, "image_vec", n, TestVectors.stream(source, dim, 31)) }
                 val fileMb = file.length() / 1e6
                 Log.i(tag, "n=$n insert all: %.0f ms, file %.1f MB".format(Locale.ROOT, insertMs, fileMb))
 
@@ -285,13 +228,6 @@ class VectorStorageSpikeTest {
         sheet.done()
     }
 
-    /** Real queries: our own frames with more noise (0.05 per number), so they are near, not equal to, stored rows. */
-    private fun realQueries(): List<FloatArray> {
-        val base = realVectors(dim)
-        val random = Random(90)
-        return List(queryCount + 1) { q -> unit(FloatArray(dim) { base[(q * 7) % base.size][it] + 0.05f * random.nextGaussian().toFloat() }) }
-    }
-
     /**
      * EYKO-100 (B4): honest memory. Three tables as the app has them (image 512, text 384 and an
      * audio-sized 512, the same n rows each: the worst case) are loaded together the way the app
@@ -304,7 +240,7 @@ class VectorStorageSpikeTest {
         val args = InstrumentationRegistry.getArguments()
         val sizes = (args.getString("sizes") ?: "5k,20k,50k,100k").split(",").map { parseSize(it) }
         val source = args.getString("source") ?: "real"
-        val sheet = Sheet(context, "eyko100-memory", args.getString("commit") ?: "unknown", sourceLabel(source))
+        val sheet = BenchSheet(context, tag, "eyko100-memory", args.getString("commit") ?: "unknown", TestVectors.label(source))
         val tables = listOf("image_vec" to 512, "text_vec" to 384, "audio_vec" to 512)
         for (n in sizes) {
             val file = context.getDatabasePath("eyko100_memory_$n.db")
@@ -312,7 +248,7 @@ class VectorStorageSpikeTest {
             file.delete()
             val db = SQLiteDatabase.openOrCreateDatabase(file, null)
             try {
-                tables.forEachIndexed { i, (table, size) -> insert(db, table, n, vectors(source, size, 31L + i)) }
+                tables.forEachIndexed { i, (table, size) -> insert(db, table, n, TestVectors.stream(source, size, 31L + i)) }
                 val fileMb = file.length() / 1e6
                 val pssBefore = pssMb()
                 val loaded = ArrayList<FloatArray>()
@@ -346,70 +282,5 @@ class VectorStorageSpikeTest {
         repeat(2) { Runtime.getRuntime().gc(); System.runFinalization() }
         Thread.sleep(300)
         return Debug.MemoryInfo().also { Debug.getMemoryInfo(it) }.totalPss / 1024.0
-    }
-
-    /** Prints the device sheet and writes the CSV rows (shared format, EYKO-90). */
-    private inner class Sheet(private val context: Context, prefix: String, private val commit: String, private val source: String) {
-        private val sqlite = SQLiteDatabase.create(null).use { db ->
-            db.rawQuery("SELECT sqlite_version()", null).use { it.moveToFirst(); it.getString(0) }
-        }
-        private val device = "${Build.MANUFACTURER} ${Build.MODEL}"
-        private val date = SimpleDateFormat("yyyy-MM-dd", Locale.ROOT).format(Date())
-        private val csv: File
-
-        init {
-            val ram = ActivityManager.MemoryInfo().also { context.getSystemService(ActivityManager::class.java).getMemoryInfo(it) }
-            Log.i(tag, "device sheet: $device, Android ${Build.VERSION.RELEASE} (API ${Build.VERSION.SDK_INT}), sqlite $sqlite, commit $commit, date $date")
-            Log.i(
-                tag,
-                "device sheet: RAM %.1f GB, java heap limit %.0f MB, free storage %.1f GB, vectors %s".format(
-                    Locale.ROOT, ram.totalMem / 1e9, Runtime.getRuntime().maxMemory() / 1e6, context.filesDir.usableSpace / 1e9, source,
-                ),
-            )
-            val outDir = context.getExternalFilesDir("results")!!.apply { mkdirs() }
-            csv = File(outDir, "$prefix-${Build.MODEL.replace(Regex("[^A-Za-z0-9]+"), "_")}-${SimpleDateFormat("yyyyMMdd-HHmm", Locale.ROOT).format(Date())}.csv")
-            csv.writeText(CSV_HEADER + "\n")
-        }
-
-        fun row(method: String, dims: Int, n: Int, run: String, times: List<Double>?, fileMb: Double, tempStart: Double?, note: String = "") {
-            val runtime = Runtime.getRuntime()
-            val battery = battery(context)
-            val stats = times?.sorted()?.let { s ->
-                listOf(s[s.size / 2], s[ceil(0.95 * s.size).toInt() - 1], s.last()).joinToString(",") { "%.2f".format(Locale.ROOT, it) }
-            } ?: ",,"
-            csv.appendText(
-                listOf(
-                    device, Build.VERSION.RELEASE, sqlite, commit, date, method, dims, n, run, stats,
-                    "%.0f".format(Locale.ROOT, Debug.getPss() / 1024.0),
-                    "%.0f".format(Locale.ROOT, (runtime.totalMemory() - runtime.freeMemory()) / 1e6),
-                    "%.1f".format(Locale.ROOT, fileMb),
-                    tempStart?.let { "%.1f".format(Locale.ROOT, it) } ?: "",
-                    "%.1f".format(Locale.ROOT, battery.first), battery.second, source, note.replace(",", ";"),
-                ).joinToString(",") + "\n",
-            )
-            if (times != null) report("n=$n $method run $run", times) else if (note.isNotEmpty()) Log.i(tag, "n=$n $method: $note")
-        }
-
-        fun done() {
-            Log.i(tag, "csv written: ${csv.absolutePath}")
-            Log.i(tag, "pull it with: adb pull ${csv.absolutePath}")
-        }
-    }
-
-    private fun parseSize(text: String): Int = text.trim().lowercase(Locale.ROOT).let {
-        if (it.endsWith("k")) it.dropLast(1).toInt() * 1_000 else it.toInt()
-    }
-
-    /** (battery temperature in °C, battery level in %), from the sticky battery broadcast. */
-    private fun battery(context: Context): Pair<Double, Int> {
-        val intent = context.registerReceiver(null, IntentFilter(Intent.ACTION_BATTERY_CHANGED))!!
-        val level = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1) * 100 / intent.getIntExtra(BatteryManager.EXTRA_SCALE, 100)
-        return intent.getIntExtra(BatteryManager.EXTRA_TEMPERATURE, 0) / 10.0 to level
-    }
-
-    private companion object {
-        /** The shared laptop/phone format from EYKO-90, plus a last `note` column for skips and failures. */
-        const val CSV_HEADER = "device,android,sqlite_version,commit,date,method,dim,n,run,median_ms,p95_ms,worst_ms," +
-            "pss_mb,heap_mb,file_mb,temp_c_start,temp_c_end,battery_pct,source_vectors,note"
     }
 }

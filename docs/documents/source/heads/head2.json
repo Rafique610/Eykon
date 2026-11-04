@@ -570,7 +570,7 @@
               ],
               [
                 "Answer",
-                "Mostly our code. A faster loop (four running sums, keep the best 20 instead of sorting every row) returns the same top 20 on all 400 checks and is 5.9× faster on the A32 at 100k (537 → 91 ms); on the Pixel the gain is similar. The laptop has not been run with the same faster loop, so the remaining phone-vs-laptop gap is not measured yet."
+                "Mostly our code. A faster loop (four running sums, keep the best 20 instead of sorting every row) returns the same top 20 on all 400 checks and is 5.9× faster on the A32 at 100k (537 → 91 ms); on the Pixel the gain is similar. The laptop has not been run with the same faster loop, so the remaining phone-vs-laptop gap is not measured yet. **Update 4 Nov (EYKO-102):** the faster scoring is now in the app. In the app's whole search the vector part was only a fifth to a quarter of the time; the rest was our code around it (reading frames, objects, sorting twice). Fixing all of it made the whole search 4.3× faster on the A32 and 4.1× on the Pixel at 20k, same hits (Head 7)."
               ],
               [
                 "How we tested",
@@ -652,7 +652,7 @@
               ],
               [
                 "Answer",
-                "Measured limits: with the faster loop, speed stays under 200 ms past 100k vectors on both phones, so speed is no longer the first limit. Memory is: with all three tables in memory the app runs out between 20k and 50k rows. The plan past that is open. Candidates: int8 or float16 vectors (a quarter or half the memory), keeping only the image table in memory, loading in blocks, an approximate index (usearch, hnswlib) or bundled sqlite-vec."
+                "Measured limits: with the faster loop, speed stays under 200 ms past 100k vectors on both phones, so speed is no longer the first limit. Memory is: with all three tables in memory the app runs out between 20k and 50k rows. The plan past that is open. Candidates: int8 or float16 vectors (a quarter or half the memory), keeping only the image table in memory, loading in blocks, an approximate index (usearch, hnswlib) or bundled sqlite-vec. **Update 4 Nov (EYKO-102):** the real search (Head 7) is over 200 ms on the A32 from about 20k kept frames even after the speed-up (302 ms), and the first search after opening takes 2.0 s. So both speed and memory limit the design before 50k."
               ],
               [
                 "How we tested",
@@ -1686,7 +1686,7 @@
           "caption": "Figure 5. All three vector tables in memory. 20k rows each (113 MB) fit on both phones; at 50k the third table, at 100k the second table no longer fits in the 268 MB Java heap. Data: docs/results/vectors/*-memory.csv."
         },
         {
-          "note": "**Outcome (good and bad):** (1) **A2 answered:** both phones refuse load_extension itself, even for a made-up name, so the platform blocks every loadable extension; it is not a sqlite-vec problem. Only compiled-in modules work, and only fts4 of the three (our keyword index uses fts4, so it is safe). (2) **B3:** real vectors take the same time as random ones (20k: A32 82 ms, Pixel 37 ms vs 80 and 40 ms random), as expected for an exact dot product. (3) **B5: most of the time was our code.** The faster loop gives the same answers 5.9× faster on the A32 at 100k (537 → 91 ms), so speed stays under 200 ms past 100k on both phones. (4) **B4, the bad news:** with all three tables in memory the app runs out between **20k and 50k rows** on both phones. **Memory, not speed, is now the limit.**"
+          "note": "**Outcome (good and bad):** (1) **A2 answered:** both phones refuse load_extension itself, even for a made-up name, so the platform blocks every loadable extension; it is not a sqlite-vec problem. Only compiled-in modules work, and only fts4 of the three (our keyword index uses fts4, so it is safe). (2) **B3:** real vectors take the same time as random ones (20k: A32 82 ms, Pixel 37 ms vs 80 and 40 ms random), as expected for an exact dot product. (3) **B5: most of the time was our code.** The faster loop gives the same answers 5.9× faster on the A32 at 100k (537 → 91 ms), so speed stays under 200 ms past 100k on both phones. (4) **B4, the bad news:** with all three tables in memory the app runs out between **20k and 50k rows** on both phones. **Memory, not speed, is now the limit.** **Update 4 Nov (EYKO-102):** these times are the vector loop alone. The search the app runs also reads every frame row and ranks every frame; measured end to end it took 1.3 s on the A32 at 20k kept frames, not about 80 ms. After EYKO-102 it takes 302 ms, with identical hits. Full part in Head 7, section 5."
         },
         "**Not yet protocol runs:** both phones were plugged in by cable. **Next:** the faster loop is only in the test so far; moving it into the app is a proposal for the lead to decide (VideoVectors.knn). The memory ceiling needs a design answer (int8 or float16 vectors, loading only the image table, or not holding every table in memory), decided in EYKO-98 with Taha's options (EYKO-89, EYKO-91) and the user-growth estimate (EYKO-101)."
       ]
@@ -1697,7 +1697,7 @@
         {
           "bullets": [
             "One SQLite file per device holds the whole video memory: rows, captions, keyword index and every vector.",
-            "Search is a plain loop over a FloatArray in memory: under 200 ms up to about 20k vectors on the slow phone with the app's loop today, and past 100k on both phones with the faster loop tested in EYKO-100 (same answers).",
+            "Search is a plain loop over a FloatArray in memory: under 200 ms up to about 20k vectors on the slow phone with the app's loop today, and past 100k on both phones with the faster loop tested in EYKO-100 (same answers). **Update 4 Nov:** that is the vector loop; the app's whole search took 1.3 s on the A32 at 20k and takes 302 ms after EYKO-102 (Head 7).",
             "The same table design and the same constants on laptop and phone, so laptop experiments carry over.",
             "**Ceiling found:** memory, not speed. With all three vector tables in memory the app runs out between 20k and 50k rows per table on both phones (268 MB Java heap); one table alone fits up to about 100k. The design needs a plan for large libraries (B7)."
           ]
@@ -1752,7 +1752,7 @@
                 "The app still uses the slow search loop; a loop with the same answers and 5–6× the speed exists only in the test (EYKO-100).",
                 "proposal (lead)",
                 "Medium",
-                ""
+                "Done 4 Nov (EYKO-102): the search is 4.3× (A32) / 4.1× (Pixel) faster at 20k, 2,400 of 2,400 hits identical. Details in Head 7."
               ],
               [
                 "G9",
