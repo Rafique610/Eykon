@@ -28,7 +28,8 @@ Each section is `{ "title": ..., "blocks": [...] }`. A block is a plain string (
 `{"h3": "..."}`, `{"bullets": [...]}`, `{"steps": [...], "ref": "unique-name"}` (numbered list),
 `{"table": {"cols": [...], "widths": [...], "rows": [[...]]}}`, `{"note": "..."}` (shaded box) or
 `{"image": "figures/x.png", "caption": "...", "width": 0.8}` (PNG or JPEG, path relative to this
-folder, `width` = share of the text width, default 1). `**bold**` works inside any text.
+folder, `width` = share of the text width, default 1) or `{"code": ["line", ...]}` (a short code
+excerpt in monospace). `**bold**` works inside any text except code.
 
 ## Graphs
 

@@ -116,6 +116,13 @@ not written up afterwards.
   only in each part's "Last updated" line and in the change history, never
   in the section order. A later finding goes into the part it belongs to,
   not at the end.
+- **Explain every name you use.** If a result names a method, variant or
+  setting ("faster loop", "blob_disk_dot", "diskMax"), the same document
+  says what it is in plain words, how it differs from the alternative
+  (a side-by-side table helps), where it lives in the code, and a short
+  code excerpt when the difference is in the code. A reader a week later,
+  or the supervisor in a demo, must not need the chat or the source to
+  understand a table or a graph.
 - **Never overwrite a finding.** If a new run disagrees with an older one,
   keep both and say which is current and why.
 

@@ -1452,6 +1452,92 @@
           "ref": "eyko100"
         },
         {
+          "h3": "The two search loops compared: what \"app's loop\" and \"faster loop\" mean"
+        },
+        "Every search does two jobs. **1. Score every stored vector:** multiply the query's 512 numbers with the stored vector's 512 numbers, pair by pair, and add them up (the dot product; our vectors have length 1, so this is the cosine similarity: higher means more alike). **2. Keep the best 20.** Both loops do exactly these two jobs on exactly the same numbers; they differ only in **how**.",
+        {
+          "table": {
+            "cols": [
+              "",
+              "App's loop today",
+              "Faster loop (tested, not in the app yet)"
+            ],
+            "widths": [
+              2,
+              4,
+              4
+            ],
+            "rows": [
+              [
+                "Where in the code",
+                "VideoVectors.kt (app code, video folder), function knn(); the test copies it as topK()",
+                "VectorStorageSpikeTest.kt (androidTest), function topKFast()"
+              ],
+              [
+                "Job 1: scoring",
+                "One running total per row: each multiply-add has to wait for the one before it to finish.",
+                "Four running totals per row (numbers 0, 4, 8 … / 1, 5, 9 … / 2, 6, 10 … / 3, 7, 11 …), added together at the end. The four do not wait on each other, so the phone's CPU works on them at the same time."
+              ],
+              [
+                "Job 2: keeping the best 20",
+                "Stores all n scores, then **sorts all n rows** by score and keeps the first 20.",
+                "Keeps only a **20-slot \"best so far\" list** (a min-heap: the worst of the 20 is always on top). A new score is compared with that worst one and goes in only if it is better."
+              ],
+              [
+                "Work for job 2 at 100k vectors",
+                "A full sort of 100,000 rows: about 1.7 million comparisons (n × log₂ n). Each row number is also wrapped in a Java object: 100,000 objects of garbage per search.",
+                "One comparison per row (100,000), plus a small fix-up of the 20-slot list only when a score gets in. No objects."
+              ],
+              [
+                "Extra memory per search",
+                "100,000 scores + 100,000 objects",
+                "20 scores + 20 row numbers"
+              ],
+              [
+                "Answer",
+                "The 20 best rows",
+                "The same 20 rows: checked on every query, 400 of 400 at every size, on both phones"
+              ]
+            ]
+          }
+        },
+        "The app's loop, as it is in VideoVectors.knn():",
+        {
+          "code": [
+            "val scores = FloatArray(rows) { row ->",
+            "    var sum = 0f                                   // one running total",
+            "    for (i in 0 until size) sum += matrix[row * size + i] * query[i]",
+            "    sum",
+            "}",
+            "return scores.indices.sortedByDescending { scores[it] }.take(k)   // sort ALL rows, keep 20"
+          ]
+        },
+        "The faster loop, topKFast() in the test (shortened):",
+        {
+          "code": [
+            "while (i < dim) {                                  // four running totals",
+            "    s0 += m[base + i] * q[i];         s1 += m[base + i + 1] * q[i + 1]",
+            "    s2 += m[base + i + 2] * q[i + 2]; s3 += m[base + i + 3] * q[i + 3]",
+            "    i += 4",
+            "}",
+            "val score = (s0 + s1) + (s2 + s3)",
+            "if (heap not full) add score to heap                // keep only the best 20",
+            "else if (score > heap.worst) replace the worst with score"
+          ]
+        },
+        {
+          "bullets": [
+            "**Why the answer is the same:** both loops score every row exactly; nothing is skipped or approximated. Adding in four totals changes the order of the additions, which can move a score in its last decimal place, so the test compared the 20 row numbers of both loops on every query. They never differed.",
+            "**What was measured:** both changes together. How much of the gain comes from the scoring change and how much from not sorting every row was **not** measured separately.",
+            "**What it does not fix:** memory. The vectors still have to be in memory; the faster loop only searches them faster (see Figure 5).",
+            "**Names in the CSV files and logs:** method **blob_memory_dot** = the app's loop on vectors already in memory; **blob_memory_fast** = the faster loop on the same vectors; **blob_disk_dot** = read the whole table from SQLite on every query, then the app's loop (the slow comparison, Figure 2). **PSS** = the app's total memory as Android counts it (Java and native memory, shared pages split fairly between apps)."
+          ]
+        },
+        {
+          "h3": "Results of the full test (EYKO-100)"
+        },
+        "**Any extension (A2):** what each phone said when asked to load or use an extension:",
+        {
           "table": {
             "cols": [
               "Check (A2)",

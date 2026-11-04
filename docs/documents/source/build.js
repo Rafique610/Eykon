@@ -87,6 +87,17 @@ function jpegSize(data) {
   throw new Error("cannot read JPEG size");
 }
 
+// {"code": ["line", ...]}: a short code excerpt, one paragraph per line, monospace on a grey band.
+function code(lines) {
+  return lines.map((line, i) => new Paragraph({
+    shading: { fill: "F2F2F2", type: ShadingType.CLEAR, color: "auto" },
+    spacing: { before: i === 0 ? 80 : 0, after: i === lines.length - 1 ? 160 : 0 },
+    indent: { left: 120 },
+    keepNext: i < lines.length - 1,
+    children: [new TextRun({ text: line.replace(/^ +/, (s) => " ".repeat(s.length)) || " ", font: "Consolas", size: 17 })],
+  }));
+}
+
 function blocks(list) {
   const outEls = [];
   for (const b of list) {
@@ -97,6 +108,7 @@ function blocks(list) {
     else if (b.table) { outEls.push(table(b.table)); outEls.push(new Paragraph({ spacing: { after: 120 }, children: [] })); }
     else if (b.note) outEls.push(note(b.note));
     else if (b.image) outEls.push(...image(b));
+    else if (b.code) outEls.push(...code(b.code));
   }
   return outEls;
 }
