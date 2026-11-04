@@ -2,11 +2,11 @@
   "title": "Head 2 · Setup & storage decisions",
   "subtitle": "Where vectors live, how the tables are shaped, and the ground rules that keep the laptop and the phone in step.",
   "header": "Eykon · Head 2 · Setup & storage decisions",
-  "date": "3 Nov 2026",
+  "date": "4 Nov 2026",
   "meta": [
     [
       "Status",
-      "Built; decision re-tested on two phones on 3 Nov 2026. Open questions and their cards are in section 2."
+      "Built; decision re-tested on two phones (3 Nov) and swept from 1k to 300k vectors (EYKO-90). Open questions and their cards are in section 2."
     ],
     [
       "Covers",
@@ -91,7 +91,7 @@
               [
                 "B1",
                 "One run? What is the spread?",
-                "Partly",
+                "Answered",
                 "EYKO-90, EYKO-95"
               ],
               [
@@ -109,7 +109,7 @@
               [
                 "B4",
                 "112 MB of memory for one table: what about all three tables, on a 4 GB phone?",
-                "Open",
+                "Partly",
                 "EYKO-100, EYKO-95"
               ],
               [
@@ -127,7 +127,7 @@
               [
                 "B7",
                 "Brute force will not scale. What is the plan past the limit?",
-                "Open",
+                "Partly",
                 "EYKO-89, EYKO-91, EYKO-97"
               ],
               [
@@ -402,27 +402,27 @@
             "rows": [
               [
                 "Status",
-                "**Partly**"
+                "**Answered**"
               ],
               [
                 "Answer",
-                "The A32 was run twice, three weeks apart: 20,000 vectors searched in memory took 81.0 ms (12 Oct) and 83.5 ms (3 Nov), about 3 % apart. Each run is still a single run of 20 queries, so there is no proper spread yet."
+                "Each size now runs 20 queries × 5 runs after a warm-up. The 5 run medians stay within about 10 % on both phones (e.g. A32 20k: 77.2–84.5 ms; Pixel 20k: 40.1–41.1 ms). The 20k figure also matches the older single runs (81.0 ms on 12 Oct, 83.5 ms on 3 Nov). These were trial runs while charging; the protocol runs (EYKO-95) will add the Infinix and hot / low-battery conditions."
               ],
               [
                 "How we tested",
-                "Same test, same phone, two dates."
+                "EYKO-90 sweep test on the A32 and the Pixel, 3 Nov (section 6, \"Size sweep\")."
               ],
               [
                 "Evidence",
-                "2026-10-12 result file and a32-2026-11-03-logcat.txt."
+                "docs/results/vectors/a32-2026-11-03-sweep.csv, pixel9proxl-2026-11-03-sweep.csv; Figure 1."
               ],
               [
                 "Next / card",
-                "5 runs with a warm-up, median and p95 (EYKO-90 on Pixel and A32, EYKO-95 on the Infinix)."
+                "Protocol runs incl. the Infinix (EYKO-95)."
               ],
               [
                 "Last updated",
-                "3 Nov 2026"
+                "4 Nov 2026"
               ]
             ]
           }
@@ -447,23 +447,23 @@
               ],
               [
                 "Answer",
-                "Estimate: the app keeps about 13.4 frames per minute of video (Ego4D on the Pixel: 372 kept in 27.8 min). One hour of video a day is about 800 frame vectors a day, so 20,000 is reached in about 25 days. Nothing above 20,000 has been measured yet."
+                "Measured up to 300k now. In-memory search passes 200 ms between 20k and 50k vectors on the A32 and between 50k and 100k on the Pixel; at 300k it runs out of memory on both. When a real user gets there is still an estimate: at about 13.4 kept frames per minute and an assumed one hour of video a day (~800 vectors a day), 20k comes in about 25 days, 50k in about 2 months and 100k in about 4 months. The hour a day is an assumption with no source yet."
               ],
               [
                 "How we tested",
-                "Kept-frame rate from the Ego4D phone run (Head 8); simple arithmetic."
+                "EYKO-90 sweep (section 6); kept-frame rate from the Ego4D phone run (Head 8)."
               ],
               [
                 "Evidence",
-                "docs/results/2026-10-20-ego4d-baseline.md (On the phone)."
+                "Sweep CSVs and Figure 1; docs/results/2026-10-20-ego4d-baseline.md."
               ],
               [
                 "Next / card",
-                "Sweep 1k to 300k (EYKO-90, EYKO-95) and the days-until-too-slow model (EYKO-97)."
+                "Real usage sources and the 1/3/6/12-month table (EYKO-101); Infinix (EYKO-95)."
               ],
               [
                 "Last updated",
-                "3 Nov 2026"
+                "4 Nov 2026"
               ]
             ]
           }
@@ -525,27 +525,27 @@
             "rows": [
               [
                 "Status",
-                "**Open**"
+                "**Partly**"
               ],
               [
                 "Answer",
-                "At 20,000 vectors one table used 106 MB (Pixel) to 112 MB (A32) of Java heap, but that figure includes the test's own copies, so it overstates. Three tables and a 4 GB phone have not been measured."
+                "The vectors need one block of n × 512 × 4 bytes (205 MB at 100k, 614 MB at 300k). Android gives the app a 268 MB Java heap on both phones, even the Pixel with 16 GB of RAM, so 100k ran and 300k failed with OutOfMemoryError. The measured Java heap is noisy (it counts garbage not yet collected), so it is not used as the answer. All three tables together and a 4 GB phone are still not measured."
               ],
               [
                 "How we tested",
-                "Java heap read inside the test after loading."
+                "EYKO-90 sweep: memory columns in the CSV and the out-of-memory error text."
               ],
               [
                 "Evidence",
-                "Proof logs (memory lines)."
+                "Sweep CSVs (300k rows, note column); Figure 3."
               ],
               [
                 "Next / card",
-                "Honest PSS with all tables (EYKO-100); PSS from dumpsys during the sweep (EYKO-95)."
+                "All three tables with real vectors, PSS (EYKO-100); Infinix (EYKO-95)."
               ],
               [
                 "Last updated",
-                "3 Nov 2026"
+                "4 Nov 2026"
               ]
             ]
           }
@@ -648,27 +648,27 @@
             "rows": [
               [
                 "Status",
-                "**Open**"
+                "**Partly**"
               ],
               [
                 "Answer",
-                "The size where in-memory search passes 200 ms is not measured yet. Candidates: int8 vectors, an approximate index (usearch, hnswlib) or bundled sqlite-vec."
+                "The limit is now measured: 200 ms is passed at 20k–50k vectors (A32) and 50k–100k (Pixel), and a hard memory wall comes at about 100k–130k vectors per table. The plan past it is still open. Candidates: int8 vectors (a quarter of the memory), splitting the table into blocks, an approximate index (usearch, hnswlib) or bundled sqlite-vec."
               ],
               [
                 "How we tested",
-                "Planned: research the options, test one on the laptop for speed and recall."
+                "EYKO-90 sweep (section 6). Options not tested yet."
               ],
               [
                 "Evidence",
-                "—"
+                "Figures 1 and 3."
               ],
               [
                 "Next / card",
-                "EYKO-89, EYKO-91, EYKO-97."
+                "EYKO-89 and EYKO-91 (options), EYKO-93 (bundled sqlite-vec), EYKO-98 (decision)."
               ],
               [
                 "Last updated",
-                "3 Nov 2026"
+                "4 Nov 2026"
               ]
             ]
           }
@@ -693,23 +693,23 @@
               ],
               [
                 "Answer",
-                "Found on 3 Nov: 20,000 vectors read from SQLite took 3,068 ms on the Pixel and 1,521 ms on the A32. Not explained. The Pixel was 97 % full, charging and at 36 °C. It does not change the decision, because the app searches from memory."
+                "Seen again in the sweep: reading 20k vectors from SQLite on every query took 3,137–3,489 ms on the Pixel vs 1,569–1,627 ms on the A32, while from memory the Pixel was twice as fast. Still not explained. The Pixel was charging, 98 % full and reached 38 °C. It does not affect the app, which searches from memory."
               ],
               [
                 "How we tested",
-                "Same test, same day, both phones."
+                "EYKO-90 sweep, same day, both phones."
               ],
               [
                 "Evidence",
-                "Both proof logs and device sheets."
+                "Sweep CSVs (blob_disk_dot rows); Figure 2."
               ],
               [
                 "Next / card",
-                "Controlled sweep (EYKO-95, EYKO-90) after freeing Pixel storage (EYKO-83)."
+                "Repeat after freeing Pixel storage (EYKO-83) and under the protocol (EYKO-95)."
               ],
               [
                 "Last updated",
-                "3 Nov 2026"
+                "4 Nov 2026"
               ]
             ]
           }
@@ -1351,7 +1351,92 @@
             "Real use since then: on the Pixel, the frame-vector search takes about 0.1 s (first search about 1 s while vectors load); storing a frame vector takes under 1 ms (Head 6).",
             "Ego4D on the Pixel: the database grew about 7 MB for 27.8 minutes of video, with every vector (Head 8)."
           ]
-        }
+        },
+        {
+          "h3": "Size sweep, 1k to 300k vectors (EYKO-90, two phones)"
+        },
+        "**Why:** the decision rested on one run of 20 queries at 5k and 20k only, so the supervisor's questions B1 (one run, what spread?) and B2 (why only 20k?) had no data. **Approach:** the same in-memory BLOB search the app uses (float32, dot product, top 20), measured at six sizes with repeats, on the cheap phone and the fast phone. The slow method (read the table from SQLite on every query) is kept as a comparison up to 20k only, because past that one query takes seconds.",
+        {
+          "steps": [
+            "The test inserts n random unit vectors (512 numbers, fixed seed) into a fresh SQLite table, at n = 1k, 5k, 20k, 50k, 100k, 300k.",
+            "Per size and method: 1 warm-up query thrown away, then 20 queries × 5 runs; each run gives median, p95 and worst.",
+            "The test writes one CSV row per run (shared laptop/phone format) with Java heap, PSS, battery temperature and level. A size that runs out of memory is written as a row with the exact error, not skipped.",
+            "Command (phone kit README section 5b): adb shell am instrument -w -e class com.eykon.memory.spike.VectorStorageSpikeTest#blobColumnWithBruteForceSearch -e sizes 1k,5k,20k,50k,100k,300k -e commit 7fc6af7 com.eykon.memory.test/androidx.test.runner.AndroidJUnitRunner"
+          ],
+          "ref": "sweep"
+        },
+        {
+          "table": {
+            "cols": [
+              "Vectors",
+              "A32: median of the 5 runs (range)",
+              "Pixel 9 Pro XL: median of the 5 runs (range)"
+            ],
+            "widths": [
+              2,
+              3,
+              3
+            ],
+            "rows": [
+              [
+                "1k",
+                "3.2 ms (3.2–3.3)",
+                "1.6 ms (1.55–1.60)"
+              ],
+              [
+                "5k",
+                "16.6 ms (16.4–18.1)",
+                "8.7 ms (8.5–8.7)"
+              ],
+              [
+                "20k",
+                "80.5 ms (77.2–84.5)",
+                "40.4 ms (40.1–41.1)"
+              ],
+              [
+                "50k",
+                "249 ms (244–253)",
+                "109 ms (101–111)"
+              ],
+              [
+                "100k",
+                "535 ms (532–539)",
+                "271 ms (238–283)"
+              ],
+              [
+                "300k",
+                "**OutOfMemoryError**",
+                "**OutOfMemoryError**"
+              ],
+              [
+                "Read from SQLite every query, 20k",
+                "1,581 ms (1,569–1,627)",
+                "3,243 ms (3,137–3,489)"
+              ],
+              [
+                "Conditions",
+                "24 % battery, charging over USB, 28–31 °C",
+                "30 %, charging, 33–38 °C, storage 98 % full"
+              ]
+            ]
+          }
+        },
+        {
+          "image": "figures/head2-vector-memory-speed.png",
+          "caption": "Figure 1. Search from memory, median of 20 queries; the bar on each point is the range of the 5 runs (too small to see on most). The 200 ms line is still an assumption (source: EYKO-101). Data: docs/results/vectors/*-sweep.csv."
+        },
+        {
+          "image": "figures/head2-vector-memory-vs-disk.png",
+          "caption": "Figure 2. Keeping the vectors in memory vs reading the table from SQLite on every query (log scale). Reading every time is over 200 ms from 5k on both phones."
+        },
+        {
+          "image": "figures/head2-vector-heap.png",
+          "caption": "Figure 3. The single block the vectors need against the Java heap limit both phones report (268 MB, even on the Pixel's 16 GB). 100k (205 MB) ran; 300k (614 MB) failed on both: \"Failed to allocate a 614400016 byte allocation … growth limit 268435456\"."
+        },
+        {
+          "note": "**Outcome (good and bad):** the runs are stable (5 run medians within about 10 %), and the old 20k number holds (A32 80 ms now, 81 ms on 12 Oct). But in-memory search passes 200 ms between **20k and 50k on the A32** and between **50k and 100k on the Pixel**, and above roughly 100k–130k vectors the table **cannot be held in memory at all** with the current design. The design is fine for small libraries and has a hard ceiling for large ones."
+        },
+        "**Not yet protocol runs:** both phones were charging at low battery; the Infinix and the protocol runs (cool, hot, low battery) come from EYKO-95. **Next:** how many vectors a real user reaches (EYKO-101), real vectors and honest memory with all three tables (EYKO-100), and the storage decision v2 (EYKO-98). Graphs: uv run docs/documents/source/figures/vector_sweep.py redraws them from every sweep CSV."
       ]
     },
     {
@@ -1360,8 +1445,9 @@
         {
           "bullets": [
             "One SQLite file per device holds the whole video memory: rows, captions, keyword index and every vector.",
-            "Search is a plain loop over a FloatArray in memory: fast enough on the slow phone at 20,000 vectors.",
-            "The same table design and the same constants on laptop and phone, so laptop experiments carry over."
+            "Search is a plain loop over a FloatArray in memory: under 200 ms up to about 20k vectors on the slow phone and about 50k on the Pixel (EYKO-90 sweep).",
+            "The same table design and the same constants on laptop and phone, so laptop experiments carry over.",
+            "**Ceiling found:** above roughly 100k vectors in one table the vectors no longer fit in the 268 MB Java heap, on both phones (300k failed). The design needs a plan for large libraries (B7)."
           ]
         }
       ]
@@ -1371,11 +1457,11 @@
       "blocks": [
         {
           "bullets": [
-            "One run on one phone, not repeated, so there is no spread.",
-            "A cool, idle phone on a desk on USB power is the best case.",
+            "One run on one phone, not repeated, so there is no spread. **Update 4 Nov:** superseded by the EYKO-90 sweep (20 queries × 5 runs, two phones, spread within about 10 %); still trial conditions, protocol runs are EYKO-95.",
+            "A cool, idle phone on a desk on USB power is the best case. **Update 4 Nov:** the sweep ran on phones charging at low battery and up to 38 °C (Pixel); the cool / hot / low-battery comparison is EYKO-95.",
             "Random vectors, not real ones; real search also filters by video status, which adds a join.",
-            "The Pixel 9 Pro XL was not run in the spike; only the A32.",
-            "Memory is the cost to watch: 112 MB of Java heap for one table of 20,000 vectors, and the design has three vector tables (image, text, audio).",
+            "The Pixel 9 Pro XL was not run in the spike; only the A32. **Update 4 Nov:** the Pixel has now run the spike (3 Nov) and the full sweep (EYKO-90).",
+            "Memory is the cost to watch: 112 MB of Java heap for one table of 20,000 vectors, and the design has three vector tables (image, text, audio). **Update 4 Nov:** the sweep found the hard limit: the app gets a 268 MB Java heap on both phones, and 300k vectors (614 MB) do not fit (G20).",
             "BLOB files are about twice the size of sqlite-vec files."
           ]
         }
@@ -1402,6 +1488,13 @@
               2.2
             ],
             "rows": [
+              [
+                "G20",
+                "In-memory float32 vectors hit the 268 MB heap limit between 100k and 300k vectors per table; 200 ms is passed earlier (A32 20k–50k). No plan yet for larger libraries.",
+                "EYKO-98, EYKO-100, EYKO-101",
+                "High",
+                ""
+              ],
               [
                 "G9",
                 "The retrieval rule (phone = BM25 + dense + RRF) and the video search (dense only) disagree; the decision lives in a result file, not in the rule. Needs an ADR.",

@@ -3,11 +3,13 @@
 const fs = require("fs");
 const {
   Document, Packer, Paragraph, TextRun, Table, TableRow, TableCell, WidthType, ShadingType,
-  HeadingLevel, AlignmentType, BorderStyle, LevelFormat, Footer, Header, PageNumber, TabStopType,
+  HeadingLevel, AlignmentType, BorderStyle, LevelFormat, Footer, Header, PageNumber, TabStopType, ImageRun,
 } = require("docx");
+const path = require("path");
 
 const [, , src, out] = process.argv;
 const d = JSON.parse(fs.readFileSync(src, "utf8"));
+const ROOT = path.join(path.dirname(src), ".."); // image paths in the JSON are relative to source/
 
 const FONT = "Calibri";
 const ACCENT = "1F4E79";
@@ -59,6 +61,32 @@ function note(text) {
   });
 }
 
+// {"image": "figures/x.png", "caption": "...", "width": 0.8}: a PNG or JPEG at `width` of the text
+// width (default full), height kept to the picture's own shape, caption in italics under it.
+const TEXT_PX = Math.round((TEXT_W / 1440) * 96);
+function image(b) {
+  const file = path.join(ROOT, b.image);
+  const data = fs.readFileSync(file);
+  const png = data.readUInt32BE(0) === 0x89504e47;
+  const [w, h] = png ? [data.readUInt32BE(16), data.readUInt32BE(20)] : jpegSize(data);
+  const width = Math.round(TEXT_PX * (b.width || 1));
+  const els = [new Paragraph({
+    alignment: AlignmentType.CENTER, keepNext: Boolean(b.caption), spacing: { before: 120, after: 60 },
+    children: [new ImageRun({ type: png ? "png" : "jpg", data, transformation: { width, height: Math.round((width * h) / w) } })],
+  })];
+  if (b.caption) els.push(new Paragraph({ alignment: AlignmentType.CENTER, spacing: { after: 200 }, children: runs(b.caption, { size: 18, italics: true, color: "404040" }) }));
+  return els;
+}
+
+function jpegSize(data) {
+  for (let i = 2; i < data.length;) {
+    const marker = data[i + 1], len = data.readUInt16BE(i + 2);
+    if (marker >= 0xc0 && marker <= 0xc3) return [data.readUInt16BE(i + 7), data.readUInt16BE(i + 5)];
+    i += 2 + len;
+  }
+  throw new Error("cannot read JPEG size");
+}
+
 function blocks(list) {
   const outEls = [];
   for (const b of list) {
@@ -68,6 +96,7 @@ function blocks(list) {
     else if (b.steps) b.steps.forEach((x) => outEls.push(new Paragraph({ numbering: { reference: b.ref || "num", level: 0 }, children: runs(x), spacing: { after: 60 } })));
     else if (b.table) { outEls.push(table(b.table)); outEls.push(new Paragraph({ spacing: { after: 120 }, children: [] })); }
     else if (b.note) outEls.push(note(b.note));
+    else if (b.image) outEls.push(...image(b));
   }
   return outEls;
 }
