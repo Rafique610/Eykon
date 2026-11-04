@@ -41,6 +41,50 @@ user, write a short paragraph under `docs/adr/` (or as a note at the top of
 the relevant plan step) — what was decided, why, what was ruled out. Drop
 or adjust this if it turns out to be more overhead than it's worth.
 
+## No decision without evidence
+
+Added 4 November 2026, after the supervisor's review: "the group has a
+tendency to make design decisions based on assumptions rather than real
+research."
+
+- Research comes **before** the decision, never after it to defend it. Until
+  the evidence is in, a choice is a **proposal**, and the docs, flows and
+  cards must call it that.
+- Every design decision records: the options found (each with a source:
+  paper, docs page, repo or our own test), what we tested ourselves, the
+  numbers, what was ruled out and why, and who took part. That record is the
+  ADR.
+- Every number a decision rests on (a limit, a target size, a threshold) has
+  a stated source or our own measurement. "Feels right" is written down as
+  an assumption, with a card to check it.
+- "We read online that X fails" is not evidence. Run X on the real device
+  and keep the exact error.
+- Decisions are taken with the team: the researcher (Taha) brings the
+  options, the evaluator (Zara) brings the data, and the lead decides with
+  both. The ADR names all three. A teammate can block a decision by showing
+  the data doesn't support it.
+- If you find an older decision that rests on an assumption, don't quietly
+  fix it: list it as a gap with a card.
+
+## Show-ready proof
+
+The supervisor does not accept "an automated test passed." He wants the
+real data and outcome, good or bad, shown on the spot. So every result is
+kept as something that can be opened in a meeting in under a minute:
+
+- **Raw output**, unedited: logcat, CSV or console text, with device, date
+  and commit hash in it.
+- **A graph or table** made from that raw output, and the script that made
+  it, so the figure can be redrawn from the data.
+- **A screenshot or screen recording** for anything that happens on screen
+  or on a phone (the error message, the app result).
+- **One line of verdict**, including bad outcomes: "fails at 300k: out of
+  memory" is a result and stays in the record.
+- All of it is linked from the card's comment and from the head's document
+  (`docs/documents/`), so in a demo you open the card or doc and the proof is
+  one click away. A result that exists only in chat or someone's memory
+  doesn't count.
+
 ## Session memory log — `.memory/`
 
 Shared memory for the agent AND the user. This is what makes progress
