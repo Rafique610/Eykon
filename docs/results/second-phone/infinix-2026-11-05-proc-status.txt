@@ -1,0 +1,16 @@
+NOTE: copied by hand from the console, not saved by a command. Taken on the Infinix X670 after all three
+runs (Snapchat smoke test and both PXL clips), with the app process still alive (pid 28196 from the first
+run to this reading). Command: adb shell grep Vm /proc/28196/status
+
+VmPeak: 17124680 kB
+VmSize: 16506980 kB
+VmLck:         0 kB
+VmPin:         0 kB
+VmHWM:   1152504 kB
+VmRSS:    607564 kB
+VmData:  2061000 kB
+VmStk:      8192 kB
+VmExe:        12 kB
+VmLib:    191868 kB
+VmPTE:      3084 kB
+VmSwap:   318788 kB

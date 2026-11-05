@@ -1,0 +1,50 @@
+--- 10:22:42
+  level: 99
+  temperature: 336
+        TOTAL   797098   154960   317128   308535   609948  1085004  1059940    13076
+           TOTAL PSS:   797098            TOTAL RSS:   609948       TOTAL SWAP PSS:   308535
+--- 10:22:58
+  level: 99
+  temperature: 336
+        TOTAL   797106   154968   317128   308535   609956  1085003  1059940    13075
+           TOTAL PSS:   797106            TOTAL RSS:   609956       TOTAL SWAP PSS:   308535
+--- 10:23:13
+  level: 99
+  temperature: 336
+        TOTAL   795607   154944   315908   308551   608180  1085002  1059939    13075
+           TOTAL PSS:   795607            TOTAL RSS:   608180       TOTAL SWAP PSS:   308551
+--- 10:23:29
+  level: 99
+  temperature: 335
+        TOTAL   795187   154952   315524   308548   608188  1085001  1059938    13075
+           TOTAL PSS:   795187            TOTAL RSS:   608188       TOTAL SWAP PSS:   308548
+--- 10:23:44
+  level: 99
+  temperature: 335
+        TOTAL   789841   155924   310360   308520   603584  1090359  1060266    18085
+           TOTAL PSS:   789841            TOTAL RSS:   603584       TOTAL SWAP PSS:   308520
+--- 10:24:00
+  level: 99
+  temperature: 335
+        TOTAL   863154   231091   307784   308511   677539  1141818  1110684    18994
+           TOTAL PSS:   863154            TOTAL RSS:   677539       TOTAL SWAP PSS:   308511
+--- 10:24:15
+  level: 99
+  temperature: 335
+        TOTAL   856613   224181   307872   308514   671089  1140709  1110120    18449
+           TOTAL PSS:   856613            TOTAL RSS:   671089       TOTAL SWAP PSS:   308514
+--- 10:24:31
+  level: 99
+  temperature: 335
+        TOTAL   794434   162136   308020   308510   608668  1109244  1079088    18084
+           TOTAL PSS:   794434            TOTAL RSS:   608668       TOTAL SWAP PSS:   308510
+--- 10:24:46
+  level: 99
+  temperature: 335
+        TOTAL   801041   164776   311952   308511   614700  1092979  1060105    18730
+           TOTAL PSS:   801041            TOTAL RSS:   614700       TOTAL SWAP PSS:   308511
+--- 10:25:02
+  level: 99
+  temperature: 339
+        TOTAL   810133   172352   313440   308503   623836  1112474  1069743    28465
+           TOTAL PSS:   810133            TOTAL RSS:   623836       TOTAL SWAP PSS:   308503

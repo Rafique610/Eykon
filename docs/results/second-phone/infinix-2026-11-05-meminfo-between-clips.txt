@@ -1,0 +1,58 @@
+Applications Memory Usage (in Kilobytes):
+Uptime: 460024657 Realtime: 730232150
+
+** MEMINFO in pid 28196 [com.eykon.memory] **
+                   Pss  Private  Private  SwapPss      Rss     Heap     Heap     Heap
+                 Total    Dirty    Clean    Dirty    Total     Size    Alloc     Free
+                ------   ------   ------   ------   ------   ------   ------   ------
+  Native Heap   423114   132224   290872   303196   424848  1074296  1051924    10384
+  Dalvik Heap     9567     6000     3500       97    11808    10708     8031     2677
+ Dalvik Other    12676     4252       24       56    21372                           
+        Stack     1644     1576       68      696     1652                           
+       Ashmem      215        0        0        0     1112                           
+    Other dev        9        0        8        0      532                           
+     .so mmap     7618      364     1332      143    60636                           
+    .jar mmap     1448        0      184        0    37476                           
+    .apk mmap    18809        8    18724      128    20216                           
+    .ttf mmap       33        0        0        0      312                           
+    .dex mmap       10        0        0        0      536                           
+    .oat mmap       35        0        0        0     1852                           
+    .art mmap     4723     3212     1256     4259    16840                           
+   Other mmap       99       40       16        0     1884                           
+    GL mtrack     6620     6620        0        0     6620                           
+      Unknown      716      600      100       76     1372                           
+        TOTAL   795987   154896   316084   308651   609068  1085004  1059955    13061
+ 
+ App Summary
+                       Pss(KB)                        Rss(KB)
+                        ------                         ------
+           Java Heap:    10468                          28648
+         Native Heap:   132224                         424848
+                Code:    20652                         137888
+               Stack:     1576                           1652
+            Graphics:     6620                           6620
+       Private Other:   299440
+              System:   325007
+             Unknown:                                    9412
+ 
+           TOTAL PSS:   795987            TOTAL RSS:   609068       TOTAL SWAP PSS:   308651
+ 
+ Objects
+               Views:       10         ViewRootImpl:        1
+         AppContexts:        5           Activities:        1
+              Assets:       36        AssetManagers:        0
+       Local Binders:       15        Proxy Binders:       42
+       Parcel memory:        7         Parcel count:       30
+    Death Recipients:        0      OpenSSL Sockets:        0
+            WebViews:        0
+ 
+ SQL
+         MEMORY_USED:     1072
+  PAGECACHE_OVERFLOW:      683          MALLOC_SIZE:       46
+ 
+ DATABASES
+      pgsz     dbsz   Lookaside(b)          cache  Dbname
+         4      572            104    1603/159/25  /data/user/0/com.eykon.memory/databases/memories.db
+         4        8                         0/0/0    (attached) temp
+         4      572             28        5/480/2  /data/user/0/com.eykon.memory/databases/memories.db (27)
+         4      572            123      886/63/25  /data/user/0/com.eykon.memory/databases/memories.db (26)
