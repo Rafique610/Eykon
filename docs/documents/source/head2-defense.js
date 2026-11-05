@@ -501,7 +501,7 @@ body.push(grid([2200, 2600, 2600, 2238], ['Route', 'Plugin loading', 'Cost for o
   ['SQLCipher', 'Turned on for every connection; FTS5 on', 'Room 2 factory, but needs a password and key storage', 'Not now: encryption no card asks for'],
   ['Our own NDK build', 'Not needed: sqlite-vec compiled in', 'Our own native build and JNI', 'Last resort'],
 ], { firstColBold: true }));
-body.push(P('**Each route has its own test card**, all under one shared protocol and the same pass marks: EYKO-104 (build our own sqlite-vec file), EYKO-105 (R1 Google bundled), EYKO-106 (R2 requery), EYKO-107 (R3 SQLCipher), EYKO-108 (R4 own NDK build, only if the others fail).', { run: { size: 20 }, before: 100 }));
+body.push(P('**Each route has its own test card**, all under one shared protocol and the same pass marks: EYKO-104 (build our own sqlite-vec file), EYKO-105 (R1 Google bundled), EYKO-106 (R2 requery), EYKO-107 (R3 SQLCipher), EYKO-108 (R4 own NDK build). Option O1, vectors outside Java memory: EYKO-109.', { run: { size: 20 }, before: 100 }));
 body.push(grid([3238, 3200, 3200], ['Ready-made Android file (checked with `readelf`)', 'Memory-page alignment', 'Speed-up (NEON)'], [
   ['sqlite-vec v0.1.9 `vec0.so` (arm64)', '**4 KB** (`0x1000`); 16 KB needed on 16 KB phones and by Google Play from 1 Feb 2027', '**None**: the build script turns NEON on only for Mac'],
   ['usearch v2.26.6 `libusearch_c.so` (arm64)', '**4 KB** (`0x1000`)', 'not checked'],

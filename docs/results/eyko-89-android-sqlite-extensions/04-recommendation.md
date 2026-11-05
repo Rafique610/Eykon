@@ -103,20 +103,24 @@ bundled-SQLite migration unnecessary for the app, though still worth testing for
    allow extensions. Its source shows it does (`sqlite3_enable_load_extension(db, 1)` on every
    connection). The plan's table is corrected here.
 
-## Test cards for each route (created 5 November 2026)
+## Test cards for each route and for O1 (created 5 November 2026)
 
 Each route is a claim until it has run on a phone. One card per route, all using the same
 shared protocol (same phones, real vectors at 1k–100k, 5 runs × 20 queries, recall@20, PSS
 with all three tables, APK size, 16 KB check) and the same pass marks, so their results can be
 put side by side and the choice justified with data:
 
-| Route | Card | Waits for | Priority |
-|---|---|---|---|
-| R5 · build our own sqlite-vec `.so` (NDK r28, 16 KB, NEON) | EYKO-104 | EYKO-89 | high |
-| R1 · Google bundled SQLite (`BundledSQLiteDriver.addExtension`) | EYKO-105 | EYKO-104 | high |
-| R2 · requery `sqlite-android` | EYKO-106 | EYKO-104 | normal |
-| R3 · SQLCipher for Android | EYKO-107 | EYKO-104 | normal |
-| R4 · own NDK build, sqlite-vec compiled in | EYKO-108 | EYKO-89 | low (run only if R1–R3 fail) |
+| Route | Card | Waits for | Priority | Assigned |
+|---|---|---|---|---|
+| R5 · build our own sqlite-vec `.so` (NDK r28, 16 KB, NEON) | EYKO-104 | EYKO-89 | high | Rafique |
+| R1 · Google bundled SQLite (`BundledSQLiteDriver.addExtension`) | EYKO-105 | EYKO-104 | high | Rafique |
+| R2 · requery `sqlite-android` | EYKO-106 | EYKO-104 | normal | Rafique |
+| R3 · SQLCipher for Android | EYKO-107 | EYKO-104 | normal | Rafique |
+| R4 · own NDK build, sqlite-vec compiled in (full test; builds sqlite-vec itself) | EYKO-108 | EYKO-89 | normal | Zara |
+| O1 · vectors outside Java memory, float32 / float16 / int8 (file 03) | EYKO-109 | — | high | Zara |
+
+Split so no teammate waits for the other: the sqlite-vec file (EYKO-104) and every route that
+loads it stay with one person; R4 and O1 need nothing from anyone.
 
 EYKO-93 (the lead's "try the bundled route" card) overlaps with EYKO-105. The lead decides
 whether EYKO-93 becomes the comparison card that picks a winner from EYKO-105 to EYKO-108.
