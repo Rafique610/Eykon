@@ -37,6 +37,9 @@ lead's storage decision) decides.
    row, and the run is done plugged in.
 9. **Warm caches.** Every query after the warm-up finds the data in memory or the OS cache, the best
    case. The first-search cost on the phone (about 1 s, Head 7) is not modelled here.
+10. **numpy's float16 is slow, not float16 itself.** In the 6 Nov self-check at 1k, `blob_memory_f16`
+    took 2.2 ms against 0.04 ms for float32: numpy widens float16 to float32 in software. So its
+    laptop time says little about a phone loop; its recall and memory are what count here.
 
 ## Things noticed while planning (flagged, not acted on)
 
