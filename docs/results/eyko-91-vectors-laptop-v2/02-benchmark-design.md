@@ -14,7 +14,7 @@ Every method is given the same vectors and the same queries, and returns the top
 | 3 | `blob_memory_numpy_1t` | Same, numpy limited to **1 thread** (`threadpoolctl`) | all | fair against the one-thread phone loop (B5) |
 | 4 | `blob_memory_pyloop` | Plain Python loops, no numpy | 1k, 5k (20k if under ~2 min per run) | card step 3: how much of the phone gap is code (B5) |
 | 5 | `blob_memory_f16` | Matrix kept as float16 (½ the memory), dot in float32 in blocks | all | laptop half of **EYKO-109** (O1) |
-| 6 | `blob_memory_i8` | int8 with **one scale per vector** (¼ the memory), integer dot | all | laptop half of EYKO-109 |
+| 6 | `blob_memory_i8` | int8 with **one scale per vector** (¼ the memory); each block widened to float32, dotted with the float32 query, then scaled (the byte × float loop a phone would run) | all | laptop half of EYKO-109 |
 | 7 | `blob_memory_i8_rescore` | Method 6, then re-score its top 100 with float32 | all | EYKO-109's planned int8 design |
 | 8 | `sqlite_vec_f32` | `vec0(e float[512] distance_metric=cosine)`, `MATCH ? AND k = 20` | all | v1 method; card step 3 |
 | 9 | `sqlite_vec_int8` | `vec0(e int8[512] distance_metric=cosine)`, filled with `vec_quantize_int8(v, 'unit')` | all | card step 3 |
@@ -69,14 +69,14 @@ not break it.
 device,android,sqlite_version,commit,date,method,dim,n,run,median_ms,p95_ms,worst_ms,pss_mb,heap_mb,file_mb,temp_c_start,temp_c_end,battery_pct,source_vectors,note,recall_at_20
 ```
 
-- `device`: `laptop i5-10310U (Taha)`. `android` empty. `sqlite_version`: from Python's sqlite3.
+- `device`: `laptop <cpu>` from `/proc/cpuinfo` (here `laptop i5-10310U`), or `--device`. `android` empty. `sqlite_version`: from Python's sqlite3.
 - `commit`: `git rev-parse --short HEAD`, with `-dirty` if the tree has changes.
 - `temp_c_start` / `temp_c_end`: CPU package temperature (`psutil.sensors_temperatures()`, coretemp).
   `battery_pct`: `psutil.sensors_battery()`; the note says whether the charger was in.
 - **File name: one per source (owner's decision D2, 6 Nov).** The card says `docs/results/vectors/laptop-<date>.csv`. The Head 2
   figure script picks up only `*-sweep-real.csv`, so the laptop would not appear in the graphs EYKO-97
   draws. So: one file per source,
-  `laptop-<date>-sweep-random.csv`, `laptop-<date>-sweep-real.csv` (S2, the same data as the phones'
+  `laptop-<date>-sweep.csv` (S1 random: the figure script finds random sweeps with `*-sweep.csv`, as the phones' 3 Nov files), `laptop-<date>-sweep-real.csv` (S2, the same data as the phones'
   real sweep) and `laptop-<date>-sweep-varied.csv` (S3).
 
 ## Code layout (keeps every `.py` under the 300-line rule in `core.md`)
@@ -96,13 +96,18 @@ Taskfile:
 ```
 vectors-laptop-v2:
   desc: "EYKO-91 — laptop vector benchmark v2: 13 methods, 1k–300k, 5 runs × 20 queries, recall@20, PSS, shared CSV (sqlite-vec, usearch, threadpoolctl fetched for the run only)"
-  cmd: uv run --with sqlite-vec --with usearch --with threadpoolctl python src/benchmarks/vector_storage_v2.py {{.CLI_ARGS}}
+  cmd: uv run --no-project --python 3.10 --with numpy==2.2.6 --with psutil==7.2.2 --with sqlite-vec==0.1.9 --with usearch==2.26.5 --with threadpoolctl python src/benchmarks/vector_storage_v2.py {{.CLI_ARGS}}
 ```
+
+`--no-project` matters: a plain `uv run` first installs the whole project (torch through
+sentence-transformers, llama-cpp), several GB this laptop does not have room for (found 6 Nov).
 
 Options: `--sources random,real,varied`, `--sizes 1k,5k,20k,50k,100k,300k`, `--methods …`, `--runs 5`,
 `--out docs/results/vectors/`. sqlite-vec and usearch are fetched per run with `--with`, as v1 already
 does, so they are not added to the project's dependencies (licences: sqlite-vec MIT / Apache-2.0,
 usearch Apache-2.0, threadpoolctl BSD-3).
+
+If go-task is not installed, run the `cmd` line directly with the options after the script name.
 
 ## Time and disk budget (estimates, to be replaced by measured times)
 

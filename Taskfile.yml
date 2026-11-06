@@ -194,6 +194,10 @@ tasks:
     desc: "EYKO-31 spike — on the laptop, time sqlite-vec against BLOB brute-force vector search (sqlite-vec is fetched for this run only)"
     cmd: uv run --with sqlite-vec python src/benchmarks/vector_storage_spike.py
 
+  vectors-laptop-v2:
+    desc: "EYKO-91 — laptop vector benchmark v2: 13 methods, 1k–300k, 5 runs × 20 queries, recall@20, PSS, shared CSV (own small env: numpy, psutil, sqlite-vec, usearch, threadpoolctl; never the full project)"
+    cmd: uv run --no-project --python 3.10 --with numpy==2.2.6 --with psutil==7.2.2 --with sqlite-vec==0.1.9 --with usearch==2.26.5 --with threadpoolctl python src/benchmarks/vector_storage_v2.py {{.CLI_ARGS}}
+
   spike-android-vectors:
     desc: "EYKO-31 spike — on the connected phone, test sqlite-vec loading and time BLOB brute-force vector search (results print from logcat). Updates the app in place, never uninstalls it; pass SERIAL=<id> when more than one device is listed"
     dir: android

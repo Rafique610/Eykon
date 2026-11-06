@@ -44,7 +44,7 @@ shared CSV that EYKO-97's graphs read.
 | # | Question | Decision |
 |---|---|---|
 | D1 | Varied real vectors (S3): which source? | **EPIC-KITCHENS slice** (decided by the owner, 6 Nov 2026): about 30 videos streamed one by one, frames every 2 s, MobileCLIP-S2 vectors, narrations as text queries, target 100k vectors. COCO stays the fallback if downloads are too slow |
-| D2 | CSV file name | **One file per source** (decided by the owner, 6 Nov 2026): `laptop-<date>-sweep-random.csv`, `-sweep-real.csv`, `-sweep-varied.csv`, named like the phone files so EYKO-97's graphs pick the laptop up. This differs from the card's single `laptop-<date>.csv`; the card comment will say so |
+| D2 | CSV file name | **One file per source** (decided by the owner, 6 Nov 2026): `laptop-<date>-sweep.csv` (random, the same suffix as the phones' random sweep), `-sweep-real.csv`, `-sweep-varied.csv`, named like the phone files so EYKO-97's graphs pick the laptop up. This differs from the card's single `laptop-<date>.csv`; the card comment will say so |
 | D3 | For the lead, on the card | **open**: judge the index on varied real data at its largest size instead of "at 300k"; compare with one-thread numpy; float16 / int8 mark 0.99. To be confirmed before the full run |
 
 ## Files

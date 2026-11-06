@@ -70,9 +70,13 @@ def recall_at_k(vecs: np.ndarray, query: np.ndarray, returned, k: int = 20) -> f
     TIE_TOLERANCE, so returning either copy of two identical vectors counts. Repeated ids,
     negative ids (usearch's "no result") and anything past the first k count once or not at all.
     """
-    scores = vecs @ query
+    return recall_from_scores(vecs @ query, returned, k)
+
+
+def recall_from_scores(scores: np.ndarray, returned, k: int = 20) -> float:
+    """recall_at_k from the exact scores of every row for one query (saved before the run)."""
     kth = np.partition(scores, len(scores) - k)[len(scores) - k]
-    ids = {int(i) for i in list(returned)[:k] if 0 <= int(i) < len(vecs)}
+    ids = {int(i) for i in list(returned)[:k] if 0 <= int(i) < len(scores)}
     return sum(scores[i] >= kth - TIE_TOLERANCE for i in ids) / k
 
 
