@@ -1,0 +1,91 @@
+# 3 · Which vectors to test on
+
+Every result row says which vectors it used (`source_vectors`). The plan uses **three
+sources**, because they answer different questions.
+
+| Source | `source_vectors` label | What it is | Answers | Comparable with |
+|---|---|---|---|---|
+| **S1 · random** | `random_unit_seed31` | Gaussian 512-d unit vectors, seed 31; queries from seed 90 (as EYKO-90) | speed and memory; worst case for an approximate index | v1, the 3 Nov phone sweep |
+| **S2 · phone "real"** | `real_own_clips_90+noise` | The **same 90 own-clip vectors** the phones use (`android/app/src/androidTest/assets/vectors/own_image_512.f32`, `own_text_384.f32`). Copies after the first 90 get noise 0.01 per number (≈ 0.97 cosine); queries get noise 0.05 | speed with the same data as the phones (B3) | the 4 Nov phone sweep |
+| **S3 · varied real** | e.g. `real_epic_mobileclip` | Many **different** real frames, embedded with the same MobileCLIP-S2 model as the app; queries are real **text** phrases through the MobileCLIP text encoder, as in the app | **accuracy** of float16, int8 and the approximate index (A5, B7, EYKO-109) | — (new) |
+
+## Why S2 alone is not enough
+
+S2 is right for **timing**. An exact dot product does the same work whatever the numbers are,
+and the 4 Nov phone run showed real and random times match (Head 2, B3).
+
+S2 is **wrong for accuracy**. At 100k, 99.9 % of the vectors are noisy copies of only 90
+frames. The true top 20 for a query is then about 20 near-identical copies of one frame, which
+differ only by noise. Any method that rounds the numbers (float16, int8) or skips some vectors
+(HNSW) will shuffle those copies and show a low recall that means nothing. The opposite risk
+also exists: a clustered set can make an approximate index look better than it is. So recall is
+reported on **S1 (worst case) and S3 (realistic case)**, and only listed for S2.
+
+The noise is drawn with numpy, not Java's `Random`, so S2 matches the phones in kind but not
+bit for bit. That is fine for timing, and the write-up will say so.
+
+## The card's step 5 and a licence problem
+
+The card says to read `image_vec` / `text_vec` "from a copy of the Pixel database (ask the lead
+for `memories.db`)". Two facts change that:
+
+1. **The Pixel database also holds Ego4D vectors.** EYKO-56 ran 4 Ego4D clips through the app
+   on the Pixel. The lead's own `src/benchmarks/export_own_vectors.py` says: *"Never point this
+   at a database with Ego4D clips: the licence forbids sharing anything from them."*
+2. **Ego4D access ended on 1 November 2026.** `docs/results/2026-10-19-ego4d-subset.md`: *"Access
+   is valid until 1 November 2026."* Whether vectors already derived from the clips may still be
+   used after that date is a licence question I cannot settle. The plan does not touch them.
+
+**Proposal:** use only the own-clip vectors the lead already exported. They are committed (90 per
+table) and are what the phones use, so laptop and phone stay on the same data. If the lead
+exports more own-clip vectors (own clips only), S2 grows without any licence question.
+
+Where the card and the docs disagree, the card wins and I say so. Here the card's wording
+predates both facts, so this is flagged for the lead rather than followed blindly.
+
+## Options for S3 (varied real vectors)
+
+What it must have: real images like a phone user's, embedded with MobileCLIP-S2; a licence that
+allows academic use; and it has to fit in **15 GB of free disk**, so it is streamed (download,
+embed, delete, keep only the vectors: 100k × 2 KB = 205 MB).
+
+| Option | Domain | Licence | Size / effort | Queries | Fit |
+|---|---|---|---|---|---|
+| **EPIC-KITCHENS-100**, a slice of videos, frames at 1 per 2–3 s | **first-person, everyday** (like our users; the project already used it for keyframes, Head 4) | CC BY-NC 4.0 (academic use fine) | Full set ≈ 740 GB, so **video by video** with the official script (`--specific-videos`, Python 3.5+, no libraries); per-video size not published, so measure one | real narrations ("open fridge", "pick up knife") through the text encoder | **best match** |
+| COCO 2017 (train 118k + val 5k) through streaming | everyday photos, not first-person | annotations CC BY 4.0; images under Flickr terms (terms page could not be read: **verify**) | train is ≈ 18 GB, more than the free disk, so stream it | 5 human captions per image | good scale, wrong viewpoint |
+| Own clips, every frame at 3 fps (not only kept frames) | exactly ours | ours | a few thousand frames; needs the lead's clips | object words from Head 5 (keys, wallet …) | most real, too small |
+| Ego4D | first-person | **access ended 1 Nov** | — | — | **excluded** |
+
+**S3 is required, not optional. The probe showed why** ([evidence](evidence/probe-results-2026-11-05.txt)).
+On 20k random 512-d vectors the true top 20 have a cosine of only about 0.144, while all
+scores have a std of 0.044. Random vectors have no neighbourhoods, which is the worst possible
+case for a graph index:
+
+- usearch at its default settings found **0.20–0.25** of the true top 20.
+- It needs connectivity 32 and expansion_search 1024 to reach 0.997, and then takes 8.3 ms per
+  query on one thread, slower than numpy brute force (4.5 ms).
+
+So an approximate index judged on random vectors fails for reasons that say nothing about real
+use. **Its pass mark has to be judged on S3.** S1 is still run and reported, labelled as the
+worst case.
+
+**How large S3 needs to be:** the card judges the index "at 300k". 300k varied real vectors means
+about 170 hours of video at one frame every 2 s, far beyond this laptop's disk and a reasonable
+download. **Proposal:** S3 goes as large as the time budget allows (target **100k**), and the
+pass mark is judged at the largest S3 size, with the brute-force time at 300k measured on S1 and
+S2 for the speed side. This changes the card's wording, so the lead confirms it before anything
+runs ([05](05-pass-marks-and-risks.md)).
+
+**Decision (owner, 6 Nov 2026):** EPIC-KITCHENS-100, a slice of about 30 videos, streamed, frames every 2 s,
+MobileCLIP-S2 image vectors, with narrations as text queries, up to the largest size that fits
+the time budget (target 100k). COCO is the fallback if the EPIC downloads are too slow.
+
+## What S3 needs that the laptop does not have yet
+
+- **MobileCLIP-S2 ONNX** (image and text encoders): exported with the existing `task export-clip`
+  / `task export-clip-text` (≈ 2 GB of tools and weights; research-only licence, never shipped).
+  The same ONNX files as the phone, so the vectors are the app's vectors.
+- **Embedding speed on this CPU** is not known. Measure it on 500 frames first and write down the
+  hours it implies before starting the full run.
+- PyTorch from PyPI on Linux pulls CUDA libraries (several GB) unless the CPU wheel index is used.
+  With 15 GB free, the export must use the CPU build.
