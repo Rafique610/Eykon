@@ -129,10 +129,34 @@ The app's library ("Saved videos (3)") holds 30 frames in total:
   frames). The remaining frames show a wallet, earbuds, glasses, empty chairs or the 17 Oct classroom.
   Both queries rank mostly the same desk frames at the top, because the keys and the pen lie together.
 
+## Comparison with the Pixel 9 Pro XL (cost reference, not the same clips)
+
+The Pixel's only video-pipeline numbers are the lead's 20 Oct run on four Ego4D clips (27.8 min):
+`docs/results/2026-10-20-ego4d-baseline.md`, section "On the phone (EYKO-56)". Ego4D clips cannot be
+shared and the tester has no Ego4D licence, so they were not run on the Infinix. The Pixel run also used
+the 20 Oct app build, before later stage changes (the Infinix run used the 4 Nov kit build `a637e1d`).
+This table therefore compares **cost per minute of video only**. It is not a same-clip parity check.
+
+| Measure | Infinix X670 (PXL clips, 4 Nov build) | Pixel 9 Pro XL (Ego4D clips, 20 Oct build) |
+|---|---|---|
+| Video length | 74.5 s and 74.9 s | 27.8 min (three of 8 min, one of 3.8 min) |
+| Work per minute of video | about 1.8 and 3.4 min | about 1.4 min (27.6 min for 20.0 min of video) |
+| YOLOE per frame (`small_objects`) | 3.1 s and 2.8 s | 2.5 s |
+| Phone temperature | 29.8 to 33.9 C (sampled, charging) | 28.0 to 36.4 C (on the charger) |
+| Database growth | about 1.6 MiB for 2.7 min (about 0.6 MiB/min, rough) | about 7 MB for 27.8 min (about 0.25 MB/min) |
+| Video copies | about 141 MiB per minute (full copy of phone clips at about 2.5 MB/s) | 530 MB for 27.8 min with the WAV (lower-bitrate clips). Not comparable. |
+| Frame JPEGs | none kept separately | 8.8 MB per minute (that build kept dropped frames' JPEGs) |
+
+Reading: per frame, the YOLOE step is about 1.1 to 1.2 times slower on the Infinix. Per minute of video
+the Infinix took about 1.3 to 2.4 times the Pixel's 1.4 min. The clips differ in length (75 s against 3.8
+to 8 min), content and app build, so the safe statement is: same order of magnitude, the Infinix is
+slower. Nothing finer is supported by these numbers.
+
 ## Not done yet
 
-- **Comparison with the Pixel (card step 6):** kept frames, captions and search answers on the same two PXL
-  clips. Needs the lead's Pixel logs and answers to the same two queries. Not available to the tester.
+- **Same-clip comparison with the Pixel (card step 6):** kept frames, captions and search answers on the
+  same two PXL clips. It needs the two PXL clips run on the Pixel (not available to the tester; the lead
+  owns that phone). The Pixel cost reference above stands in for it and says what it can and cannot show.
 - Confirmation of the matching counts above by the tester (they are an assistant's reading of the
   screenshots).
 - Temperature and PSS during clip 1 and the second half of clip 2 (not sampled, cannot be recovered).
