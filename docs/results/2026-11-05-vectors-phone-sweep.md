@@ -1,7 +1,8 @@
 # Phone vector speed sweep, 1k to 300k (EYKO-95)
 
 Protocol written 5 November 2026, before any controlled run. Cool run done 7 November (Infinix X670).
-Hot run done 7 November (with a late start, see below). Low-battery run is **not done yet**. Supervisor questions answered: B1 "one run? spread?", B2 "why only 20k?",
+Hot run and low-battery run done 7 November (the hot run with a late start, see below). All three Infinix runs are in;
+the Pixel and A32 have not been run under this protocol. Supervisor questions answered: B1 "one run? spread?", B2 "why only 20k?",
 B4 memory, B6 "does a hot phone slow down?".
 
 ## Protocol (fixed before the runs; not changed after seeing numbers)
@@ -107,6 +108,31 @@ of the cool run; only disk read at 20,000 is slower (+4 %, 1,142 to 1,154 ms aga
 ranges do not overlap). The phone only got 5 C warmer, and the sweep ran 10 minutes after the peak, so a
 hotter phone could still throttle; that was not tested.
 
+## Results: Infinix X670, low-battery run (7 Nov 2026, 20:38 to 20:42)
+
+Sizes 20,000 and 100,000, 5 runs each, kit commit a637e1d, flight mode on (turned on from the laptop at the start;
+it had been off), apps cleared, screen on, room 27 C. **Battery 24 % at the start, 23 % at the end** (the
+protocol asks for 30 % or less). The sweep was started over USB at 20:38:54 and the cable was pulled at
+**20:41** (told by Zara), so about the first 2 minutes ran with the cable in (the 20,000 size and part of the
+100,000 size); the run finished 20:42:42. Battery temperature 31.6 C at the start, 32.3 C at the end.
+Files: `infinix-2026-11-07-lowbat.csv` and `proof/infinix-2026-11-07-sweep-lowbat-logcat.txt` (raw).
+
+Median of the 5 run medians in ms:
+
+| n | method | cool (90 %) | hot (88 %) | low battery (24 %) | low against cool |
+|---|---|---|---|---|---|
+| 20,000 | disk | 1,100.2 | 1,144.0 | 1,141.2 | +4 % |
+| 20,000 | memory | 56.4 | 55.9 | 56.4 | 0 % |
+| 20,000 | fast | 13.9 | 14.0 | 14.1 | +1 % |
+| 100,000 | memory | 354.0 | 352.2 | 355.2 | +0.3 % |
+| 100,000 | fast | 69.1 | 68.8 | 68.9 | 0 % |
+
+Reading: **a low battery did not slow the search** in this test. Memory and fast search are within 1 % of
+the cool run; disk read at 20,000 is +4 %, the same as in the hot run (the hot and low-battery disk numbers
+are within 0.3 % of each other, so that +4 % may come from the session rather than heat or battery). The
+cable was in for the first 2 minutes, so the low-battery condition covers the later part of the run only.
+One phone, one session per condition, so small differences (a few percent) should not be read as effects.
+
 ## Other phones (the lead's earlier runs, not under this protocol)
 
 Files `pixel9proxl-2026-11-04-sweep-real.csv` and `a32-2026-11-04-sweep-real.csv`. They were run on 4 Nov,
@@ -130,7 +156,6 @@ here; cause unknown, the builds differ).
 
 ## Not done yet
 
-- **Low-battery run** (20,000 and 100,000 at 30 % or less).
 - A hot run that starts straight after the load, at the peak temperature.
 - Pixel and A32 runs under this protocol (the lead's phones).
 - Sizes between 50,000 and 100,000 (to find the 200 ms crossing more exactly).
