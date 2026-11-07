@@ -6,8 +6,9 @@ Answers, once run: **A5** (same results or just faster?), **B1** (spread), **B2*
 (real data), **B5** (chip or code), **B7** (plan past brute force), and the laptop half of
 **EYKO-109** (float16 / int8).
 
-**Status: plan written, nothing run yet.** The owner decided D1 and D2 on 6 Nov; the lead still
-confirms the pass marks (D3) before the full run.
+**Status: steps 1–3 done** (sources + recall tests, 13 methods + runner, smoke run on 7 Nov:
+[evidence/smoke-2026-11-07](evidence/smoke-2026-11-07/README.md)). The owner decided D1 and D2 on
+6 Nov; the lead still confirms the pass marks (D3) before the full run.
 
 ## The plan in one paragraph
 

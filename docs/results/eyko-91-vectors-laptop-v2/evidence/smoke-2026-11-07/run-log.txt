@@ -1,0 +1,32 @@
+laptop i5-10310U · python 3.10.12 · numpy 2.2.6 · sqlite 3.37.2 · 9b70fd2
+random n=  1000 blob_disk_dot            median      3.53 ms  recall 1.0000  pss 26 MB  (1 s)
+random n=  1000 blob_memory_numpy        median      3.10 ms  recall 1.0000  pss 26 MB  (1 s)
+random n=  1000 blob_memory_numpy_1t     median      0.07 ms  recall 1.0000  pss 26 MB  (0 s)
+random n=  1000 blob_memory_pyloop       median     34.05 ms  recall 1.0000  pss 43 MB  (4 s)
+random n=  1000 blob_memory_f16          median      1.03 ms  recall 1.0000  pss 25 MB  (0 s)
+random n=  1000 blob_memory_i8           median      0.16 ms  recall 0.9900  pss 26 MB  (0 s)
+random n=  1000 blob_memory_i8_rescore   median      0.48 ms  recall 1.0000  pss 28 MB  (0 s)
+random n=  1000 sqlite_vec_f32           median      1.20 ms  recall 1.0000  pss 26 MB  (0 s)
+random n=  1000 sqlite_vec_int8          median      2.16 ms  recall 0.8750  pss 25 MB  (1 s)
+random n=  1000 usearch_hnsw_c16_ef64    median      0.43 ms  recall 0.9125  pss 34 MB  (1 s)
+random n=  1000 usearch_hnsw_c16_ef256   median      0.51 ms  recall 0.9925  pss 34 MB  (1 s)
+random n=  1000 usearch_hnsw_c32_ef1024  median      0.85 ms  recall 0.9875  pss 34 MB  (1 s)
+random n=  1000 usearch_exact_f32        median      0.36 ms  recall 1.0000  pss 33 MB  (0 s)
+random n=  5000 blob_disk_dot            median     19.16 ms  recall 1.0000  pss 26 MB  (2 s)
+random n=  5000 blob_memory_numpy        median      0.88 ms  recall 1.0000  pss 35 MB  (1 s)
+random n=  5000 blob_memory_numpy_1t     median      0.59 ms  recall 1.0000  pss 34 MB  (0 s)
+random n=  5000 blob_memory_pyloop       median    172.64 ms  recall 1.0000  pss 123 MB  (19 s)
+random n=  5000 blob_memory_f16          median      5.64 ms  recall 0.9975  pss 29 MB  (1 s)
+random n=  5000 blob_memory_i8           median      2.15 ms  recall 0.9950  pss 35 MB  (1 s)
+random n=  5000 blob_memory_i8_rescore   median      3.00 ms  recall 1.0000  pss 37 MB  (1 s)
+random n=  5000 sqlite_vec_f32           median      7.35 ms  recall 1.0000  pss 26 MB  (1 s)
+random n=  5000 sqlite_vec_int8          median      5.84 ms  recall 0.8425  pss 26 MB  (1 s)
+random n=  5000 usearch_hnsw_c16_ef64    median      0.70 ms  recall 0.5200  pss 43 MB  (2 s)
+random n=  5000 usearch_hnsw_c16_ef256   median      1.44 ms  recall 0.9025  pss 43 MB  (2 s)
+random n=  5000 usearch_hnsw_c32_ef1024  median      2.76 ms  recall 0.9875  pss 44 MB  (3 s)
+random n=  5000 usearch_exact_f32        median      1.90 ms  recall 1.0000  pss 41 MB  (1 s)
+written to docs/results/eyko-91-vectors-laptop-v2/evidence/smoke-2026-11-07
+
+real	0m46.455s
+user	1m28.991s
+sys	0m4.417s
