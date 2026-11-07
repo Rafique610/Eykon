@@ -1,7 +1,7 @@
 # Phone vector speed sweep, 1k to 300k (EYKO-95)
 
 Protocol written 5 November 2026, before any controlled run. Cool run done 7 November (Infinix X670).
-Hot run and low-battery run are **not done yet** (see the end). Supervisor questions answered: B1 "one run? spread?", B2 "why only 20k?",
+Hot run done 7 November (with a late start, see below). Low-battery run is **not done yet**. Supervisor questions answered: B1 "one run? spread?", B2 "why only 20k?",
 B4 memory, B6 "does a hot phone slow down?".
 
 ## Protocol (fixed before the runs; not changed after seeing numbers)
@@ -77,6 +77,33 @@ What the numbers say:
   linear. I did not investigate why (it could be the SQLite page cache; not tested).
 - Peak PSS of 222 MB at n = 1,000 is the first run of the first size (JIT and start-up), not the data.
 
+## Results: Infinix X670, hot run (7 Nov 2026)
+
+**Heat load:** the video pipeline processed the Snapchat clip and both PXL clips (094359, 094903) from
+13:31 to 13:42:40 (about 11 minutes), with the phone unplugged from the laptop's side only for the sweep
+(it was on USB during the load). Battery temperature read each minute (`infinix-2026-11-07-hot-load-readings.txt`):
+32.0 C at 13:34, 37.3 C peak at 13:39, 36.5 to 37.2 C until the load ended, battery 89 to 88 %.
+**Deviation from the protocol:** my laptop shut down during the load, so the sweep did not start right
+after it. It started at 13:52:25, **10 minutes after the load ended**, when the phone had already cooled to
+35.6 C. So this is a "warm" run (35.6 to 36.6 C during the sweep, against 30.3 to 32.9 C in the cool run),
+not the peak 37.3 C. Phone unplugged during the sweep, flight mode, battery 88 %, room 27 C. Files:
+`infinix-2026-11-07-hot.csv` and `proof/infinix-2026-11-07-sweep-hot-logcat.txt` (raw).
+
+Median of the 5 run medians in ms, hot against cool:
+
+| n | method | cool | hot (35.6 to 36.6 C) | change |
+|---|---|---|---|---|
+| 20,000 | disk | 1,100.2 | 1,144.0 | +4 % |
+| 20,000 | memory | 56.4 | 55.9 | -1 % |
+| 20,000 | fast | 13.9 | 14.0 | 0 % |
+| 100,000 | memory | 354.0 | 352.2 | -1 % |
+| 100,000 | fast | 69.1 | 68.8 | 0 % |
+
+Answer to B6 ("does a hot phone slow down?"): **not measurably here.** Memory and fast search are within 1 %
+of the cool run; only disk read at 20,000 is slower (+4 %, 1,142 to 1,154 ms against 1,097 to 1,107 ms, so the
+ranges do not overlap). The phone only got 5 C warmer, and the sweep ran 10 minutes after the peak, so a
+hotter phone could still throttle; that was not tested.
+
 ## Other phones (the lead's earlier runs, not under this protocol)
 
 Files `pixel9proxl-2026-11-04-sweep-real.csv` and `a32-2026-11-04-sweep-real.csv`. They were run on 4 Nov,
@@ -100,8 +127,8 @@ here; cause unknown, the builds differ).
 
 ## Not done yet
 
-- **Hot run** (10 minutes of the video pipeline, then 20,000 and 100,000) and **low-battery run**
-  (20,000 and 100,000 at 30 % or less).
+- **Low-battery run** (20,000 and 100,000 at 30 % or less).
+- A hot run that starts straight after the load, at the peak temperature.
 - Pixel and A32 runs under this protocol (the lead's phones).
 - Sizes between 50,000 and 100,000 (to find the 200 ms crossing more exactly).
 - Device sheet for the Infinix is in `docs/results/vectors/proof/infinix-2026-11-05-device.txt`; the lead's
