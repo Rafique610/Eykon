@@ -1,0 +1,22 @@
+Device sheet for infinix-2026-11-05-logcat.txt (adb output and the test's own lines, recorded by Zara Tahir)
+date:            2026-11-05 14:14 (phone clock, start of the recorded run)
+manufacturer:    INFINIX
+model:           Infinix X670
+soc:             MT6781V/CDZAMB-H (board mt6781)
+android:         13 (SDK 33)
+platform sqlite: 3.32.2 (printed by the test)
+ram:             MemTotal 7931676 kB (the test prints 8.1 GB, java heap limit 268 MB)
+free storage:    9.9 GB free (printed by the test), 110 GB total (/data)
+battery:         91 %, USB powered, 28.9 °C. Read earlier the same afternoon, before the first test run; NOT at the start of this run.
+app:             updated in place (adb install -r, data kept) from phone kit 2026-11-03; APKs built from commit a637e1d
+                 (KIT-VERSION.txt). Installed 2026-11-05 09:30. The test prints "commit unknown" because no -e commit was given.
+models:          six kit models pushed with push-models.bat (not used by this test)
+command:         run-eyko94.ps1, which runs: adb shell am instrument -w -e class com.eykon.memory.spike.VectorStorageSpikeTest com.eykon.memory.test/androidx.test.runner.AndroidJUnitRunner
+result:          ran to the end (last log line: csv written, 14:20:05). The "OK (n tests)" line was printed in the terminal and is
+                 in the recording, not in this log. 60 lines, 5 min 12 s from the first log line to the last.
+earlier run:     none kept. A rehearsal and one more recorded attempt were run earlier the same afternoon; their logs were
+                 overwritten by this one (same file name).
+run 2:           infinix-2026-11-05-logcat-run2.txt, started 14:30:04 after a phone restart (uptime 9 min at 14:38, so it
+                 booted about 14:29). Same errors. Terminal: "Time: 320.792", "OK (3 tests)". Not recorded. 10.5 GB free.
+note:            Not run under the EYKO-95 protocol (phone charging, other apps open, not cool). The timing lines in this log are
+                 not EYKO-95 data. The phone had been up 1 week 1 day (not restarted) at the time of this run.
