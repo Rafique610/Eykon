@@ -101,7 +101,11 @@ screenshot of the error lines:
 
 ## Still to do
 
-- Attach the key screenshot to the card (done on the card page, not here).
+- Screenshot is attached to the card (done 7 Nov).
+- The script that ran the test is committed as `docs/phone-kit/run-eyko94.ps1` (7 Nov), so others can rerun it.
+- The two CSVs the test wrote on 5 Nov (`eyko100-memory-...1414.csv`, `eyko90-...1417.csv`) are still on the phone;
+  to be pulled and committed as an uncontrolled run.
+- Head 2 document (A1 and A4): left to the lead at merge; not edited here.
 
 ## What this does not prove
 
