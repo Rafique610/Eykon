@@ -1,6 +1,7 @@
 package com.eykon.memory.video
 
 import androidx.sqlite.db.SupportSQLiteDatabase
+import java.io.File
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 
@@ -19,7 +20,13 @@ object VideoVectors {
         "audio_vec" to ("window_id" to 512),
     )
 
-    private class Loaded(val stamp: Pair<Long, Long>, val ids: LongArray, val matrix: FloatArray, val size: Int)
+    /** How tables are held in memory. HEAP_F32 is the app's way; the rest are EYKO-109 variants (tests set it). */
+    @Volatile internal var mode = VectorMode.HEAP_F32
+
+    /** How many of the best int8 scores are re-scored with the exact float32 vector (DIRECT_I8 only). */
+    private const val RESCORE = 100
+
+    private class Loaded(val stamp: Pair<Long, Long>, val ids: LongArray, val matrix: FloatArray?, val block: VectorBlock?, val size: Int)
 
     /** Every row's id (ascending) and its likeness to the query, at the same index. */
     class Scored(val ids: LongArray, val scores: FloatArray)
@@ -54,7 +61,20 @@ object VideoVectors {
         require(query.size == size) { "$table expects $size numbers, got ${query.size}" }
         val stamp = db.query("SELECT COUNT(*), IFNULL(MAX($idColumn), 0) FROM $table").use { it.moveToFirst(); it.getLong(0) to it.getLong(1) }
         val loaded = cache[table]?.takeIf { it.stamp == stamp } ?: load(db, table, idColumn, size, stamp).also { cache[table] = it }
-        return Scored(loaded.ids, FloatArray(loaded.ids.size) { row -> dot(loaded.matrix, row * size, query) })
+        val block = loaded.block ?: return Scored(loaded.ids, FloatArray(loaded.ids.size) { row -> dot(loaded.matrix!!, row * size, query) })
+        val out = FloatArray(loaded.ids.size)
+        block.scoreAll(query, out)
+        if (mode == VectorMode.DIRECT_I8) rescore(db, table, idColumn, loaded.ids, out, query)
+        return Scored(loaded.ids, out)
+    }
+
+    /** Replace the [RESCORE] best int8 scores with the exact float32 likeness, read back by id. */
+    private fun rescore(db: SupportSQLiteDatabase, table: String, idColumn: String, ids: LongArray, scores: FloatArray, query: FloatArray) {
+        for (row in rankDescending(scores).take(RESCORE)) {
+            db.query("SELECT embedding FROM $table WHERE $idColumn = ?", arrayOf(ids[row])).use {
+                if (it.moveToFirst()) scores[row] = dot(fromBlob(it.getBlob(0)), 0, query)
+            }
+        }
     }
 
     /**
@@ -97,16 +117,18 @@ object VideoVectors {
     private fun load(db: SupportSQLiteDatabase, table: String, idColumn: String, size: Int, stamp: Pair<Long, Long>): Loaded {
         val rows = stamp.first.toInt()
         val ids = LongArray(rows)
-        val matrix = FloatArray(rows * size)
+        val block = if (mode == VectorMode.HEAP_F32) null else VectorBlock(mode, rows, size, if (mode == VectorMode.MAPPED_F32) File("${db.path}.$table.vec") else null)
+        val matrix = if (block == null) FloatArray(rows * size) else null
         db.query("SELECT $idColumn, embedding FROM $table ORDER BY $idColumn").use { cursor ->
             var row = 0
             while (cursor.moveToNext() && row < rows) {
                 ids[row] = cursor.getLong(0)
-                ByteBuffer.wrap(cursor.getBlob(1)).order(ByteOrder.LITTLE_ENDIAN).asFloatBuffer().get(matrix, row * size, size)
+                if (block != null) block.put(row, cursor.getBlob(1))
+                else ByteBuffer.wrap(cursor.getBlob(1)).order(ByteOrder.LITTLE_ENDIAN).asFloatBuffer().get(matrix!!, row * size, size)
                 row++
             }
         }
-        return Loaded(stamp, ids, matrix, size)
+        return Loaded(stamp, ids, matrix, block, size)
     }
 
     internal fun toBlob(vector: FloatArray): ByteArray =

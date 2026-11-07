@@ -31,7 +31,7 @@ import java.util.Locale
  * and after a change can be compared.
  *
  * Arguments: sizes (kept frames, default 5k,20k,50k,100k), runs (default 5), dropped (default 12),
- * label (goes into the file names, e.g. before / after), commit.
+ * label (goes into the file names, e.g. before / after), mode (a VectorMode name, default HEAP_F32), commit.
  */
 @RunWith(AndroidJUnit4::class)
 class VideoSearchSpeedTest {
@@ -47,6 +47,7 @@ class VideoSearchSpeedTest {
         val runs = args.getString("runs")?.toInt() ?: 5
         val dropped = args.getString("dropped")?.toInt() ?: 12
         val label = args.getString("label") ?: "current"
+        VideoVectors.mode = VectorMode.valueOf(args.getString("mode") ?: "HEAP_F32") // EYKO-109: compare the whole app search per mode
         val sheet = BenchSheet(context, tag, "eyko102-search-$label", args.getString("commit") ?: "unknown", TestVectors.label("real"))
         Log.i(tag, "search: sizes $sizes, runs $runs, dropped per kept $dropped, label $label")
         val queries = TestVectors.queries("real", 512, 21) // the first one is the warm-up
