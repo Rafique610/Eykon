@@ -10,8 +10,8 @@ Answers, once run: **A5** (same results or just faster?), **B1** (spread), **B2*
 [evidence/smoke-2026-11-07](evidence/smoke-2026-11-07/README.md); full run on S1 + S2, 1k–300k,
 plugged in, 7 Nov: [`laptop-2026-11-07-sweep.csv`](../vectors/laptop-2026-11-07-sweep.csv),
 [`-sweep-real.csv`](../vectors/laptop-2026-11-07-sweep-real.csv),
-[run log](evidence/full-2026-11-07/run-log.txt)). The owner decided D1 and D2 on 6 Nov; the lead
-still confirms the pass marks (D3), which change the verdict, not the data.
+[run log](evidence/full-2026-11-07/run-log.txt)). The owner decided D1 and D2 on 6 Nov; D3 (pass
+marks) was decided on 7 Nov, **after** the full run. The marks change the verdict, not the data.
 
 ## The plan in one paragraph
 
@@ -49,7 +49,7 @@ shared CSV that EYKO-97's graphs read.
 |---|---|---|
 | D1 | Varied real vectors (S3): which source? | **EPIC-KITCHENS slice** (decided by the owner, 6 Nov 2026): about 30 videos streamed one by one, frames every 2 s, MobileCLIP-S2 vectors, narrations as text queries, target 100k vectors. COCO stays the fallback if downloads are too slow |
 | D2 | CSV file name | **One file per source** (decided by the owner, 6 Nov 2026): `laptop-<date>-sweep.csv` (random, the same suffix as the phones' random sweep), `-sweep-real.csv`, `-sweep-varied.csv`, named like the phone files so EYKO-97's graphs pick the laptop up. This differs from the card's single `laptop-<date>.csv`; the card comment will say so |
-| D3 | For the lead, on the card | **open**: judge the index on varied real data at its largest size instead of "at 300k"; compare with one-thread numpy; float16 / int8 mark 0.99. To be confirmed before the full run |
+| D3 | Pass marks (for the lead, on the card) | **Decided 7 Nov 2026** by the lead (Taha Ahmed), agreed by the reviewer (Rafique, EYKO-91 comment, 15:41 UTC): (1) the index is judged on S3 (varied real, EPIC-KITCHENS) at its largest size, not on random vectors "at 300k"; (2) "in-memory BLOB" = `blob_memory_numpy_1t`, with the all-threads `blob_memory_numpy` reported next to it; (3) float16 / int8 mark recall@20 ≥ 0.99, ties counted. **The 7 Nov full run (S1 + S2, 14:44 UTC) finished before D3 was written down**; D3 changes how the rows are judged, not the rows |
 
 ## Files
 

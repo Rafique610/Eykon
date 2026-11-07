@@ -9,8 +9,8 @@
 |---|---|---|
 | Exact methods (1, 2, 3, 4, 8, 13) | recall@20 = **1.0** (ties counted) at every size and source. Lower = a bug; stop and fix before any timing is reported | card |
 | Approximate index (usearch rows 10–12) | worth porting only if **recall@20 ≥ 0.95 and ≥ 5× faster** than in-memory BLOB search | card |
-| … judged on which data | **S3 (varied real), at its largest size** (target 100k), not random. Random has no neighbourhoods: defaults gave 0.20–0.25 and 0.997 cost more time than brute force ([04](04-libraries.md)) | **proposed change**: the card says "at 300k" |
-| … "in-memory BLOB" means | `blob_memory_numpy_1t` (one thread, the fair comparison with the one-thread phone loop). The multi-thread row is reported next to it | proposed: the card does not say |
+| … judged on which data | **S3 (varied real), at its largest size** (target 100k), not random. Random has no neighbourhoods: defaults gave 0.20–0.25 and 0.997 cost more time than brute force ([04](04-libraries.md)) | **D3, decided 7 Nov 2026** (the card says "at 300k") |
+| … "in-memory BLOB" means | `blob_memory_numpy_1t` (one thread, the fair comparison with the one-thread phone loop). The multi-thread row is reported next to it | **D3, decided 7 Nov 2026** (the card does not say) |
 | float16 / int8 (rows 5–7, 9) | **recall@20 ≥ 0.99** on S3, the same mark EYKO-109 sets for the phone. Below that the method is listed, not proposed | EYKO-109 |
 
 Nothing in this card "adopts" a method for the app. It produces the laptop evidence, and EYKO-98 (the
