@@ -201,5 +201,50 @@ class OffHeapVectorTest {
         sheet.done()
     }
 
+    /**
+     * Step 6: does Android take the memory back? Loads three tables with [mode] (argument `mode`, default
+     * MAPPED_F32, `n` rows each, default 100k), logs pid, PSS and Java heap every 30 s for `seconds` (default 300)
+     * while the tester opens other apps, then searches every table again and times it. A first search that is
+     * much slower than a repeat means the vectors were dropped from RAM. The test runs in an instrumentation
+     * process, which Android protects more than a normal app, so a kill here is strong evidence and "no kill" is weaker.
+     */
+    @Test
+    fun holdInBackground() {
+        val context = ApplicationProvider.getApplicationContext<Context>()
+        val args = InstrumentationRegistry.getArguments()
+        val mode = VectorMode.valueOf(args.getString("mode") ?: "MAPPED_F32")
+        val n = parseSize(args.getString("n") ?: "100k")
+        val seconds = args.getString("seconds")?.toInt() ?: 300
+        val tables = listOf(Triple("image_vec", "frame_id", 512), Triple("text_vec", "text_id", 384), Triple("audio_vec", "window_id", 512))
+        val name = "eyko109_hold_$n.db"
+        cleanUp(context, name)
+        val helper = open(context, name)
+        val db = helper.writableDatabase
+        try {
+            tables.forEachIndexed { i, (table, idColumn, size) -> insert(db, table, idColumn, size, n, 31L + i) }
+            VideoVectors.mode = mode
+            VideoVectors.clearCache()
+            val queries = tables.associate { it.third to TestVectors.queries("real", it.third, 1)[0] }
+            for ((table, _, size) in tables) VideoVectors.scores(db, table, queries.getValue(size))
+            Log.i(tag, "hold: $mode, $n rows x 3 tables loaded, pid ${android.os.Process.myPid()}, holding $seconds s: open other apps now")
+            var waited = 0
+            while (waited < seconds) {
+                Thread.sleep(30_000)
+                waited += 30
+                Log.i(tag, "hold: ${waited}s, pid ${android.os.Process.myPid()}, PSS %.0f MB, java heap %.0f MB".format(Locale.ROOT, Debug.MemoryInfo().also { Debug.getMemoryInfo(it) }.totalPss / 1024.0, javaMb()))
+            }
+            for ((table, _, size) in tables) {
+                val first = timeMs { VideoVectors.scores(db, table, queries.getValue(size)) }
+                val repeat = timeMs { VideoVectors.scores(db, table, queries.getValue(size)) }
+                Log.i(tag, "hold: after $seconds s, $table search %.0f ms, repeat %.0f ms, still the same process (pid ${android.os.Process.myPid()})".format(Locale.ROOT, first, repeat))
+            }
+        } finally {
+            VideoVectors.mode = VectorMode.HEAP_F32
+            VideoVectors.clearCache()
+            helper.close()
+            cleanUp(context, name)
+        }
+    }
+
     private fun top(scores: FloatArray): Set<Int> = VideoVectors.rankDescending(scores).take(topK).toSet()
 }

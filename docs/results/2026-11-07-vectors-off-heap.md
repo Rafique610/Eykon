@@ -44,9 +44,9 @@ Java heap after loading (MB) / total PSS after (MB) / tables loaded of 3. Total 
 Bold = `OutOfMemoryError` while loading the next table (the error text is in the CSV note). Native heap was
 8 to 9 MB in every row (the mapped file does not count there; it is in PSS).
 **New "rows that fit" for three tables on the Infinix:** today's way and `DIRECT_F32` fit 20,000 (50,000 fails);
-`DIRECT_F16` fits 50,000 (100,000 fails); `DIRECT_I8` and `MAPPED_F32` fit 100,000 (200,000 and 300,000 not tested).
+`DIRECT_F16` fits 50,000 (100,000 fails); `DIRECT_I8` fits 100,000 (200,000 fails); `MAPPED_F32` fits 300,000 (the largest tested).
 `MAPPED_F32` at 100,000 held 598 MB of PSS: the vectors are still in RAM when touched, only as reclaimable file
-pages, not Java heap. Whether Android keeps them under memory pressure was **not tested** (step 6).
+pages, not Java heap. What Android does with them under memory pressure is in the Step 6 section below.
 
 ## Speed: image table only, `VideoVectors.scores` (scores every row), median ms of 5 runs x 20 queries
 
@@ -74,33 +74,71 @@ pages, not Java heap. Whether Android keeps them under memory pressure was **not
 Not run: the whole-app check with `VideoSearchSpeedTest` (the 2,400 hits). It has a `mode` argument now, but with
 float16 and int8 already failing other marks below, it would not change a verdict; it is still needed if either is considered later.
 
+## Bigger tables: 200,000 and 300,000 rows (only the two modes that fit 100,000)
+
+| Rows each | `DIRECT_I8` (Java heap / PSS / tables) | `MAPPED_F32` (Java heap / PSS / tables) |
+|---|---|---|
+| 200,000 | 185 / 236 / **2** (out of memory on the audio table) | 7 / 1,132 / 3 |
+| 300,000 | 159 / 210 / **1** (out of memory on the text table) | 10 / 1,484 / 3 |
+
+`MAPPED_F32` loads all three tables at 300,000 rows with a 10 MB Java heap, but it then holds 1.5 GB of PSS on an
+8 GB phone (first load takes minutes). On a 6 GB phone such as the A32 this was **not tested**, and I would not
+assume it fits: it is file-backed memory the OS may drop, not free memory.
+
+## Whole-app search with each mode (`VideoSearchSpeedTest`, `mode` argument, 1 run, 20 queries x 20 hits per size)
+
+Hits are (frame, window start, window end) per query, compared with `HEAP_F32`:
+
+| Mode | Hits identical, 5k + 20k (800 hits) | Same hits in any order | Whole-app search median, 5k / 20k (ms) |
+|---|---|---|---|
+| `HEAP_F32` | (reference) | (reference) | 70.3 / 185.1 |
+| `MAPPED_F32` | 800 of 800 | 800 of 800 | 70.4 / 192.6 (+4 % at 20k) |
+| `DIRECT_I8` | 779 of 800 (97.4 %) | 779 of 800 | 80.8 / 207.7 |
+| `DIRECT_F16` | 737 of 800 (92.1 %) | 799 of 800 (99.9 %) | 173.1 / 613.6 |
+
+The card's 2,400 hits came from the larger sizes of EYKO-102; this check used 5k and 20k only (800 hits), because the app
+database at 50k and 100k kept frames is much slower to build on the phone. So it is **not** the full 2,400-hit check.
+Against the card's 99 % mark: `MAPPED_F32` passes; `DIRECT_I8` fails (97.4 %); `DIRECT_F16` passes only if order does not matter.
+
+## Step 6: does Android take the memory back? (one phone, background test)
+
+`holdInBackground`: three tables of 100,000 rows loaded with `MAPPED_F32`, held 5 minutes (23:28 to 23:38) while Chrome, the camera,
+YouTube Music, Settings and the calculator were opened in turn from the laptop (three rounds), then searched again.
+- The process **was not killed**: same pid (22330) for the whole time.
+- PSS fell from 598 MB to 567 to 569 MB when the other apps opened: Android took back about 30 MB of the mapped pages.
+- First search afterwards: image table 1,318 ms against 350 ms on repeat (3.8 times slower, pages re-read from storage);
+  text 265 against 209 ms; audio 353 against 339 ms.
+- Limits: this ran inside an instrumentation process, which Android protects more than a normal app, so "not killed"
+  is weaker evidence than the card intends; the card asks for this on the **A32** (6 GB), which was not run. Only `MAPPED_F32` was held.
+
 ## Against the card's pass marks (one phone only)
 
 - **V1 (float32 off-heap): not adopted.** Scores are bit-identical, but `DIRECT_F32` fails the 50k three-table mark
   (out of memory on 2 of 3 tables) and both float32 variants are 14 to 15 % slower at 100,000 (mark: within 10 %).
-  `MAPPED_F32` passes the memory mark (100,000 loaded, even past 50,000) and fails the speed mark by about 5 points.
+  `MAPPED_F32` passes the memory mark (100,000 loaded, even 300,000) and the same-hits mark, and fails the speed mark by about 5
+  points at 100,000 (the whole app search is +4 % at 20,000).
 - **V2 (float16): not adopted.** recall passes (0.99 at 100,000), but three tables at 100,000 do not fit, and it is 2.3 s at 100,000.
 - **V3 (int8 + re-score): not adopted.** Fits three tables at 100,000 (146 MB heap) and recall is 0.995, but 386 ms at 100,000
-  on the Infinix is above the 200 ms mark, and the A32 is slower. The 2,400-hit check was not run.
+  on the Infinix is above the 200 ms mark, the A32 is slower, and the same-hits check gives 97.4 % (mark 99 %).
 - **Verdict (one phone): no variant passes all marks.** The nearest is the memory-mapped float32 file: exact answers,
-  Java heap near zero, three tables at 100,000 rows, 14 to 15 % slower than today. Whether that cost is acceptable is the lead's call.
+  Java heap near zero, three tables up to 300,000 rows, 14 to 15 % slower than today at 100,000, survived 5 minutes in the
+  background but had some pages reclaimed (first search 3.8 times slower). Whether that cost and the RAM use are acceptable is the lead's call.
 
 ## What went wrong or is not proven
 
-- **One phone.** A32 and Pixel not run; the card's pass marks cannot be fully applied.
+- **One phone.** A32 and Pixel not run; the card's pass marks cannot be fully applied, and step 6 was not done on the A32.
 - **A process crash.** Running all five modes in one process crashed it at 100,000 rows, after the heap had run out of memory twice
   (memory test, 21:00; speed test, 21:37). The cause was not found (the logcat was cleared between runs). Each remaining mode was then
   run alone at 100,000 and finished, so the 100,000 rows in the tables come from separate processes, not one run.
-- **Raw logcat is partial.** The logcat buffer was cleared before each batch; only the last two runs are saved
-  (`proof/infinix-2026-11-07-offheap-logcat-last-runs.txt`). The CSVs hold every number above; they are the evidence.
-- **Not tested:** step 6 (leaving the app in the background to see if Android kills it), 200,000 and 300,000 rows for the modes that
-  fit 100,000, the whole-app 2,400-hit check, and the Head 2 document (B4, B7, E8, G20) and its graphs. The phone was plugged in
-  during these runs (not a thermal test). Android killed several unrelated background processes during the 100,000 runs
-  (`signal 9` lines in logcat); I did not identify them and do not claim our test caused it.
-- Pass marks were not confirmed by the lead before the run.
+- **Raw logcat is partial.** The logcat buffer was cleared before each batch; the saved files are the last runs
+  (`proof/infinix-2026-11-07-offheap-logcat-*.txt`). The CSVs hold every number above; they are the evidence.
+- **Not done:** the 2,400-hit check at the larger sizes (800 hits at 5k and 20k only), the Head 2 document graphs (a new figure was not
+  drawn), and the lead's confirmation of the pass marks. The phone was plugged in during these runs (not a thermal test). Android killed
+  several unrelated background processes during the 100,000 runs (`signal 9` lines in logcat); I did not identify them and do not claim our test caused it.
 
 ## Evidence files
 
 `docs/results/vectors/offheap/infinix-2026-11-07-eyko109-memory-*.csv` (4 files; the first is the run that crashed at 100,000)
 and `...-eyko109-speed-*.csv` (6 files; 2137 crashed after the float16 rows, 2157 and 2200 are the int8 and mapped runs at 100,000),
-pulled unedited from the phone. Code: `android/.../video/VectorBlock.kt`, `VideoVectors.kt`, `OffHeapVectorTest.kt`.
+plus the 200,000/300,000 memory files (2238 mapped, 2255 int8) and `offheap/app-search/` (whole-app hits and timings per mode),
+pulled unedited from the phone. Step 6 numbers are in `proof/infinix-2026-11-07-offheap-logcat-hits-big-hold.txt`. Code: `android/.../video/VectorBlock.kt`, `VideoVectors.kt`, `OffHeapVectorTest.kt`.
