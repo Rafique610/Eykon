@@ -110,9 +110,9 @@ body.push(new Paragraph({ heading: HeadingLevel.TITLE, children: [new TextRun('S
 body.push(P('Where the vectors live, how the tables are shaped, and the ground rules that keep the laptop and the phone in step.', { run: { color: C.muted, size: 22 }, after: 200 }));
 
 body.push(grid([2100, W - 2100], null, [
-  ['**Last updated**', '4 Nov 2026'],
-  ['**Overall status**', 'Built and in the app. Re-tested on two phones with real vectors. Memory limit found; plan for it still open.'],
-  ['**Cards**', 'EYKO-1 (tables), EYKO-31 (storage test), EYKO-30 (pytest), EYKO-90 (size sweep), EYKO-100 (full test), EYKO-102 (faster search in app)'],
+  ['**Last updated**', '7 Nov 2026'],
+  ['**Overall status**', 'Built and in the app. Re-tested on two phones with real vectors; the failure confirmed on a third phone, and the setup reproduced on a second laptop. Memory limit found; plan for it still open.'],
+  ['**Cards**', 'EYKO-1 (tables), EYKO-31 (storage test), EYKO-30 (pytest), EYKO-90 (size sweep), EYKO-100 (full test), EYKO-102 (faster search in app), EYKO-94 (three-phone proof pack), EYKO-92 (clean clone), EYKO-84 (second phone, whole pipeline)'],
 ], { firstColFill: true }));
 
 body.push(LABEL('How to use this document', { before: 240 }));
@@ -226,6 +226,7 @@ const steps = [
   ['Full test · 4 Nov · EYKO-100', 'ok', 'Android blocks every plugin, not just sqlite-vec', 'Even a made-up plugin name gives "no such function: load_extension". Real vectors from our own clips are as fast as random ones. 5 runs × 20 queries, two phones.', 'E5, E6'],
   ['Improvement · EYKO-100 → 102', 'ok', 'Our own loop was the slow part', 'In the test, a smarter loop (four running sums, keep only the best 20) gave the same top 20 on 400 of 400 checks, **5.9× faster** at 100k (537 → 91 ms). The app took the four running sums plus a faster ranking (it needs every frame\'s score to grow its time windows, so it cannot keep only 20): whole search **4.3× faster** on the A32 at 20k, 2,400 of 2,400 hits identical (Head 7).', 'E6, E7'],
   ['Limit found · 4 Nov', 'bad', 'Memory runs out between 20k and 50k rows', 'With all three vector tables loaded, 20k rows each fit, 50k does not. Android gives the app 268 MB, on the 6 GB A32 and on the 16 GB Pixel alike.', 'E8'],
+  ['Re-check · 5–7 Nov · EYKO-94, 92', 'ok', 'A third phone and a second laptop agree', 'Zara ran the same test on her Infinix X670 (another maker, another chip): the same two errors, again after a phone restart, and the same memory limit. From a fresh clone on her own laptop the laptop side reproduced too: 14 tests pass and the storage test ranks the methods the same way.', 'E4, E8'],
   ['Still open', null, 'What comes next', 'Try shipping our own SQLite (EYKO-93). Choose a plan past 20k, such as smaller vectors or one table in memory (EYKO-98). Find sources for the 200 ms target and the usage estimate (EYKO-101).', null],
 ];
 steps.forEach((s, i) => {
@@ -259,21 +260,21 @@ body.push(P([
 const Q = [
   // id, group, q, status, say, show, push, card
   ['A1', 'A', 'Did you actually run sqlite-vec on a phone, or just read about it?', 'Answered',
-    'Yes. On two real phones, on three days: the A32 on 12 Oct, 3 Nov and 4 Nov, the Pixel 9 Pro XL on 3 and 4 Nov. Same two errors every time: "no such module: vec0" and "no such function: load_extension".',
-    'E4, E5. Raw logs: `docs/results/vectors/proof/*-2026-11-03-logcat.txt`, `*-2026-11-04-extensions-logcat.txt`',
-    'The test is one command from the phone kit, so anyone can rerun it. A screen recording and a third phone are planned.', 'EYKO-94'],
+    'Yes. On three real phones, run by two people: the A32 on 12 Oct, 3 and 4 Nov and the Pixel 9 Pro XL on 3 and 4 Nov (Rafique), the Infinix X670 on 5 Nov, twice, the second time after a restart (Zara). Same two errors every time: "no such module: vec0" and "no such function: load_extension".',
+    'E4, E5. The proof pack: `docs/results/2026-11-05-sqlite-vec-proof-pack.md` (every raw log and device sheet). Screen recording of the Infinix run: Drive link in the proof pack.',
+    'The test is one command from the phone kit (`docs/phone-kit/run-eyko94.ps1`), so anyone can rerun it while you watch.', 'Done: EYKO-94'],
   ['A2', 'A', 'Is that a sqlite-vec problem or an Android problem?', 'Answered',
-    'Android. Both phones refuse to load any plugin at all, even one with a made-up name. Only modules built into Android\'s own SQLite work.',
+    'Android. All three phones refuse to load any plugin at all, even one with a made-up name. Only modules built into Android\'s own SQLite work.',
     'E5',
     'Of fts4, fts5 and rtree, only fts4 is built in. Our keyword index uses fts4, so it is safe.', 'EYKO-89 (official reason)'],
   ['A3', 'A', 'Android apps can ship their own SQLite. Did you try that?', 'Open',
     'Not yet. Only the built-in SQLite was tried. This is the main open point of the storage decision.',
     'Nothing yet',
     'Plan: add a bundled SQLite (androidx sqlite-bundled or requery) with an arm64 sqlite-vec build on a throwaway branch, then time it against BLOBs.', 'EYKO-89, EYKO-93'],
-  ['A4', 'A', 'Did it fail only on one phone?', 'Partly',
-    'Two phones so far, one cheap and one high-end: Samsung A32 (Helio G80) and Pixel 9 Pro XL (Tensor G4). Same failure on both.',
+  ['A4', 'A', 'Did it fail only on one phone?', 'Answered',
+    'No. Three phones from three makers: Samsung A32 (Helio G80, Android 13), Pixel 9 Pro XL (Tensor G4, Android 17) and Infinix X670 (MediaTek MT6781, Android 13). Same failure on all three.',
     'E4',
-    'A third phone, Zara\'s Infinix, is planned.', 'EYKO-94'],
+    'Three phones are not every Android version. But the newest SQLite (3.50.6 on the Pixel) fails exactly like the oldest (3.32.2), so it is not an old-version problem.', 'Done: EYKO-94'],
   ['A5', 'A', 'Do sqlite-vec and your BLOB search return the same results, or is one just faster?', 'Open',
     'Both are exact searches with no shortcuts, so they should return the same top 20. That has not been checked yet.',
     'Nothing yet',
@@ -335,9 +336,9 @@ const Q = [
     '`docs/invariants/tooling.md` (rule)',
     'A licence list with a swap-out plan per model has not been written yet.', 'EYKO-88'],
   ['D2', 'D', 'Can someone other than you reproduce the setup?', 'Partly',
-    'The phone kit installs and runs from its README alone, with only adb, on two phones. Using it found three README fixes, which are done.',
-    '`docs/phone-kit/README.md`, kit SHA256SUMS.txt',
-    'Not yet done by another person or on another laptop.', 'EYKO-99, EYKO-92'],
+    'Yes, on the phone and on the laptop. Zara installed and ran the phone kit on her Infinix from its README alone. From a fresh clone on her own laptop: `uv sync` worked, **14 tests pass**, and the storage test ranks the methods the same way as ours. Clone to green tests: 12 min 49 s.',
+    '`docs/results/2026-11-06-clean-clone-reproduction.md` (raw output pasted); her kit confirmation on EYKO-99',
+    'One check fails on a fresh clone: `task smoke` looks for a memory that only exists in our own untracked `data/memories.db`. Six README fixes are listed for the lead. The Android build has not been reproduced on another laptop.', 'Done: EYKO-92 · README fixes: lead card'],
 ];
 
 body.push(LABEL('All questions at a glance', { before: 0 }));
@@ -408,27 +409,27 @@ body.push(grid([4038, 2800, 2800], ['Measurement', '5,000 vectors', '20,000 vect
 ]));
 body.push(SRC('docs/results/2026-10-12-eyko-31-vector-storage.md'));
 
-ev('E4', 'Re-run on two phones (3 Nov)', 'The failure and the speed repeat on a second, high-end phone with a newer Android.');
-body.push(grid([3238, 3200, 3200], ['', 'Samsung A32', 'Pixel 9 Pro XL'], [
-  ['Android / built-in SQLite', '13 / 3.32.2', '17 / 3.50.6'],
-  ['sqlite-vec (vec0)', 'no such module', 'no such module'],
-  ['load_extension', 'no such function', 'no such function'],
-  ['20k, BLOB in memory (median / worst)', '83.5 / 114.8 (12 Oct: 81.0 / 127.0)', '40.5 / 148.4'],
-  ['20k, BLOB read from SQLite (median)', '1,521', '3,068 (unexplained, see B8)'],
-  ['5k, BLOB in memory (median)', '16.4', '8.9'],
-  ['Conditions', '28 % battery, USB, 27.8 °C, fresh install', '57 %, charging, 36 °C, storage 97 % full'],
+ev('E4', 'Re-run on three phones (3 and 5 Nov)', 'The failure repeats on a high-end phone with a newer Android and on a third phone from another maker. The Infinix is faster than the A32 at vector search, so the A32 stays our slowest phone.');
+body.push(grid([2638, 2200, 2200, 2600], ['', 'Samsung A32 (3 Nov)', 'Pixel 9 Pro XL (3 Nov)', 'Infinix X670 (5 Nov, uncontrolled)'], [
+  ['Android / built-in SQLite', '13 / 3.32.2', '17 / 3.50.6', '13 / 3.32.2'],
+  ['sqlite-vec (vec0)', 'no such module', 'no such module', 'no such module'],
+  ['load_extension', 'no such function', 'no such function', 'no such function'],
+  ['20k, BLOB in memory (median / worst)', '83.5 / 114.8 (12 Oct: 81.0 / 127.0)', '40.5 / 148.4', '54.6 / 62.8 (5 runs)'],
+  ['20k, BLOB read from SQLite (median)', '1,521', '3,068 (unexplained, see B8)', '1,146'],
+  ['5k, BLOB in memory (median)', '16.4', '8.9', '12.2'],
+  ['Conditions', '28 % battery, USB, 27.8 °C, fresh install', '57 %, charging, 36 °C, storage 97 % full', 'USB, apps open, not in flight mode; random vectors'],
 ], { firstColBold: true }));
-body.push(SRC('docs/results/vectors/proof/ (logcat + device sheets, commit 79f3904)'));
+body.push(SRC('docs/results/vectors/proof/ (logcat + device sheets) · docs/results/2026-11-05-sqlite-vec-proof-pack.md · docs/results/vectors/eyko90-Infinix_X670-20261105-1417.csv'));
 
-ev('E5', 'Plugin check: is it Android or sqlite-vec? (4 Nov)', 'Android refuses every loadable plugin, even a made-up name. So it is not a sqlite-vec bug.');
-body.push(grid([3238, 3200, 3200], ['Check', 'A32 (Android 13, SQLite 3.32.2)', 'Pixel (Android 17, SQLite 3.50.6)'], [
-  ['sqlite-vec: CREATE … USING vec0', 'no such module: vec0', 'no such module: vec0'],
-  ["load_extension('vec0')", 'no such function: load_extension', 'no such function: load_extension'],
-  ['load_extension of a made-up name', '**no such function: load_extension**', '**no such function: load_extension**'],
-  ['fts4 / fts5 / rtree (built in or not)', 'fts4 works; fts5 and rtree: no such module', 'fts4 works; fts5 and rtree: no such module'],
-  ['PRAGMA compile_options', 'none listed', 'none listed'],
+ev('E5', 'Plugin check: is it Android or sqlite-vec? (4 and 5 Nov)', 'Android refuses every loadable plugin, even a made-up name, on all three phones. So it is not a sqlite-vec bug.');
+body.push(grid([2638, 2333, 2333, 2334], ['Check', 'A32 (Android 13, SQLite 3.32.2)', 'Pixel (Android 17, SQLite 3.50.6)', 'Infinix X670 (Android 13, SQLite 3.32.2)'], [
+  ['sqlite-vec: CREATE … USING vec0', 'no such module: vec0', 'no such module: vec0', 'no such module: vec0'],
+  ["load_extension('vec0')", 'no such function: load_extension', 'no such function: load_extension', 'no such function: load_extension'],
+  ['load_extension of a made-up name', '**no such function: load_extension**', '**no such function: load_extension**', '**no such function: load_extension**'],
+  ['fts4 / fts5 / rtree (built in or not)', 'fts4 works; fts5 and rtree: no such module', 'fts4 works; fts5 and rtree: no such module', 'fts4 works; fts5 and rtree: no such module'],
+  ['PRAGMA compile_options', 'none listed', 'none listed', 'none listed'],
 ]));
-body.push(SRC('docs/results/vectors/proof/*-2026-11-04-extensions-logcat.txt'));
+body.push(SRC('docs/results/vectors/proof/*-2026-11-04-extensions-logcat.txt · infinix-2026-11-05-logcat.txt'));
 
 ev('E6', 'Speed with real vectors: old loop vs faster loop (4 Nov)', 'Real vectors, 5 runs × 20 queries. The faster loop returned the same top 20 on all 400 checks at every size, on both phones.');
 body.push(grid([1638, 2000, 2000, 2000, 2000], ['Vectors', 'A32: old loop', 'A32: faster loop', 'Pixel: old loop', 'Pixel: faster loop'], [
@@ -466,6 +467,7 @@ body.push(grid([1638, 1600, 3200, 3200], ['Rows per table', 'Vectors need', 'A32
 figure('head2-vector-heap.png', '**Figure 4.** One table on its own: what its vectors need against the 268 MB Android gives the app. Real vectors ran on both phones up to 100k (205 MB). The line goes on to 300k as arithmetic (614 MB); 300k was run only with random vectors on 3 Nov, where both phones ran out of memory.');
 figure('head2-vector-all-tables.png', '**Figure 5.** All three vector tables in memory. At 50k the third table, at 100k the second table no longer fits in the 268 MB Java memory Android gives the app.');
 body.push(SRC('docs/results/vectors/*-2026-11-04-memory.csv'));
+body.push(P('**A third phone shows the same limit (Infinix X670, 5 Nov, uncontrolled run):** 20k rows each fit (app memory 86 → 167 MB); at 50k only 2 of 3 tables load and at 100k only 1, with the same "Failed to allocate" errors and the same 268 MB limit. Not drawn in Figure 5 because it was not a protocol run. Raw data: `docs/results/vectors/eyko100-memory-Infinix_X670-20261105-1414.csv`.', { run: { size: 20 } }));
 body.push(P('**Extra proof from the random-vector sweep (EYKO-90, 3 Nov):** one table of 300k vectors needs a single 614 MB block. Both phones refused: "Failed to allocate a 614400016 byte allocation … growth limit 268435456". Raw data: `docs/results/vectors/*-2026-11-03-sweep.csv`.', { run: { size: 20 } }));
 
 ev('E9', 'What the database holds', 'One table design, written once in `src/video_memory/schema.py` and copied into the phone\'s `VideoSchema.kt`. Every kept frame is tied to its video and second, so a search hit can show the exact moment.');
@@ -486,7 +488,7 @@ body.push(H2('Limits: how these numbers could mislead'));
 [
   'All runs were on phones plugged in by cable, so this is not a controlled protocol yet (EYKO-95).',
   'The Pixel was charging and warm (36–38 °C) during the 3 Nov runs.',
-  'A 4 GB phone and the Infinix have not been measured.',
+  'A 4 GB phone has not been measured. The Infinix numbers so far come from an uncontrolled run (plugged in, apps open); its protocol runs are EYKO-95.',
   'Real search also filters by video status, which adds a join that the storage test does not include.',
   'BLOB files are about twice the size of sqlite-vec files (E3).',
 ].forEach((t) => body.push(bullet(t)));
@@ -519,7 +521,7 @@ body.push(grid([800, 3938, 1600, 1100, 2200], ['Gap', 'What is missing', 'Card',
   ['G20', 'Vectors in memory hit the 268 MB limit between 20k and 50k rows per table (one table alone: about 100k). No plan for larger libraries.', 'EYKO-98, 100, 101', 'High', ''],
   ['G21', 'The app used the slow search loop.', 'lead', 'Medium', 'Done 4 Nov (EYKO-102): 4.3× (A32) / 4.1× (Pixel) faster at 20k, 2,400 of 2,400 hits identical.'],
   ['G9', 'Phone retrieval rule (BM25 + dense + RRF) and video search (dense only) disagree. Needs an ADR.', 'EYKO-81', 'Medium', ''],
-  ['G13', 'The A32 only ran this test, never the video pipeline.', 'EYKO-84', 'Medium', ''],
+  ['G13', 'The A32 only ran this test, never the video pipeline.', 'EYKO-84', 'Medium', 'Done 5 Nov (EYKO-84): a second phone, Zara\'s Infinix X670, ran the whole pipeline on both kit clips to "ready", no crash, peak memory 1.10 GiB (`docs/results/2026-11-05-second-phone-first-run.md`). Still open: the same two clips on the Pixel for a same-clip comparison.'],
   ['G17', 'Two broken tools: frame_report pull needs Python 3.12; task test-android / build-android call bare gradlew.bat.', 'EYKO-70', 'Low', ''],
   ['G19', 'Licences to re-decide before release: MobileCLIP research-only, YOLOE AGPL.', 'EYKO-88', 'Low', ''],
   ['G12', 'Speech tables exist but nothing writes them.', 'EYKO-86', 'Low', ''],
