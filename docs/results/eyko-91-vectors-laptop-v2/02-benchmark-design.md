@@ -23,7 +23,12 @@ Every method is given the same vectors and the same queries, and returns the top
 | 12 | `usearch_hnsw_c32_ef1024` | setting that reached 0.997 on random 20k | all | recall against speed |
 | 13 | `usearch_exact_f32` | usearch `exact=True`, 1 search thread | all | a fast native brute force (B5) |
 
-usearch searches use `threads=1`; building uses all threads and is timed separately.
+**Threads:** every method runs on **one thread**, like the phone loop: BLAS is limited to 1 thread
+(`threadpoolctl`) in each child process, and usearch searches with `threads=1`. The only exception is
+`blob_memory_numpy`, the laptop's multi-thread reference. The smoke run showed why: with all 8
+OpenBLAS threads, numpy at 5k took 5.9–8.9 ms against 0.6 ms on one, and int8 got slower run after
+run (1.8 → 8.8 ms). The note says `blas_threads=1|all`. usearch **builds** on all threads (timed
+separately, `build_threads=all`).
 
 ## Sizes, runs and timing (card step 2)
 
@@ -51,6 +56,10 @@ copy ([04](04-libraries.md)).
 
 - **One fresh process per (source, size, method).** Peak memory only ever rises within a process,
   so measuring methods one after another in one process would give wrong numbers.
+- Before reading PSS the child drops the source vectors and calls glibc `malloc_trim(0)`, so pages
+  freed during the build are handed back. Without it, int8 at 5k read 42.7 MB instead of 25.6 MB.
+  The float16 / int8 methods keep one reused float32 scratch buffer (4,096 rows: 8 MB at ≥ 4k rows),
+  written to `note` as `scratch_mb` and included in `pss_mb`.
 - `pss_mb` = **PSS** after the method has built and loaded (`psutil memory_full_info().pss`, works on
   Linux). This is the same measure the phones report, rather than the card's "peak RSS".
 - Peak RSS (`resource.getrusage(RUSAGE_SELF).ru_maxrss`) and the process's PSS before loading go in

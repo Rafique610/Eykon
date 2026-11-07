@@ -11,7 +11,7 @@ import time
 
 import numpy as np
 
-BLOCK = 16_384  # rows converted to float32 at a time by the float16 / int8 methods
+BLOCK = 4_096  # rows widened to float32 at a time by the float16 / int8 methods
 
 
 def top_k(scores: np.ndarray, k: int) -> np.ndarray:
@@ -30,6 +30,7 @@ def blob_file(vecs: np.ndarray, path: str) -> sqlite3.Connection:
 
 class Method:
     name = ""
+    all_threads = False  # True only for blob_memory_numpy: every other method runs BLAS on 1 thread
     exact = True  # exact methods must reach recall 1.0, or the run stops
     max_n = None  # larger sizes are skipped
     path = None  # file whose size goes into file_mb
@@ -60,17 +61,15 @@ class BlobDisk(Method):
 
 
 class NumpyMemory(Method):
-    """float32 matrix in memory; m @ q with OpenBLAS (default threads, or 1 thread)."""
+    """float32 matrix in memory; m @ q with OpenBLAS. The runner limits BLAS to 1 thread for every
+    method except this one when all_threads=True (the laptop's multi-thread reference)."""
 
-    def __init__(self, one_thread=False):
-        self.name = "blob_memory_numpy_1t" if one_thread else "blob_memory_numpy"
-        self.one_thread = one_thread
+    def __init__(self, all_threads=False):
+        self.name = "blob_memory_numpy" if all_threads else "blob_memory_numpy_1t"
+        self.all_threads = all_threads
 
     def build(self, vecs, workdir):
         self.m = vecs.copy()
-        if self.one_thread:
-            from threadpoolctl import threadpool_limits
-            self.limit = threadpool_limits(1)  # stays on for this process
         return {}
 
     def search(self, query, k):
@@ -91,31 +90,50 @@ class PyLoop(Method):
         return heapq.nlargest(k, range(len(scores)), key=scores.__getitem__)
 
 
-class Float16Memory(Method):
+class Blocked(Method):
+    """float16 / int8 base: widen BLOCK rows at a time into ONE reused float32 buffer and dot them
+    with the query. Nothing is allocated per query, like a phone loop (a new 10 MB array per query
+    made the times swing 1.5-5.6 ms at 5k in the 7 Nov smoke run)."""
+    exact = False
+
+    def buffers(self, n, dim):
+        self.buf = np.empty((min(n, BLOCK), dim), dtype=np.float32)
+        self.out = np.empty(n, dtype=np.float32)
+        return {"scratch_mb": f"{(self.buf.nbytes + self.out.nbytes) / 2**20:.1f}"}  # counted in pss_mb
+
+    def scores(self, query):
+        for i in range(0, len(self.m), BLOCK):
+            part = self.m[i:i + BLOCK]
+            buf = self.buf[:len(part)]
+            np.copyto(buf, part, casting="unsafe")
+            np.dot(buf, query, out=self.out[i:i + len(part)])
+        return self.out
+
+    def search(self, query, k):
+        return top_k(self.scores(query), k)
+
+
+class Float16Memory(Blocked):
     """Matrix kept as float16 (half the memory); dot in float32, block by block (EYKO-109)."""
-    name, exact = "blob_memory_f16", False
+    name = "blob_memory_f16"
 
     def build(self, vecs, workdir):
         self.m = vecs.astype(np.float16)
-        return {}
-
-    def search(self, query, k):
-        scores = np.concatenate([self.m[i:i + BLOCK].astype(np.float32) @ query for i in range(0, len(self.m), BLOCK)])
-        return top_k(scores, k)
+        return self.buffers(*vecs.shape)
 
 
-class Int8Memory(Method):
+class Int8Memory(Blocked):
     """int8 with one scale per vector (a quarter of the memory). Each block is widened to float32
     and dotted with the float32 query, then scaled: the byte x float loop a phone would run."""
-    name, exact = "blob_memory_i8", False
+    name = "blob_memory_i8"
 
     def build(self, vecs, workdir):
         self.scale = (np.abs(vecs).max(axis=1) / 127).astype(np.float32)
         self.m = np.round(vecs / self.scale[:, None]).astype(np.int8)
-        return {}
+        return self.buffers(*vecs.shape)
 
     def scores(self, query):
-        return np.concatenate([self.m[i:i + BLOCK].astype(np.float32) @ query for i in range(0, len(self.m), BLOCK)]) * self.scale
+        return np.multiply(super().scores(query), self.scale, out=self.out)
 
     def search(self, query, k):
         return top_k(self.scores(query), k)
@@ -181,7 +199,8 @@ class UsearchHnsw(Method):
         build_s = time.perf_counter() - start
         self.path = os.path.join(workdir, "index.usearch")
         self.index.save(self.path)
-        return {"index_build_s": f"{build_s:.1f}", "expansion_add": max(128, self.ef // 2)}
+        # threads=0 builds on all cores; such builds are not repeatable (recall 0.4875-0.55 over 3 builds at 5k)
+        return {"index_build_s": f"{build_s:.1f}", "expansion_add": max(128, self.ef // 2), "build_threads": "all"}
 
     def search(self, query, k):
         return self.index.search(query, k, threads=1).keys
@@ -203,7 +222,7 @@ class UsearchExact(Method):
 
 
 METHODS = {m.name: m for m in (
-    BlobDisk(), NumpyMemory(), NumpyMemory(one_thread=True), PyLoop(), Float16Memory(), Int8Memory(),
+    BlobDisk(), NumpyMemory(all_threads=True), NumpyMemory(), PyLoop(), Float16Memory(), Int8Memory(),
     Int8Rescore(), SqliteVec(), SqliteVec(int8=True), UsearchHnsw(16, 64), UsearchHnsw(16, 256),
     UsearchHnsw(32, 1024), UsearchExact(),
 )}

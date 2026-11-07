@@ -6,6 +6,7 @@ shared format plus recall_at_20, appended to docs/results/vectors/laptop-<date>-
 """
 import argparse
 import csv
+import ctypes
 import datetime
 import gc
 import json
@@ -41,6 +42,15 @@ def pss_mb() -> int:
     return round(psutil.Process().memory_full_info().pss / 2**20)
 
 
+def release_freed_memory():
+    """Hand freed heap pages back to the OS (glibc keeps them), so PSS shows only what the method
+    holds. Without it, int8 at 5k read 42.7 MB instead of 25.6 MB (smoke run, 7 Nov)."""
+    try:
+        ctypes.CDLL("libc.so.6").malloc_trim(0)
+    except OSError:
+        pass  # not glibc: PSS may include freed build copies; say so in the result file
+
+
 def cpu_temp():
     temps = psutil.sensors_temperatures().get("coretemp", [])
     return next((t.current for t in temps if t.label.startswith("Package")), temps[0].current if temps else None)
@@ -68,6 +78,9 @@ def stats(times):
 def run_one(source: str, n: int, name: str, runs: int, dim: int) -> list:
     """Child process: build one method at one size, time it, return its CSV rows (as dicts)."""
     method = METHODS[name]
+    if not method.all_threads:  # the phone loop is single-threaded; so is every method but one
+        from threadpoolctl import threadpool_limits
+        limit = threadpool_limits(1)  # noqa: F841 (kept alive for the whole process)
     before = pss_mb()
     vecs, qs = vs.vectors(source, n, dim), vs.queries(source, QUERIES + 1, dim)
     exact_scores = qs @ vecs.T  # the float32 reference for recall, kept after vecs is dropped
@@ -77,6 +90,7 @@ def run_one(source: str, n: int, name: str, runs: int, dim: int) -> list:
         build_s = time.perf_counter() - start
         del vecs
         gc.collect()
+        release_freed_memory()
         held = pss_mb()
         file_mb = method.file_mb()
         temp_start = cpu_temp()
@@ -94,7 +108,8 @@ def run_one(source: str, n: int, name: str, runs: int, dim: int) -> list:
     battery = psutil.sensors_battery()
     note = {"build_s": f"{build_s:.1f}", **extra, "pss_before_mb": before, "pss_after_mb": held,
             "peak_rss_mb": resource.getrusage(resource.RUSAGE_SELF).ru_maxrss // 1024,
-            "charger": "in" if battery and battery.power_plugged else "out", "threads": os.cpu_count()}
+            "charger": "in" if battery and battery.power_plugged else "out", "cpu_threads": os.cpu_count(),
+            "blas_threads": "all" if method.all_threads else 1}
     rows = []
     for run, (times, recall) in enumerate(timed, 1):
         median, p95, worst = stats(times)

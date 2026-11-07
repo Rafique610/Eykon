@@ -40,6 +40,13 @@ lead's storage decision) decides.
 10. **numpy's float16 is slow, not float16 itself.** In the 6 Nov self-check at 1k, `blob_memory_f16`
     took 2.2 ms against 0.04 ms for float32: numpy widens float16 to float32 in software. So its
     laptop time says little about a phone loop; its recall and memory are what count here.
+11. **An HNSW index built on several threads is not repeatable.** Three builds of the same 5k random
+    set gave recall@20 0.535, 0.55 and 0.4875 (c16 / ef64); one-thread builds gave 0.56 every time.
+    Builds stay multi-threaded (one thread would be ~4× slower at 300k), so the write-up reports the
+    spread over several builds before quoting a recall against the 0.95 mark.
+12. **Charger.** The 7 Nov smoke run was on battery (`charger=out` in its rows), and times moved
+    between runs (int8 at 5k: 1.2 and 3.0 ms). Steps 4–5 run plugged in, and rows with
+    `charger=out` are not used for timing.
 
 ## Things noticed while planning (flagged, not acted on)
 
