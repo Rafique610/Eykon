@@ -59,3 +59,18 @@ def test_real_follows_the_phone_recipe():
 
 def test_text_table_has_384_numbers():
     assert vs.vectors("real", 200, dim=384).shape == (200, 384)
+
+
+def test_varied_reads_first_rows_of_the_coco_files(tmp_path, monkeypatch):
+    rows = np.random.default_rng(0).standard_normal((300, 512)).astype("<f4")
+    rows.tofile(tmp_path / "images_512.f32")
+    rows[:30].tofile(tmp_path / "queries_512.f32")
+    monkeypatch.setattr(vs, "VARIED", tmp_path)
+    small, large = vs.vectors("varied", 100), vs.vectors("varied", 300)
+    np.testing.assert_array_equal(small, large[:100])
+    np.testing.assert_allclose(np.linalg.norm(large, axis=1), 1.0, atol=1e-5)
+    np.testing.assert_allclose(large[0], rows[0] / np.linalg.norm(rows[0]), rtol=1e-5)
+    assert vs.queries("varied", 21).shape == (21, 512)
+    with pytest.raises(ValueError, match="coco-vectors"):
+        vs.vectors("varied", 301)
+    assert vs.label("varied") == "real_coco_train2017_mobileclip_s2"

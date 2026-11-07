@@ -198,6 +198,10 @@ tasks:
     desc: "EYKO-91 — laptop vector benchmark v2: 13 methods, 1k–300k, 5 runs × 20 queries, recall@20, PSS, shared CSV (own small env: numpy, psutil, sqlite-vec, usearch, threadpoolctl; never the full project)"
     cmd: uv run --no-project --python 3.10 --with numpy==2.2.6 --with psutil==7.2.2 --with sqlite-vec==0.1.9 --with usearch==2.26.5 --with threadpoolctl python src/benchmarks/vector_storage_v2.py {{.CLI_ARGS}}
 
+  coco-vectors:
+    desc: "EYKO-91 S3 — embed COCO train2017 photos (fetched one by one, never saved) and 21 val2017 captions with MobileCLIP-S2 into data/eyko91_coco/ (CPU-only PyTorch, own env, never the full project; resumes; research-only model licence)"
+    cmd: uv run --no-project --python 3.10 --index https://download.pytorch.org/whl/cpu --with torch --with torchvision --with open_clip_torch --with timm --with pillow --with numpy==2.2.6 python src/benchmarks/embed_coco.py {{.CLI_ARGS}}
+
   spike-android-vectors:
     desc: "EYKO-31 spike — on the connected phone, test sqlite-vec loading and time BLOB brute-force vector search (results print from logcat). Updates the app in place, never uninstalls it; pass SERIAL=<id> when more than one device is listed"
     dir: android

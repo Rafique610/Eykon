@@ -47,7 +47,7 @@ shared CSV that EYKO-97's graphs read.
 
 | # | Question | Decision |
 |---|---|---|
-| D1 | Varied real vectors (S3): which source? | **EPIC-KITCHENS slice** (decided by the owner, 6 Nov 2026): about 30 videos streamed one by one, frames every 2 s, MobileCLIP-S2 vectors (**updated by the owner, 8 Nov 2026: the 30 longest videos, 20.8 h, one frame every 0.75 s ≈ 100k**; 2 s on 30 typical videos gives only ~7.5k, see [03](03-vector-sources.md)), narrations as text queries, target 100k vectors. COCO stays the fallback if downloads are too slow |
+| D1 | Varied real vectors (S3): which source? | **EPIC-KITCHENS slice** (decided by the owner, 6 Nov 2026): about 30 videos streamed one by one, frames every 2 s, MobileCLIP-S2 vectors (**updated by the owner, 8 Nov 2026: the 30 longest videos, 20.8 h, one frame every 0.75 s ≈ 100k**; 2 s on 30 typical videos gives only ~7.5k, see [03](03-vector-sources.md)). **Changed again, 8 Nov: S3 = COCO train2017, 100k photos + val2017 captions as queries** (the 30 videos are ≈ 250 GB and the connection was slow; [03](03-vector-sources.md)), narrations as text queries, target 100k vectors. COCO stays the fallback if downloads are too slow |
 | D2 | CSV file name | **One file per source** (decided by the owner, 6 Nov 2026): `laptop-<date>-sweep.csv` (random, the same suffix as the phones' random sweep), `-sweep-real.csv`, `-sweep-varied.csv`, named like the phone files so EYKO-97's graphs pick the laptop up. This differs from the card's single `laptop-<date>.csv`; the card comment will say so |
 | D3 | Pass marks (for the lead, on the card) | **Decided 7 Nov 2026** by the lead (Taha Ahmed), agreed by the reviewer (Rafique, EYKO-91 comment, 15:41 UTC): (1) the index is judged on S3 (varied real, EPIC-KITCHENS) at its largest size, not on random vectors "at 300k"; (2) "in-memory BLOB" = `blob_memory_numpy_1t`, with the all-threads `blob_memory_numpy` reported next to it; (3) float16 / int8 mark recall@20 ≥ 0.99, ties counted. **The 7 Nov full run (S1 + S2, 14:44 UTC) finished before D3 was written down**; D3 changes how the rows are judged, not the rows |
 
@@ -69,7 +69,8 @@ shared CSV that EYKO-97's graphs read.
 2. Write `_vector_methods.py` (13 methods) and `vector_storage_v2.py`; add `task vectors-laptop-v2`.
 3. Smoke run: S1 at 1k and 5k, all methods; check every exact method gives recall 1.0.
 4. Full run on S1 and S2 (1k–300k) → the first two CSVs.
-5. S3: export MobileCLIP-S2 (CPU build), time 500 frames, then stream and embed up to the target.
+5. S3: `task coco-vectors` embeds 100k COCO photos and 21 captions (CPU PyTorch; photos never saved), then
+   `task vectors-laptop-v2 -- --sources varied --sizes 1k,5k,20k,50k,100k`.
    Run the benchmark on S3 → the third CSV.
 6. Write `docs/results/<date>-vectors-laptop-v2.md`: method, every number, and how they could lie.
    Update the Head 2 document (A5, B1, B3, B5, B7, E-items). PR, card comment, Review.
