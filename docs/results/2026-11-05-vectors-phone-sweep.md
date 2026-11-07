@@ -64,7 +64,7 @@ Median of the 5 run medians in ms (range of the 5 in brackets). Slowest p95 of a
 | 100,000 | skipped | 354.0 (351.4 to 355.6) | 69.1 (68.8 to 69.5) | 371.3 | 252 |
 | 300,000 | skipped | **OutOfMemoryError** (needed a 614 MB array, Java heap limit 268 MB) | not reached | n/a | n/a |
 
-Where each method crosses 200 ms (median):
+Where each method crosses 200 ms (median). **200 ms is our own target, with no source yet (EYKO-101)**; it is not a published limit:
 - **disk:** between 5,000 (142 ms) and 20,000 (1,100 ms). Not measured in between.
 - **memory (the app's way):** between 50,000 (160 ms) and 100,000 (354 ms). Not measured in between.
 - **fast:** not within 100,000 (69 ms). 300,000 could not be tested (out of memory), so its crossing is unknown.
@@ -78,7 +78,7 @@ What the numbers say:
   (memory 100,000 runs: 351.9, 351.4, 355.7, 355.6, 354.0 ms). A real hot-phone test is still to do.
 - **Odd:** disk read at 20,000 (1,100 ms) is 7.7 times the 5,000 time for 4 times the vectors, more than
   linear. I did not investigate why (it could be the SQLite page cache; not tested).
-- Peak PSS of 222 MB at n = 1,000 is the first run of the first size (JIT and start-up), not the data.
+- Peak PSS of 222 MB at n = 1,000 is the first run of the first size. The likely cause is JIT compilation and start-up, not the data; this was **not tested**.
 
 ## Results: Infinix X670, hot run (7 Nov 2026)
 
@@ -121,15 +121,16 @@ Median of the 5 run medians in ms:
 
 | n | method | cool (90 %) | hot (88 %) | low battery (24 %) | low against cool |
 |---|---|---|---|---|---|
-| 20,000 | disk | 1,100.2 | 1,144.0 | 1,141.2 | +4 % |
+| 20,000 | disk | 1,100.2 | 1,144.0 | 1,137.9 | +3.4 % |
 | 20,000 | memory | 56.4 | 55.9 | 56.4 | 0 % |
 | 20,000 | fast | 13.9 | 14.0 | 14.1 | +1 % |
 | 100,000 | memory | 354.0 | 352.2 | 355.2 | +0.3 % |
 | 100,000 | fast | 69.1 | 68.8 | 68.9 | 0 % |
 
 Reading: **a low battery did not slow the search** in this test. Memory and fast search are within 1 % of
-the cool run; disk read at 20,000 is +4 %, the same as in the hot run (the hot and low-battery disk numbers
-are within 0.3 % of each other, so that +4 % may come from the session rather than heat or battery). The
+the cool run; disk read at 20,000 is +3.4 % (1,137.9 against 1,100.2 ms; the 5 run medians were 1,147.95, 1,137.91,
+1,141.18, 1,137.56 and 1,137.40), close to the hot run's +4 % (the hot and low-battery disk numbers are within 0.5 % of
+each other, so that rise may come from the session rather than heat or battery). The
 cable was in for the first 2 minutes, so the low-battery condition covers the later part of the run only.
 One phone, one session per condition, so small differences (a few percent) should not be read as effects.
 
@@ -149,7 +150,7 @@ run started at 55 % battery. Only the shape is comparable, not the exact times. 
 | 100,000 | 354.0 | 261.6 | 536.8 | 69.1 | 38.8 | 91.0 |
 
 The Infinix sits between the Pixel and the A32 (about 1.4 times the Pixel and 0.65 times the A32 on
-memory). On the app's way, 200 ms is crossed between 50,000 and 100,000 vectors on the Infinix, between
+memory). On the app's way, our own 200 ms target (no source yet, EYKO-101) is crossed between 50,000 and 100,000 vectors on the Infinix, between
 50,000 and 100,000 on the Pixel (101.6 then 261.6) and between 20,000 and 50,000 on the A32
 (81.8 then 245.9). Disk read at 5,000: Infinix 142 ms, Pixel 238 ms, A32 250 ms (the Infinix is faster
 here; cause unknown, the builds differ).
