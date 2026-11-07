@@ -170,7 +170,10 @@ slower. Nothing finer is supported by these numbers.
 | `infinix-2026-11-05-meminfo-between-clips.txt` | `dumpsys meminfo com.eykon.memory` taken after clip 1 and before clip 2 (TOTAL PSS 795,987 kB), re-encoded to UTF-8. |
 | `infinix-2026-11-05-battery-between-clips.txt` | `dumpsys battery` from the same moment (level 98, 33.7 C), re-encoded to UTF-8. |
 | `infinix-2026-11-05-proc-status.txt` | `grep Vm /proc/28196/status` after all runs, copied by hand from the console. |
-| `screenshots/infinix-2026-11-05-search-pens-01..09.jpg` | Phone screenshots (`adb shell screencap`, shrunk to 720 px wide JPEG; full-size PNGs kept by the tester) scrolling through the pens results, top to the "Saved videos (3)" list. |
-| `screenshots/infinix-2026-11-05-search-keys-01..11.jpg` | The same for the repeated keys search (the 227 ms run). The first, cold keys run (2,193 ms) was not screenshotted. |
+| `screenshots/infinix-2026-11-05-search-pens-01..03,05..07.jpg` | Phone screenshots (`adb shell screencap`, shrunk to 720 px wide JPEG; full-size PNGs kept by the tester) scrolling through the pens results. pens-04, 08 and 09 were **removed** (they show people from the 17 Oct classroom clip). |
+| `screenshots/infinix-2026-11-05-search-keys-01..08.jpg` | The same for the repeated keys search (the 227 ms run). keys-09, 10 and 11 were **removed** for the same reason. The first, cold keys run (2,193 ms) was not screenshotted. |
 
-The screenshots show frames from our own PXL clips and the phone's notification bar. No Ego4D material.
+The remaining screenshots show frames from our own PXL clips, desk or office frames from the 17 Oct clip,
+and the phone's notification bar. No Ego4D material. Six screenshots that showed people from the 17 Oct
+classroom clip were removed on 7 Nov after review, and the branch history was rewritten so they are not in
+any commit of this branch. The Snapchat clip is to be deleted from the app library.
