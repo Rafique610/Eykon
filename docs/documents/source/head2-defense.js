@@ -294,7 +294,7 @@ const Q = [
   ['B4', 'B', '112 MB of memory for one table. What about all three tables, on a 4 GB phone?', 'Partly',
     'We measured all three loaded together. 20k rows each fits (app grows 53 → 160 MB on the A32). At 50k it runs out of memory on both phones. The limit is the 268 MB Android gives the app, the same on a 6 GB and a 16 GB phone.',
     'E8 and Figures 4–5',
-    'A 4 GB phone has not been measured. The Infinix is the next test.', 'EYKO-95, EYKO-98'],
+    'A 4 GB phone has not been measured. The Infinix (8 GB) shows the same limit (E8). On the Infinix, a memory-mapped file keeps the Java memory near zero and fits all three tables at 300k rows, but it holds 1.5 GB of ordinary RAM when full; the A32 has not been tried (EYKO-109, E8).', 'EYKO-95, EYKO-98, EYKO-109'],
   ['B5', 'B', 'The phone is about 50× slower than the laptop. Is that the chip or your code?', 'Partly',
     'Mostly our code. In the test, a smarter loop gave the same top 20 on all 400 checks and was 5.9× faster on the A32 at 100k (537 → 91 ms). Its faster scoring is now in the app, with a faster ranking: the whole search got 4.3× faster on the A32 at 20k (1.3 s → 302 ms), identical hits.',
     'E6, E7, Figure 3 · Head 7',
@@ -304,9 +304,9 @@ const Q = [
     'E4 (conditions row)',
     'Planned: cool, hot (after 10 minutes of load) and low-battery runs under a fixed protocol.', 'EYKO-95, EYKO-90'],
   ['B7', 'B', 'Brute force will not scale. What is the plan past the limit?', 'Partly',
-    'Speed is fine up to 100k with the new loop (91 ms on the A32). Memory is the wall, between 20k and 50k rows. The plan is not chosen yet.',
+    'Speed is fine up to 100k with the new loop (91 ms on the A32). Memory is the wall, between 20k and 50k rows. We tried four ways to hold the vectors on the Infinix (EYKO-109, 7 Nov): none passes every mark. The nearest, a memory-mapped float32 file, gives identical answers and near-zero Java memory, at 14–15 % slower search; the plan is the lead\'s decision.',
     'E6, E8',
-    'Options: int8 or float16 vectors (¼ or ½ the memory), keep only the image table in memory, load in blocks, an approximate index (usearch, hnswlib), or bundled sqlite-vec. Note the whole app search is still 302 ms on the A32 at 20k.', 'EYKO-98'],
+    'Tried on one phone: float32 in direct buffers (no help: Android counts it in the same 268 MB), float16 (fits only 50k, 8× slower), int8 with exact re-check (fits 100k, 386 ms, 97.4 % same hits), memory-mapped file (fits 300k, exact). Not tried: A32, keeping only the image table, an approximate index (usearch, hnswlib), bundled sqlite-vec. The whole app search is still 302 ms on the A32 at 20k.', 'EYKO-98, EYKO-109'],
   ['B8', 'B', 'Why was reading from disk twice as slow on the Pixel as on the cheaper A32?', 'Open',
     'Not explained yet. Reading 20k vectors from SQLite on every search took 3.1–3.5 s on the Pixel vs about 1.6 s on the A32. It does not affect the app, which searches from memory.',
     'E4',
@@ -468,6 +468,8 @@ figure('head2-vector-heap.png', '**Figure 4.** One table on its own: what its ve
 figure('head2-vector-all-tables.png', '**Figure 5.** All three vector tables in memory. At 50k the third table, at 100k the second table no longer fits in the 268 MB Java memory Android gives the app.');
 body.push(SRC('docs/results/vectors/*-2026-11-04-memory.csv'));
 body.push(P('**A third phone shows the same limit (Infinix X670, 5 Nov, uncontrolled run):** 20k rows each fit (app memory 86 → 167 MB); at 50k only 2 of 3 tables load and at 100k only 1, with the same "Failed to allocate" errors and the same 268 MB limit. Not drawn in Figure 5 because it was not a protocol run. Raw data: `docs/results/vectors/eyko100-memory-Infinix_X670-20261105-1414.csv`.', { run: { size: 20 } }));
+body.push(P('**Four ways to hold the vectors (EYKO-109, Infinix X670 only, 7 Nov).** Java memory after loading all three tables / tables loaded: today\'s array at 20k 116 MB, 3 of 3; at 50k 183 MB, **2 of 3**; at 100k 208 MB, **1 of 3**. Float32 in direct buffers: identical to today (Android counts direct buffers in the same 268 MB). Float16: 50k fits (145 MB), 100k 2 of 3. Int8 with exact re-check: 100k fits (146 MB), 200k 2 of 3. Memory-mapped float32 file: 300k fits with 10 MB of Java memory, but 1,484 MB of total memory when full. Speed at 100k (scores for all rows): today 297 ms, direct 340, mapped 341, int8 386, float16 2,341. Answers against today (whole app search, 800 hits): mapped 800 of 800 identical, int8 779, float16 737 (799 as a set). After 5 minutes in the background with other apps open the mapped vectors were not killed, but the first search was 3.8× slower. None passes every mark on the card. Full tables: `docs/results/2026-11-07-vectors-off-heap.md`; A32 and Pixel not run.', { run: { size: 20 }, before: 100 }));
+body.push(SRC('docs/results/vectors/offheap/*.csv'));
 body.push(P('**Extra proof from the random-vector sweep (EYKO-90, 3 Nov):** one table of 300k vectors needs a single 614 MB block. Both phones refused: "Failed to allocate a 614400016 byte allocation … growth limit 268435456". Raw data: `docs/results/vectors/*-2026-11-03-sweep.csv`.', { run: { size: 20 } }));
 
 ev('E9', 'What the database holds', 'One table design, written once in `src/video_memory/schema.py` and copied into the phone\'s `VideoSchema.kt`. Every kept frame is tied to its video and second, so a search hit can show the exact moment.');
@@ -518,7 +520,7 @@ body.push(grid([2338, W - 2338], ['Word', 'What it means here'], [
 
 body.push(H2('Open gaps for this Head'));
 body.push(grid([800, 3938, 1600, 1100, 2200], ['Gap', 'What is missing', 'Card', 'Severity', 'Resolution'], [
-  ['G20', 'Vectors in memory hit the 268 MB limit between 20k and 50k rows per table (one table alone: about 100k). No plan for larger libraries.', 'EYKO-98, 100, 101', 'High', ''],
+  ['G20', 'Vectors in memory hit the 268 MB limit between 20k and 50k rows per table (one table alone: about 100k). No plan for larger libraries.', 'EYKO-98, 100, 101, 109', 'High', 'Partly (EYKO-109, 7 Nov, Infinix only): four storage ways tried, none passes every mark; a memory-mapped file fits 300k rows exactly but 14–15 % slower and 1.5 GB of RAM. A32 and Pixel not run; the lead decides.'],
   ['G21', 'The app used the slow search loop.', 'lead', 'Medium', 'Done 4 Nov (EYKO-102): 4.3× (A32) / 4.1× (Pixel) faster at 20k, 2,400 of 2,400 hits identical.'],
   ['G9', 'Phone retrieval rule (BM25 + dense + RRF) and video search (dense only) disagree. Needs an ADR.', 'EYKO-81', 'Medium', ''],
   ['G13', 'The A32 only ran this test, never the video pipeline.', 'EYKO-84', 'Medium', 'Done 5 Nov (EYKO-84): a second phone, Zara\'s Infinix X670, ran the whole pipeline on both kit clips to "ready", no crash, peak memory 1.10 GiB (`docs/results/2026-11-05-second-phone-first-run.md`). Still open: the same two clips on the Pixel for a same-clip comparison.'],
