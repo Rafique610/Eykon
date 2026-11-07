@@ -81,8 +81,8 @@ What the numbers say:
 
 ## Results: Infinix X670, hot run (7 Nov 2026)
 
-**Heat load:** the video pipeline processed the Snapchat clip and both PXL clips (094359, 094903) from
-13:31 to 13:42:40 (about 11 minutes), with the phone unplugged from the laptop's side only for the sweep
+**Heat load:** the video pipeline processed 7 clips (the Snapchat clip, both PXL clips 094359 and 094903, and
+three other short phone clips of 20, 30 and 30.5 s) from 13:31 to 13:42:40 (about 11 minutes), with the phone unplugged from the laptop's side only for the sweep
 (it was on USB during the load). Battery temperature read each minute (`infinix-2026-11-07-hot-load-readings.txt`):
 32.0 C at 13:34, 37.3 C peak at 13:39, 36.5 to 37.2 C until the load ended, battery 89 to 88 %.
 **Deviation from the protocol:** my laptop shut down during the load, so the sweep did not start right
