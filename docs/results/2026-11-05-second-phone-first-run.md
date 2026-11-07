@@ -123,11 +123,15 @@ The app's library ("Saved videos (3)") holds 30 frames in total:
 - **Scores:** keys 0.261 down to 0.093 (16 frames); pens 0.223 down to 0.111 (14 frames).
 - **Frames from the 17 Oct Snapchat clip:** 3 of the 16 for keys (0.162, 0.121, 0.093) and 3 of the 14
   for pens (0.204, 0.176, 0.111). The smoke-test clip is still in the library and still gets searched.
-- **Matching (read by eye from the screenshots by the assistant who captured them; the tester should
-  confirm):** keys, visible on the table in about the first 3 of 16 frames (the 14:45 clip, with the
-  phone and a blue pen beside them); a pen, visible in the first 2 of 14 frames (also the 14:45 desk
-  frames). The remaining frames show a wallet, earbuds, glasses, empty chairs or the 17 Oct classroom.
-  Both queries rank mostly the same desk frames at the top, because the keys and the pen lie together.
+- **Matching (counted by Zara by eye from the screenshots, 7 Nov; this replaces the earlier reading by the
+  assistant):**
+  - keys query: keys clearly visible in **2** frames and half visible (behind a hand) in **3** frames;
+  - pens query: a pen clearly visible in **2** frames and blurry (a hand holding it) in **1** frame.
+
+  She did not note which frame numbers these are, so they are counts, not a frame list. The counts cover
+  the screenshots as kept after the 7 Nov removal of six images, so a frame that only appeared in a removed
+  screenshot is not counted. The other frames show a wallet, earbuds, glasses, empty chairs or office
+  scenes. Both queries rank mostly the same desk frames at the top, because the keys and the pen lie together.
 
 ## Comparison with the Pixel 9 Pro XL (cost reference, not the same clips)
 
@@ -157,8 +161,6 @@ slower. Nothing finer is supported by these numbers.
 - **Same-clip comparison with the Pixel (card step 6):** kept frames, captions and search answers on the
   same two PXL clips. It needs the two PXL clips run on the Pixel (not available to the tester; the lead
   owns that phone). The Pixel cost reference above stands in for it and says what it can and cannot show.
-- Confirmation of the matching counts above by the tester (they are an assistant's reading of the
-  screenshots).
 - Temperature and PSS during clip 1 and the second half of clip 2 (not sampled, cannot be recovered).
 
 ## Evidence files (`docs/results/second-phone/`)
