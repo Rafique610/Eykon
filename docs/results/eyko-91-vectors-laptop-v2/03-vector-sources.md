@@ -80,6 +80,8 @@ runs ([05](05-pass-marks-and-risks.md)).
 MobileCLIP-S2 image vectors, with narrations as text queries, up to the largest size that fits
 the time budget (target 100k). COCO is the fallback if the EPIC downloads are too slow.
 
+**Updated (owner, 8 Nov 2026):** 30 typical videos are only about 4.2 h, so one frame every 2 s gives about 7.5k vectors, too small to judge an index (brute force is about 3 ms there). From EPIC's own `EPIC_100_video_info.csv`, the **30 longest videos** (31–62 min each, 20.8 h, 74,841 s) at **one frame every 0.75 s** give about 100k. Frames 0.75 s apart are still distinct; the 6.5 frames/s that 30 typical videos would need gives near-duplicates, S2's problem. The list of the 30: P01_109, P01_18, P01_09, P23_102, P10_04, P35_104, P30_05, P35_108, P30_107, P13_08, P27_103, P20_04, P23_04, P25_107, P33_105, P02_09, P22_07, P35_105, P01_105, P23_103, P29_03, P04_05, P07_10, P12_101, P22_109, P24_09, P12_04, P04_105, P06_101, P12_02.
+
 ## What S3 needs that the laptop does not have yet
 
 - **MobileCLIP-S2 ONNX** (image and text encoders): exported with the existing `task export-clip`

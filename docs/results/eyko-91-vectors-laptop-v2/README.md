@@ -47,7 +47,7 @@ shared CSV that EYKO-97's graphs read.
 
 | # | Question | Decision |
 |---|---|---|
-| D1 | Varied real vectors (S3): which source? | **EPIC-KITCHENS slice** (decided by the owner, 6 Nov 2026): about 30 videos streamed one by one, frames every 2 s, MobileCLIP-S2 vectors, narrations as text queries, target 100k vectors. COCO stays the fallback if downloads are too slow |
+| D1 | Varied real vectors (S3): which source? | **EPIC-KITCHENS slice** (decided by the owner, 6 Nov 2026): about 30 videos streamed one by one, frames every 2 s, MobileCLIP-S2 vectors (**updated by the owner, 8 Nov 2026: the 30 longest videos, 20.8 h, one frame every 0.75 s ≈ 100k**; 2 s on 30 typical videos gives only ~7.5k, see [03](03-vector-sources.md)), narrations as text queries, target 100k vectors. COCO stays the fallback if downloads are too slow |
 | D2 | CSV file name | **One file per source** (decided by the owner, 6 Nov 2026): `laptop-<date>-sweep.csv` (random, the same suffix as the phones' random sweep), `-sweep-real.csv`, `-sweep-varied.csv`, named like the phone files so EYKO-97's graphs pick the laptop up. This differs from the card's single `laptop-<date>.csv`; the card comment will say so |
 | D3 | Pass marks (for the lead, on the card) | **Decided 7 Nov 2026** by the lead (Taha Ahmed), agreed by the reviewer (Rafique, EYKO-91 comment, 15:41 UTC): (1) the index is judged on S3 (varied real, EPIC-KITCHENS) at its largest size, not on random vectors "at 300k"; (2) "in-memory BLOB" = `blob_memory_numpy_1t`, with the all-threads `blob_memory_numpy` reported next to it; (3) float16 / int8 mark recall@20 ≥ 0.99, ties counted. **The 7 Nov full run (S1 + S2, 14:44 UTC) finished before D3 was written down**; D3 changes how the rows are judged, not the rows |
 
