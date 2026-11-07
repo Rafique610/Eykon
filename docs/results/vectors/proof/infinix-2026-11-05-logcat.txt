@@ -1,0 +1,60 @@
+--------- beginning of main
+11-05 14:14:53.874 19508 19527 I EYKO31  : device INFINIX Infinix X670, Android 13, platform sqlite 3.32.2
+11-05 14:14:53.875 19508 19527 I EYKO31  : option 1: CREATE VIRTUAL TABLE ... USING vec0 failed: no such module: vec0 (code 1 SQLITE_ERROR)
+11-05 14:14:53.875 19508 19527 I EYKO31  : option 1: load_extension('vec0') failed: no such function: load_extension (code 1 SQLITE_ERROR): , while compiling: SELECT load_extension('vec0')
+11-05 14:14:53.876 19508 19527 I EYKO31  : any extension: load_extension('eyko_no_such_extension') failed: no such function: load_extension (code 1 SQLITE_ERROR): , while compiling: SELECT load_extension('eyko_no_such_extension')
+11-05 14:14:53.879 19508 19527 I EYKO31  : built-in module: fts5 failed: no such module: fts5 (code 1 SQLITE_ERROR)
+11-05 14:14:53.880 19508 19527 I EYKO31  : built-in module: fts4 works (compiled into the platform SQLite)
+11-05 14:14:53.881 19508 19527 I EYKO31  : built-in module: rtree failed: no such module: rtree (code 1 SQLITE_ERROR)
+11-05 14:14:53.885 19508 19527 I EYKO31  : compile options (extension / fts / rtree): [none listed]
+11-05 14:14:53.901 19508 19527 I EYKO31  : device sheet: INFINIX Infinix X670, Android 13 (API 33), sqlite 3.32.2, commit unknown, date 2026-11-05
+11-05 14:14:53.904 19508 19527 I EYKO31  : device sheet: RAM 8.1 GB, java heap limit 268 MB, free storage 9.9 GB, vectors real_own_clips_90+noise
+11-05 14:14:58.832 19508 19527 I EYKO31  : n=5000 all tables: PSS 61 -> 86 MB, vectors held 28 MB 
+11-05 14:14:58.845 19508 19527 I EYKO31  : n=5000 memory_all_tables: pss_before_mb=61; pss_after_mb=86; vectors_held_mb=28; tables_loaded=3 of 3
+11-05 14:15:16.393 19508 19527 I EYKO31  : n=20000 all tables: PSS 86 -> 167 MB, vectors held 113 MB 
+11-05 14:15:16.409 19508 19527 I EYKO31  : n=20000 memory_all_tables: pss_before_mb=86; pss_after_mb=167; vectors_held_mb=113; tables_loaded=3 of 3
+11-05 14:15:59.462 19508 19527 I EYKO31  : n=50000 all tables: PSS 167 -> 230 MB, vectors held 179 MB OutOfMemoryError while loading audio_vec: Failed to allocate a 102400016 byte allocation with 25165824 free bytes and 82MB until OOM, target footprint 206983704, growth limit 268435456
+11-05 14:15:59.479 19508 19527 I EYKO31  : n=50000 memory_all_tables: pss_before_mb=167; pss_after_mb=230; vectors_held_mb=179; tables_loaded=2 of 3; OutOfMemoryError while loading audio_vec: Failed to allocate a 102400016 byte allocation with 25165824 free bytes and 82MB until OOM, target footprint 206983704, growth limit 268435456
+11-05 14:17:31.323 19508 19527 I EYKO31  : n=100000 all tables: PSS 228 -> 251 MB, vectors held 205 MB OutOfMemoryError while loading text_vec: Failed to allocate a 153600016 byte allocation with 25165824 free bytes and 58MB until OOM, target footprint 232579592, growth limit 268435456
+11-05 14:17:31.345 19508 19527 I EYKO31  : n=100000 memory_all_tables: pss_before_mb=228; pss_after_mb=251; vectors_held_mb=205; tables_loaded=1 of 3; OutOfMemoryError while loading text_vec: Failed to allocate a 153600016 byte allocation with 25165824 free bytes and 58MB until OOM, target footprint 232579592, growth limit 268435456
+11-05 14:17:31.523 19508 19527 I EYKO31  : csv written: /storage/emulated/0/Android/data/com.eykon.memory/files/results/eyko100-memory-Infinix_X670-20261105-1414.csv
+11-05 14:17:31.523 19508 19527 I EYKO31  : pull it with: adb pull /storage/emulated/0/Android/data/com.eykon.memory/files/results/eyko100-memory-Infinix_X670-20261105-1414.csv
+11-05 14:17:31.537 19508 19527 I EYKO31  : device sheet: INFINIX Infinix X670, Android 13 (API 33), sqlite 3.32.2, commit unknown, date 2026-11-05
+11-05 14:17:31.537 19508 19527 I EYKO31  : device sheet: RAM 8.1 GB, java heap limit 268 MB, free storage 9.9 GB, vectors random_unit_seed31
+11-05 14:17:31.537 19508 19527 I EYKO31  : sweep: sizes [5000, 20000], runs 5, diskMax 20000, source random
+11-05 14:17:32.786 19508 19527 I EYKO31  : n=5000 insert all: 1228 ms, file 20.6 MB
+11-05 14:17:35.998 19508 19527 I EYKO31  : n=5000 blob_disk_dot run 1: median 147.02 ms, worst 162.19 ms
+11-05 14:17:38.867 19508 19527 I EYKO31  : n=5000 blob_disk_dot run 2: median 142.89 ms, worst 145.21 ms
+11-05 14:17:41.743 19508 19527 I EYKO31  : n=5000 blob_disk_dot run 3: median 143.28 ms, worst 146.56 ms
+11-05 14:17:44.782 19508 19527 I EYKO31  : n=5000 blob_disk_dot run 4: median 143.59 ms, worst 276.43 ms
+11-05 14:17:47.665 19508 19527 I EYKO31  : n=5000 blob_disk_dot run 5: median 143.74 ms, worst 145.43 ms
+11-05 14:17:48.077 19508 19527 I EYKO31  : n=5000 blob_memory_dot run 1: median 12.29 ms, worst 15.03 ms
+11-05 14:17:48.338 19508 19527 I EYKO31  : n=5000 blob_memory_dot run 2: median 12.21 ms, worst 15.62 ms
+11-05 14:17:48.603 19508 19527 I EYKO31  : n=5000 blob_memory_dot run 3: median 12.26 ms, worst 14.83 ms
+11-05 14:17:48.870 19508 19527 I EYKO31  : n=5000 blob_memory_dot run 4: median 12.16 ms, worst 16.63 ms
+11-05 14:17:49.134 19508 19527 I EYKO31  : n=5000 blob_memory_dot run 5: median 12.16 ms, worst 15.37 ms
+11-05 14:17:49.509 19508 19527 I EYKO31  : n=5000 fast top-20 equals the app's: 400 of 400
+11-05 14:17:49.594 19508 19527 I EYKO31  : n=5000 blob_memory_fast run 1: median 3.60 ms, worst 3.66 ms
+11-05 14:17:49.674 19508 19527 I EYKO31  : n=5000 blob_memory_fast run 2: median 3.58 ms, worst 3.60 ms
+11-05 14:17:49.756 19508 19527 I EYKO31  : n=5000 blob_memory_fast run 3: median 3.59 ms, worst 3.69 ms
+11-05 14:17:49.839 19508 19527 I EYKO31  : n=5000 blob_memory_fast run 4: median 3.58 ms, worst 3.66 ms
+11-05 14:17:49.920 19508 19527 I EYKO31  : n=5000 blob_memory_fast run 5: median 3.61 ms, worst 3.66 ms
+11-05 14:17:54.892 19508 19527 I EYKO31  : n=20000 insert all: 4960 ms, file 82.2 MB
+11-05 14:18:19.176 19508 19527 I EYKO31  : n=20000 blob_disk_dot run 1: median 1145.91 ms, worst 1207.20 ms
+11-05 14:18:42.062 19508 19527 I EYKO31  : n=20000 blob_disk_dot run 2: median 1137.62 ms, worst 1212.66 ms
+11-05 14:19:04.936 19508 19527 I EYKO31  : n=20000 blob_disk_dot run 3: median 1144.26 ms, worst 1165.39 ms
+11-05 14:19:31.190 19508 19527 I EYKO31  : n=20000 blob_disk_dot run 4: median 1277.22 ms, worst 1627.78 ms
+11-05 14:19:55.314 19508 19527 I EYKO31  : n=20000 blob_disk_dot run 5: median 1204.64 ms, worst 1334.51 ms
+11-05 14:19:57.572 19508 19527 I EYKO31  : n=20000 blob_memory_dot run 1: median 54.53 ms, worst 61.64 ms
+11-05 14:19:58.709 19508 19527 I EYKO31  : n=20000 blob_memory_dot run 2: median 54.42 ms, worst 62.13 ms
+11-05 14:19:59.850 19508 19527 I EYKO31  : n=20000 blob_memory_dot run 3: median 54.58 ms, worst 62.03 ms
+11-05 14:20:00.987 19508 19527 I EYKO31  : n=20000 blob_memory_dot run 4: median 55.25 ms, worst 61.02 ms
+11-05 14:20:02.131 19508 19527 I EYKO31  : n=20000 blob_memory_dot run 5: median 55.70 ms, worst 62.82 ms
+11-05 14:20:03.530 19508 19527 I EYKO31  : n=20000 fast top-20 equals the app's: 400 of 400
+11-05 14:20:03.835 19508 19527 I EYKO31  : n=20000 blob_memory_fast run 1: median 13.97 ms, worst 14.21 ms
+11-05 14:20:04.125 19508 19527 I EYKO31  : n=20000 blob_memory_fast run 2: median 14.00 ms, worst 14.08 ms
+11-05 14:20:04.414 19508 19527 I EYKO31  : n=20000 blob_memory_fast run 3: median 13.98 ms, worst 14.07 ms
+11-05 14:20:04.703 19508 19527 I EYKO31  : n=20000 blob_memory_fast run 4: median 13.96 ms, worst 14.04 ms
+11-05 14:20:04.993 19508 19527 I EYKO31  : n=20000 blob_memory_fast run 5: median 13.98 ms, worst 14.16 ms
+11-05 14:20:05.007 19508 19527 I EYKO31  : csv written: /storage/emulated/0/Android/data/com.eykon.memory/files/results/eyko90-Infinix_X670-20261105-1417.csv
+11-05 14:20:05.008 19508 19527 I EYKO31  : pull it with: adb pull /storage/emulated/0/Android/data/com.eykon.memory/files/results/eyko90-Infinix_X670-20261105-1417.csv
