@@ -1,0 +1,21 @@
+--------- beginning of main
+11-07 21:57:40.349  4365  4384 I EYKO109 : device sheet: INFINIX Infinix X670, Android 13 (API 33), sqlite 3.32.2, commit eyko109-wip, date 2026-11-07
+11-07 21:57:40.350  4365  4384 I EYKO109 : device sheet: RAM 8.1 GB, java heap limit 268 MB, free storage 13.7 GB, vectors real_own_clips_90+noise
+11-07 21:59:09.196  4365  4384 I EYKO109 : n=100000 offheap_i8_rescore: first search (loads the table) 28132 ms; identical scores on 0 of 20 queries; recall@20 0.9950 (398 of 400)
+11-07 21:59:16.964  4365  4384 I EYKO109 : n=100000 offheap_i8_rescore run 1: median 386.07 ms, worst 395.30 ms
+11-07 21:59:24.691  4365  4384 I EYKO109 : n=100000 offheap_i8_rescore run 2: median 385.09 ms, worst 390.04 ms
+11-07 21:59:32.511  4365  4384 I EYKO109 : n=100000 offheap_i8_rescore run 3: median 391.90 ms, worst 402.31 ms
+11-07 21:59:40.291  4365  4384 I EYKO109 : n=100000 offheap_i8_rescore run 4: median 387.94 ms, worst 397.07 ms
+11-07 21:59:48.058  4365  4384 I EYKO109 : n=100000 offheap_i8_rescore run 5: median 386.42 ms, worst 395.53 ms
+11-07 21:59:48.126  4365  4384 I EYKO109 : csv written: /storage/emulated/0/Android/data/com.eykon.memory/files/results/eyko109-speed-Infinix_X670-20261107-2157.csv
+11-07 21:59:48.126  4365  4384 I EYKO109 : pull it with: adb pull /storage/emulated/0/Android/data/com.eykon.memory/files/results/eyko109-speed-Infinix_X670-20261107-2157.csv
+11-07 22:00:51.022  5161  5181 I EYKO109 : device sheet: INFINIX Infinix X670, Android 13 (API 33), sqlite 3.32.2, commit eyko109-wip, date 2026-11-07
+11-07 22:00:51.023  5161  5181 I EYKO109 : device sheet: RAM 8.1 GB, java heap limit 268 MB, free storage 14.1 GB, vectors real_own_clips_90+noise
+11-07 22:02:11.440  5161  5181 I EYKO109 : n=100000 offheap_mapped_f32: first search (loads the table) 20805 ms; identical scores on 20 of 20 queries; recall@20 1.0000 (400 of 400)
+11-07 22:02:18.270  5161  5181 I EYKO109 : n=100000 offheap_mapped_f32 run 1: median 340.67 ms, worst 345.11 ms
+11-07 22:02:25.086  5161  5181 I EYKO109 : n=100000 offheap_mapped_f32 run 2: median 339.85 ms, worst 344.21 ms
+11-07 22:02:31.933  5161  5181 I EYKO109 : n=100000 offheap_mapped_f32 run 3: median 341.48 ms, worst 345.97 ms
+11-07 22:02:38.770  5161  5181 I EYKO109 : n=100000 offheap_mapped_f32 run 4: median 341.03 ms, worst 344.13 ms
+11-07 22:02:45.635  5161  5181 I EYKO109 : n=100000 offheap_mapped_f32 run 5: median 341.07 ms, worst 349.21 ms
+11-07 22:02:45.704  5161  5181 I EYKO109 : csv written: /storage/emulated/0/Android/data/com.eykon.memory/files/results/eyko109-speed-Infinix_X670-20261107-2200.csv
+11-07 22:02:45.704  5161  5181 I EYKO109 : pull it with: adb pull /storage/emulated/0/Android/data/com.eykon.memory/files/results/eyko109-speed-Infinix_X670-20261107-2200.csv
