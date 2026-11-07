@@ -71,9 +71,6 @@ pages, not Java heap. What Android does with them under memory pressure is in th
 | `DIRECT_F16` | 0 of 20 (expected) | 1.0000 / 0.9975 / 1.0000 / 0.9900 |
 | `DIRECT_I8` | 0 of 20 (expected) | 1.0000 / 1.0000 / 1.0000 / 0.9950 |
 
-Not run: the whole-app check with `VideoSearchSpeedTest` (the 2,400 hits). It has a `mode` argument now, but with
-float16 and int8 already failing other marks below, it would not change a verdict; it is still needed if either is considered later.
-
 ## Bigger tables: 200,000 and 300,000 rows (only the two modes that fit 100,000)
 
 | Rows each | `DIRECT_I8` (Java heap / PSS / tables) | `MAPPED_F32` (Java heap / PSS / tables) |
@@ -102,7 +99,7 @@ Against the card's 99 % mark: `MAPPED_F32` passes; `DIRECT_I8` fails (97.4 %); `
 
 ## Step 6: does Android take the memory back? (one phone, background test)
 
-`holdInBackground`: three tables of 100,000 rows loaded with `MAPPED_F32`, held 5 minutes (23:28 to 23:38) while Chrome, the camera,
+`holdInBackground`: three tables of 100,000 rows loaded with `MAPPED_F32`, held 5 minutes (23:30:30 to 23:35:33 in the logcat) while Chrome, the camera,
 YouTube Music, Settings and the calculator were opened in turn from the laptop (three rounds), then searched again.
 - The process **was not killed**: same pid (22330) for the whole time.
 - PSS fell from 598 MB to 567 to 569 MB when the other apps opened: Android took back about 30 MB of the mapped pages.
@@ -110,6 +107,22 @@ YouTube Music, Settings and the calculator were opened in turn from the laptop (
   text 265 against 209 ms; audio 353 against 339 ms.
 - Limits: this ran inside an instrumentation process, which Android protects more than a normal app, so "not killed"
   is weaker evidence than the card intends; the card asks for this on the **A32** (6 GB), which was not run. Only `MAPPED_F32` was held.
+
+## Disk cost of the memory-mapped file
+
+`MAPPED_F32` keeps a **second copy of every vector on the phone's storage**, a file next to the database
+(`<database>.<table>.vec`, float32, the same size as the in-memory data). It is written each time a table is loaded and it
+stays on disk (the app code does not delete it; the test does). For three tables of n rows (image 512, text 384, audio 512):
+
+| Rows each | Extra file(s) | Database file in the test | Extra as a share of the database |
+|---|---|---|---|
+| 100,000 | 563 MB | 1,028 MB | +55 % |
+| 200,000 | 1,126 MB | 2,056 MB | +55 % |
+| 300,000 | 1,690 MB | 3,084 MB | +55 % |
+
+That is free storage the app needs on top of the database, and the file is rewritten from the database on every reload,
+which is part of the 20 s first search at 100,000 rows. The Pixel's storage was 97 % full on 4 Nov (gap G18), so a second copy
+of the vectors there is a risk; this was not measured on that phone. The other three variants write nothing to storage.
 
 ## Against the card's pass marks (one phone only)
 
@@ -122,7 +135,8 @@ YouTube Music, Settings and the calculator were opened in turn from the laptop (
   on the Infinix is above the 200 ms mark, the A32 is slower, and the same-hits check gives 97.4 % (mark 99 %).
 - **Verdict (one phone): no variant passes all marks.** The nearest is the memory-mapped float32 file: exact answers,
   Java heap near zero, three tables up to 300,000 rows, 14 to 15 % slower than today at 100,000, survived 5 minutes in the
-  background but had some pages reclaimed (first search 3.8 times slower). Whether that cost and the RAM use are acceptable is the lead's call.
+  background but had some pages reclaimed (first search 3.8 times slower), and needs a second copy of the vectors on storage
+  (563 MB at 100,000 rows, 1.7 GB at 300,000). Whether that cost and the RAM use are acceptable is the lead's call.
 
 ## What went wrong or is not proven
 

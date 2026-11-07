@@ -294,7 +294,7 @@ const Q = [
   ['B4', 'B', '112 MB of memory for one table. What about all three tables, on a 4 GB phone?', 'Partly',
     'We measured all three loaded together. 20k rows each fits (app grows 53 → 160 MB on the A32). At 50k it runs out of memory on both phones. The limit is the 268 MB Android gives the app, the same on a 6 GB and a 16 GB phone.',
     'E8 and Figures 4–5',
-    'A 4 GB phone has not been measured. The Infinix (8 GB) shows the same limit (E8). On the Infinix, a memory-mapped file keeps the Java memory near zero and fits all three tables at 300k rows, but it holds 1.5 GB of ordinary RAM when full; the A32 has not been tried (EYKO-109, E8).', 'EYKO-95, EYKO-98, EYKO-109'],
+    'A 4 GB phone has not been measured. The Infinix (8 GB) shows the same limit (E8). On the Infinix, a memory-mapped file keeps the Java memory near zero and fits all three tables at 300k rows, but it holds 1.5 GB of ordinary RAM when full and keeps a second copy of the vectors on storage (563 MB at 100k, 1.7 GB at 300k); the A32 has not been tried (EYKO-109, E8).', 'EYKO-95, EYKO-98, EYKO-109'],
   ['B5', 'B', 'The phone is about 50× slower than the laptop. Is that the chip or your code?', 'Partly',
     'Mostly our code. In the test, a smarter loop gave the same top 20 on all 400 checks and was 5.9× faster on the A32 at 100k (537 → 91 ms). Its faster scoring is now in the app, with a faster ranking: the whole search got 4.3× faster on the A32 at 20k (1.3 s → 302 ms), identical hits.',
     'E6, E7, Figure 3 · Head 7',
