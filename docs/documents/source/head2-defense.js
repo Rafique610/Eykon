@@ -267,10 +267,10 @@ const Q = [
     'Android. All three phones refuse to load any plugin at all, even one with a made-up name. Only modules built into Android\'s own SQLite work.',
     'E5',
     'Of fts4, fts5 and rtree, only fts4 is built in. Our keyword index uses fts4, so it is safe.', 'EYKO-89 (official reason)'],
-  ['A3', 'A', 'Android apps can ship their own SQLite. Did you try that?', 'Open',
-    'Not yet. Only the built-in SQLite was tried. This is the main open point of the storage decision.',
-    'Nothing yet',
-    'Plan: add a bundled SQLite (androidx sqlite-bundled or requery) with an arm64 sqlite-vec build on a throwaway branch, then time it against BLOBs.', 'EYKO-89, EYKO-93'],
+  ['A3', 'A', 'Android apps can ship their own SQLite. Did you try that?', 'Partly',
+    'One way tried (EYKO-108, 8 Nov): our own NDK build of SQLite 3.53.4 with sqlite-vec 0.1.9 compiled in. On the Infinix it loads, search is exact (recall 1.0000 at every size) and three tables at 100k rows build with no memory error. Other bundled-SQLite routes are not tried here.',
+    'E11',
+    'One phone only; the A32 and Pixel are not run. Plan for the other routes: a bundled SQLite (androidx sqlite-bundled or requery), timed against BLOBs.', 'EYKO-89, EYKO-93, EYKO-108'],
   ['A4', 'A', 'Did it fail only on one phone?', 'Answered',
     'No. Three phones from three makers: Samsung A32 (Helio G80, Android 13), Pixel 9 Pro XL (Tensor G4, Android 17) and Infinix X670 (MediaTek MT6781, Android 13). Same failure on all three.',
     'E4',
@@ -483,6 +483,17 @@ body.push(grid([2338, 4700, 2600], ['Table', 'What one row holds', 'Written by']
   ['transcript_chunks, audio_windows, audio_vec', 'Speech and sound. Tables exist; nothing writes them yet.', 'Speech head (later)'],
 ], { firstColBold: true }));
 body.push(SRC('src/video_memory/schema.py · android/…/video/VideoSchema.kt'));
+
+ev('E11', 'Route R4: our own build of SQLite with sqlite-vec inside (Infinix, 8 Nov)', 'SQLite 3.53.4 and sqlite-vec 0.1.9 compiled together with the Android NDK; nothing is loaded at run time. Works on the Infinix and gives exact answers, but search is slower than BLOBs in memory.');
+body.push(grid([1638, 1500, 1500, 1500, 3500], ['Rows', 'sqlite-vec search (ms)', 'Same, no NEON (ms)', 'BLOBs in memory, fast loop (ms)', 'Notes'], [
+  ['1k', '2.4', '', '0.8', 'recall 1.0000'],
+  ['5k', '7.0', '', '3.6', 'recall 1.0000'],
+  ['20k', '24.6', '31.5', '13.9', 'recall 1.0000; NEON 1.3× faster than no NEON'],
+  ['50k', '58.0', '', '34.4', 'recall 1.0000'],
+  ['100k', '110.3', '152.3', '69.1', 'recall 1.0000; NEON 1.4× faster than no NEON'],
+], { firstColBold: true }));
+body.push(P('**What it shows (one phone, Infinix X670):** it works without loading anything (A3), answers are exact (recall 1.0000 on 400 of 400 checks at every size), and three tables at 100k rows build with a flat 56–59 MB process memory (the vectors stay in the database file, not in the 268 MB Java memory). It is 1.6× to 1.9× slower than the fast in-memory loop from the 8 Nov sweep (EYKO-95, random vectors, top 20 only; a different vector source, so only roughly comparable). It adds about 0.85 MB to the app after stripping and compression (one library) and its 16 KB alignment check passes. It took about two hours of building and 399 lines of new code for the test (C, CMake, Kotlin, scripts). Not tested: through Room, the whole app search (which needs every frame\'s score, not only the top 20), the A32 and Pixel. Details: `docs/results/2026-11-08-route-r4-static.md`.', { run: { size: 20 }, before: 100 }));
+body.push(SRC('docs/results/vectors/route-r4/*.csv'));
 
 body.push(H2('Limits: how these numbers could mislead'));
 [

@@ -1,0 +1,119 @@
+﻿-- The C compiler identification is Clang 19.0.1
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: C:/Users/Zara Tahir/AppData/Local/Android/Sdk/ndk/28.2.13676358/toolchains/llvm/prebuilt/windows-x86_64/bin/clang.exe - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Configuring done
+-- Generating done
+-- Build files have been written to: C:/Users/Zara Tahir/University/FYP/FYP - 1/Eykon Source Code/Eykon/android/app/src/androidTest/cpp/build-eykon_r4
+[1/4] Building C object CMakeFiles/eykon_r4.dir/r4_jni.c.o
+[2/4] Building C object CMakeFiles/eykon_r4.dir/third_party/sqlite-vec.c.o
+C:/Users/Zara Tahir/University/FYP/FYP - 1/Eykon Source Code/Eykon/android/app/src/androidTest/cpp/third_party/sqlite-vec.c:4293:7: warning: address of function 'sqlite3_mutex_enter' will always evaluate to 'true' [-Wpointer-bool-conversion]
+ 4293 |   if (sqlite3_mutex_enter) {
+      |   ~~  ^~~~~~~~~~~~~~~~~~~
+C:/Users/Zara Tahir/University/FYP/FYP - 1/Eykon Source Code/Eykon/android/app/src/androidTest/cpp/third_party/sqlite-vec.c:4293:7: note: prefix with the address-of operator to silence this warning
+ 4293 |   if (sqlite3_mutex_enter) {
+      |       ^
+      |       &
+C:/Users/Zara Tahir/University/FYP/FYP - 1/Eykon Source Code/Eykon/android/app/src/androidTest/cpp/third_party/sqlite-vec.c:4325:7: warning: address of function 'sqlite3_mutex_leave' will always evaluate to 'true' [-Wpointer-bool-conversion]
+ 4325 |   if (sqlite3_mutex_leave && entered) {
+      |       ^~~~~~~~~~~~~~~~~~~ ~~
+C:/Users/Zara Tahir/University/FYP/FYP - 1/Eykon Source Code/Eykon/android/app/src/androidTest/cpp/third_party/sqlite-vec.c:4325:7: note: prefix with the address-of operator to silence this warning
+ 4325 |   if (sqlite3_mutex_leave && entered) {
+      |       ^
+      |       &
+C:/Users/Zara Tahir/University/FYP/FYP - 1/Eykon Source Code/Eykon/android/app/src/androidTest/cpp/third_party/sqlite-vec.c:4355:7: warning: address of function 'sqlite3_mutex_enter' will always evaluate to 'true' [-Wpointer-bool-conversion]
+ 4355 |   if (sqlite3_mutex_enter) {
+      |   ~~  ^~~~~~~~~~~~~~~~~~~
+C:/Users/Zara Tahir/University/FYP/FYP - 1/Eykon Source Code/Eykon/android/app/src/androidTest/cpp/third_party/sqlite-vec.c:4355:7: note: prefix with the address-of operator to silence this warning
+ 4355 |   if (sqlite3_mutex_enter) {
+      |       ^
+      |       &
+C:/Users/Zara Tahir/University/FYP/FYP - 1/Eykon Source Code/Eykon/android/app/src/androidTest/cpp/third_party/sqlite-vec.c:4392:7: warning: address of function 'sqlite3_mutex_leave' will always evaluate to 'true' [-Wpointer-bool-conversion]
+ 4392 |   if (sqlite3_mutex_leave && entered) {
+      |       ^~~~~~~~~~~~~~~~~~~ ~~
+C:/Users/Zara Tahir/University/FYP/FYP - 1/Eykon Source Code/Eykon/android/app/src/androidTest/cpp/third_party/sqlite-vec.c:4392:7: note: prefix with the address-of operator to silence this warning
+ 4392 |   if (sqlite3_mutex_leave && entered) {
+      |       ^
+      |       &
+C:/Users/Zara Tahir/University/FYP/FYP - 1/Eykon Source Code/Eykon/android/app/src/androidTest/cpp/third_party/sqlite-vec.c:4513:7: warning: address of function 'sqlite3_mutex_enter' will always evaluate to 'true' [-Wpointer-bool-conversion]
+ 4513 |   if (sqlite3_mutex_enter) {
+      |   ~~  ^~~~~~~~~~~~~~~~~~~
+C:/Users/Zara Tahir/University/FYP/FYP - 1/Eykon Source Code/Eykon/android/app/src/androidTest/cpp/third_party/sqlite-vec.c:4513:7: note: prefix with the address-of operator to silence this warning
+ 4513 |   if (sqlite3_mutex_enter) {
+      |       ^
+      |       &
+C:/Users/Zara Tahir/University/FYP/FYP - 1/Eykon Source Code/Eykon/android/app/src/androidTest/cpp/third_party/sqlite-vec.c:4530:7: warning: address of function 'sqlite3_mutex_leave' will always evaluate to 'true' [-Wpointer-bool-conversion]
+ 4530 |   if (sqlite3_mutex_leave) {
+      |   ~~  ^~~~~~~~~~~~~~~~~~~
+C:/Users/Zara Tahir/University/FYP/FYP - 1/Eykon Source Code/Eykon/android/app/src/androidTest/cpp/third_party/sqlite-vec.c:4530:7: note: prefix with the address-of operator to silence this warning
+ 4530 |   if (sqlite3_mutex_leave) {
+      |       ^
+      |       &
+6 warnings generated.
+[3/4] Building C object CMakeFiles/eykon_r4.dir/third_party/sqlite3.c.o
+[4/4] Linking C shared library libeykon_r4.so
+-- The C compiler identification is Clang 19.0.1
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: C:/Users/Zara Tahir/AppData/Local/Android/Sdk/ndk/28.2.13676358/toolchains/llvm/prebuilt/windows-x86_64/bin/clang.exe - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Configuring done
+-- Generating done
+-- Build files have been written to: C:/Users/Zara Tahir/University/FYP/FYP - 1/Eykon Source Code/Eykon/android/app/src/androidTest/cpp/build-eykon_r4_noneon
+[1/4] Building C object CMakeFiles/eykon_r4_noneon.dir/r4_jni.c.o
+[2/4] Building C object CMakeFiles/eykon_r4_noneon.dir/third_party/sqlite-vec.c.o
+C:/Users/Zara Tahir/University/FYP/FYP - 1/Eykon Source Code/Eykon/android/app/src/androidTest/cpp/third_party/sqlite-vec.c:4293:7: warning: address of function 'sqlite3_mutex_enter' will always evaluate to 'true' [-Wpointer-bool-conversion]
+ 4293 |   if (sqlite3_mutex_enter) {
+      |   ~~  ^~~~~~~~~~~~~~~~~~~
+C:/Users/Zara Tahir/University/FYP/FYP - 1/Eykon Source Code/Eykon/android/app/src/androidTest/cpp/third_party/sqlite-vec.c:4293:7: note: prefix with the address-of operator to silence this warning
+ 4293 |   if (sqlite3_mutex_enter) {
+      |       ^
+      |       &
+C:/Users/Zara Tahir/University/FYP/FYP - 1/Eykon Source Code/Eykon/android/app/src/androidTest/cpp/third_party/sqlite-vec.c:4325:7: warning: address of function 'sqlite3_mutex_leave' will always evaluate to 'true' [-Wpointer-bool-conversion]
+ 4325 |   if (sqlite3_mutex_leave && entered) {
+      |       ^~~~~~~~~~~~~~~~~~~ ~~
+C:/Users/Zara Tahir/University/FYP/FYP - 1/Eykon Source Code/Eykon/android/app/src/androidTest/cpp/third_party/sqlite-vec.c:4325:7: note: prefix with the address-of operator to silence this warning
+ 4325 |   if (sqlite3_mutex_leave && entered) {
+      |       ^
+      |       &
+C:/Users/Zara Tahir/University/FYP/FYP - 1/Eykon Source Code/Eykon/android/app/src/androidTest/cpp/third_party/sqlite-vec.c:4355:7: warning: address of function 'sqlite3_mutex_enter' will always evaluate to 'true' [-Wpointer-bool-conversion]
+ 4355 |   if (sqlite3_mutex_enter) {
+      |   ~~  ^~~~~~~~~~~~~~~~~~~
+C:/Users/Zara Tahir/University/FYP/FYP - 1/Eykon Source Code/Eykon/android/app/src/androidTest/cpp/third_party/sqlite-vec.c:4355:7: note: prefix with the address-of operator to silence this warning
+ 4355 |   if (sqlite3_mutex_enter) {
+      |       ^
+      |       &
+C:/Users/Zara Tahir/University/FYP/FYP - 1/Eykon Source Code/Eykon/android/app/src/androidTest/cpp/third_party/sqlite-vec.c:4392:7: warning: address of function 'sqlite3_mutex_leave' will always evaluate to 'true' [-Wpointer-bool-conversion]
+ 4392 |   if (sqlite3_mutex_leave && entered) {
+      |       ^~~~~~~~~~~~~~~~~~~ ~~
+C:/Users/Zara Tahir/University/FYP/FYP - 1/Eykon Source Code/Eykon/android/app/src/androidTest/cpp/third_party/sqlite-vec.c:4392:7: note: prefix with the address-of operator to silence this warning
+ 4392 |   if (sqlite3_mutex_leave && entered) {
+      |       ^
+      |       &
+C:/Users/Zara Tahir/University/FYP/FYP - 1/Eykon Source Code/Eykon/android/app/src/androidTest/cpp/third_party/sqlite-vec.c:4513:7: warning: address of function 'sqlite3_mutex_enter' will always evaluate to 'true' [-Wpointer-bool-conversion]
+ 4513 |   if (sqlite3_mutex_enter) {
+      |   ~~  ^~~~~~~~~~~~~~~~~~~
+C:/Users/Zara Tahir/University/FYP/FYP - 1/Eykon Source Code/Eykon/android/app/src/androidTest/cpp/third_party/sqlite-vec.c:4513:7: note: prefix with the address-of operator to silence this warning
+ 4513 |   if (sqlite3_mutex_enter) {
+      |       ^
+      |       &
+C:/Users/Zara Tahir/University/FYP/FYP - 1/Eykon Source Code/Eykon/android/app/src/androidTest/cpp/third_party/sqlite-vec.c:4530:7: warning: address of function 'sqlite3_mutex_leave' will always evaluate to 'true' [-Wpointer-bool-conversion]
+ 4530 |   if (sqlite3_mutex_leave) {
+      |   ~~  ^~~~~~~~~~~~~~~~~~~
+C:/Users/Zara Tahir/University/FYP/FYP - 1/Eykon Source Code/Eykon/android/app/src/androidTest/cpp/third_party/sqlite-vec.c:4530:7: note: prefix with the address-of operator to silence this warning
+ 4530 |   if (sqlite3_mutex_leave) {
+      |       ^
+      |       &
+6 warnings generated.
+[3/4] Building C object CMakeFiles/eykon_r4_noneon.dir/third_party/sqlite3.c.o
+[4/4] Linking C shared library libeykon_r4_noneon.so
+
+Name                   Length
+----                   ------
+libeykon_r4.so        9419512
+libeykon_r4_noneon.so 9402224
+
+
