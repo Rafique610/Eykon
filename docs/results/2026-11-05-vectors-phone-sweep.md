@@ -39,9 +39,11 @@ Android version.
 ## Results: Infinix X670, cool run (7 Nov 2026, 13:10 to 13:16)
 
 Session facts: Infinix X670, Android 13, platform SQLite 3.32.2, kit commit a637e1d, vectors are 512-dim
-random unit vectors (`random_unit_seed31`). Battery 90 % at the start, 89 % at the end. Phone **unplugged
-for the whole run** (the test was started over USB with `setsid nohup` and kept going after the cable was
-pulled, finished 13:16:47). Flight mode on, apps cleared, screen on. Room temperature 27 C (told by Zara,
+random unit vectors (`random_unit_seed31`). Battery 90 % at the start, 89 % at the end. Phone **unplugged for
+most of the run, not all of it**: the test was started over USB at 13:10:47 with `setsid nohup`, and the cable
+was pulled some time after that (exact time not recorded). The 1,000 and 5,000 sizes finished within about
+10 seconds of the start, so they ran with the cable in; later sizes ran on battery. The run kept going after
+the cable was pulled and finished 13:16:47. Flight mode on, apps cleared, screen on. Room temperature 27 C (told by Zara,
 not measured). Battery temperature 30.3 C at the start, 32.9 C at the end. 5 runs per size.
 Raw files: `docs/results/vectors/infinix-2026-11-07-cool.csv` (pulled unedited) and
 `docs/results/vectors/proof/infinix-2026-11-07-sweep-cool-logcat.txt` (raw `logcat -s EYKO31`).
@@ -86,7 +88,8 @@ What the numbers say:
 **Deviation from the protocol:** my laptop shut down during the load, so the sweep did not start right
 after it. It started at 13:52:25, **10 minutes after the load ended**, when the phone had already cooled to
 35.6 C. So this is a "warm" run (35.6 to 36.6 C during the sweep, against 30.3 to 32.9 C in the cool run),
-not the peak 37.3 C. Phone unplugged during the sweep, flight mode, battery 88 %, room 27 C. Files:
+not the peak 37.3 C. The sweep was started over USB at 13:52:25 and the cable was pulled shortly after (time not recorded), so the
+start of the 20,000 size may have run with the cable in. Flight mode, battery 88 %, room 27 C. Files:
 `infinix-2026-11-07-hot.csv` and `proof/infinix-2026-11-07-sweep-hot-logcat.txt` (raw).
 
 Median of the 5 run medians in ms, hot against cool:
