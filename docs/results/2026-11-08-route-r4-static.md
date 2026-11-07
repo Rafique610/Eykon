@@ -67,11 +67,37 @@ which `Debug.getMemoryInfo` does not count as the app's. The data still uses RAM
 measured how much RAM that takes or what the search costs when those pages are dropped (the EYKO-109 background test
 showed a 3.8 times slower first search for the mapped file; nothing like it was run for vec0).
 
+## Controlled repeat: unplugged, flight mode (8 Nov, 03:20)
+
+Same sweep, NEON build, sizes 1k to 100k, 5 runs. **Phone unplugged from 03:17** (told by Zara; the sweep started at 03:20:27, after a 3-minute
+delay built into the test so the cable could come out first), **flight mode on**, battery 68 % at the start and the end, battery temperature
+26.6 to 26.8 C, other apps not opened. Room temperature not recorded. Median ms: 1k 2.1, 5k 6.9, 20k 25.2, 50k 57.9, 100k 114.8. Recall@20 1.0000
+(400 of 400) at every size. Against the plugged-in run above: within 2 % up to 50k, **+4 % at 100,000 rows** (114.8 against 110.3 ms; the
+five runs were 114.5 to 116.2 against 109.7 to 112.4). So the plugged-in run was a little faster at 100,000, not slower. Files:
+`...eyko108-r4-neon-...-0320.csv` (this run) and `...-0256.csv` (a flight-mode run that was entirely plugged in by mistake; it matches the first run).
+An earlier attempt to schedule the start from the shell died when the cable came out and produced no run; it is not in the results.
+
+## Ranking every row: sqlite-vec cannot do it
+
+The app's search needs every frame's score, not only the top 20, to grow its time windows (EYKO-109 card). Asking vec0 for all rows fails:
+`k value in knn query too large, provided 20000 and the limit is 4096` (same at 5,000; 0 rows returned at 20k and 100k). So sqlite-vec's nearest-neighbour
+query returns at most **4,096 rows**. Within that limit it is much slower than asking for 20: at 100,000 rows, `LIMIT 1000` took 296 ms and `LIMIT 4096` took
+306 ms, against 110 ms for `LIMIT 20` (median of 3 queries each; raw in `proof/infinix-2026-11-08-route-r4-logcat.txt`, tag EYKO108).
+So R4 as built cannot be the app's `scores()`; the app would have to change how it grows windows (top 4,096 only), which was not tried. At the
+card's 200 ms target, ranking 1,000 or more rows at 100,000 rows already fails.
+
+## APK size added (step: APK Analyzer)
+
+One stripped NEON library (`llvm-strip --strip-unneeded`, 1,708,176 bytes) added to the app's `jniLibs` and the debug APK rebuilt: the APK's file list grew by exactly
+**1,708,176 bytes (1.71 MB)** (stored uncompressed in a debug APK; about 0.85 MB if it were compressed). Whole-file sizes were 143,887,194 and 162,110,184 bytes,
+an 18 MB difference that is more than the library; the cause (rebuild layout) was not investigated, so I trust the per-entry numbers. The unstripped libraries
+in the test APK are 9.4 MB each.
+
 ## Claims (C1 to C3)
 
 - **C1, it always works because nothing is loaded at run time: holds on the Infinix** (one phone, Android 13).
 - **C2, it is the most effort: about 2 hours of my time for this test, most of it waiting on the NDK and downloads (r26d then r28c,
-  about 1.5 GB), 399 lines written** (88 C, 23 CMake, 33 PowerShell scripts, 41 + 214 Kotlin). This is the test only: a production
+  about 1.5 GB), 489 lines written** (88 C, 23 CMake, 33 PowerShell scripts, 41 + 304 Kotlin). This is the test only: a production
   version needs a JNI database layer replacing Room's use of SQLite (open, transactions, prepared statements, migrations, threads)
   and our own native build in the app, which this test does not include. Not weighed against R1 to R3 (that is EYKO-98).
 - **C3, full control (NEON on, 16 KB pages, only the flags we need): holds.** NEON gives 1.3 to 1.4 times faster search;
@@ -85,21 +111,21 @@ showed a 3.8 times slower first search for the mapped file; nothing like it was 
   **met** (all three tables build at 100,000 rows with a flat 56 MB PSS; today's array fails at 50,000). (b) faster than
   `blob_memory_fast` at 100k on the A32: **not met on the Infinix** (110 against 69 ms); the A32 was not run. 110 ms at 100,000 rows is under the 200 ms target
   (our own target, no source yet, EYKO-101).
-- **Verdict (one phone): works, exact, memory problem solved at 100k rows, but 1.6 to 1.9 times slower than the fast in-memory loop, and the effort
-  (own native build and JNI layer) is not proven small.** Whether it beats R1 to R3 and the memory-mapped float32 file from EYKO-109 is the lead's
+- **Verdict (one phone): works, exact and memory problem solved at 100k rows, but 1.6 to 1.9 times slower than the fast in-memory loop, it cannot rank more than 4,096
+  rows (the app needs all of them), and the effort (own native build and JNI layer) is not proven small.** Whether it beats R1 to R3 and the memory-mapped float32 file from EYKO-109 is the lead's
   decision (EYKO-98).
 
 ## Not tested / limits
 
 - A32 and Pixel not run; the card's `Samsung A32` comparison for mark (b) is missing.
-- Not exercised through Room, through the app's whole search (which needs every frame's score, not only the top 20), or
-  with the 2,400-hit check. vec0 returns the nearest k rows; the app's time-window growth needs all scores, so this is not a drop-in for `VideoVectors.scores`.
-- The phone was plugged in during these runs and not in flight mode (not a thermal or protocol-controlled run).
-- The APK size is an estimate; APK Analyzer was not run. The app APK was not rebuilt with the library inside.
+- Not exercised through Room (the card says to use the JNI layer instead). The app's whole search and the 2,400-hit check were **not run**, because
+  sqlite-vec cannot rank every row (see the next section), so it cannot replace `VideoVectors.scores` as it is.
+- The first sweep (00:00 to 02:05) was done with the phone plugged in and not in flight mode; the controlled run below was repeated unplugged.
+- Android's APK Analyzer would not start from this folder (the space in the user name); the APK size comes from the APK's own file list instead.
 - The no-NEON build was run at 20k and 100k only, as the card says.
 
 ## Evidence files
 
 `docs/results/vectors/route-r4/infinix-2026-11-08-eyko108-r4-neon-*.csv`, `...-r4-noneon-*.csv`, `...-r4-memory-neon-*.csv` (pulled unedited
 from the phone), `docs/results/vectors/proof/infinix-2026-11-08-route-r4-logcat.txt` and `...-route-r4-versions-logcat.txt` (raw logcat),
-`route-r4-readelf-2026-11-08.txt`, `route-r4-build-log-2026-11-08.txt`. Code: `android/app/src/androidTest/cpp/`, `NativeSqlite.kt`, `RouteR4StaticTest.kt`.
+`route-r4-readelf-2026-11-08.txt`, `route-r4-build-log-2026-11-08.txt`, `...-route-r4-unplugged-logcat.txt` (the unplugged run and the k-limit tests; the earlier logcat file also holds the full-ranking attempts), `...-fullrank-neon-*.csv`. Code: `android/app/src/androidTest/cpp/`, `NativeSqlite.kt`, `RouteR4StaticTest.kt`.

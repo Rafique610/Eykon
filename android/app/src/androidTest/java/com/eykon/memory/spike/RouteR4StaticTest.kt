@@ -14,7 +14,7 @@ import java.util.Locale
 /**
  * EYKO-108 (route R4, throwaway): our own NDK build of SQLite with sqlite-vec compiled in, opened
  * through a small JNI layer. Logcat tag EYKO31 (versions) and EYKO108; CSV in files/results.
- * Arguments (`-e name value`): neon (true default, false = the no-NEON build), sizes (default
+ * Arguments (`-e name value`): neon (true default, false = the no-NEON build), delay (seconds to wait before the sweep, default 0), sizes (default
  * 1k,5k,20k,50k,100k), runs (default 5), commit. Methods: sqlite_vec_static, sqlite_vec_static_noneon.
  * Run one test per process (`am instrument -e class ...#name`): the library loads once.
  */
@@ -77,6 +77,10 @@ class RouteR4StaticTest {
         val args = InstrumentationRegistry.getArguments()
         val sizes = (args.getString("sizes") ?: "1k,5k,20k,50k,100k").split(",").map { parseSize(it) }
         val runs = args.getString("runs")?.toInt() ?: 5
+        args.getString("delay")?.toLong()?.let { // wait first, so the tester can unplug the cable after the start command
+            Log.i(tag, "sweep starts in $it s (delay argument)")
+            Thread.sleep(it * 1000)
+        }
         NativeSqlite.load(neon)
         val sheet = BenchSheet(context, tag, "eyko108-r4-${if (neon) "neon" else "noneon"}", args.getString("commit") ?: "unknown", TestVectors.label("real"))
         val queries = TestVectors.queries("real", 512, queryCount + 1)
@@ -118,6 +122,92 @@ class RouteR4StaticTest {
             }
         }
         sheet.done()
+    }
+
+    /**
+     * What the app would need from vec0: every row's rank, not only the top 20 (VideoSearch grows its time
+     * windows from all scores). Times `ORDER BY distance LIMIT n` (all rows, with distances) and compares
+     * the first 20 ids with the exact top 20, at the sizes in `sizes` (default 20k,100k), 1 warm-up + 5 queries.
+     */
+    @Test
+    fun fullRanking() {
+        val context = ApplicationProvider.getApplicationContext<Context>()
+        val args = InstrumentationRegistry.getArguments()
+        val sizes = (args.getString("sizes") ?: "20k,100k").split(",").map { parseSize(it) }
+        NativeSqlite.load(neon)
+        val sheet = BenchSheet(context, tag, "eyko108-r4-fullrank-${if (neon) "neon" else "noneon"}", args.getString("commit") ?: "unknown", TestVectors.label("real"))
+        val queries = TestVectors.queries("real", 512, 6)
+        for (n in sizes) {
+            val name = "eyko108_fullrank_$n.db"
+            val (db, _) = open(context, name)
+            val file: File = context.getDatabasePath(name)
+            try {
+                exec(db, "CREATE VIRTUAL TABLE v USING vec0(embedding float[512])")
+                val top = exactTop(queries.drop(1))
+                insertAndScore(db, "v", 512, n, 31L, queries.drop(1), top)
+                val st = NativeSqlite.nativePrepare(db, "SELECT rowid, distance FROM v WHERE embedding MATCH ?1 ORDER BY distance LIMIT $n")
+                check(st != 0L) { "prepare failed: ${NativeSqlite.nativeErrmsg(db)}" }
+                try {
+                    fun rank(q: FloatArray): List<Long> {
+                        NativeSqlite.nativeReset(st)
+                        NativeSqlite.nativeBindBlob(st, 1, TestVectors.toBlob(q))
+                        val ids = ArrayList<Long>(n)
+                        while (NativeSqlite.nativeStep(st) == NativeSqlite.ROW) ids += NativeSqlite.nativeColumnLong(st, 0)
+                        return ids
+                    }
+                    rank(queries[0])
+                    Log.i(tag, "n=$n ($method) LIMIT $n: step message after the query: ${NativeSqlite.nativeErrmsg(db)}")
+                    var returned = 0
+                    var same = 0
+                    val times = queries.drop(1).mapIndexed { i, q ->
+                        var ids = emptyList<Long>()
+                        val ms = timeMs { ids = rank(q) }
+                        returned = ids.size
+                        same += ids.take(topK).toSet().intersect(top[i].toSet()).size
+                        ms
+                    }
+                    val note = "all rows ranked: %d rows returned; first %d match the exact top %d: %d of %d".format(Locale.ROOT, returned, topK, topK, same, 5 * topK)
+                    Log.i(tag, "n=$n ($method) full ranking: median %.0f ms; $note".format(Locale.ROOT, times.sorted()[2]))
+                    sheet.row("$method-full-ranking", 512, n, "1", times, file.length() / 1e6, battery(context).first, note)
+                } finally {
+                    NativeSqlite.nativeFinalize(st)
+                }
+            } finally {
+                NativeSqlite.nativeClose(db)
+                file.delete()
+            }
+        }
+        sheet.done()
+    }
+
+    /** sqlite-vec's KNN has a largest k. Times `LIMIT k` for k = 1,000, 4,096 and 5,000 at one size (default 100k) and logs any error. */
+    @Test
+    fun largestK() {
+        val context = ApplicationProvider.getApplicationContext<Context>()
+        val n = parseSize(InstrumentationRegistry.getArguments().getString("n") ?: "100k")
+        NativeSqlite.load(neon)
+        val queries = TestVectors.queries("real", 512, 4)
+        val (db, _) = open(context, "eyko108_largestk.db")
+        val file: File = context.getDatabasePath("eyko108_largestk.db")
+        try {
+            exec(db, "CREATE VIRTUAL TABLE v USING vec0(embedding float[512])")
+            insertAndScore(db, "v", 512, n, 31L, emptyList(), emptyList())
+            for (k in listOf(1000, 4096, 5000)) {
+                val st = NativeSqlite.nativePrepare(db, "SELECT rowid, distance FROM v WHERE embedding MATCH ?1 ORDER BY distance LIMIT $k")
+                var rows = 0
+                val times = queries.drop(1).map { q ->
+                    NativeSqlite.nativeReset(st)
+                    NativeSqlite.nativeBindBlob(st, 1, TestVectors.toBlob(q))
+                    rows = 0
+                    timeMs { while (NativeSqlite.nativeStep(st) == NativeSqlite.ROW) rows++ }
+                }
+                Log.i(tag, "n=$n LIMIT $k: $rows rows, median %.0f ms, message: ${NativeSqlite.nativeErrmsg(db)}".format(Locale.ROOT, times.sorted()[1]))
+                NativeSqlite.nativeFinalize(st)
+            }
+        } finally {
+            NativeSqlite.nativeClose(db)
+            file.delete()
+        }
     }
 
     /** Memory with all three tables (image 512, text 384, audio-sized 512), n rows each, in vec0 tables. */
