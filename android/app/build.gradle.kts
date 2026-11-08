@@ -115,4 +115,6 @@ dependencies {
     // so the app's androidx.sqlite goes 2.4.0 -> 2.7.1 on this throwaway branch (Room 2.6.1 unchanged).
     androidTestImplementation("androidx.sqlite:sqlite-bundled:2.7.1")
     implementation("androidx.sqlite:sqlite-framework:2.7.1")
+    // EYKO-106 route R2: requery's SQLite (3.49.0 tag, JitPack), which can load sqlite-vec; test only
+    androidTestImplementation("com.github.requery:sqlite-android:3.49.0")
 }

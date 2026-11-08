@@ -1,0 +1,11 @@
+--------- beginning of main
+11-08 15:48:47.305 I/TestRunner(25573): run started: 1 tests
+11-08 15:48:47.309 I/TestRunner(25573): started: sameFilesBothEngines(com.eykon.memory.spike.RouteR2DiagnoseTest)
+11-08 15:50:32.352 I/EYKO31  (25573): diag n=100000 file written-by-google (208.4 MB): google settings {page_size=4096, cache_size=-2000, mmap_size=0, journal_mode=delete, locking_mode=normal, temp_store=0, cache_spill=483, soft_heap_limit=0, hard_heap_limit=0, threads=0, auto_vacuum=1, synchronous=2}
+11-08 15:50:32.368 I/EYKO31  (25573): diag n=100000 file written-by-google: requery settings {page_size=4096, cache_size=-2000, mmap_size=0, journal_mode=truncate, locking_mode=normal, temp_store=0, cache_spill=483, soft_heap_limit=8388608, hard_heap_limit=0, threads=0, auto_vacuum=1, synchronous=2}; differ: [journal_mode, soft_heap_limit]
+11-08 15:51:00.873 I/EYKO31  (25573): diag n=100000 file written-by-google: median ms google 235.8, requery 233.8, requery with google's settings 233.0 (now {journal_mode=truncate, soft_heap_limit=0})
+11-08 15:51:30.577 I/EYKO31  (25573): diag n=100000 file written-by-requery (209.6 MB): google settings {page_size=1024, cache_size=-2000, mmap_size=0, journal_mode=delete, locking_mode=normal, temp_store=0, cache_spill=1765, soft_heap_limit=0, hard_heap_limit=0, threads=0, auto_vacuum=1, synchronous=2}
+11-08 15:51:30.584 I/EYKO31  (25573): diag n=100000 file written-by-requery: requery settings {page_size=1024, cache_size=-2000, mmap_size=0, journal_mode=truncate, locking_mode=normal, temp_store=0, cache_spill=1765, soft_heap_limit=0, hard_heap_limit=0, threads=0, auto_vacuum=1, synchronous=2}; differ: [journal_mode]
+11-08 15:52:30.560 I/EYKO31  (25573): diag n=100000 file written-by-requery: median ms google 485.0, requery 485.1, requery with google's settings 482.1 (now {journal_mode=truncate})
+11-08 15:52:30.763 I/TestRunner(25573): finished: sameFilesBothEngines(com.eykon.memory.spike.RouteR2DiagnoseTest)
+11-08 15:52:30.768 I/TestRunner(25573): run finished: 1 tests, 0 failed, 0 ignored

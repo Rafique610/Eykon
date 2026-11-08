@@ -230,7 +230,8 @@ const steps = [
   ['Re-check · 5–7 Nov · EYKO-94, 92', 'ok', 'A third phone and a second laptop agree', 'Zara ran the same test on her Infinix X670 (another maker, another chip): the same two errors, again after a phone restart, and the same memory limit. From a fresh clone on her own laptop the laptop side reproduced too: 14 tests pass and the storage test ranks the methods the same way.', 'E4, E8'],
   ['Build · 7 Nov · EYKO-104', 'ok', 'Our own sqlite-vec file for Android', 'The ready-made Android file of sqlite-vec is aligned for 4 KB pages and has no NEON speed-up (EYKO-89). So we built v0.1.9 ourselves with NDK r28c, once with NEON and once without. Both are aligned for 16 KB pages, export `sqlite3_vec_init` and need only libc, libm and libdl. Rebuilding gives the same SHA256. Not yet loaded on a phone.', 'E1'],
   ['Test · 8 Nov · EYKO-105', 'ok', 'Our own SQLite works on the phone, but it is slower', 'On the A32, Google\'s bundled SQLite loaded our own sqlite-vec file. It gave the same top 20 as our search at every size (400 of 400), and three tables at 100k rows stayed at about 56 MB, where our way runs out of memory at 50k. But it was **2.5× slower** (230 against 91 ms at 100k), and it can return at most 4,096 rows, while the app needs every frame\'s score. Zara\'s own SQLite build (R4) ran at the same speed on the same phone (231 ms). Verdict: works, not adopted.', 'E11'],
-  ['Still open', null, 'What comes next', 'Test requery (R2, EYKO-106), as the lead asked. Then choose between the memory fixes: a memory-mapped file (EYKO-109) or sqlite-vec (EYKO-105, 108) (EYKO-98). Find sources for the 200 ms target and the usage estimate (EYKO-101).', null],
+  ['Test · 8 Nov · EYKO-106', 'bad', 'requery is cheaper to adopt, but no faster', 'The lead asked to try requery too, because it works with our Room as it is. It loaded the same sqlite-vec file on the A32 and gave the same top 20, but first took **486 ms at 100k**, 2.1× Google\'s SQLite. We tested why: requery makes every new database with **1 KB pages** (its default is hard-coded to 1024), and Google uses 4 KB. On the same file both engines run at the same speed (234 against 236 ms). With 4 KB pages requery matches R1, still 2.5× our in-memory search. Verdict: works, not adopted.', 'E11'],
+  ['Still open', null, 'What comes next', 'Choose between the memory fixes: a memory-mapped file (EYKO-109) or sqlite-vec (EYKO-105, 108) (EYKO-98). Find sources for the 200 ms target and the usage estimate (EYKO-101).', null],
 ];
 steps.forEach((s, i) => {
   const [kind, tone, title, text, show] = s;
@@ -273,7 +274,7 @@ const Q = [
   ['A3', 'A', 'Android apps can ship their own SQLite. Did you try that?', 'Answered',
     'Yes, on the A32. Google\'s bundled SQLite (`BundledSQLiteDriver.addExtension`) loaded our own sqlite-vec file: same top 20 as our search at every size, and three tables at 100k fit in about 56 MB. But it is 2.5× slower than our in-memory search (230 against 91 ms at 100k) and returns at most 4,096 rows. Zara\'s own SQLite build (R4) is just as fast on the same phone. So we did not adopt it.',
     'E11 · `docs/results/2026-11-08-route-r1-bundled.md`',
-    'Before the test: we rebuilt sqlite-vec ourselves (4 KB pages and no NEON in the ready-made file). Even testing it raised the app\'s androidx.sqlite from 2.4.0 to 2.7.1, because Android\'s build tools keep test and app on one version. The Pixel and Infinix runs are not done. R2 (requery) is tested next at the lead\'s request (EYKO-106); R3 loads the same code and is proposed for closing.', 'EYKO-104, 105, 108; 106 (R2 next); 107 (proposed closed)'],
+    'Before the test: we rebuilt sqlite-vec ourselves (4 KB pages and no NEON in the ready-made file). Even testing it raised the app\'s androidx.sqlite from 2.4.0 to 2.7.1, because Android\'s build tools keep test and app on one version. The Pixel and Infinix runs are not done. R2 (requery, EYKO-106) also works. It first measured 486 ms at 100k because of its 1 KB default page size; with 4 KB pages it matches R1. R3 is proposed for closing.', 'EYKO-104, 105, 106, 108; 107 (proposed closed)'],
   ['A4', 'A', 'Did it fail only on one phone?', 'Answered',
     'No. Three phones from three makers: Samsung A32 (Helio G80, Android 13), Pixel 9 Pro XL (Tensor G4, Android 17) and Infinix X670 (MediaTek MT6781, Android 13). Same failure on all three.',
     'E4',
@@ -501,7 +502,7 @@ body.push(SRC('docs/results/eyko-89-android-sqlite-extensions/01-why-android-blo
 ev('E11', 'Ways to ship our own SQLite, and the vector options (5 Nov)', 'Three ready-made SQLite builds load plugins on Android. Google\'s is the one to try first. The ready-made sqlite-vec file needs rebuilding before it is used.');
 body.push(grid([2200, 2600, 2600, 2238], ['Route', 'Plugin loading', 'Cost for our app', 'Verdict'], [
   ['**Google bundled SQLite** (androidx sqlite-bundled)', '`addExtension(file, entryPoint)` since 2.6.0; SQLite 3.53.4, FTS5 on', 'Test: app androidx.sqlite 2.4.0 → 2.7.1 (build tools keep test and app on one version). App: Room 2.6.1 → 2.8 + support wrapper', 'Tried 8 Nov (EYKO-105): works, 2.5× slower, **not adopted**'],
-  ['requery sqlite-android', '`customExtensions`; FTS5 on; ~1.7 MB arm64', 'Works with Room 2.6.1 as it is', 'Fallback: no update since Oct 2025'],
+  ['requery sqlite-android', '`customExtensions`; FTS5 on; ~1.7 MB arm64', 'Works with Room 2.6.1 as it is (needs only androidx.sqlite 2.4.0). New databases get 1 KB pages unless set to 4 KB', 'Tried 8 Nov (EYKO-106): works, same speed as R1 with 4 KB pages, **not adopted**'],
   ['SQLCipher', 'Turned on for every connection; FTS5 on', 'Room 2 factory, but needs a password and key storage', 'Not now: encryption no card asks for'],
   ['Our own NDK build', 'Not needed: sqlite-vec compiled in', 'Our own native build and JNI', 'Last resort'],
 ], { firstColBold: true }));
@@ -509,9 +510,17 @@ body.push(P('**Result on the phone (8 Nov, Samsung A32, EYKO-105):** median ms o
 body.push(grid([2200, 2600, 2600, 2238], ['Rows', 'R1: Google\'s SQLite + our sqlite-vec', 'R4: own SQLite with sqlite-vec (Zara\'s build)', 'Our in-memory search'], [
   ['20,000', '53.0', '50.8', '18.5'],
   ['100,000', '**230.2**', '**231.0**', '**91.2**'],
+  ['R2 requery, its default 1 KB pages: 20,000 / 100,000', '104.5 / **485.8** (same A32)', '—', '20.4 / 93.2 (same run)'],
+  ['R2 requery, 4 KB pages: 100,000', '**233.8**', '—', '—'],
   ['3 tables × 100k, app memory', '55 MB, no error', 'flat (Infinix, EYKO-108)', 'out of memory at 50k'],
 ], { firstColBold: true }));
 body.push(SRC('docs/results/2026-11-08-route-r1-bundled.md · docs/results/vectors/routes/a32-*.csv · proof/a32-2026-11-08-route-r1-logcat.txt'));
+body.push(P('**Why requery (R2) first ran 2× slower (8 Nov, A32, 100k rows, median ms):** both engines searched the same two files, one written by each. 12 runtime settings were logged (`PRAGMA page_size, cache_size, mmap_size, journal_mode, …`); only the page size differs between the files. requery makes new databases with 1 KB pages because its `SQLiteGlobal.getDefaultPageSize()` returns a hard-coded 1024 (requery 3.49.0 source); Google uses 4 KB. Matching requery\'s other settings to Google\'s changed nothing. Likely mechanism, not separately measured: sqlite-vec keeps vectors in 2 MB chunk BLOBs, which take about 2,000 pages each at 1 KB and about 500 at 4 KB. Compile flags were checked and ruled out (requery `-O3`, Google `-Oz`). Fix if R2 were used: `PRAGMA page_size = 4096` before the first table.', { run: { size: 20 }, before: 100 }));
+body.push(grid([2400, 1400, 1900, 1900, 2038], ['File', 'Page size', 'Google searches it', 'requery searches it', 'requery, Google\'s settings'], [
+  ['written by Google', '4,096 B', '235.8', '**233.8**', '233.0'],
+  ['written by requery', '1,024 B', '**485.0**', '485.1', '482.1'],
+], { firstColBold: true }));
+body.push(SRC('docs/results/2026-11-08-route-r2-requery.md · proof/a32-2026-11-08-route-r2-diagnose-logcat.txt · RouteR2DiagnoseTest.kt'));
 body.push(P('**Each route has its own test card**, all under one shared protocol and the same pass marks: EYKO-104 (build our own sqlite-vec file), EYKO-105 (R1 Google bundled), EYKO-106 (R2 requery), EYKO-107 (R3 SQLCipher), EYKO-108 (R4 own NDK build). Option O1, vectors outside Java memory: EYKO-109.', { run: { size: 20 }, before: 100 }));
 body.push(grid([3238, 3200, 3200], ['Ready-made Android file (checked with `readelf`)', 'Memory-page alignment', 'Speed-up (NEON)'], [
   ['sqlite-vec v0.1.9 `vec0.so` (arm64)', '**4 KB** (`0x1000`); 16 KB needed on 16 KB phones and by Google Play from 1 Feb 2027', '**None**: the build script turns NEON on only for Mac'],

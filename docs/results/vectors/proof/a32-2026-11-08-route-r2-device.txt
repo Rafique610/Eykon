@@ -1,0 +1,11 @@
+# R2 sweep before: 2026-11-08 15:28:28 +0500
+  USB powered: true
+  level: 100
+  temperature: 271
+/dev/block/dm-47 107G  54G   53G  51% /data/user/0
+# memory before: 2026-11-08 15:33:13 +0500
+  level: 100
+  temperature: 273
+# after: 2026-11-08 15:37:24 +0500
+  level: 100
+  temperature: 277
