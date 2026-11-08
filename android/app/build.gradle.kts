@@ -51,6 +51,9 @@ android {
     sourceSets {
         getByName("androidTest") {
             assets.srcDir("src/test/resources")
+            // EYKO-105: our own sqlite-vec builds from EYKO-104 (task build-sqlite-vec-android), kept out of git
+            val sqliteVec = file(findProperty("sqliteVecOut") as String? ?: "D:/eykon-cache/sqlite-vec-android/out")
+            if (sqliteVec.exists()) assets.srcDir(sqliteVec)
         }
     }
 
@@ -107,4 +110,9 @@ dependencies {
     androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     androidTestImplementation("androidx.room:room-testing:$roomVersion")
+    // EYKO-105 route R1: Google's bundled SQLite, which can load sqlite-vec. The test alone needs
+    // androidx.sqlite 2.7.1 (the driver API), and AGP makes the app use the same version as its tests,
+    // so the app's androidx.sqlite goes 2.4.0 -> 2.7.1 on this throwaway branch (Room 2.6.1 unchanged).
+    androidTestImplementation("androidx.sqlite:sqlite-bundled:2.7.1")
+    implementation("androidx.sqlite:sqlite-framework:2.7.1")
 }

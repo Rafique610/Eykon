@@ -67,6 +67,57 @@ object TestVectors {
         ByteBuffer.allocate(v.size * 4).order(ByteOrder.LITTLE_ENDIAN).apply { asFloatBuffer().put(v) }.array()
 }
 
+/**
+ * EYKO-100's fast exact search (blob_memory_fast): four running sums per row and a [k]-slot
+ * min-heap instead of sorting every row. Row indexes of the best [k], best first.
+ */
+fun exactTopK(matrix: FloatArray, rows: Int, dim: Int, query: FloatArray, k: Int): List<Int> {
+    val ids = IntArray(k)
+    val best = FloatArray(k)
+    var size = 0
+    for (r in 0 until rows) {
+        val base = r * dim
+        var s0 = 0f
+        var s1 = 0f
+        var s2 = 0f
+        var s3 = 0f
+        var i = 0
+        while (i < dim) {
+            s0 += matrix[base + i] * query[i]
+            s1 += matrix[base + i + 1] * query[i + 1]
+            s2 += matrix[base + i + 2] * query[i + 2]
+            s3 += matrix[base + i + 3] * query[i + 3]
+            i += 4
+        }
+        val score = (s0 + s1) + (s2 + s3)
+        if (size < k) {
+            var c = size++
+            while (c > 0 && best[(c - 1) / 2] > score) { // sift up
+                best[c] = best[(c - 1) / 2]; ids[c] = ids[(c - 1) / 2]; c = (c - 1) / 2
+            }
+            best[c] = score; ids[c] = r
+        } else if (score > best[0]) {
+            var c = 0
+            while (true) { // sift down
+                var child = 2 * c + 1
+                if (child >= k) break
+                if (child + 1 < k && best[child + 1] < best[child]) child++
+                if (best[child] >= score) break
+                best[c] = best[child]; ids[c] = ids[child]; c = child
+            }
+            best[c] = score; ids[c] = r
+        }
+    }
+    return (0 until size).sortedByDescending { best[it] }.map { ids[it] }
+}
+
+/** Total PSS in MB after two GCs (EYKO-100 memory tests). */
+fun pssMb(): Double {
+    repeat(2) { Runtime.getRuntime().gc(); System.runFinalization() }
+    Thread.sleep(300)
+    return Debug.MemoryInfo().also { Debug.getMemoryInfo(it) }.totalPss / 1024.0
+}
+
 fun parseSize(text: String): Int = text.trim().lowercase(Locale.ROOT).let {
     if (it.endsWith("k")) it.dropLast(1).toInt() * 1_000 else it.toInt()
 }
@@ -85,8 +136,11 @@ fun battery(context: Context): Pair<Double, Int> {
 }
 
 /** Prints the device sheet and writes CSV rows in the shared laptop/phone format (EYKO-90) to files/results. */
-class BenchSheet(private val context: Context, private val tag: String, prefix: String, private val commit: String, private val source: String) {
-    private val sqlite = SQLiteDatabase.create(null).use { db ->
+class BenchSheet(
+    private val context: Context, private val tag: String, prefix: String, private val commit: String, private val source: String,
+    sqliteVersion: String? = null, // a bundled SQLite's version (EYKO-105); default: the platform's
+) {
+    private val sqlite = sqliteVersion ?: SQLiteDatabase.create(null).use { db ->
         db.rawQuery("SELECT sqlite_version()", null).use { it.moveToFirst(); it.getString(0) }
     }
     private val device = "${Build.MANUFACTURER} ${Build.MODEL}"

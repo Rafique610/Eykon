@@ -1,0 +1,7 @@
+# R4 on the A32, before: 2026-11-08 14:45:39 +0500
+  USB powered: true
+  level: 93
+  temperature: 310
+# after: 2026-11-08 14:49:30 +0500
+  level: 100
+  temperature: 306
