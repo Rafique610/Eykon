@@ -1,0 +1,139 @@
+{
+  "title": "Head 4 · Video processing",
+  "subtitle": "Stages split, filter and dedup: from about 225 frames of a 75 s clip to the 10–16 unique frames worth describing.",
+  "header": "Eykon · Head 4 · Video processing",
+  "date": "2 November 2026",
+  "meta": [
+    ["Status", "Built and in use on the Pixel 9 Pro XL. Thresholds are starting values, not yet tuned (gap G1, G3)."],
+    ["Covers", "Pulling frames and sound, the cheap filters, the 3-second slot rule, the keyframe comparison, dropping repeats, deleting dropped pictures."],
+    ["Cards", "EYKO-4 (split), EYKO-5 (cheap filters), EYKO-6 (unique frames), EYKO-45 (keyframes vs existing methods), EYKO-59 (delete dropped JPEGs)."],
+    ["Synverk flow", "Head 4 · Video processing: from 225 frames to 10–16 unique ones"],
+    ["Main sources", "docs/results/2026-10-12-keyframes-first-run.md, -keyframes-tuning.md, 2026-10-13-keyframes-epic-kitchens.md, -keyframes-slots-on-phone.md"]
+  ],
+  "sections": [
+    {"title": "Summary", "blocks": [
+      "The models that describe frames are the expensive part of the pipeline, so the first job is to send them as few frames as possible without losing moments. Three stages do that with no neural network until the last step:",
+      {"bullets": [
+        "**split** pulls 3 frames a second (and the sound) out of the video;",
+        "**filter** drops dark, bright, blurry and still frames with plain maths, then keeps only the sharpest frame of each 3-second slot;",
+        "**dedup** drops repeats, first with a cheap picture hash and then with MobileCLIP image vectors."
+      ]},
+      "A 75 s clip goes from about 225 frames to 10–16. Processing fell from 137.5 s to 32.6 s per minute of video on the Pixel. The keyframe tests also showed an honest result: **our selection is not better than evenly spaced frames** at the same count; its value is in cost, not in finding more moments."
+    ]},
+    {"title": "Approach", "blocks": [
+      {"h3": "Stage split (EYKO-4)"},
+      {"bullets": [
+        "MediaExtractor + MediaCodec decode the video **in one pass** at 3 frames a second (a seek-per-frame path is the fallback).",
+        "Each frame is shrunk so its longer side is 640 px and saved as JPEG quality 90.",
+        "The sound track is decoded and resampled to a 16 kHz mono WAV, kept for speech later (not used yet).",
+        "Cost: 1.6–1.9 s for a 10 s clip on the Pixel."
+      ]},
+      {"h3": "Stage filter (EYKO-5)"},
+      "Each frame is shrunk to a 320 px grey copy and measured with plain maths, the same numbers OpenCV gives on the laptop:",
+      {"table": {"cols": ["Rule", "Measure", "Drop when"], "widths": [1.2, 3.5, 2.5], "rows": [
+        ["Dark", "Mean brightness", "< 25"],
+        ["Bright", "Mean brightness", "> 235"],
+        ["Blurry", "Variance of the Laplacian (sharpness)", "< 60"],
+        ["Still", "Pixel change and histogram change against the previous frame", "pixel < 6 and histogram < 0.10"]
+      ]}},
+      "Then the **slot rule**: frames are grouped into 3-second slots (9 frames each) and only the sharpest usable frame of each slot can stay. This was added on 13 October after the keyframe tests showed that checking every frame on its own kept more than half of them.",
+      {"h3": "Stage dedup (EYKO-6)"},
+      {"steps": [
+        "**dHash:** a 64-bit difference hash of each candidate. At most 6 bits different from an already kept frame means a repeat. Cheap and catches near-identical frames.",
+        "**MobileCLIP:** the rest go through the MobileCLIP-S2 image encoder (256 px input, 512-d unit vector). Cosine ≥ 0.95 to any kept frame means a repeat.",
+        "The kept frames' vectors are saved and reused for search later (Head 6), so the image model runs only once per frame."
+      ], "ref": "dedup"},
+      {"h3": "Clean-up (EYKO-59)"},
+      "At finish, the JPEG files of frames with kept = 0 are deleted. On Ego4D they were most of the 8.8 MB per minute of frame files."
+    ]},
+    {"title": "Options considered", "blocks": [
+      {"table": {"cols": ["Option", "What it is", "Result", "Verdict"], "widths": [2, 2.6, 3.8, 1.2], "rows": [
+        ["Every frame judged on its own (first build)", "Filters + dedup on all frames at 3 fps", "Kept 227 of 416 frames; 137.5 s per minute of video on the Pixel", "Replaced"],
+        ["Sharpest per 3 s slot", "Slot rule before dedup", "44 frames kept, 32.6 s per minute; 31 of 35 moments (was 34)", "Adopted"],
+        ["Compare only with recent frames (window W)", "Dedup against the last W seconds instead of the whole video", "Tried while tuning; no setting beat uniform", "Not adopted"],
+        ["B0 uniform sampling", "Evenly spaced frames, no model", "Matched or beat ours on moments at every budget", "Baseline"],
+        ["B1 codec keyframes", "The encoder's own I-frames", "35 % of EPIC-KITCHENS moments; cannot be set to a budget", "Rejected"],
+        ["B2 ffmpeg scene filter", "Scene-change score", "80 % on EPIC; 13 of 35 on our clips at 44 frames", "Rejected"],
+        ["B3 PySceneDetect", "Content / adaptive detectors", "83 % on EPIC; 29 / 20 of 35 on our clips", "Rejected"]
+      ]}}
+    ]},
+    {"title": "Decisions", "blocks": [
+      {"table": {"cols": ["#", "Decision", "When", "Why (evidence)"], "widths": [0.4, 3, 1.1, 4.2], "rows": [
+        ["1", "3 frames a second at 640 px, one decode pass", "EYKO-4", "Enough detail for detectors; decode is the largest remaining cost"],
+        ["2", "Cheap maths filters before any model", "EYKO-5", "Drops useless frames for almost no cost (1.0 s per minute)"],
+        ["3", "Keep only the sharpest frame per 3 s slot", "13 Oct 2026", "Cost 137.5 to 32.6 s per minute, at a cost of 3 of 35 moments"],
+        ["4", "Two-step dedup: dHash, then MobileCLIP cosine 0.95", "EYKO-6", "Hash catches cheap repeats; MobileCLIP vectors are reused for search"],
+        ["5", "Park keyframe tuning", "13 Oct 2026", "No setting beat uniform; tuning later (EYKO-46)"],
+        ["6", "Delete dropped frames' JPEGs at finish", "21 Oct 2026", "Frame files were the storage problem, not the memory itself"]
+      ]}}
+    ]},
+    {"title": "Tests and evidence", "blocks": [
+      {"h3": "Keyframes, first run on our six clips (12 Oct, before tuning)"},
+      {"table": {"cols": ["Method", "Frames kept", "Moments hit (35)", "Wasted frames"], "widths": [3, 1.5, 1.5, 1.5], "rows": [
+        ["Ours (phone)", "227", "34", "22 %"],
+        ["B0 uniform, same count", "227", "35", "23 %"],
+        ["B1 codec keyframes", "142", "35", "23 %"],
+        ["B2 ffmpeg scene filter", "227", "33", "32 %"],
+        ["B3 PySceneDetect content", "138", "35", "25 %"]
+      ]}},
+      "At this budget every method finds almost every moment, so the test cannot separate them; and ours cost about ten times more than uniform on the phone, almost all of it in the image model.",
+      {"h3": "Tuning on the tuning clips (12 Oct)"},
+      "A laptop copy of the phone's layers (keyframe_tune.py) ran 350 threshold settings. Uniform sampling was ahead of ours at every budget tried (for example 50 frames: ours 23 of 26, uniform 25). The held-out clips were not opened.",
+      {"h3": "Slot rule on the phone (13 Oct)"},
+      {"table": {"cols": ["", "Pull frames", "Filter", "Repeats (MobileCLIP)", "Total s / min", "Kept of 416"], "widths": [2.6, 1.2, 1, 1.6, 1.3, 1.2], "rows": [
+        ["Before (every frame)", "21.3", "1.4", "114.7", "137.5", "227"],
+        ["Now (sharpest per 3 s)", "19.1", "1.0", "12.4", "**32.6**", "44"]
+      ]}},
+      "Moments at 44 frames: ours 31 of 35, uniform 34, PySceneDetect content 29, adaptive 20, ffmpeg 13.",
+      {"h3": "Outside data: EPIC-KITCHENS-100 (13 Oct, untuned)"},
+      "Eight head-camera kitchen videos, 11 minutes, 158 moments marked by the dataset's own annotators. Run with the laptop copy at the phone's thresholds **before the slot rule existed**.",
+      {"table": {"cols": ["Method", "Frames", "Moments hit (158)"], "widths": [3.5, 1.5, 2], "rows": [
+        ["Ours (laptop copy)", "900", "151 (96 %)"],
+        ["B0 uniform, same count", "900", "153 (97 %)"],
+        ["B0 uniform, 1 a second", "663", "154 (97 %)"],
+        ["B3 PySceneDetect content", "592", "131 (83 %)"],
+        ["B2 ffmpeg scene filter", "900", "127 (80 %)"],
+        ["B1 codec keyframes", "110", "55 (35 %)"]
+      ]}},
+      {"h3": "Dedup parity"},
+      "Phone and laptop MobileCLIP vectors agree to cosine 0.997; about 544 ms per picture for the image encoder on the Pixel."
+    ]},
+    {"title": "Results", "blocks": [
+      {"bullets": [
+        "About 10–16 unique frames per 75 s clip go on to the models.",
+        "32.6 s of processing per minute of video for frames, filters and repeats on the Pixel (4x less than the first build).",
+        "Each kept frame already has its MobileCLIP vector for search.",
+        "Dropped frames leave no picture files behind."
+      ]},
+      {"note": "**Honest reading:** the selection saves cost; it does not find more moments than evenly spaced frames. That claim should not be made in the report or the viva."}
+    ]},
+    {"title": "Limits", "blocks": [
+      {"bullets": [
+        "35 moments on six short clips, 16 of them marked by the AI assistant only; 3 moments difference is within noise.",
+        "EPIC-KITCHENS ran on the laptop copy, before the slot rule, never on a phone.",
+        "The cut-offs (25, 235, 60, 6 / 0.10, dHash 6, cosine 0.95) are starting values. Sharpness averages per video ran from 143 to 2,605 on our frames, so one fixed blur number cannot fit every scene.",
+        "The 3 s slot length was not tuned.",
+        "Sharpness is not stored and dropped pictures are deleted, so filter decisions cannot be checked afterwards."
+      ]}
+    ]},
+    {"title": "Gaps and open items", "blocks": [
+      "Fill the Resolution column as each card closes.",
+      {"table": {"cols": ["Gap", "What is missing", "Card", "Sev.", "Resolution (to fill)"], "widths": [0.6, 4, 0.9, 0.7, 2.2], "rows": [
+        ["G1", "Frame filter cut-offs never tuned; need an adaptive blur cut-off tuned on human-marked frames, laptop first.", "EYKO-77", "High", ""],
+        ["D1", "Decide what \"dynamic blur\" means: cut-off relative to the video, Gaussian before the Laplacian, or both.", "EYKO-74", "Decision", ""],
+        ["G7", "Store what the filter measured (sharpness, brightness) per frame.", "EYKO-73", "Medium", ""],
+        ["G3", "Dedup cut-offs untuned (dHash 6, cosine 0.95).", "EYKO-79", "Medium", ""],
+        ["—", "Check every 30 fps frame and keep the sharpest of each 1/3 s (laptop benchmark first).", "EYKO-48", "—", ""],
+        ["—", "Keyframe tuning and optimisation after the pipeline is complete.", "EYKO-46", "—", ""],
+        ["G12", "The 16 kHz WAV is made and unused until speech lands.", "EYKO-86", "Low", ""]
+      ]}}
+    ]},
+    {"title": "References", "blocks": [
+      {"bullets": [
+        "Keyframe protocol: docs/plans/keyframe-comparison-protocol.md",
+        "Results: docs/results/2026-10-12-keyframes-first-run.md, 2026-10-12-keyframes-tuning.md, 2026-10-13-keyframes-epic-kitchens.md, 2026-10-13-keyframes-slots-on-phone.md, docs/results/keyframes/",
+        "Code: VideoSplit.kt, FrameExtractor.kt, AudioExtractor.kt, MonoResampler.kt, FrameFilters.kt, VideoFilter.kt, FrameHash.kt, VideoDedup.kt; laptop copy src/benchmarks/keyframe_tune.py"
+      ]}
+    ]}
+  ]
+}

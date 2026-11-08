@@ -1,0 +1,11 @@
+{
+  "name": "eykon-head-documents",
+  "private": true,
+  "description": "Builds docs/documents/Head-*.docx from heads/*.json",
+  "scripts": {
+    "build": "node build-all.js"
+  },
+  "dependencies": {
+    "docx": "9.5.1"
+  }
+}

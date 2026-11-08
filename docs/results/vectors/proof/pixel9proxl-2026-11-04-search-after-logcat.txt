@@ -1,0 +1,48 @@
+Wed Nov  4 17:39:07 PST 2026
+OK (1 test)
+Wed Nov  4 17:41:50 PST 2026
+
+EYKO102 : device sheet: Google Pixel 9 Pro XL, Android 17 (API 37), sqlite 3.50.6, commit 108d315-eyko102-after, date 2026-11-04
+EYKO102 : device sheet: RAM 16.3 GB, java heap limit 268 MB, free storage 3.5 GB, vectors real_own_clips_90+noise
+EYKO102 : search: sizes [5000, 20000, 50000], runs 5, dropped per kept 12, label after
+EYKO102 : n=5000 built: 3727 ms, file 24.9 MB, 65000 frame rows
+EYKO102 : n=5000 app_search_first run : median 355.12 ms, worst 355.12 ms
+EYKO102 : n=5000 app_search_frames run 1: median 45.99 ms, worst 54.52 ms
+EYKO102 : n=5000 app_search_frames run 2: median 37.02 ms, worst 45.16 ms
+EYKO102 : n=5000 app_search_frames run 3: median 37.50 ms, worst 42.04 ms
+EYKO102 : n=5000 app_search_frames run 4: median 37.53 ms, worst 42.31 ms
+EYKO102 : n=5000 app_search_frames run 5: median 39.89 ms, worst 49.40 ms
+EYKO102 : n=5000 app_knn_all run 1: median 23.34 ms, worst 28.39 ms
+EYKO102 : n=5000 app_knn_all run 2: median 20.08 ms, worst 25.04 ms
+EYKO102 : n=5000 app_knn_all run 3: median 20.10 ms, worst 26.95 ms
+EYKO102 : n=5000 app_knn_all run 4: median 15.60 ms, worst 20.72 ms
+EYKO102 : n=5000 app_knn_all run 5: median 14.87 ms, worst 15.34 ms
+EYKO102 : n=20000 built: 12935 ms, file 100.0 MB, 260000 frame rows
+EYKO102 : n=20000 app_search_first run : median 3638.92 ms, worst 3638.92 ms
+EYKO102 : n=20000 app_search_frames run 1: median 121.02 ms, worst 128.88 ms
+EYKO102 : n=20000 app_search_frames run 2: median 117.71 ms, worst 123.78 ms
+EYKO102 : n=20000 app_search_frames run 3: median 117.76 ms, worst 121.68 ms
+EYKO102 : n=20000 app_search_frames run 4: median 119.23 ms, worst 123.70 ms
+EYKO102 : n=20000 app_search_frames run 5: median 119.85 ms, worst 123.97 ms
+EYKO102 : n=20000 app_knn_all run 1: median 49.66 ms, worst 52.66 ms
+EYKO102 : n=20000 app_knn_all run 2: median 48.20 ms, worst 56.21 ms
+EYKO102 : n=20000 app_knn_all run 3: median 51.65 ms, worst 58.61 ms
+EYKO102 : n=20000 app_knn_all run 4: median 50.41 ms, worst 55.98 ms
+EYKO102 : n=20000 app_knn_all run 5: median 48.20 ms, worst 55.45 ms
+EYKO102 : n=50000 built: 25784 ms, file 250.5 MB, 650000 frame rows
+EYKO102 : n=50000 app_search_first run : median 22209.75 ms, worst 22209.75 ms
+EYKO102 : n=50000 app_search_frames run 1: median 435.68 ms, worst 460.23 ms
+EYKO102 : n=50000 app_search_frames run 2: median 403.88 ms, worst 445.60 ms
+EYKO102 : n=50000 app_search_frames run 3: median 442.16 ms, worst 516.83 ms
+EYKO102 : n=50000 app_search_frames run 4: median 456.94 ms, worst 502.08 ms
+EYKO102 : n=50000 app_search_frames run 5: median 439.71 ms, worst 469.66 ms
+EYKO102 : n=50000 app_knn_all run 1: median 150.46 ms, worst 187.22 ms
+EYKO102 : n=50000 app_knn_all run 2: median 149.29 ms, worst 182.66 ms
+EYKO102 : n=50000 app_knn_all run 3: median 147.41 ms, worst 168.30 ms
+EYKO102 : n=50000 app_knn_all run 4: median 144.30 ms, worst 170.06 ms
+EYKO102 : n=50000 app_knn_all run 5: median 141.96 ms, worst 155.55 ms
+EYKO102 : csv written: /storage/emulated/0/Android/data/com.eykon.memory/files/results/eyko102-search-after-Pixel_9_Pro_XL-20261104-1739.csv
+EYKO102 : pull it with: adb pull /storage/emulated/0/Android/data/com.eykon.memory/files/results/eyko102-search-after-Pixel_9_Pro_XL-20261104-1739.csv
+EYKO102 : hits files: adb pull /storage/emulated/0/Android/data/com.eykon.memory/files/results/ (eyko102-hits-after-*.txt)
+
+[exited with code 0]

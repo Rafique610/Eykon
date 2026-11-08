@@ -1,0 +1,9 @@
+--------- beginning of main
+11-04 16:02:26.731 29518 29533 I EYKO31  : device samsung SM-A325F, Android 13, platform sqlite 3.32.2
+11-04 16:02:26.732 29518 29533 I EYKO31  : option 1: CREATE VIRTUAL TABLE ... USING vec0 failed: no such module: vec0 (code 1 SQLITE_ERROR[1])
+11-04 16:02:26.733 29518 29533 I EYKO31  : option 1: load_extension('vec0') failed: no such function: load_extension (code 1 SQLITE_ERROR[1]): , while compiling: SELECT load_extension('vec0')
+11-04 16:02:26.733 29518 29533 I EYKO31  : any extension: load_extension('eyko_no_such_extension') failed: no such function: load_extension (code 1 SQLITE_ERROR[1]): , while compiling: SELECT load_extension('eyko_no_such_extension')
+11-04 16:02:26.735 29518 29533 I EYKO31  : built-in module: fts5 failed: no such module: fts5 (code 1 SQLITE_ERROR[1])
+11-04 16:02:26.736 29518 29533 I EYKO31  : built-in module: fts4 works (compiled into the platform SQLite)
+11-04 16:02:26.738 29518 29533 I EYKO31  : built-in module: rtree failed: no such module: rtree (code 1 SQLITE_ERROR[1])
+11-04 16:02:26.739 29518 29533 I EYKO31  : compile options (extension / fts / rtree): [none listed]

@@ -1,0 +1,105 @@
+{
+  "title": "Head 3 · Video intake",
+  "subtitle": "From a clip picked on the phone to a background job that runs ten stages, survives crashes and can be retried.",
+  "header": "Eykon · Head 3 · Video intake",
+  "date": "2 November 2026",
+  "meta": [
+    ["Status", "Built and in use on the Pixel 9 Pro XL."],
+    ["Covers", "Picking and copying a video, reading its metadata, the job queue, the worker, the ten stages, crash recovery, retries and the finish notice."],
+    ["Cards", "EYKO-2 (upload a recorded clip), EYKO-3 (job queue with stages), EYKO-16 (finish and tell the person)."],
+    ["Synverk flow", "Head 3 · Video intake: from a picked clip to a running job"],
+    ["Code", "android/.../video/VideoCapture.kt, VideoMetadata.kt, VideoJobs.kt, VideoWorker.kt, VideoPipeline.kt, ui/screens/VideoScreen.kt"]
+  ],
+  "sections": [
+    {"title": "Summary", "blocks": [
+      "A person adds a video on the **Video tab**. The app copies it into its own storage, reads when and where it was recorded, and creates one **job**. A background worker then runs the job through ten stages in a fixed order. After each stage the job remembers how far it got, so a crash or restart resumes there instead of starting over. A failing stage is retried up to three times; after that the job is marked failed with its error and a **Retry** button restarts it at the failed stage.",
+      "When all ten stages pass, the video is marked **ready** and a notice appears. Only ready videos are searched."
+    ]},
+    {"title": "Approach", "blocks": [
+      {"h3": "Adding a video (EYKO-2)"},
+      {"steps": [
+        "The Video tab opens the Android file picker.",
+        "Accepted types: mp4, mov, m4v, avi (the same four the laptop accepts).",
+        "The file is streamed into the video's own folder inside the app; the size is counted while copying and the copy stops above **500 MB** with a clear message.",
+        "MediaMetadataRetriever reads the recorded time, the duration and GPS when present.",
+        "One videos row is written with status processing, and one jobs row with status queued and stage split."
+      ], "ref": "add"},
+      "Copying means the person can move or delete the original afterwards without breaking the memory.",
+      {"h3": "Running the job (EYKO-3)"},
+      {"steps": [
+        "One worker takes the **oldest queued job inside a transaction**, so two workers can never take the same job.",
+        "It runs only while there are jobs: no polling when the queue is empty.",
+        "The ten stages run in order: split, filter, dedup, scene, small_objects, embed_images, embed_texts, link, latest, finish.",
+        "After each stage the job row saves the stage reached. After a crash or restart the job resumes at that stage.",
+        "If a stage throws, attempts go up by one and the job returns to the queue. After **3 attempts** it is marked failed, with the error class and the first 200 characters of the message saved."
+      ], "ref": "run"},
+      {"h3": "Finishing (EYKO-16)"},
+      {"bullets": [
+        "The finish stage deletes the picture files of dropped frames (EYKO-59, see Head 4), marks the video ready and shows a notice in the app.",
+        "A failed video shows its reason. **Retry** gives the job a fresh set of attempts and restarts it at the failed stage, not from the beginning.",
+        "When a new stage is added to the app, videos processed before it are queued again for just the missing stage, so older videos catch up."
+      ]}
+    ]},
+    {"title": "Options considered", "blocks": [
+      {"table": {"cols": ["Question", "Option", "Why / result", "Verdict"], "widths": [1.8, 2.4, 4, 1.2], "rows": [
+        ["Where processing runs", "Laptop job queue and pages", "The laptop is only a lab (Head 1, decision 5)", "Rejected"],
+        ["", "Kotlin worker inside the app", "One product on the phone", "Adopted"],
+        ["Background engine", "Android WorkManager", "Keeps working when the app is closed; not built yet", "Later (EYKO-44)"],
+        ["", "In-app worker thread", "Simple, testable; stops when Android pauses the app", "Adopted for now"],
+        ["After a crash", "Start the video again from stage 1", "Wastes minutes of model time on long clips", "Rejected"],
+        ["", "Save the stage reached; resume there", "Cheap; one column on the jobs row", "Adopted"],
+        ["Keep the original file?", "Point at the gallery file", "Breaks if the person moves or deletes it", "Rejected"],
+        ["", "Copy into app storage", "Costs disk space (see Head 4 / G18)", "Adopted"]
+      ]}}
+    ]},
+    {"title": "Decisions", "blocks": [
+      {"table": {"cols": ["#", "Decision", "Why"], "widths": [0.4, 4, 4], "rows": [
+        ["1", "Limit 500 MB per video, four container types", "Keeps copy time and storage bounded; same types as the laptop"],
+        ["2", "One job per video, stages in a fixed order, stage saved after each", "Resumable and easy to reason about; each stage has its own card"],
+        ["3", "3 attempts, then failed with the reason; Retry restarts at the failed stage", "Transient errors recover alone; real bugs are shown, not hidden"],
+        ["4", "Only ready videos are searched", "Half-processed videos would give wrong or missing results"],
+        ["5", "New stages back-fill older videos", "Every video in the memory has the same fields"]
+      ]}}
+    ]},
+    {"title": "Tests and evidence", "blocks": [
+      {"table": {"cols": ["Check", "Result", "Source"], "widths": [3, 4, 2.5], "rows": [
+        ["Queue, resume, retry, catch-up", "JVM and on-device tests pass (the phone pipeline suite was 65 of 65 on 15 October; 109 JVM and 104 on-device tests at the 2 November gap review)", "android/app/src/test, src/androidTest"],
+        ["Real use: Ego4D clips through the app's own picker", "4 clips (27.8 min) processed on the Pixel 9 Pro XL, 20 October", "docs/results/2026-10-20-ego4d-baseline.md"],
+        ["Cost of a long clip", "About 1.4 min of processing per minute of video; an 8-minute clip that kept 156 frames took 13.4 min", "same"],
+        ["App in the background", "One 8-minute clip stalled while another app was in front: 21.2 min instead of about 11", "same"]
+      ]}}
+    ]},
+    {"title": "Results", "blocks": [
+      {"bullets": [
+        "Videos of up to 500 MB go from the gallery into the memory with one tap and no further action.",
+        "A crash, a phone restart or a model error does not lose work; the person sees a failed video and its reason, and can retry.",
+        "Each video row shows real counts as it moves through the stages."
+      ]}
+    ]},
+    {"title": "Limits", "blocks": [
+      {"bullets": [
+        "Processing only runs while the app is alive; Android pauses it in the background (measured stall above).",
+        "Copying doubles the storage of each video until the person deletes the original.",
+        "Tested on one phone (Pixel 9 Pro XL); the low-end phone has not run the pipeline."
+      ]}
+    ]},
+    {"title": "Gaps and open items", "blocks": [
+      "Fill the Resolution column as each card closes.",
+      {"table": {"cols": ["Gap", "What is missing", "Card", "Sev.", "Resolution (to fill)"], "widths": [0.6, 4, 0.9, 0.7, 2.2], "rows": [
+        ["G10", "Videos only process while the app is in front; an 8-minute clip stalled when another app was opened.", "EYKO-44 build, EYKO-85 check", "Medium", ""],
+        ["G11", "The same file can be added twice (videos 142de7f3 and b2ea85c0 on the Pixel are one file).", "EYKO-71", "Low", ""],
+        ["G18", "Phone storage: 620 MB free of 109 GB on 22 October; the app could not be reinstalled.", "EYKO-83", "Medium", ""],
+        ["—", "No way to delete a saved video (rows, files, keyword index, last-sighting links).", "EYKO-66", "—", ""],
+        ["—", "Saved-video view showing every frame's time, kept or dropped and why, with captions.", "EYKO-49", "—", ""],
+        ["—", "Show the pipeline live, step by step, in a redesigned app.", "EYKO-65", "—", ""]
+      ]}}
+    ]},
+    {"title": "References", "blocks": [
+      {"bullets": [
+        "Code: VideoCapture.kt, VideoMetadata.kt, VideoJobs.kt, VideoWorker.kt, VideoPipeline.kt, VideoRepository.kt",
+        "Ego4D phone run: docs/results/2026-10-20-ego4d-baseline.md (On the phone)",
+        "Gap review: docs/plans/gap-review-2026-11/00-gap-register.md"
+      ]}
+    ]}
+  ]
+}

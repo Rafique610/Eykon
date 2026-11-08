@@ -21,6 +21,9 @@ object VideoVectors {
 
     private class Loaded(val stamp: Pair<Long, Long>, val ids: LongArray, val matrix: FloatArray, val size: Int)
 
+    /** Every row's id (ascending) and its likeness to the query, at the same index. */
+    class Scored(val ids: LongArray, val scores: FloatArray)
+
     private val cache = HashMap<String, Loaded>()
 
     /** Store one vector for a row, replacing an earlier one. The caller owns the transaction. */
@@ -38,19 +41,57 @@ object VideoVectors {
     }
 
     /** The [k] rows most like [query], best first, as (row id, cosine). */
-    @Synchronized
     fun knn(db: SupportSQLiteDatabase, table: String, query: FloatArray, k: Int): List<Pair<Long, Float>> {
+        val all = scores(db, table, query)
+        val order = rankDescending(all.scores)
+        return List(minOf(k, order.size)) { all.ids[order[it]] to all.scores[order[it]] }
+    }
+
+    /** Every row's likeness to [query], in id order: no sorting and no boxing (EYKO-102). */
+    @Synchronized
+    fun scores(db: SupportSQLiteDatabase, table: String, query: FloatArray): Scored {
         val (idColumn, size) = TABLES.getValue(table)
         require(query.size == size) { "$table expects $size numbers, got ${query.size}" }
         val stamp = db.query("SELECT COUNT(*), IFNULL(MAX($idColumn), 0) FROM $table").use { it.moveToFirst(); it.getLong(0) to it.getLong(1) }
         val loaded = cache[table]?.takeIf { it.stamp == stamp } ?: load(db, table, idColumn, size, stamp).also { cache[table] = it }
-        val scores = FloatArray(loaded.ids.size) { row ->
-            var sum = 0f
-            val base = row * size
-            for (i in 0 until size) sum += loaded.matrix[base + i] * query[i]
-            sum
+        return Scored(loaded.ids, FloatArray(loaded.ids.size) { row -> dot(loaded.matrix, row * size, query) })
+    }
+
+    /**
+     * The dot product of [query] with the vector starting at [base] in [matrix], with four running
+     * sums so the CPU can work on them at once (EYKO-100: same top 20 as one sum on 400 of 400 queries).
+     */
+    internal fun dot(matrix: FloatArray, base: Int, query: FloatArray): Float {
+        var s0 = 0f
+        var s1 = 0f
+        var s2 = 0f
+        var s3 = 0f
+        var i = 0
+        val end = query.size - query.size % 4
+        while (i < end) {
+            s0 += matrix[base + i] * query[i]
+            s1 += matrix[base + i + 1] * query[i + 1]
+            s2 += matrix[base + i + 2] * query[i + 2]
+            s3 += matrix[base + i + 3] * query[i + 3]
+            i += 4
         }
-        return scores.indices.sortedByDescending { scores[it] }.take(k).map { loaded.ids[it] to scores[it] }
+        while (i < query.size) { s0 += matrix[base + i] * query[i]; i++ }
+        return (s0 + s1) + (s2 + s3)
+    }
+
+    /**
+     * Indexes of [scores] from highest to lowest; equal scores keep their order, the same as
+     * `indices.sortedByDescending { scores[it] }`. Each (score, index) is packed into one Long and
+     * the Longs are sorted as plain numbers: no comparator and no boxed Integers (EYKO-102).
+     */
+    internal fun rankDescending(scores: FloatArray): IntArray {
+        val packed = LongArray(scores.size) { i ->
+            val bits = java.lang.Float.floatToIntBits(scores[i])
+            val key = if (bits < 0) bits xor 0x7fffffff else bits // orders like Float.compare
+            (key.toLong() shl 32) or (Int.MAX_VALUE - i).toLong() // ties: lower index ranks higher
+        }
+        packed.sort()
+        return IntArray(packed.size) { Int.MAX_VALUE - (packed[packed.size - 1 - it] and 0xffffffffL).toInt() }
     }
 
     private fun load(db: SupportSQLiteDatabase, table: String, idColumn: String, size: Int, stamp: Pair<Long, Long>): Loaded {

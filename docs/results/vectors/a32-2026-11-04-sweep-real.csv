@@ -1,0 +1,64 @@
+device,android,sqlite_version,commit,date,method,dim,n,run,median_ms,p95_ms,worst_ms,pss_mb,heap_mb,file_mb,temp_c_start,temp_c_end,battery_pct,source_vectors,note
+samsung SM-A325F,13,3.32.2,290c200-eyko100,2026-11-04,blob_disk_dot,512,1000,1,48.17,81.42,81.86,67,13,4.1,28.0,28.0,15,real_own_clips_90+noise,
+samsung SM-A325F,13,3.32.2,290c200-eyko100,2026-11-04,blob_disk_dot,512,1000,2,51.85,85.69,103.41,66,12,4.1,28.0,28.0,15,real_own_clips_90+noise,
+samsung SM-A325F,13,3.32.2,290c200-eyko100,2026-11-04,blob_disk_dot,512,1000,3,70.71,85.36,86.07,61,11,4.1,28.0,28.0,15,real_own_clips_90+noise,
+samsung SM-A325F,13,3.32.2,290c200-eyko100,2026-11-04,blob_disk_dot,512,1000,4,65.02,76.68,82.51,60,10,4.1,28.0,28.0,15,real_own_clips_90+noise,
+samsung SM-A325F,13,3.32.2,290c200-eyko100,2026-11-04,blob_disk_dot,512,1000,5,37.92,75.59,77.32,62,12,4.1,28.0,28.0,15,real_own_clips_90+noise,
+samsung SM-A325F,13,3.32.2,290c200-eyko100,2026-11-04,blob_memory_dot,512,1000,1,3.12,7.10,38.21,64,13,4.1,28.0,28.0,15,real_own_clips_90+noise,
+samsung SM-A325F,13,3.32.2,290c200-eyko100,2026-11-04,blob_memory_dot,512,1000,2,3.03,5.41,44.48,62,12,4.1,28.0,28.0,15,real_own_clips_90+noise,
+samsung SM-A325F,13,3.32.2,290c200-eyko100,2026-11-04,blob_memory_dot,512,1000,3,3.03,4.18,52.12,62,12,4.1,28.0,28.0,15,real_own_clips_90+noise,
+samsung SM-A325F,13,3.32.2,290c200-eyko100,2026-11-04,blob_memory_dot,512,1000,4,3.80,5.11,43.60,62,11,4.1,28.0,28.0,15,real_own_clips_90+noise,
+samsung SM-A325F,13,3.32.2,290c200-eyko100,2026-11-04,blob_memory_dot,512,1000,5,3.19,3.92,50.56,61,10,4.1,28.0,28.0,15,real_own_clips_90+noise,
+samsung SM-A325F,13,3.32.2,290c200-eyko100,2026-11-04,blob_memory_fast,512,1000,1,1.18,5.74,31.73,58,8,4.1,28.0,28.0,15,real_own_clips_90+noise,fast top-20 equals the app's: 400 of 400
+samsung SM-A325F,13,3.32.2,290c200-eyko100,2026-11-04,blob_memory_fast,512,1000,2,1.16,1.30,1.41,58,8,4.1,28.0,28.0,15,real_own_clips_90+noise,fast top-20 equals the app's: 400 of 400
+samsung SM-A325F,13,3.32.2,290c200-eyko100,2026-11-04,blob_memory_fast,512,1000,3,1.17,1.32,1.36,58,8,4.1,28.0,28.0,15,real_own_clips_90+noise,fast top-20 equals the app's: 400 of 400
+samsung SM-A325F,13,3.32.2,290c200-eyko100,2026-11-04,blob_memory_fast,512,1000,4,1.17,1.29,1.30,58,8,4.1,28.0,28.0,15,real_own_clips_90+noise,fast top-20 equals the app's: 400 of 400
+samsung SM-A325F,13,3.32.2,290c200-eyko100,2026-11-04,blob_memory_fast,512,1000,5,1.16,1.32,1.32,58,8,4.1,28.0,28.0,15,real_own_clips_90+noise,fast top-20 equals the app's: 400 of 400
+samsung SM-A325F,13,3.32.2,290c200-eyko100,2026-11-04,blob_disk_dot,512,5000,1,251.10,283.72,285.33,76,26,20.6,28.0,28.1,15,real_own_clips_90+noise,
+samsung SM-A325F,13,3.32.2,290c200-eyko100,2026-11-04,blob_disk_dot,512,5000,2,247.46,273.79,289.90,75,26,20.6,28.1,28.1,15,real_own_clips_90+noise,
+samsung SM-A325F,13,3.32.2,290c200-eyko100,2026-11-04,blob_disk_dot,512,5000,3,247.66,274.74,280.75,76,26,20.6,28.1,28.1,15,real_own_clips_90+noise,
+samsung SM-A325F,13,3.32.2,290c200-eyko100,2026-11-04,blob_disk_dot,512,5000,4,250.14,265.43,282.26,76,26,20.6,28.1,28.1,15,real_own_clips_90+noise,
+samsung SM-A325F,13,3.32.2,290c200-eyko100,2026-11-04,blob_disk_dot,512,5000,5,249.69,278.26,284.68,76,26,20.6,28.1,28.1,15,real_own_clips_90+noise,
+samsung SM-A325F,13,3.32.2,290c200-eyko100,2026-11-04,blob_memory_dot,512,5000,1,16.34,57.92,63.30,84,34,20.6,28.1,28.1,15,real_own_clips_90+noise,
+samsung SM-A325F,13,3.32.2,290c200-eyko100,2026-11-04,blob_memory_dot,512,5000,2,15.89,58.09,62.93,68,18,20.6,28.1,28.1,15,real_own_clips_90+noise,
+samsung SM-A325F,13,3.32.2,290c200-eyko100,2026-11-04,blob_memory_dot,512,5000,3,16.25,55.74,60.76,70,21,20.6,28.1,28.1,15,real_own_clips_90+noise,
+samsung SM-A325F,13,3.32.2,290c200-eyko100,2026-11-04,blob_memory_dot,512,5000,4,15.89,68.93,69.69,71,21,20.6,28.1,28.1,15,real_own_clips_90+noise,
+samsung SM-A325F,13,3.32.2,290c200-eyko100,2026-11-04,blob_memory_dot,512,5000,5,16.18,56.95,63.23,71,21,20.6,28.1,28.1,15,real_own_clips_90+noise,
+samsung SM-A325F,13,3.32.2,290c200-eyko100,2026-11-04,blob_memory_fast,512,5000,1,4.89,5.02,5.12,73,23,20.6,28.1,28.1,15,real_own_clips_90+noise,fast top-20 equals the app's: 400 of 400
+samsung SM-A325F,13,3.32.2,290c200-eyko100,2026-11-04,blob_memory_fast,512,5000,2,4.89,5.00,5.00,73,23,20.6,28.1,28.1,15,real_own_clips_90+noise,fast top-20 equals the app's: 400 of 400
+samsung SM-A325F,13,3.32.2,290c200-eyko100,2026-11-04,blob_memory_fast,512,5000,3,4.89,4.98,4.99,73,23,20.6,28.1,28.1,15,real_own_clips_90+noise,fast top-20 equals the app's: 400 of 400
+samsung SM-A325F,13,3.32.2,290c200-eyko100,2026-11-04,blob_memory_fast,512,5000,4,4.89,4.98,5.00,73,23,20.6,28.1,28.1,15,real_own_clips_90+noise,fast top-20 equals the app's: 400 of 400
+samsung SM-A325F,13,3.32.2,290c200-eyko100,2026-11-04,blob_memory_fast,512,5000,5,4.90,5.00,5.20,73,23,20.6,28.1,28.1,15,real_own_clips_90+noise,fast top-20 equals the app's: 400 of 400
+samsung SM-A325F,13,3.32.2,290c200-eyko100,2026-11-04,blob_disk_dot,512,20000,,,,,58,8,82.2,,28.1,15,real_own_clips_90+noise,skipped: over diskMax 5000
+samsung SM-A325F,13,3.32.2,290c200-eyko100,2026-11-04,blob_memory_dot,512,20000,1,81.82,123.45,127.89,106,76,82.2,28.1,28.1,15,real_own_clips_90+noise,
+samsung SM-A325F,13,3.32.2,290c200-eyko100,2026-11-04,blob_memory_dot,512,20000,2,83.05,123.16,123.29,103,55,82.2,28.1,28.1,15,real_own_clips_90+noise,
+samsung SM-A325F,13,3.32.2,290c200-eyko100,2026-11-04,blob_memory_dot,512,20000,3,82.21,119.37,121.77,107,59,82.2,28.1,28.1,15,real_own_clips_90+noise,
+samsung SM-A325F,13,3.32.2,290c200-eyko100,2026-11-04,blob_memory_dot,512,20000,4,81.51,117.31,117.94,110,62,82.2,28.1,28.1,15,real_own_clips_90+noise,
+samsung SM-A325F,13,3.32.2,290c200-eyko100,2026-11-04,blob_memory_dot,512,20000,5,81.58,121.46,124.15,113,66,82.2,28.1,28.2,15,real_own_clips_90+noise,
+samsung SM-A325F,13,3.32.2,290c200-eyko100,2026-11-04,blob_memory_fast,512,20000,1,18.63,26.39,46.54,93,44,82.2,28.2,28.2,15,real_own_clips_90+noise,fast top-20 equals the app's: 400 of 400
+samsung SM-A325F,13,3.32.2,290c200-eyko100,2026-11-04,blob_memory_fast,512,20000,2,18.56,18.64,18.76,93,44,82.2,28.2,28.2,15,real_own_clips_90+noise,fast top-20 equals the app's: 400 of 400
+samsung SM-A325F,13,3.32.2,290c200-eyko100,2026-11-04,blob_memory_fast,512,20000,3,18.57,18.72,18.73,93,44,82.2,28.2,28.2,15,real_own_clips_90+noise,fast top-20 equals the app's: 400 of 400
+samsung SM-A325F,13,3.32.2,290c200-eyko100,2026-11-04,blob_memory_fast,512,20000,4,18.57,18.75,18.82,93,44,82.2,28.2,28.2,15,real_own_clips_90+noise,fast top-20 equals the app's: 400 of 400
+samsung SM-A325F,13,3.32.2,290c200-eyko100,2026-11-04,blob_memory_fast,512,20000,5,18.55,18.75,18.80,93,44,82.2,28.2,28.2,15,real_own_clips_90+noise,fast top-20 equals the app's: 400 of 400
+samsung SM-A325F,13,3.32.2,290c200-eyko100,2026-11-04,blob_disk_dot,512,50000,,,,,58,8,205.6,,28.2,15,real_own_clips_90+noise,skipped: over diskMax 5000
+samsung SM-A325F,13,3.32.2,290c200-eyko100,2026-11-04,blob_memory_dot,512,50000,1,250.45,258.17,281.79,167,116,205.6,28.2,28.2,15,real_own_clips_90+noise,
+samsung SM-A325F,13,3.32.2,290c200-eyko100,2026-11-04,blob_memory_dot,512,50000,2,246.77,273.09,273.95,184,140,205.6,28.2,28.2,15,real_own_clips_90+noise,
+samsung SM-A325F,13,3.32.2,290c200-eyko100,2026-11-04,blob_memory_dot,512,50000,3,245.30,249.42,254.17,183,138,205.6,28.2,28.2,15,real_own_clips_90+noise,
+samsung SM-A325F,13,3.32.2,290c200-eyko100,2026-11-04,blob_memory_dot,512,50000,4,245.91,252.41,252.65,181,136,205.6,28.2,28.2,15,real_own_clips_90+noise,
+samsung SM-A325F,13,3.32.2,290c200-eyko100,2026-11-04,blob_memory_dot,512,50000,5,242.17,253.25,253.60,180,135,205.6,28.2,28.3,15,real_own_clips_90+noise,
+samsung SM-A325F,13,3.32.2,290c200-eyko100,2026-11-04,blob_memory_fast,512,50000,1,45.71,46.02,46.06,154,109,205.6,28.3,28.3,15,real_own_clips_90+noise,fast top-20 equals the app's: 400 of 400
+samsung SM-A325F,13,3.32.2,290c200-eyko100,2026-11-04,blob_memory_fast,512,50000,2,45.91,46.14,46.14,154,109,205.6,28.3,28.3,15,real_own_clips_90+noise,fast top-20 equals the app's: 400 of 400
+samsung SM-A325F,13,3.32.2,290c200-eyko100,2026-11-04,blob_memory_fast,512,50000,3,45.71,46.04,46.08,154,109,205.6,28.3,28.3,15,real_own_clips_90+noise,fast top-20 equals the app's: 400 of 400
+samsung SM-A325F,13,3.32.2,290c200-eyko100,2026-11-04,blob_memory_fast,512,50000,4,45.76,46.01,46.05,154,109,205.6,28.3,28.3,15,real_own_clips_90+noise,fast top-20 equals the app's: 400 of 400
+samsung SM-A325F,13,3.32.2,290c200-eyko100,2026-11-04,blob_memory_fast,512,50000,5,45.76,46.03,46.05,154,109,205.6,28.3,28.3,15,real_own_clips_90+noise,fast top-20 equals the app's: 400 of 400
+samsung SM-A325F,13,3.32.2,290c200-eyko100,2026-11-04,blob_disk_dot,512,100000,,,,,57,7,411.1,,28.3,15,real_own_clips_90+noise,skipped: over diskMax 5000
+samsung SM-A325F,13,3.32.2,290c200-eyko100,2026-11-04,blob_memory_dot,512,100000,1,525.21,553.39,567.98,272,233,411.1,28.5,28.4,15,real_own_clips_90+noise,
+samsung SM-A325F,13,3.32.2,290c200-eyko100,2026-11-04,blob_memory_dot,512,100000,2,527.22,562.71,604.41,270,230,411.1,28.4,28.5,15,real_own_clips_90+noise,
+samsung SM-A325F,13,3.32.2,290c200-eyko100,2026-11-04,blob_memory_dot,512,100000,3,538.75,566.60,567.37,268,228,411.1,28.5,28.5,15,real_own_clips_90+noise,
+samsung SM-A325F,13,3.32.2,290c200-eyko100,2026-11-04,blob_memory_dot,512,100000,4,536.81,559.81,573.93,265,225,411.1,28.5,28.5,15,real_own_clips_90+noise,
+samsung SM-A325F,13,3.32.2,290c200-eyko100,2026-11-04,blob_memory_dot,512,100000,5,537.36,568.49,572.88,264,223,411.1,28.5,28.6,15,real_own_clips_90+noise,
+samsung SM-A325F,13,3.32.2,290c200-eyko100,2026-11-04,blob_memory_fast,512,100000,1,90.98,91.51,91.51,261,221,411.1,28.6,28.6,15,real_own_clips_90+noise,fast top-20 equals the app's: 400 of 400
+samsung SM-A325F,13,3.32.2,290c200-eyko100,2026-11-04,blob_memory_fast,512,100000,2,90.98,91.52,91.85,262,221,411.1,28.6,28.6,15,real_own_clips_90+noise,fast top-20 equals the app's: 400 of 400
+samsung SM-A325F,13,3.32.2,290c200-eyko100,2026-11-04,blob_memory_fast,512,100000,3,90.97,91.39,91.45,262,221,411.1,28.6,28.6,15,real_own_clips_90+noise,fast top-20 equals the app's: 400 of 400
+samsung SM-A325F,13,3.32.2,290c200-eyko100,2026-11-04,blob_memory_fast,512,100000,4,90.98,91.35,91.52,262,221,411.1,28.6,28.6,15,real_own_clips_90+noise,fast top-20 equals the app's: 400 of 400
+samsung SM-A325F,13,3.32.2,290c200-eyko100,2026-11-04,blob_memory_fast,512,100000,5,91.05,91.46,91.51,262,222,411.1,28.6,28.6,15,real_own_clips_90+noise,fast top-20 equals the app's: 400 of 400

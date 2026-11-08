@@ -53,3 +53,5 @@ Rules for package managers, build tools, and paths.
 - Kotlin + Jetpack Compose.
 - LiteRT-LM for on-device inference.
 - Build via `task build-android`.
+- Phone tests never use `connectedDebugAndroidTest`: it uninstalls the app and deletes the saved memories and models. Install both APKs with `adb install -r`, then run `adb shell am instrument -w -e class ... com.eykon.memory.test/androidx.test.runner.AndroidJUnitRunner` (see `task spike-android-vectors`).
+- In Taskfile commands, single-quote Windows paths (`'.\gradlew.bat'`, `'app\build\...'`): Task's shell drops unquoted backslashes. Call the wrapper as `.\gradlew.bat`, which also works where `NoDefaultCurrentDirectoryInExePath` is set (the agent's shell).

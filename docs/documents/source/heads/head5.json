@@ -1,0 +1,143 @@
+{
+  "title": "Head 5 · Scene understanding",
+  "subtitle": "Stages scene and small_objects (Option A): naming what is in each kept frame, where it is and what the wearer is doing, in one record and one caption.",
+  "header": "Eykon · Head 5 · Scene understanding",
+  "date": "2 November 2026",
+  "meta": [
+    ["Status", "Built and in use on the Pixel 9 Pro XL. Cut-offs are model defaults or card starting values (gap G2)."],
+    ["Covers", "YOLOX-Tiny, D-FINE S Objects365, MobileCLIP place and action phrases, YOLOE-11L for keys and earbuds and its MobileCLIP gate, the scene record and caption; the VLM and open-vocabulary detectors that were tried."],
+    ["Cards", "EYKO-9 (Option A), EYKO-10 (scene record), EYKO-32 (small objects), EYKO-60 (first-person actions), EYKO-63 (YOLOE gate); later: EYKO-25 (Option B), EYKO-26 (Option C)."],
+    ["Synverk flow", "Head 5 · Scene understanding: describing each kept frame"],
+    ["Main sources", "docs/results/2026-10-13-eyko-9-perception-option-a.md, 2026-10-14-detectors-open-vocabulary.md, 2026-10-13-eyko-32-hands-vs-grid.md, 2026-10-21-ego4d-improvements.md"]
+  ],
+  "sections": [
+    {"title": "Summary", "blocks": [
+      "Each kept frame is described by four small models instead of one large VLM:",
+      {"table": {"cols": ["Model", "Job", "Settings"], "widths": [2.2, 3, 3.5], "rows": [
+        ["YOLOX-Tiny (Apache-2.0)", "80 COCO objects; counts people", "416 px letterbox, score ≥ 0.35, NMS 0.45"],
+        ["D-FINE S, Objects365 (Apache-2.0)", "365 everyday things (wallet, glasses, pen…)", "640 px, score ≥ 0.5, graph optimisation off"],
+        ["MobileCLIP-S2 phrases (research licence)", "Place (9 phrases) and action (14 phrases)", "Softmax of 100 × cosine; kept if share ≥ 0.30; actions smoothed over ±6 s"],
+        ["YOLOE-11L (AGPL-3.0)", "The user's own keys and earbuds", "640 px, six words fixed at export, score ≥ 0.25; only on frames MobileCLIP flags"]
+      ]}},
+      "Their answers are merged into one **scene record** per frame and a short **caption** that always names personal things first. The path to this set was measured step by step: the first detector could not see keys or wallets at all, VLMs were too slow, word-prompted detectors were accurate but slow, and the final mix gives the most finds for the time on the phone."
+    ]},
+    {"title": "Approach", "blocks": [
+      {"h3": "Stage scene (EYKO-9, EYKO-10, EYKO-32, EYKO-60)"},
+      {"steps": [
+        "YOLOX-Tiny lists COCO objects and counts people.",
+        "D-FINE S lists Objects365 objects; its \"person\" is ignored because YOLOX counts people.",
+        "The two lists are merged: same name and box overlap > 0.5 means one thing.",
+        "MobileCLIP compares the frame's saved 512-d vector with 9 place phrases and 14 action phrases written from the wearer's point of view. The shares of frames within 6 s are averaged before the action is chosen, so one odd frame does not flip the action.",
+        "The caption is written: personal things (keys, wallet, glasses, pen, phone…) always first, other things up to 3, then people, place and action. Saved in scene_records."
+      ], "ref": "scene"},
+      {"h3": "Stage small_objects (EYKO-32, EYKO-63)"},
+      {"steps": [
+        "The gate: if the frame's MobileCLIP cosine to \"a photo of keys\" or \"a photo of earbuds\" is at least 0.15, the frame goes to YOLOE; otherwise it is skipped.",
+        "YOLOE-11L looks for six words fixed when the model was exported and keeps keys and earbuds (what D-FINE never names).",
+        "Finds join the frame's record with source \"own\" and the caption is written again."
+      ], "ref": "small"}
+    ]},
+    {"title": "Options considered: the path to the current set", "blocks": [
+      {"h3": "Step 1 · YOLOX-Nano vs YOLOX-Tiny (13 Oct, 44 Pixel frames)"},
+      "Nano found 4 of 32 everyday non-person things; Tiny found 18 of 32. People 40 of 40. Phone and laptop agreed (same things on 41 of 44 frames). **Tiny adopted.** Cost with the saved image vector: median 119 ms per frame (Nano path); Tiny about 244 ms.",
+      {"h3": "Step 2 · The problem: the user's own things"},
+      "COCO's 80 classes contain no keys, wallet, glasses or earbuds. Captions said \"bench and bird\" or \"dog\". Two ways to look closer were tried on EPIC-KITCHENS take / put events first:",
+      {"table": {"cols": ["Where to look", "Result (44 events)", "Verdict"], "widths": [3, 4, 1.4], "rows": [
+        ["Crops around hands (MediaPipe Hands)", "At most 6 of 44 named", "Rejected"],
+        ["18 overlapping tiles", "20 to 33 of 44, but several wrong objects per frame and 18 MobileCLIP runs", "Rejected"]
+      ]}},
+      {"h3": "Step 3 · Small VLMs on the laptop (Option C, 44 phone frames)"},
+      {"table": {"cols": ["Model", "Things named of 88", "Seconds per frame"], "widths": [3, 2, 2], "rows": [
+        ["Option A (YOLOX-Tiny + phrases)", "30", "< 0.3"],
+        ["Gemma 4 E2B", "40", "8.4"],
+        ["LFM2.5-VL-450M", "51", "3.7"],
+        ["Qwen2-VL-2B", "52", "29.8"]
+      ]}},
+      "Better captions, but too slow to run on every kept frame for now. Kept for later (EYKO-26).",
+      {"h3": "Step 4 · Detectors asked by word (laptop, own50: 87 labelled own-thing sightings)"},
+      {"table": {"cols": ["Model", "Licence", "Own things found", "False", "ms / frame"], "widths": [2.4, 1.3, 1.5, 1, 1.2], "rows": [
+        ["YOLOX-Tiny (app)", "Apache-2.0", "7", "10", "24"],
+        ["RF-DETR Nano", "Apache-2.0", "8", "9", "176"],
+        ["Grounding DINO tiny", "Apache-2.0", "63", "16", "7,806"],
+        ["OmDet-Turbo", "Apache-2.0", "77", "71", "1,100"],
+        ["OWLv2 base", "Apache-2.0", "81", "67", "4,664"],
+        ["YOLOE-11L, our phrases", "AGPL-3.0", "44", "6", "544"]
+      ]}},
+      "OWLv2 8-bit on the Pixel took 8–13 s a frame, 4.9 GB, with scores up to 0.32 lower than the laptop. OWL-ViT was fast (0.7 s) but found 0 of 22 keys.",
+      {"h3": "Step 5 · D-FINE (365 fixed classes)"},
+      "D-FINE S found 37 of 87 at 0.37 s on the laptop: wallet 10/16, glasses 9/13, pen 10/12, no false alarms, but never keys or earbuds. On the Pixel 0.96 s per frame with the same scores.",
+      {"h3": "Step 6 · Combinations on the Pixel (15 Oct, 75 s clip with 13 kept frames)"},
+      {"table": {"cols": ["Setup", "Found of 87", "False of 213", "Keys /22", "Earbuds /13", "s per clip"], "widths": [3.2, 1, 1, 0.9, 1, 1], "rows": [
+        ["D-FINE only", "37", "12", "0", "0", "12"],
+        ["D-FINE + OWLv2 on MobileCLIP's third", "50", "12", "13", "0", "70"],
+        ["YOLOE-11L alone, every frame", "48", "6", "13", "5", "30"],
+        ["**D-FINE + YOLOE every frame**", "**55**", "15", "13", "5", "**43**"]
+      ]}},
+      "YOLOE-11L on the Pixel: 2.34 s per frame, 570 MB native memory, exactly the laptop's scores. **D-FINE + YOLOE adopted, replacing OWLv2** (commit 903b1f9).",
+      {"h3": "Step 7 · Ego4D-driven changes (21 Oct)"},
+      {"bullets": [
+        "**First-person actions (EYKO-60):** wearer's-view wording, 6 more actions, ±6 s smoothing. MQ F1 10.8 → 32.2 on set A, 15.4 → 16.7 on held-out set B. \"Use phone\" found 0 → 34.8 %. Kept.",
+        "**YOLOE gate (EYKO-63):** YOLOE only where MobileCLIP cosine ≥ 0.15 to keys or earbuds. YOLOE runs on 15–20 % of Ego4D frames; all 18 right finds on our own clips kept. Kept."
+      ]}
+    ]},
+    {"title": "Decisions", "blocks": [
+      {"table": {"cols": ["#", "Decision", "When", "Why (evidence)"], "widths": [0.4, 3.2, 1.1, 4], "rows": [
+        ["1", "YOLOX-Tiny, not Nano", "13 Oct 2026 (Rafique)", "18 vs 4 of 32 everyday things"],
+        ["2", "Do not build hand crops or grid tiles", "13 Oct 2026", "Hands 6/44; grid noisy and 18 model runs"],
+        ["3", "VLM captions stay optional (Option C)", "14 Oct 2026", "3.7–29.8 s per frame on the laptop"],
+        ["4", "Allow AGPL models while academic", "14 Oct 2026", "Needed to try YOLOE; re-decide before release"],
+        ["5", "D-FINE S on every frame for general objects", "14 Oct 2026", "37/87, no false alarms, 0.96 s on the Pixel"],
+        ["6", "YOLOE-11L for keys and earbuds, replacing OWLv2", "15 Oct 2026", "55 vs 50 found, earbuds 5 vs 0, 43 s vs 70 s per clip"],
+        ["7", "Personal things always named first in captions", "15 Oct 2026", "Glasses in captions 0 → 4, wallet 2 → 6, keys 3"],
+        ["8", "First-person action phrases with ±6 s smoothing", "21 Oct 2026", "Ego4D MQ F1 up on both sets"],
+        ["9", "YOLOE only on frames MobileCLIP flags", "21 Oct 2026", "Runs on 15–20 % of frames, no right finds lost on own clips"]
+      ]}}
+    ]},
+    {"title": "Tests and evidence", "blocks": [
+      {"table": {"cols": ["Test", "Result", "Source"], "widths": [3, 4, 2.5], "rows": [
+        ["Phone vs laptop, YOLOX demo picture", "dog 0.855 / 0.855, bicycle 0.803 / 0.804", "eyko-9 write-up"],
+        ["Place on 44 frames", "23 of 44 (52 %); never says \"none\" for places not on the list", "same"],
+        ["Ego4D actions, set A baseline", "Talking 35 % precision; reading, eating, cooking mostly wrong", "ego4d-baseline"],
+        ["Ego4D parity, 4 clips on the Pixel", "Place 99 %, action 96 %, people 86 %, captions identical 50 % (detector scores move ~0.1 with decoder pixels)", "same"],
+        ["Phone test suite", "Detectors and scene 13 of 13", "androidTest"],
+        ["Golden frames", "perception_golden.json must match laptop and phone", "src/benchmarks/perception_golden.py"]
+      ]}}
+    ]},
+    {"title": "Results", "blocks": [
+      {"bullets": [
+        "Each kept frame gets one record: objects (with source), people count, place, action and a caption of about 0.7 KB per minute of video.",
+        "Cost on the Pixel: scene about 0.5 s per kept frame; YOLOE about 2.3 s when the gate lets a frame through.",
+        "Search can now find personal things by name in captions and by picture through the frame vectors."
+      ]}
+    ]},
+    {"title": "Limits", "blocks": [
+      {"bullets": [
+        "The own-thing labels (own50, ours44) were written by the AI assistant and not checked by a person (G5).",
+        "Cut-offs for the mix were chosen after seeing results; new clips must confirm them.",
+        "Earbuds are still weak (3–5 of 13).",
+        "Captions repeat the models' mistakes (phones called \"cake\" or \"book\").",
+        "The ±6 s smoothing may be fitted to set A: set B ranks the unsmoothed version higher (F1 18.2 vs 16.7).",
+        "YOLOE's word list is fixed at export: a new personal object needs a new export."
+      ]}
+    ]},
+    {"title": "Gaps and open items", "blocks": [
+      "Fill the Resolution column as each card closes.",
+      {"table": {"cols": ["Gap", "What is missing", "Card", "Sev.", "Resolution (to fill)"], "widths": [0.6, 4, 0.9, 0.7, 2.2], "rows": [
+        ["G5", "Four results rest on AI-written labels (YOLOX choice, search probe, crop cut-off, own50); a person must check them and the results be re-scored.", "EYKO-72", "High", ""],
+        ["G2", "Detector and prompt cut-offs untuned on our clips (YOLOX 0.35, D-FINE 0.5, YOLOE 0.25, share 0.30).", "EYKO-78", "High", ""],
+        ["G4", "Action smoothing (±6 s) may be fitted to set A.", "EYKO-80", "Medium", ""],
+        ["G6", "Too little of our own footage; record the clips the chosen scope needs.", "EYKO-82, EYKO-50", "High", ""],
+        ["—", "Actions on public data and on our own sealed clips.", "EYKO-52, EYKO-53", "—", ""],
+        ["—", "Close the object detection phase (score on new and sealed clips).", "EYKO-51", "—", ""],
+        ["—", "Option B clip action model / Option C small VLM.", "EYKO-25, EYKO-26", "—", ""]
+      ]}}
+    ]},
+    {"title": "References", "blocks": [
+      {"bullets": [
+        "Results: docs/results/2026-10-13-eyko-9-perception-option-a.md, 2026-10-13-eyko-32-hands-vs-grid.md, 2026-10-14-detectors-open-vocabulary.md, 2026-10-14-vlm-licence-and-format-check.md, 2026-10-21-ego4d-improvements.md; folders perception/, detectors/, small-objects/, vlm/",
+        "Code: VideoScene.kt, OptionA.kt, VideoSmallObjects.kt, assets/scene_prompts.json; laptop src/config.py, src/benchmarks/",
+        "Synverk charts: \"1 of 3 · Fixed-list detectors\", \"2 of 3 · Detectors asked by word\", \"3 of 3 · On the phone\", \"Option C on the laptop\""
+      ]}
+    ]}
+  ]
+}

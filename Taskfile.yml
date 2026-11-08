@@ -203,14 +203,21 @@ tasks:
     cmd: uv run --with sqlite-vec python src/benchmarks/vector_storage_spike.py
 
   spike-android-vectors:
-    desc: "EYKO-31 spike — on the connected phone, test sqlite-vec loading and time BLOB brute-force vector search (results print from logcat)"
+    desc: "EYKO-31 spike — on the connected phone, test sqlite-vec loading and time BLOB brute-force vector search (results print from logcat). Updates the app in place, never uninstalls it; pass SERIAL=<id> when more than one device is listed"
     dir: android
+    vars:
+      S: '{{if .SERIAL}}-s {{.SERIAL}}{{end}}'
     env:
       JAVA_HOME: 'C:\Users\rafique_\AppData\Roaming\.minecraft\runtime\java-runtime-delta\windows\java-runtime-delta'
       ADB: 'C:\Users\rafique_\AppData\Local\Android\Sdk\platform-tools\adb.exe'
     cmds:
-      - cmd.exe /c gradlew.bat connectedDebugAndroidTest "-Pandroid.testInstrumentationRunnerArguments.class=com.eykon.memory.spike.VectorStorageSpikeTest"
-      - cmd.exe /c "%ADB%" logcat -d -s EYKO31:I
+      # not connectedDebugAndroidTest: it uninstalls the app, deleting the saved memories and models
+      - cmd.exe /c '.\gradlew.bat' assembleDebug assembleDebugAndroidTest
+      - cmd.exe /c "%ADB%" {{.S}} install -r 'app\build\outputs\apk\debug\app-debug.apk'
+      - cmd.exe /c "%ADB%" {{.S}} install -r 'app\build\outputs\apk\androidTest\debug\app-debug-androidTest.apk'
+      - cmd.exe /c "%ADB%" {{.S}} logcat -c
+      - cmd.exe /c "%ADB%" {{.S}} shell am instrument -w -e class com.eykon.memory.spike.VectorStorageSpikeTest com.eykon.memory.test/androidx.test.runner.AndroidJUnitRunner
+      - cmd.exe /c "%ADB%" {{.S}} logcat -d -s EYKO31:I
 
   test-vision-integration:
     desc: Process a test video, store as memories, then query them

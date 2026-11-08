@@ -1,0 +1,616 @@
+{
+  "title": "Head 7 · Search",
+  "subtitle": "From a typed phrase to a result card: searching frames by picture, growing hits into time windows, and the hybrid search that was tried and dropped.",
+  "header": "Eykon · Head 7 · Search",
+  "date": "4 Nov 2026",
+  "meta": [
+    [
+      "Status",
+      "Built and in use on the Pixel 9 Pro XL (Video tab). Search made 4–5× faster with identical hits (EYKO-102, 4 Nov). Question parsing, date filter and answer writing are not built yet (Ask & answer head)."
+    ],
+    [
+      "Covers",
+      "MobileCLIP text-to-frame search, time windows, the result card, the search probe, hybrid caption search (EYKO-61, dropped), and the open retrieval decision."
+    ],
+    [
+      "Cards",
+      "EYKO-19 (core: text to frames), EYKO-58 (time windows), EYKO-61 (hybrid, tested and dropped), EYKO-75 / 81 (retrieval decision, open). EYKO-102 (search speed, end to end)."
+    ],
+    [
+      "Synverk flow",
+      "Head 7 · Search: from a typed phrase to a result card"
+    ],
+    [
+      "Main sources",
+      "docs/results/2026-10-13-frame-search-probe.md, 2026-10-20-ego4d-baseline.md, 2026-10-21-ego4d-improvements.md (sections 1 and 3)"
+    ]
+  ],
+  "sections": [
+    {
+      "title": "Summary",
+      "blocks": [
+        "On the Video tab the person types what to look for (\"keys\"). The phrase is turned into a MobileCLIP text vector in the same space as the frame vectors, and every kept frame of every ready video is scored by cosine. The best frames grow into **time windows** over neighbouring frames that still match, so a result covers a stretch of the video rather than one instant. The top 20 windows are shown as result cards.",
+        "Search uses the **pictures, not the captions**. That lets it find things the detectors have no name for. A hybrid that added caption keywords and caption vectors with RRF was tested on Ego4D and made results worse, so it was dropped for now."
+      ]
+    },
+    {
+      "title": "Approach",
+      "blocks": [
+        {
+          "steps": [
+            "**Encode the phrase:** a CLIP BPE tokenizer written in Kotlin makes 77 tokens; the MobileCLIP-S2 text encoder (ONNX, 254 MB, about 130 ms) returns a 512-d unit vector.",
+            "**Score every frame:** image_vec is held in memory; the dot product of unit vectors is the cosine. Only kept frames of ready videos count.",
+            "**Grow windows (EYKO-58):** from each hit, neighbouring kept frames of the same video join while they score at least 0.85 × the hit and are no more than 10 s apart; the window is widened by 1.5 s each side (each kept frame stands for its 3 s slot).",
+            "**One hit per window:** a frame inside an earlier window is not returned again. The best 20 are kept (Phase 1's pool size).",
+            "**Result card:** frame picture, date, time, \"at 48.0 s\", the window, the likeness score, and the stored caption (shown only, not used to rank)."
+          ],
+          "ref": "search"
+        },
+        {
+          "note": "Speed on the Pixel: about 0.1 s per search; the first search about 1 s while the vectors load into memory. **Update 4 Nov (EYKO-102):** that was on a memory of a few dozen frames. Measured end to end on a test memory: at 20k kept frames the search took 493 ms on the Pixel and 1.3 s on the A32; after EYKO-102 119 ms and 302 ms, same hits (section 5)."
+        }
+      ]
+    },
+    {
+      "title": "Options considered",
+      "blocks": [
+        {
+          "table": {
+            "cols": [
+              "Option",
+              "What it is",
+              "Result",
+              "Verdict"
+            ],
+            "widths": [
+              2,
+              3,
+              3.6,
+              1.2
+            ],
+            "rows": [
+              [
+                "Captions only",
+                "Keyword or vector search over captions",
+                "Captions only name what detectors know; a helmet frame was captioned \"2 people, in an office\"",
+                "Rejected"
+              ],
+              [
+                "Picture search",
+                "MobileCLIP text vector vs frame vectors",
+                "Finds the helmet (0.223); top frame inside the answer 24.4 % on Ego4D (random 3.4 %)",
+                "Adopted"
+              ],
+              [
+                "Single frames",
+                "Return the best frames as instants",
+                "R@1 at tIoU 0.5 only 6.4 % on Ego4D",
+                "Replaced"
+              ],
+              [
+                "Time windows",
+                "Grow hits over matching neighbours (0.85, 10 s)",
+                "Set A 6.4 → 9.0 %; held-out set B 6.2 → 15.6 %",
+                "Adopted"
+              ],
+              [
+                "Hybrid (EYKO-61)",
+                "BM25 + bge over 15 / 30 s caption windows, fused with picture search by RRF",
+                "Worse in every mix on set A (hit@1 24.4 → 15–21 %); on set B pictures + bge 15 s better, keywords worse",
+                "Dropped for now"
+              ],
+              [
+                "\"a photo of\" prefix",
+                "Template in front of the phrase",
+                "Average precision changed by at most 0.05",
+                "No change"
+              ]
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "title": "Decisions",
+      "blocks": [
+        {
+          "table": {
+            "cols": [
+              "#",
+              "Decision",
+              "When",
+              "Why (evidence)"
+            ],
+            "widths": [
+              0.4,
+              3.2,
+              1.1,
+              4
+            ],
+            "rows": [
+              [
+                "1",
+                "Search frames by picture with MobileCLIP",
+                "13 Oct 2026",
+                "Finds things with no detector name; works for scene-filling things"
+              ],
+              [
+                "2",
+                "Return windows, not instants (0.85, 10 s, ±1.5 s)",
+                "21 Oct 2026",
+                "Chosen on set A by the mean of four R@k numbers; confirmed on held-out set B"
+              ],
+              [
+                "3",
+                "Drop hybrid caption search for now",
+                "21 Oct 2026",
+                "Detector-list captions rarely share words with questions; retry with richer captions (Option C)"
+              ],
+              [
+                "4",
+                "Open: the phone retrieval rule says BM25 + dense + RRF; video search is dense only",
+                "Open (D2)",
+                "Needs an ADR: a video exception backed by EYKO-61, or hybrid back later"
+              ],
+              [
+                "5",
+                "Faster search code with identical hits (scores as arrays, one packed sort, path and caption for hits only)",
+                "4 Nov 2026",
+                "Before/after on two phones: 4.3× (A32) and 4.1× (Pixel) at 20k, 2,400 of 2,400 hits identical (EYKO-102)"
+              ]
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "title": "Tests and evidence",
+      "blocks": [
+        {
+          "h3": "Search probe on our 44 frames (13 Oct, laptop)"
+        },
+        {
+          "table": {
+            "cols": [
+              "Phrase",
+              "Frames showing it",
+              "Chance",
+              "Avg precision",
+              "Detector found"
+            ],
+            "widths": [
+              2.4,
+              1.4,
+              1,
+              1.4,
+              1.6
+            ],
+            "rows": [
+              [
+                "sheets of paper",
+                "28",
+                "0.64",
+                "0.97",
+                "no such class"
+              ],
+              [
+                "a table tennis table",
+                "4",
+                "0.09",
+                "1.00",
+                "no such class"
+              ],
+              [
+                "a car",
+                "1",
+                "0.02",
+                "1.00",
+                "1 of 1"
+              ],
+              [
+                "a laptop",
+                "9",
+                "0.20",
+                "0.76",
+                "7 of 9"
+              ],
+              [
+                "a backpack",
+                "6",
+                "0.14",
+                "0.58",
+                "0 of 6"
+              ],
+              [
+                "a computer monitor",
+                "7",
+                "0.16",
+                "0.52",
+                "5 of 7"
+              ],
+              [
+                "a chair",
+                "17",
+                "0.39",
+                "0.51",
+                "13 of 17"
+              ],
+              [
+                "a phone",
+                "16",
+                "0.36",
+                "0.43",
+                "5 of 16"
+              ]
+            ]
+          }
+        },
+        "Picture search is very good for things that fill the scene and close to chance for a small phone on a desk. It always returns something: \"a dog\" scores 0.14 with no dog present. On the phone, keys, glasses, wallet and earbuds put the right frame at rank 1 in ~0.1 s (4 of 4).",
+        {
+          "h3": "Ego4D NLQ objects (where did I put X?)"
+        },
+        {
+          "table": {
+            "cols": [
+              "Measure",
+              "Baseline (A)",
+              "Windows (A)",
+              "Baseline (B)",
+              "Windows (B)"
+            ],
+            "widths": [
+              2.6,
+              1.3,
+              1.3,
+              1.3,
+              1.3
+            ],
+            "rows": [
+              [
+                "R@1, tIoU ≥ 0.3",
+                "10.3",
+                "16.7",
+                "12.5",
+                "25.0"
+              ],
+              [
+                "R@1, tIoU ≥ 0.5",
+                "6.4",
+                "9.0",
+                "6.2",
+                "15.6"
+              ],
+              [
+                "R@5, tIoU ≥ 0.3",
+                "20.5",
+                "32.1",
+                "28.1",
+                "37.5"
+              ],
+              [
+                "R@5, tIoU ≥ 0.5",
+                "10.3",
+                "20.5",
+                "15.6",
+                "25.0"
+              ]
+            ]
+          }
+        },
+        "Baseline hit@1 (top frame inside the answer window ± 1.5 s): 24.4 %, random kept frame 3.4 %; hit@5 47.4 %. People questions stay near zero: search cannot tell people apart.",
+        {
+          "h3": "Search speed on the phone, end to end (EYKO-102)"
+        },
+        "**Why:** the speed in this document (\"about 0.1 s per search\") was measured on our own small memory of a few dozen frames, and the vector tests in Head 2 (EYKO-90, EYKO-100) timed only the vector loop. Nobody had timed the search a user actually waits for, VideoSearch.frames(), at the sizes a user reaches. **Approach:** measure the real search first on both phones, change only what the numbers point at, prove the hits are identical, then measure again.",
+        {
+          "steps": [
+            "**A test memory with the app's own tables** (VideoSchema), in the proportions we measured: ready videos of 600 kept frames each (about 45 min at 13.4 kept frames a minute), 12 dropped frames per kept one (the Ego4D phone memory of 20 Oct had 5,939 frames for 460 kept), and for every kept frame a caption and a real vector (our own clips, Head 2 EYKO-100).",
+            "Sizes 5k, 20k and 50k kept frames (65,000 to 650,000 frame rows). 100k was left out: building it takes about 10 minutes on the A32.",
+            "Per size: the first search (it also loads the vectors into memory), then 1 warm-up and 20 queries × 5 runs of the whole search, and the same for knn alone, so the time can be split.",
+            "Every hit of every query (frame, window start and end, score) is written to a file. **Before** = the app as it was (commit 108d315); **after** = this change. Same queries, same phones, same day.",
+            "Command: adb shell am instrument -w -e class com.eykon.memory.video.VideoSearchSpeedTest -e sizes 5k,20k,50k -e label before -e commit <commit> com.eykon.memory.test/androidx.test.runner.AndroidJUnitRunner (label after for the second run)."
+          ],
+          "ref": "eyko102"
+        },
+        {
+          "h3": "Before: where the search's time went"
+        },
+        {
+          "table": {
+            "cols": [
+              "Kept frames",
+              "A32: whole search",
+              "A32: vector part (knn)",
+              "Pixel: whole search",
+              "Pixel: vector part (knn)"
+            ],
+            "widths": [
+              2,
+              2,
+              2,
+              2,
+              2
+            ],
+            "rows": [
+              [
+                "5k",
+                "326 ms",
+                "65 ms (20 %)",
+                "99 ms",
+                "29 ms (29 %)"
+              ],
+              [
+                "20k",
+                "1.3 s",
+                "274 ms (21 %)",
+                "493 ms",
+                "108 ms (22 %)"
+              ],
+              [
+                "50k",
+                "3.9 s",
+                "725 ms (18 %)",
+                "2.0 s",
+                "353 ms (18 %)"
+              ]
+            ]
+          }
+        },
+        {
+          "image": "figures/head7-search-split.png",
+          "caption": "Figure 1. Before the change: the vector part (knn, coloured) was only a fifth to a quarter of each search; the rest (grey) was reading every frame row, building objects and sorting. Data: docs/results/vectors/search/*-search-before.csv."
+        },
+        "So the vector loop was not where most of the time went. The search read every kept frame with its path, recorded date and caption, made a file object for each, wrapped every score in an object inside a map, and sorted all frames twice (once inside knn, once after filtering), looking each score up in the map on every comparison.",
+        {
+          "h3": "What changed in the search code"
+        },
+        {
+          "table": {
+            "cols": [
+              "Step of one search",
+              "Before (until 108d315)",
+              "After (EYKO-102)"
+            ],
+            "widths": [
+              2,
+              4,
+              4
+            ],
+            "rows": [
+              [
+                "Score every frame",
+                "knn(…, Int.MAX_VALUE): one running sum per row, then **sort every row**, wrap each as a (frame id, score) pair, then turn the list into a map.",
+                "VideoVectors.scores(): four running sums per row (Head 2, EYKO-100), returned as two plain arrays (ids, scores). **No sort, no objects.**"
+              ],
+              [
+                "Read the frames",
+                "One query over every kept frame of the ready videos with 7 columns (incl. path, recorded date, caption via a join); a file object made for every frame.",
+                "One query with 3 columns (id, video, time). Path and caption are read **only for the hits** (at most 20 small queries)."
+              ],
+              [
+                "Match frame to score",
+                "Map lookup with a boxed Long for every frame and on every sort comparison.",
+                "Binary search in the sorted id array (ids come out of the vector table in id order)."
+              ],
+              [
+                "Rank the frames",
+                "Sort all frames with a comparator that looks the score up in the map each time.",
+                "**One sort of packed numbers:** each frame's score and position become one Long, sorted as plain numbers (rankDescending)."
+              ],
+              [
+                "Grow the windows",
+                "SearchWindows.grow (unchanged)",
+                "SearchWindows.grow (unchanged)"
+              ]
+            ]
+          }
+        },
+        "How the packed sort keeps exactly the old order: a float's bits are turned into a number that sorts like the float (negative numbers flipped), put in the top half of a Long, and the frame's position goes in the bottom half so equal scores keep their order:",
+        {
+          "code": [
+            "val bits = java.lang.Float.floatToIntBits(score)",
+            "val key = if (bits < 0) bits xor 0x7fffffff else bits      // orders like Float.compare",
+            "packed[i] = (key.toLong() shl 32) or (Int.MAX_VALUE - i).toLong()   // ties: lower position first",
+            "packed.sort()                                               // plain numbers, no comparator"
+          ]
+        },
+        {
+          "h3": "After: same hits, faster"
+        },
+        {
+          "table": {
+            "cols": [
+              "Kept frames",
+              "A32 before",
+              "A32 after",
+              "Pixel before",
+              "Pixel after"
+            ],
+            "widths": [
+              2,
+              2,
+              2,
+              2,
+              2
+            ],
+            "rows": [
+              [
+                "5k",
+                "326 ms",
+                "**83 ms** (3.9× faster)",
+                "99 ms",
+                "**38 ms** (2.6× faster)"
+              ],
+              [
+                "20k",
+                "1.3 s",
+                "**302 ms** (4.3× faster)",
+                "493 ms",
+                "**119 ms** (4.1× faster)"
+              ],
+              [
+                "50k",
+                "3.9 s",
+                "**745 ms** (5.3× faster)",
+                "2.0 s",
+                "**440 ms** (4.4× faster)"
+              ],
+              [
+                "5k, first search (loads the vectors)",
+                "1.3 s",
+                "424 ms",
+                "757 ms",
+                "355 ms"
+              ],
+              [
+                "20k, first search (loads the vectors)",
+                "2.9 s",
+                "2.0 s",
+                "3.6 s",
+                "3.6 s"
+              ],
+              [
+                "50k, first search (loads the vectors)",
+                "11.2 s",
+                "7.8 s",
+                "20.8 s",
+                "22.2 s"
+              ]
+            ]
+          }
+        },
+        {
+          "image": "figures/head7-search-before-after.png",
+          "caption": "Figure 2. The app's search, end to end, median of 20 queries per run over 5 runs: before (grey) and after (colour). Data: docs/results/vectors/search/*-search-{before,after}.csv; graph script docs/documents/source/figures/search_speed.py."
+        },
+        {
+          "bullets": [
+            "**Same answers, checked three ways:** (1) all 2,400 hits (20 queries × 3 sizes × 2 phones, 20 hits each) are identical before and after: same frames, same window start and end, scores within 0.000001 (src/benchmarks/compare_search_hits.py); (2) a JVM test checks the packed sort against the old sort over 200 random rounds with ties, negatives and both zeros, and the four-sum dot product against the plain one (VideoVectorsRankTest); (3) the existing on-phone tests still pass on both phones: VideoSearchTest 6, VideoEmbedImagesTest 8, VideoEmbedTextsTest 9, VideoFinishTest 8.",
+            "**Names in the CSV files:** app_search_frames = the whole search (VideoSearch.frames, 20 hits); app_knn_all = VideoVectors.knn asked for every row (before the change this was the search's vector part; after it, the search no longer calls knn); app_search_first = the first search on a freshly opened memory, which also loads the vectors.",
+            "**What was not measured:** how much each of the four changes gives on its own; 100k kept frames; three vector tables at once (Head 2 shows they do not fit from 20k–50k)."
+          ]
+        },
+        {
+          "note": "**Outcome (good and bad):** the search is 4.3× faster on the A32 and 4.1× on the Pixel at 20k kept frames, with identical hits. It still takes 302 ms on the A32 at 20k, and 745 ms (A32) / 440 ms (Pixel) at 50k. **The first search after opening the app is the bigger problem:** it loads every vector from SQLite and takes 2.0 s (A32) and 3.6 s (Pixel) at 20k, and 7.8 s and 22.2 s at 50k. This change does not touch that (G22)."
+        },
+        "**Not protocol runs:** both phones plugged in by cable. Raw logs: docs/results/vectors/proof/*-2026-11-04-search-{before,after}-logcat.txt; hits: docs/results/vectors/search/*-hits-*.txt.",
+        {
+          "h3": "Published numbers, for scale only"
+        },
+        "OSGNet 2025 NLQ R@1 28.50 / 20.05 (tIoU 0.3 / 0.5). Large GPU video models on the test split, not a ranking."
+      ]
+    },
+    {
+      "title": "Results",
+      "blocks": [
+        {
+          "bullets": [
+            "Typed search over all ready videos returns moments as windows in about 0.1 s on the Pixel. **Update 4 Nov:** \"0.1 s\" holds only for small memories. At 20k kept frames the search now takes 119 ms (Pixel) and 302 ms (A32) after EYKO-102 (before: 493 ms and 1.3 s); the first search after opening takes 3.6 s and 2.0 s.",
+            "On held-out Ego4D data, windows more than doubled R@1 at tIoU 0.5 (6.2 → 15.6 %).",
+            "The Ask tab (notes answered by Gemma) is still a separate path; joining it to video is the next head."
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Limits",
+      "blocks": [
+        {
+          "bullets": [
+            "Search probe labels were AI-written, not checked by a person (G5).",
+            "Ego4D question counts are small, especially on set B (32 + 4 NLQ).",
+            "Search always returns something; there is no \"not found\" cut-off yet.",
+            "No date filter, no question rewording, no latest-only option yet.",
+            "Search speed was measured on test memories built with the app's schema and real vectors repeated with noise, not on a real user's year of video; phones were plugged in."
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Gaps and open items",
+      "blocks": [
+        "Fill the Resolution column as each card closes.",
+        {
+          "table": {
+            "cols": [
+              "Gap",
+              "What is missing",
+              "Card",
+              "Sev.",
+              "Resolution (to fill)"
+            ],
+            "widths": [
+              0.6,
+              4,
+              0.9,
+              0.7,
+              2.2
+            ],
+            "rows": [
+              [
+                "G22",
+                "The first search after opening the app loads every vector from SQLite: 2.0 s (A32) / 3.6 s (Pixel) at 20k kept frames, 7.8 s / 22.2 s at 50k.",
+                "EYKO-103 (parked until Head 7)",
+                "High",
+                ""
+              ],
+              [
+                "G23",
+                "Even after EYKO-102 the search takes 302 ms on the A32 at 20k kept frames, and 745 ms (A32) / 440 ms (Pixel) at 50k. The frames query reads every frame row (12 dropped per kept).",
+                "EYKO-103 (parked until Head 7)",
+                "Medium",
+                ""
+              ],
+              [
+                "G9",
+                "The retrieval rule and the video search disagree; write the decision as an ADR.",
+                "EYKO-81",
+                "Medium",
+                ""
+              ],
+              [
+                "D2",
+                "Decide: video exception to the parity rule, or hybrid comes back with better captions.",
+                "EYKO-75",
+                "Decision",
+                ""
+              ],
+              [
+                "G5",
+                "Search probe labels need a person's check.",
+                "EYKO-72",
+                "High",
+                ""
+              ],
+              [
+                "—",
+                "Typed or spoken question; date filter + HyDE; keyword and text-vector search; RRF fusion; answer with proof.",
+                "EYKO-17, 18, 20, 21, 23, 24",
+                "—",
+                ""
+              ],
+              [
+                "—",
+                "Text to sounds (CLAP).",
+                "EYKO-22",
+                "—",
+                ""
+              ]
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "title": "References",
+      "blocks": [
+        {
+          "bullets": [
+            "Results: docs/results/2026-10-13-frame-search-probe.md, 2026-10-20-ego4d-baseline.md, 2026-10-21-ego4d-improvements.md",
+            "Code: VideoSearch.kt, SearchWindows.kt, ml/vision/TextEmbedder.kt, ui/screens/VideoScreen.kt; laptop src/benchmarks/ego4d_eval.py (windows), ego4d_hybrid.py"
+          ]
+        }
+      ]
+    }
+  ]
+}

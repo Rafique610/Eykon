@@ -1,0 +1,40 @@
+NOTE: copied by hand from the live console of `adb logcat -s EykonVideo` (Infinix X670, 2026-11-05).
+This is NOT a raw `logcat -d` dump. The `-d` dumps saved afterwards came out empty (0 bytes), so this
+console text is the only record of the pipeline log. Video ids: 41f69d4d... = Snapchat smoke test,
+008a56a2... = PXL_20261014_094359202.mp4, e30e088f... = PXL_20261014_094903187.mp4.
+
+--- run 1: Snapchat clip (smoke test, not part of the EYKO-84 result) ---
+11-05 09:54:13.547 28196 28212 I EykonVideo: split 41f69d4df6d54cd08bc29059f2056af3: 35 frames in 1298 ms (one pass), audio 11.5 s in 122 ms
+11-05 09:54:13.809 28196 28212 I EykonVideo: filter 41f69d4df6d54cd08bc29059f2056af3: kept 4 of 35 (less sharp 31) in 257 ms
+11-05 09:54:18.099 28196 28212 I EykonVideo: dedup 41f69d4df6d54cd08bc29059f2056af3: kept 4 of 4 (hash dropped 0, embedding dropped 0) in 4282 ms; embedded 4 frames, 1054 ms each; memory java 12 MB, native 338 MB
+11-05 09:54:24.970 28196 28212 I EykonVideo: scene 41f69d4df6d54cd08bc29059f2056af3: 4 frames described by option A in 6859 ms, 1714 ms each
+11-05 09:54:35.082 28196 28212 I EykonVideo: small_objects 41f69d4df6d54cd08bc29059f2056af3: 4 frames looked at, 0 found, in 10003 ms
+11-05 09:54:35.145 28196 28212 I EykonVideo: embed_images 41f69d4df6d54cd08bc29059f2056af3: 4 vectors stored (4 reused, 0 computed) in 1 ms
+11-05 09:54:36.105 28196 28212 I EykonVideo: embed_texts 41f69d4df6d54cd08bc29059f2056af3: 4 texts (4 captions, 0 transcript chunks) in 958 ms
+11-05 09:54:36.109 28196 28212 I EykonVideo: link 41f69d4df6d54cd08bc29059f2056af3: every row points at its video and moment
+11-05 09:54:54.248 28196 28212 I EykonVideo: latest 41f69d4df6d54cd08bc29059f2056af3: 22 sightings (11 boxes too small) in 18138 ms
+11-05 09:54:54.253 28196 28212 I EykonVideo: finish 41f69d4df6d54cd08bc29059f2056af3: ready; 31 dropped frame files deleted
+
+--- run 2: PXL_20261014_094359202.mp4 ---
+11-05 10:13:12.875 28196 28212 I EykonVideo: split 008a56a26cc840b2a30b9cf02356d521: 224 frames in 22065 ms (one pass), audio 74.5 s in 13750 ms
+11-05 10:13:14.332 28196 28212 I EykonVideo: filter 008a56a26cc840b2a30b9cf02356d521: kept 25 of 224 (less sharp 199) in 1442 ms
+11-05 10:13:23.741 28196 28212 I EykonVideo: dedup 008a56a26cc840b2a30b9cf02356d521: kept 10 of 25 (hash dropped 14, embedding dropped 1) in 9395 ms; embedded 11 frames, 833 ms each; memory java 18 MB, native 1078 MB
+11-05 10:13:38.524 28196 28212 I EykonVideo: scene 008a56a26cc840b2a30b9cf02356d521: 10 frames described by option A in 14766 ms, 1476 ms each
+11-05 10:14:09.511 28196 28212 I EykonVideo: small_objects 008a56a26cc840b2a30b9cf02356d521: 10 frames looked at, 6 found, in 30968 ms
+11-05 10:14:09.580 28196 28212 I EykonVideo: embed_images 008a56a26cc840b2a30b9cf02356d521: 10 vectors stored (10 reused, 0 computed) in 2 ms
+11-05 10:14:09.953 28196 28212 I EykonVideo: embed_texts 008a56a26cc840b2a30b9cf02356d521: 10 texts (10 captions, 0 transcript chunks) in 371 ms
+11-05 10:14:09.957 28196 28212 I EykonVideo: link 008a56a26cc840b2a30b9cf02356d521: every row points at its video and moment
+11-05 10:14:52.300 28196 28212 I EykonVideo: latest 008a56a26cc840b2a30b9cf02356d521: 53 sightings (0 boxes too small) in 42342 ms
+11-05 10:14:52.318 28196 28212 I EykonVideo: finish 008a56a26cc840b2a30b9cf02356d521: ready; 214 dropped frame files deleted
+
+--- run 3: PXL_20261014_094903187.mp4 ---
+11-05 10:24:30.993 28196 28212 I EykonVideo: split e30e088ff37f4fe5bbba904f70489c1f: 225 frames in 23201 ms (one pass), audio 74.9 s in 13742 ms
+11-05 10:24:32.411 28196 28212 I EykonVideo: filter e30e088ff37f4fe5bbba904f70489c1f: kept 25 of 225 (less sharp 200) in 1402 ms
+11-05 10:24:45.889 28196 28212 I EykonVideo: dedup e30e088ff37f4fe5bbba904f70489c1f: kept 16 of 25 (hash dropped 9, embedding dropped 0) in 13468 ms; embedded 16 frames, 825 ms each; memory java 9 MB, native 1075 MB
+11-05 10:25:09.384 28196 28212 I EykonVideo: scene e30e088ff37f4fe5bbba904f70489c1f: 16 frames described by option A in 23468 ms, 1466 ms each
+11-05 10:25:54.065 28196 28212 I EykonVideo: small_objects e30e088ff37f4fe5bbba904f70489c1f: 16 frames looked at, 4 found, in 44639 ms
+11-05 10:25:54.144 28196 28212 I EykonVideo: embed_images e30e088ff37f4fe5bbba904f70489c1f: 16 vectors stored (16 reused, 0 computed) in 4 ms
+11-05 10:25:54.555 28196 28212 I EykonVideo: embed_texts e30e088ff37f4fe5bbba904f70489c1f: 16 texts (16 captions, 0 transcript chunks) in 409 ms
+11-05 10:25:54.559 28196 28212 I EykonVideo: link e30e088ff37f4fe5bbba904f70489c1f: every row points at its video and moment
+11-05 10:28:11.042 28196 28212 I EykonVideo: latest e30e088ff37f4fe5bbba904f70489c1f: 134 sightings (2 boxes too small) in 136482 ms
+11-05 10:28:11.061 28196 28212 I EykonVideo: finish e30e088ff37f4fe5bbba904f70489c1f: ready; 209 dropped frame files deleted

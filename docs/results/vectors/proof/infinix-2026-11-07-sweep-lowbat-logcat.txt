@@ -1,0 +1,36 @@
+--------- beginning of main
+11-07 20:38:53.985 15137 15153 I EYKO31  : device sheet: INFINIX Infinix X670, Android 13 (API 33), sqlite 3.32.2, commit a637e1d, date 2026-11-07
+11-07 20:38:53.988 15137 15153 I EYKO31  : device sheet: RAM 8.1 GB, java heap limit 268 MB, free storage 9.6 GB, vectors random_unit_seed31
+11-07 20:38:53.990 15137 15153 I EYKO31  : sweep: sizes [20000, 100000], runs 5, diskMax 20000, source random
+11-07 20:38:59.331 15137 15153 I EYKO31  : n=20000 insert all: 5300 ms, file 82.2 MB
+11-07 20:39:24.108 15137 15153 I EYKO31  : n=20000 blob_disk_dot run 1: median 1147.95 ms, worst 1277.08 ms
+11-07 20:39:46.900 15137 15153 I EYKO31  : n=20000 blob_disk_dot run 2: median 1137.91 ms, worst 1156.17 ms
+11-07 20:40:09.743 15137 15153 I EYKO31  : n=20000 blob_disk_dot run 3: median 1141.18 ms, worst 1154.76 ms
+11-07 20:40:32.521 15137 15153 I EYKO31  : n=20000 blob_disk_dot run 4: median 1137.56 ms, worst 1152.52 ms
+11-07 20:40:55.282 15137 15153 I EYKO31  : n=20000 blob_disk_dot run 5: median 1137.40 ms, worst 1150.20 ms
+11-07 20:40:57.596 15137 15153 I EYKO31  : n=20000 blob_memory_dot run 1: median 58.62 ms, worst 67.22 ms
+11-07 20:40:58.793 15137 15153 I EYKO31  : n=20000 blob_memory_dot run 2: median 58.08 ms, worst 70.95 ms
+11-07 20:40:59.968 15137 15153 I EYKO31  : n=20000 blob_memory_dot run 3: median 55.44 ms, worst 65.26 ms
+11-07 20:41:01.156 15137 15153 I EYKO31  : n=20000 blob_memory_dot run 4: median 56.43 ms, worst 77.35 ms
+11-07 20:41:02.316 15137 15153 I EYKO31  : n=20000 blob_memory_dot run 5: median 56.21 ms, worst 62.93 ms
+11-07 20:41:04.052 15137 15153 I EYKO31  : n=20000 fast top-20 equals the app's: 400 of 400
+11-07 20:41:04.357 15137 15153 I EYKO31  : n=20000 blob_memory_fast run 1: median 14.08 ms, worst 14.17 ms
+11-07 20:41:04.648 15137 15153 I EYKO31  : n=20000 blob_memory_fast run 2: median 14.11 ms, worst 15.40 ms
+11-07 20:41:04.938 15137 15153 I EYKO31  : n=20000 blob_memory_fast run 3: median 14.11 ms, worst 14.61 ms
+11-07 20:41:05.228 15137 15153 I EYKO31  : n=20000 blob_memory_fast run 4: median 14.10 ms, worst 14.12 ms
+11-07 20:41:05.518 15137 15153 I EYKO31  : n=20000 blob_memory_fast run 5: median 14.10 ms, worst 14.54 ms
+11-07 20:41:30.990 15137 15153 I EYKO31  : n=100000 insert all: 25448 ms, file 411.1 MB
+11-07 20:41:31.001 15137 15153 I EYKO31  : n=100000 blob_disk_dot: skipped: over diskMax 20000
+11-07 20:41:58.842 15137 15153 I EYKO31  : n=100000 blob_memory_dot run 1: median 355.25 ms, worst 372.10 ms
+11-07 20:42:05.994 15137 15153 I EYKO31  : n=100000 blob_memory_dot run 2: median 358.53 ms, worst 374.71 ms
+11-07 20:42:13.122 15137 15153 I EYKO31  : n=100000 blob_memory_dot run 3: median 355.84 ms, worst 372.66 ms
+11-07 20:42:20.210 15137 15153 I EYKO31  : n=100000 blob_memory_dot run 4: median 355.19 ms, worst 363.98 ms
+11-07 20:42:27.292 15137 15153 I EYKO31  : n=100000 blob_memory_dot run 5: median 353.83 ms, worst 364.41 ms
+11-07 20:42:35.756 15137 15153 I EYKO31  : n=100000 fast top-20 equals the app's: 400 of 400
+11-07 20:42:37.216 15137 15153 I EYKO31  : n=100000 blob_memory_fast run 1: median 68.95 ms, worst 69.06 ms
+11-07 20:42:38.606 15137 15153 I EYKO31  : n=100000 blob_memory_fast run 2: median 68.93 ms, worst 69.10 ms
+11-07 20:42:39.996 15137 15153 I EYKO31  : n=100000 blob_memory_fast run 3: median 68.94 ms, worst 69.52 ms
+11-07 20:42:41.386 15137 15153 I EYKO31  : n=100000 blob_memory_fast run 4: median 68.96 ms, worst 69.08 ms
+11-07 20:42:42.777 15137 15153 I EYKO31  : n=100000 blob_memory_fast run 5: median 68.93 ms, worst 69.01 ms
+11-07 20:42:42.847 15137 15153 I EYKO31  : csv written: /storage/emulated/0/Android/data/com.eykon.memory/files/results/eyko90-Infinix_X670-20261107-2038.csv
+11-07 20:42:42.847 15137 15153 I EYKO31  : pull it with: adb pull /storage/emulated/0/Android/data/com.eykon.memory/files/results/eyko90-Infinix_X670-20261107-2038.csv

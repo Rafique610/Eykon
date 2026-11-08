@@ -1,0 +1,9 @@
+--------- beginning of main
+11-04 16:06:24.953 30734 30755 I EYKO31  : device Google Pixel 9 Pro XL, Android 17, platform sqlite 3.50.6
+11-04 16:06:24.955 30734 30755 I EYKO31  : option 1: CREATE VIRTUAL TABLE ... USING vec0 failed: no such module: vec0 (code 1 SQLITE_ERROR)
+11-04 16:06:24.955 30734 30755 I EYKO31  : option 1: load_extension('vec0') failed: no such function: load_extension (code 1 SQLITE_ERROR): , while compiling: SELECT load_extension('vec0')
+11-04 16:06:24.956 30734 30755 I EYKO31  : any extension: load_extension('eyko_no_such_extension') failed: no such function: load_extension (code 1 SQLITE_ERROR): , while compiling: SELECT load_extension('eyko_no_such_extension')
+11-04 16:06:24.957 30734 30755 I EYKO31  : built-in module: fts5 failed: no such module: fts5 (code 1 SQLITE_ERROR)
+11-04 16:06:24.960 30734 30755 I EYKO31  : built-in module: fts4 works (compiled into the platform SQLite)
+11-04 16:06:24.962 30734 30755 I EYKO31  : built-in module: rtree failed: no such module: rtree (code 1 SQLITE_ERROR)
+11-04 16:06:24.964 30734 30755 I EYKO31  : compile options (extension / fts / rtree): [none listed]
