@@ -66,8 +66,7 @@ Total PSS before / after (MB), native heap after 8 MB, Java heap after 3 MB, tab
 
 Careful with this number: PSS stays flat because the vectors stay in the database file and the OS caches the file pages,
 which `Debug.getMemoryInfo` does not count as the app's. The data still uses RAM as page cache, which the system can drop. It was **not**
-measured how much RAM that takes or what the search costs when those pages are dropped (the EYKO-109 background test
-showed a 3.8 times slower first search for the mapped file; nothing like it was run for vec0).
+measured how much RAM that takes. What the search costs when those pages are dropped is in the memory-pressure section below (first search 3.4 to 3.9 times slower).
 
 ## Controlled repeat: unplugged, flight mode (8 Nov, 03:20)
 
@@ -78,6 +77,25 @@ delay built into the test so the cable could come out first), **flight mode on**
 five runs were 114.5 to 116.2 against 109.7 to 112.4). So the plugged-in run was a little faster at 100,000, not slower. Files:
 `...eyko108-r4-neon-...-0320.csv` (this run) and `...-0256.csv` (a flight-mode run that was entirely plugged in by mistake; it matches the first run).
 An earlier attempt to schedule the start from the shell died when the cable came out and produced no run; it is not in the results.
+
+## Memory pressure: does Android drop the cached vector pages? (Infinix, 9 Nov 00:57 to 01:20)
+
+`pressure` in `RouteR4StaticTest`: three vec0 tables (image 512, text 384, audio-sized 512), 100,000 rows each, NEON build. One query per table is timed
+twice before the pressure (first, repeat). The test then takes real RAM in 100 MB steps until about 700 MB is left (it took 3,200 MB; free memory fell
+from 3,768 MB to 688 MB), holds 60 s (616 MB free at the end), frees it, and times the first query per table again, then a repeat. Phone plugged in, flight mode on,
+battery 72 %. Android closed background apps to make room; which ones was not looked at. The test process was **not killed** (same pid, 31699, throughout).
+Raw: `proof/infinix-2026-11-09-route-r4-pressure-logcat.txt`.
+
+| Table | Before: first / repeat (ms) | After pressure: first / repeat (ms) | First search after, against before |
+|---|---|---|---|
+| image (512) | 149 / 115 | 503 / 132 | 3.4 times slower |
+| text (384) | 82 / 86 | 317 / 92 | 3.9 times slower |
+| audio-sized (512) | 122 / 115 | 442 / 122 | 3.6 times slower |
+
+Reading: yes, Android dropped most of the cached database pages. The first search after the pressure had to read them back from storage and took 3.4 to 3.9 times as long;
+the repeat was back to normal (within 15 %). This is the cost of keeping the vectors in the database file instead of in the app's memory. It is the same
+kind of cost as the memory-mapped file in EYKO-109 (first search 3.8 times slower after 5 minutes in the background). An earlier run of this test (8 Nov, 03:33) gave the
+same picture (image 202 to 550 ms, text 100 to 127, audio 145 to 312); its raw log was not saved, so that run is mentioned but not counted. One phone, two runs; no A32.
 
 ## Ranking every row: sqlite-vec cannot do it
 
@@ -125,7 +143,7 @@ in the test APK are 9.4 MB each.
 - The first sweep (00:00 to 02:05) was done with the phone plugged in and not in flight mode; the controlled run below was repeated unplugged.
 - Android's APK Analyzer would not start from this folder (the space in the user name); the APK size comes from the APK's own file list instead.
 - The no-NEON build was run at 20k and 100k only, as the card says.
-- A memory-pressure test (does Android drop the cached vector pages?) has code in the branch (`pressure` in `RouteR4StaticTest`) but its result is **not in this file**: it is to be re-run, and no number from it is claimed here.
+- The memory-pressure test ran once with a saved log (above); the A32 and Pixel were not run.
 
 ## Evidence files
 
