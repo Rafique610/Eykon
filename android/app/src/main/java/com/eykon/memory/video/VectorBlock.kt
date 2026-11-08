@@ -15,10 +15,21 @@ import kotlin.math.roundToInt
  * HEAP_F32 is the app's way: one Java FloatArray. The others keep the numbers in direct or
  * memory-mapped buffers in chunks, so no single 600 MB allocation is needed.
  */
-internal enum class VectorMode { HEAP_F32, DIRECT_F32, DIRECT_F16, DIRECT_I8, MAPPED_F32 }
+internal enum class VectorMode(val mapped: Boolean = false) {
+    HEAP_F32, DIRECT_F32, DIRECT_F16, DIRECT_I8, MAPPED_F32(true),
 
-/** One table's vectors in chunked [ByteBuffer]s (every mode except HEAP_F32). */
-internal class VectorBlock(private val mode: VectorMode, private val rows: Int, private val size: Int, mapFile: File?) {
+    /** EYKO-114 option 1: the mapped file copied [BLOCK_ROWS] rows at a time, then the same dot() as the heap. */
+    MAPPED_BLOCK(true),
+
+    /** EYKO-114 option 2: scored in place in the mapped memory by NEON C code (libeykonvec.so), same sum order. */
+    MAPPED_NATIVE(true),
+}
+
+/**
+ * One table's vectors in chunked [ByteBuffer]s (every mode except HEAP_F32). With [readOnly] the
+ * [mapFile] already holds every row (EYKO-115: written once, appended to) and is only mapped, not filled.
+ */
+internal class VectorBlock(private val mode: VectorMode, private val rows: Int, private val size: Int, mapFile: File?, readOnly: Boolean = false) {
 
     private val numberBytes = when (mode) { VectorMode.DIRECT_F16 -> 2; VectorMode.DIRECT_I8 -> 1; else -> 4 }
     private val rowBytes = size * numberBytes
@@ -30,11 +41,12 @@ internal class VectorBlock(private val mode: VectorMode, private val rows: Int, 
     val bytes: Long = rows.toLong() * rowBytes
 
     init {
-        val file = mapFile?.let { RandomAccessFile(it, "rw") }
+        val file = mapFile?.let { RandomAccessFile(it, if (readOnly) "r" else "rw") }
+        val mapMode = if (readOnly) FileChannel.MapMode.READ_ONLY else FileChannel.MapMode.READ_WRITE
         chunks = Array((rows + CHUNK_ROWS - 1) / CHUNK_ROWS) { c ->
             val length = minOf(CHUNK_ROWS, rows - c * CHUNK_ROWS) * rowBytes
             val buffer = if (file != null) {
-                file.channel.map(FileChannel.MapMode.READ_WRITE, c.toLong() * CHUNK_ROWS * rowBytes, length.toLong())
+                file.channel.map(mapMode, c.toLong() * CHUNK_ROWS * rowBytes, length.toLong())
             } else {
                 ByteBuffer.allocateDirect(length)
             }
@@ -83,6 +95,24 @@ internal class VectorBlock(private val mode: VectorMode, private val rows: Int, 
                     out[row] = VideoVectors.dot(scratch, 0, query)
                 }
             }
+            VectorMode.MAPPED_BLOCK -> {
+                val scratch = FloatArray(BLOCK_ROWS * size)
+                for (c in chunks.indices) {
+                    val buffer = floats!![c]
+                    val chunkRows = minOf(CHUNK_ROWS, rows - c * CHUNK_ROWS)
+                    var start = 0
+                    while (start < chunkRows) {
+                        val n = minOf(BLOCK_ROWS, chunkRows - start)
+                        buffer.position(start * size)
+                        buffer.get(scratch, 0, n * size)
+                        for (k in 0 until n) out[c * CHUNK_ROWS + start + k] = VideoVectors.dot(scratch, k * size, query)
+                        start += n
+                    }
+                }
+            }
+            VectorMode.MAPPED_NATIVE -> for (c in chunks.indices) {
+                VectorNative.scoreF32(chunks[c], minOf(CHUNK_ROWS, rows - c * CHUNK_ROWS), size, query, out, c * CHUNK_ROWS)
+            }
             else -> {
                 val scratch = FloatArray(size)
                 for (row in 0 until rows) {
@@ -112,5 +142,16 @@ internal class VectorBlock(private val mode: VectorMode, private val rows: Int, 
     private companion object {
         /** 32,768 rows: 64 MB of float32 at 512 numbers, 16 MB of int8. */
         const val CHUNK_ROWS = 32768
+
+        /** MAPPED_BLOCK: rows copied per call, 2 MB of float32 at 512 numbers (EYKO-114). */
+        const val BLOCK_ROWS = 1024
     }
+}
+
+/** EYKO-114 option 2: NEON scoring straight from a mapped (direct) buffer, libeykonvec.so (cpp/eykonvec.c). */
+internal object VectorNative {
+    init { System.loadLibrary("eykonvec") }
+
+    /** Writes the dot product of [query] with each of the [rows] vectors in [buffer] to out[outOffset + row]. */
+    @JvmStatic external fun scoreF32(buffer: java.nio.ByteBuffer, rows: Int, size: Int, query: FloatArray, out: FloatArray, outOffset: Int)
 }

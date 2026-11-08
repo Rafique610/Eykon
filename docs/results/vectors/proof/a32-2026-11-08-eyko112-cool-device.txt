@@ -1,0 +1,12 @@
+# Samsung A32 (SM-A325F), Android 13, kit a637e1d (SHA256 OK), EYKO-95 protocol cool run
+# timer set (cable in): 2026-11-08 17:48:16 +0500
+  AC powered: false
+  USB powered: true
+  level: 100
+  temperature: 278
+/dev/block/dm-47 107G  54G   53G  51% /data/user/0
+# after (cable back in): 2026-11-08 18:02:34 +0500
+  USB powered: true
+  level: 99
+  temperature: 294
+# room temperature: about 20 C (user's estimate, not measured)

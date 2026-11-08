@@ -1,0 +1,27 @@
+# ELF LOAD alignment of prebuilt Android arm64 libraries (readelf -lW), checked 2026-11-05
+# 0x1000 = 4 KB alignment, 0x4000 = 16 KB. Android guide: LOAD alignment must be >= 2**14 (0x4000) for 16 KB devices.
+
+## sqlite-vec v0.1.9 sqlite-vec-0.1.9-loadable-android-aarch64.tar.gz -> vec0.so
+76f60d4d2d89d2e5070ef8f1868c52b140a10200dbe98b0c2ca7a4d02d483eaa  v.tgz
+3083712f52da27a172469b34d1b82fe8388f2c76bc822b85ceaaed9f8e460c74  vec0.so
+  Machine:                           AArch64
+  LOAD           0x000000 0x0000000000000000 0x0000000000000000 0x00ad60 0x00ad60 R   0x1000
+  LOAD           0x00ad60 0x000000000000bd60 0x000000000000bd60 0x0167d0 0x0167d0 R E 0x1000
+  LOAD           0x021530 0x0000000000023530 0x0000000000023530 0x000608 0x000ad0 RW  0x1000
+  LOAD           0x021b38 0x0000000000024b38 0x0000000000024b38 0x0003f0 0x0003f8 RW  0x1000
+  GNU_RELRO      0x021530 0x0000000000023530 0x0000000000023530 0x000608 0x000ad0 R   0x1
+entry point:
+    62: 0000000000019f60   484 FUNC    GLOBAL DEFAULT   13 sqlite3_vec_init
+needed:
+ 0x0000000000000001 (NEEDED)             Shared library: [libm.so]
+ 0x0000000000000001 (NEEDED)             Shared library: [libdl.so]
+ 0x0000000000000001 (NEEDED)             Shared library: [libc.so]
+
+## usearch v2.26.6 usearch_android_arm64_2.26.6.zip -> libusearch_c.so
+e80320e515d0085ee4465214608fcd1015e53117405a692ca87ee218aa86b448  a.zip
+19c9f1cdd8f57d50760c606dec1c76150cbf77e9ecb7fcf99ca3dcfd7c993c5a  libusearch_c.so
+  Machine:                           AArch64
+  LOAD           0x000000 0x0000000000000000 0x0000000000000000 0x0a6090 0x0a6090 R E 0x1000
+  LOAD           0x0a6090 0x00000000000a7090 0x00000000000a7090 0x006250 0x006f70 RW  0x1000
+  LOAD           0x0ac2e0 0x00000000000ae2e0 0x00000000000ae2e0 0x000170 0x0011e0 RW  0x1000
+  GNU_RELRO      0x0a6090 0x00000000000a7090 0x00000000000a7090 0x006250 0x006f70 R   0x1

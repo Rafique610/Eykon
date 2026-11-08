@@ -1,0 +1,40 @@
+--------- beginning of main
+11-08 18:03:22.311 I/TestRunner( 9513): run started: 1 tests
+11-08 18:03:22.313 I/TestRunner( 9513): started: blobColumnWithBruteForceSearch(com.eykon.memory.spike.VectorStorageSpikeTest)
+11-08 18:03:22.363 I/EYKO31  ( 9513): device sheet: samsung SM-A325F, Android 13 (API 33), sqlite 3.32.2, commit a637e1d, date 2026-11-08
+11-08 18:03:22.367 I/EYKO31  ( 9513): device sheet: RAM 5.9 GB, java heap limit 268 MB, free storage 57.1 GB, vectors random_unit_seed31
+11-08 18:03:22.372 I/EYKO31  ( 9513): sweep: sizes [20000, 100000], runs 5, diskMax 20000, source random
+11-08 18:03:30.442 I/EYKO31  ( 9513): n=20000 insert all: 8007 ms, file 82.2 MB
+11-08 18:04:04.673 I/EYKO31  ( 9513): n=20000 blob_disk_dot run 1: median 1603.97 ms, worst 1663.39 ms
+11-08 18:04:36.610 I/EYKO31  ( 9513): n=20000 blob_disk_dot run 2: median 1595.66 ms, worst 1662.63 ms
+11-08 18:05:07.609 I/EYKO31  ( 9513): n=20000 blob_disk_dot run 3: median 1592.14 ms, worst 1606.69 ms
+11-08 18:05:39.480 I/EYKO31  ( 9513): n=20000 blob_disk_dot run 4: median 1596.00 ms, worst 1602.61 ms
+11-08 18:06:11.431 I/EYKO31  ( 9513): n=20000 blob_disk_dot run 5: median 1593.20 ms, worst 1618.49 ms
+11-08 18:06:14.821 I/EYKO31  ( 9513): n=20000 blob_memory_dot run 1: median 81.65 ms, worst 120.35 ms
+11-08 18:06:16.652 I/EYKO31  ( 9513): n=20000 blob_memory_dot run 2: median 83.85 ms, worst 120.91 ms
+11-08 18:06:18.471 I/EYKO31  ( 9513): n=20000 blob_memory_dot run 3: median 83.08 ms, worst 120.63 ms
+11-08 18:06:20.316 I/EYKO31  ( 9513): n=20000 blob_memory_dot run 4: median 82.53 ms, worst 125.79 ms
+11-08 18:06:22.177 I/EYKO31  ( 9513): n=20000 blob_memory_dot run 5: median 82.48 ms, worst 121.11 ms
+11-08 18:06:24.431 I/EYKO31  ( 9513): n=20000 fast top-20 equals the app's: 400 of 400
+11-08 18:06:24.841 I/EYKO31  ( 9513): n=20000 blob_memory_fast run 1: median 18.49 ms, worst 18.90 ms
+11-08 18:06:25.231 I/EYKO31  ( 9513): n=20000 blob_memory_fast run 2: median 18.48 ms, worst 18.74 ms
+11-08 18:06:25.621 I/EYKO31  ( 9513): n=20000 blob_memory_fast run 3: median 18.49 ms, worst 18.69 ms
+11-08 18:06:26.011 I/EYKO31  ( 9513): n=20000 blob_memory_fast run 4: median 18.50 ms, worst 18.64 ms
+11-08 18:06:26.401 I/EYKO31  ( 9513): n=20000 blob_memory_fast run 5: median 18.48 ms, worst 18.68 ms
+11-08 18:06:59.829 I/EYKO31  ( 9513): n=100000 insert all: 33348 ms, file 411.1 MB
+11-08 18:06:59.857 I/EYKO31  ( 9513): n=100000 blob_disk_dot: skipped: over diskMax 20000
+11-08 18:07:34.206 I/EYKO31  ( 9513): n=100000 blob_memory_dot run 1: median 530.58 ms, worst 572.79 ms
+11-08 18:07:45.045 I/EYKO31  ( 9513): n=100000 blob_memory_dot run 2: median 534.37 ms, worst 581.76 ms
+11-08 18:07:56.024 I/EYKO31  ( 9513): n=100000 blob_memory_dot run 3: median 543.72 ms, worst 595.44 ms
+11-08 18:08:06.838 I/EYKO31  ( 9513): n=100000 blob_memory_dot run 4: median 536.42 ms, worst 567.90 ms
+11-08 18:08:17.576 I/EYKO31  ( 9513): n=100000 blob_memory_dot run 5: median 532.35 ms, worst 567.63 ms
+11-08 18:08:30.197 I/EYKO31  ( 9513): n=100000 fast top-20 equals the app's: 400 of 400
+11-08 18:08:32.136 I/EYKO31  ( 9513): n=100000 blob_memory_fast run 1: median 90.85 ms, worst 92.08 ms
+11-08 18:08:33.985 I/EYKO31  ( 9513): n=100000 blob_memory_fast run 2: median 90.90 ms, worst 92.27 ms
+11-08 18:08:35.832 I/EYKO31  ( 9513): n=100000 blob_memory_fast run 3: median 90.87 ms, worst 91.65 ms
+11-08 18:08:37.679 I/EYKO31  ( 9513): n=100000 blob_memory_fast run 4: median 90.91 ms, worst 91.09 ms
+11-08 18:08:39.526 I/EYKO31  ( 9513): n=100000 blob_memory_fast run 5: median 90.86 ms, worst 91.22 ms
+11-08 18:08:39.663 I/EYKO31  ( 9513): csv written: /storage/emulated/0/Android/data/com.eykon.memory/files/results/eyko90-SM_A325F-20261108-1803.csv
+11-08 18:08:39.663 I/EYKO31  ( 9513): pull it with: adb pull /storage/emulated/0/Android/data/com.eykon.memory/files/results/eyko90-SM_A325F-20261108-1803.csv
+11-08 18:08:39.663 I/TestRunner( 9513): finished: blobColumnWithBruteForceSearch(com.eykon.memory.spike.VectorStorageSpikeTest)
+11-08 18:08:39.668 I/TestRunner( 9513): run finished: 1 tests, 0 failed, 0 ignored

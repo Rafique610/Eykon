@@ -1,0 +1,11 @@
+--------- beginning of main
+11-08 19:15:08.567 I/TestRunner(18434): run started: 1 tests
+11-08 19:15:08.569 I/TestRunner(18434): started: persistentFile(com.eykon.memory.video.OffHeapVectorTest)
+11-08 19:16:11.076 I/EYKO109 (18434): n=100000 file step 'first search, writes the file': 24283 ms
+11-08 19:16:11.191 I/EYKO109 (18434): n=100000 file step 'repeat search': 115 ms
+11-08 19:16:11.358 I/EYKO109 (18434): n=100000 file step 'first search after restart, file reused': 166 ms
+11-08 19:16:40.678 I/EYKO109 (18434): n=100000 file step 'after restart': rows 100000, identical to heap on 20 of 20 queries
+11-08 19:16:41.587 I/EYKO109 (18434): n=100000 file step '1,000 new rows, appended': 169 ms
+11-08 19:17:13.305 I/EYKO109 (18434): n=100000 file step 'after append': rows 101000, identical to heap on 20 of 20 queries
+11-08 19:17:38.046 I/EYKO109 (18434): n=100000 file step '10 rows deleted with forget, rebuilt': 24719 ms
+11-08 19:18:07.714 I/EYKO109 (18434): n=100000 file step 'after delete': rows 100990, identical to heap on 20 of 20 queries

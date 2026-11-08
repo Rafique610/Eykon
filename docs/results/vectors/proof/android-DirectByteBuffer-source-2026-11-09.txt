@@ -1,0 +1,20 @@
+# Android's DirectByteBuffer allocates a Java byte[] (EYKO-109 review point 4), fetched 9 Nov 2026
+# File: platform/libcore, ojluni/src/main/java/java/nio/DirectByteBuffer.java (AOSP, Apache 2.0). Line is in class MemoryRef(int capacity).
+
+android11-release  https://android.googlesource.com/platform/libcore/+/refs/heads/android11-release/ojluni/src/main/java/java/nio/DirectByteBuffer.java
+70:            buffer = (byte[]) runtime.newNonMovableArray(byte.class, capacity + 7);
+
+android12-release  https://android.googlesource.com/platform/libcore/+/refs/heads/android12-release/ojluni/src/main/java/java/nio/DirectByteBuffer.java
+70:            buffer = (byte[]) runtime.newNonMovableArray(byte.class, capacity + 7);
+
+android13-release  https://android.googlesource.com/platform/libcore/+/refs/heads/android13-release/ojluni/src/main/java/java/nio/DirectByteBuffer.java
+70:            buffer = (byte[]) runtime.newNonMovableArray(byte.class, capacity + 7);
+
+android14-release  https://android.googlesource.com/platform/libcore/+/refs/heads/android14-release/ojluni/src/main/java/java/nio/DirectByteBuffer.java
+71:            buffer = (byte[]) runtime.newNonMovableArray(byte.class, capacity + 7);
+
+android15-release  https://android.googlesource.com/platform/libcore/+/refs/heads/android15-release/ojluni/src/main/java/java/nio/DirectByteBuffer.java
+73:            buffer = (byte[]) runtime.newNonMovableArray(byte.class, capacity + 7);
+
+android16-release  https://android.googlesource.com/platform/libcore/+/refs/heads/android16-release/ojluni/src/main/java/java/nio/DirectByteBuffer.java
+73:            buffer = (byte[]) runtime.newNonMovableArray(byte.class, capacity + 7);

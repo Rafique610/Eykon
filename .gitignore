@@ -20,3 +20,6 @@ wheels/
 # Environment files
 .env
 .env.local
+
+# EYKO-114: built by task build-vector-native from android/app/src/main/cpp/eykonvec.c
+android/app/src/main/jniLibs/

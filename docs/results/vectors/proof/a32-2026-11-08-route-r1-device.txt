@@ -1,0 +1,19 @@
+# before: 2026-11-08 13:47:11 +0500
+  AC powered: false
+  USB powered: true
+  level: 76
+  temperature: 292
+/dev/block/dm-47 107G  54G   53G  51% /data/user/0
+# after sweep: 2026-11-08 13:48:21 +0500
+  level: 76
+  temperature: 293
+# sweep run 2 before: 2026-11-08 13:49:04 +0500
+  USB powered: true
+  level: 76
+  temperature: 295
+# memory before: 2026-11-08 13:51:57 +0500
+  level: 77
+  temperature: 300
+# after: 2026-11-08 13:54:52 +0500
+  level: 77
+  temperature: 307

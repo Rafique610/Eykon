@@ -1,0 +1,27 @@
+device,android,sqlite_version,commit,date,method,dim,n,run,median_ms,p95_ms,worst_ms,pss_mb,heap_mb,file_mb,temp_c_start,temp_c_end,battery_pct,source_vectors,note
+INFINIX Infinix X670,13,3.32.2,a637e1d,2026-11-07,blob_disk_dot,512,20000,1,1154.28,1217.03,1234.64,103,71,82.2,35.6,35.8,88,random_unit_seed31,
+INFINIX Infinix X670,13,3.32.2,a637e1d,2026-11-07,blob_disk_dot,512,20000,2,1143.97,1157.79,1159.37,104,72,82.2,35.8,36.0,88,random_unit_seed31,
+INFINIX Infinix X670,13,3.32.2,a637e1d,2026-11-07,blob_disk_dot,512,20000,3,1141.50,1151.00,1156.21,103,71,82.2,36.0,36.0,88,random_unit_seed31,
+INFINIX Infinix X670,13,3.32.2,a637e1d,2026-11-07,blob_disk_dot,512,20000,4,1144.00,1163.81,1200.48,103,72,82.2,36.0,36.4,88,random_unit_seed31,
+INFINIX Infinix X670,13,3.32.2,a637e1d,2026-11-07,blob_disk_dot,512,20000,5,1146.15,1153.54,1154.92,103,71,82.2,36.4,36.4,88,random_unit_seed31,
+INFINIX Infinix X670,13,3.32.2,a637e1d,2026-11-07,blob_memory_dot,512,20000,1,55.40,60.26,62.60,85,53,82.2,36.4,36.4,88,random_unit_seed31,
+INFINIX Infinix X670,13,3.32.2,a637e1d,2026-11-07,blob_memory_dot,512,20000,2,55.94,61.46,64.03,95,63,82.2,36.4,36.4,88,random_unit_seed31,
+INFINIX Infinix X670,13,3.32.2,a637e1d,2026-11-07,blob_memory_dot,512,20000,3,55.21,63.33,63.71,84,52,82.2,36.4,36.4,88,random_unit_seed31,
+INFINIX Infinix X670,13,3.32.2,a637e1d,2026-11-07,blob_memory_dot,512,20000,4,56.57,62.70,63.65,103,71,82.2,36.4,36.4,88,random_unit_seed31,
+INFINIX Infinix X670,13,3.32.2,a637e1d,2026-11-07,blob_memory_dot,512,20000,5,56.48,63.54,65.47,88,56,82.2,36.4,36.4,88,random_unit_seed31,
+INFINIX Infinix X670,13,3.32.2,a637e1d,2026-11-07,blob_memory_fast,512,20000,1,14.03,14.08,14.11,83,50,82.2,36.3,36.3,88,random_unit_seed31,fast top-20 equals the app's: 400 of 400
+INFINIX Infinix X670,13,3.32.2,a637e1d,2026-11-07,blob_memory_fast,512,20000,2,14.03,14.05,14.10,83,50,82.2,36.3,36.3,88,random_unit_seed31,fast top-20 equals the app's: 400 of 400
+INFINIX Infinix X670,13,3.32.2,a637e1d,2026-11-07,blob_memory_fast,512,20000,3,14.05,14.08,15.28,83,51,82.2,36.3,36.3,88,random_unit_seed31,fast top-20 equals the app's: 400 of 400
+INFINIX Infinix X670,13,3.32.2,a637e1d,2026-11-07,blob_memory_fast,512,20000,4,14.03,14.06,14.11,83,51,82.2,36.3,36.3,88,random_unit_seed31,fast top-20 equals the app's: 400 of 400
+INFINIX Infinix X670,13,3.32.2,a637e1d,2026-11-07,blob_memory_fast,512,20000,5,14.04,14.06,14.07,83,51,82.2,36.3,36.3,88,random_unit_seed31,fast top-20 equals the app's: 400 of 400
+INFINIX Infinix X670,13,3.32.2,a637e1d,2026-11-07,blob_disk_dot,512,100000,,,,,37,3,411.1,,36.3,88,random_unit_seed31,skipped: over diskMax 20000
+INFINIX Infinix X670,13,3.32.2,a637e1d,2026-11-07,blob_memory_dot,512,100000,1,351.89,362.65,363.90,244,220,411.1,36.3,36.3,88,random_unit_seed31,
+INFINIX Infinix X670,13,3.32.2,a637e1d,2026-11-07,blob_memory_dot,512,100000,2,353.84,361.87,363.19,244,220,411.1,36.3,36.3,88,random_unit_seed31,
+INFINIX Infinix X670,13,3.32.2,a637e1d,2026-11-07,blob_memory_dot,512,100000,3,352.16,370.44,374.65,256,232,411.1,36.3,36.3,88,random_unit_seed31,
+INFINIX Infinix X670,13,3.32.2,a637e1d,2026-11-07,blob_memory_dot,512,100000,4,354.76,369.47,370.17,255,231,411.1,36.3,36.3,88,random_unit_seed31,
+INFINIX Infinix X670,13,3.32.2,a637e1d,2026-11-07,blob_memory_dot,512,100000,5,349.07,359.14,362.06,247,223,411.1,36.3,36.3,88,random_unit_seed31,
+INFINIX Infinix X670,13,3.32.2,a637e1d,2026-11-07,blob_memory_fast,512,100000,1,68.74,68.89,69.25,236,211,411.1,36.3,36.3,88,random_unit_seed31,fast top-20 equals the app's: 400 of 400
+INFINIX Infinix X670,13,3.32.2,a637e1d,2026-11-07,blob_memory_fast,512,100000,2,68.76,68.85,69.02,236,211,411.1,36.3,36.3,88,random_unit_seed31,fast top-20 equals the app's: 400 of 400
+INFINIX Infinix X670,13,3.32.2,a637e1d,2026-11-07,blob_memory_fast,512,100000,3,68.87,69.04,69.32,236,211,411.1,36.3,36.6,87,random_unit_seed31,fast top-20 equals the app's: 400 of 400
+INFINIX Infinix X670,13,3.32.2,a637e1d,2026-11-07,blob_memory_fast,512,100000,4,68.74,68.81,68.91,236,212,411.1,36.6,36.6,87,random_unit_seed31,fast top-20 equals the app's: 400 of 400
+INFINIX Infinix X670,13,3.32.2,a637e1d,2026-11-07,blob_memory_fast,512,100000,5,68.77,68.96,69.21,236,212,411.1,36.6,36.6,87,random_unit_seed31,fast top-20 equals the app's: 400 of 400

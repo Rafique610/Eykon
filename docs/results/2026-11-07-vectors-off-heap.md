@@ -2,8 +2,12 @@
 
 Run by Zara Tahir on her Infinix X670 only, 7 November 2026. Answers supervisor questions B4 (memory) and B7,
 gap G20 (vectors in memory hit the 268 MB limit). **One phone out of the two the card asks for: the A32
-and the Pixel were not run.** The card's pass marks need both phones and say the lead confirms them before the run;
-that confirmation was not obtained, so the verdicts below use the card's marks as written, on one phone.
+and the Pixel were not run here** (they are EYKO-111). The 200 ms target is dropped from the marks (our own, with no source, EYKO-101): a variant is
+judged by being at most 10 % slower than `HEAP_F32` on the same phone, as the reviewer set on 8 Nov.
+
+**What happened next:** EYKO-114 and EYKO-115 built on this code. The memory-mapped file got two faster modes (`MAPPED_BLOCK`, `MAPPED_NATIVE` with a NEON C
+function) and the app now uses `MAPPED_NATIVE`; see `docs/results/2026-11-08-mapped-fast.md` and `docs/results/2026-11-08-adopt-mapped.md`. The code in
+this file's tests is the version merged into `feature/video-memory`; the numbers below are from the first version, on the Infinix.
 
 ## What was built (code in this branch, commit 5d26724)
 
@@ -24,10 +28,13 @@ Build: kit commit was not used; the test APK was built from this working tree on
 column in the CSV says `eyko109-wip`; the code is the committed 5d26724). **The kit app on the phone was
 uninstalled** to install this build (a different signing key), and the six models were pushed again.
 
-## Finding 1: on this phone a "direct" buffer is not outside the Java heap
+## Finding 1: a "direct" buffer is not outside the Java heap on Android
 
 `DIRECT_F32` used exactly the same Java heap as the plain array (116 MB at 20,000 rows) and ran out of memory at
-the same size. On this Android 13 build, `allocateDirect` memory is charged to the 268 MB Java heap limit.
+the same size. This is how Android is built, not a quirk of this phone: in every release from Android 11 to 16, `DirectByteBuffer` allocates its memory
+as a Java `byte[]` (`VMRuntime.newNonMovableArray(byte.class, capacity + 7)` in `MemoryRef`), so it is charged to the Java heap limit
+(268 MB here). Source lines for each release: `docs/results/vectors/proof/android-DirectByteBuffer-source-2026-11-09.txt` (AOSP `platform/libcore`,
+`ojluni/src/main/java/java/nio/DirectByteBuffer.java`). The 268 MB heap limit itself was measured on this phone (device sheet in the logcat).
 The memory-mapped file (`MAPPED_F32`) is the only float32 variant that left the heap alone (3 to 5 MB).
 
 ## Memory: three tables (image 512, text 384, audio-sized 512) with the same n rows each
@@ -59,7 +66,7 @@ pages, not Java heap. What Android does with them under memory pressure is in th
 
 - float32 variants are **14 to 15 % slower** than the heap array at 100,000 (339.6 and 341.0 against 296.8).
 - `DIRECT_F16` is 8 times slower (the half-to-float conversion is done per number in software).
-- `DIRECT_I8` is 30 % slower at 100,000 and over 200 ms there (198 ms at 50,000, just under).
+- `DIRECT_I8` is 30 % slower than `HEAP_F32` at 100,000 (386.4 against 296.8 ms).
 - First search (loads the table), 100,000 rows: heap 20.4 s, direct 20.1 s, mapped 20.8 s, int8 28.1 s, float16 29.9 s.
 
 ## Same answers (against `HEAP_F32`, 20 queries x top 20)
@@ -124,19 +131,19 @@ That is free storage the app needs on top of the database, and the file is rewri
 which is part of the 20 s first search at 100,000 rows. The Pixel's storage was 97 % full on 4 Nov (gap G18), so a second copy
 of the vectors there is a risk; this was not measured on that phone. The other three variants write nothing to storage.
 
-## Against the card's pass marks (one phone only)
+## Against the pass marks (one phone only; 200 ms dropped, within 10 % of `HEAP_F32` instead)
 
 - **V1 (float32 off-heap): not adopted.** Scores are bit-identical, but `DIRECT_F32` fails the 50k three-table mark
   (out of memory on 2 of 3 tables) and both float32 variants are 14 to 15 % slower at 100,000 (mark: within 10 %).
   `MAPPED_F32` passes the memory mark (100,000 loaded, even 300,000) and the same-hits mark, and fails the speed mark by about 5
   points at 100,000 (the whole app search is +4 % at 20,000).
 - **V2 (float16): not adopted.** recall passes (0.99 at 100,000), but three tables at 100,000 do not fit, and it is 2.3 s at 100,000.
-- **V3 (int8 + re-score): not adopted.** Fits three tables at 100,000 (146 MB heap) and recall is 0.995, but 386 ms at 100,000
-  on the Infinix is above the 200 ms mark, the A32 is slower, and the same-hits check gives 97.4 % (mark 99 %).
+- **V3 (int8 + re-score): not adopted.** Fits three tables at 100,000 (146 MB heap) and recall is 0.995, but it is
+  30 % slower than `HEAP_F32` on the same phone at 100,000 (386.4 against 296.8 ms; mark: at most 10 %), and the same-hits check gives 97.4 % (mark 99 %).
 - **Verdict (one phone): no variant passes all marks.** The nearest is the memory-mapped float32 file: exact answers,
   Java heap near zero, three tables up to 300,000 rows, 14 to 15 % slower than today at 100,000, survived 5 minutes in the
   background but had some pages reclaimed (first search 3.8 times slower), and needs a second copy of the vectors on storage
-  (563 MB at 100,000 rows, 1.7 GB at 300,000). Whether that cost and the RAM use are acceptable is the lead's call.
+  (563 MB at 100,000 rows, 1.7 GB at 300,000). Whether that cost and the RAM use are acceptable is decided in EYKO-98; the A32 and Pixel runs with these marks are EYKO-111.
 
 ## What went wrong or is not proven
 
@@ -146,8 +153,8 @@ of the vectors there is a risk; this was not measured on that phone. The other t
   run alone at 100,000 and finished, so the 100,000 rows in the tables come from separate processes, not one run.
 - **Raw logcat is partial.** The logcat buffer was cleared before each batch; the saved files are the last runs
   (`proof/infinix-2026-11-07-offheap-logcat-*.txt`). The CSVs hold every number above; they are the evidence.
-- **Not done:** the 2,400-hit check at the larger sizes (800 hits at 5k and 20k only), the Head 2 document graphs (a new figure was not
-  drawn), and the lead's confirmation of the pass marks. The phone was plugged in during these runs (not a thermal test). Android killed
+- **Not done:** the 2,400-hit check at the larger sizes (800 hits at 5k and 20k only). The Head 2 graph is now drawn
+  (`figures/head2-vector-variants.png`, from `vector_sweep.py`). The phone was plugged in during these runs (not a thermal test). Android killed
   several unrelated background processes during the 100,000 runs (`signal 9` lines in logcat); I did not identify them and do not claim our test caused it.
 
 ## Evidence files
