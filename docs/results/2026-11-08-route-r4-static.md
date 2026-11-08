@@ -94,8 +94,7 @@ Raw: `proof/infinix-2026-11-09-route-r4-pressure-logcat.txt`.
 
 Reading: yes, Android dropped most of the cached database pages. The first search after the pressure had to read them back from storage and took 3.4 to 3.9 times as long;
 the repeat was back to normal (within 15 %). This is the cost of keeping the vectors in the database file instead of in the app's memory. It is the same
-kind of cost as the memory-mapped file in EYKO-109 (first search 3.8 times slower after 5 minutes in the background). An earlier run of this test (8 Nov, 03:33) gave the
-same picture (image 202 to 550 ms, text 100 to 127, audio 145 to 312); its raw log was not saved, so that run is mentioned but not counted. One phone, two runs; no A32.
+kind of cost as the memory-mapped file in EYKO-109 (first search 3.8 times slower after 5 minutes in the background). One phone, one run; no A32.
 
 ## Ranking every row: sqlite-vec cannot do it
 
