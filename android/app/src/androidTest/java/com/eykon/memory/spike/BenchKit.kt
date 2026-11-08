@@ -111,6 +111,18 @@ fun exactTopK(matrix: FloatArray, rows: Int, dim: Int, query: FloatArray, k: Int
     return (0 until size).sortedByDescending { best[it] }.map { ids[it] }
 }
 
+/**
+ * Our own sqlite-vec build [variant] ("neon" / "no-neon", EYKO-104) copied out of the test assets into
+ * the app's files folder, so a bundled SQLite can load it (EYKO-105, 106). Returns its path and SHA256.
+ */
+fun sqliteVecPlugin(context: Context, variant: String): Pair<String, String> {
+    val out = File(context.filesDir, "sqlite-vec/$variant/libvec0.so").apply { parentFile!!.mkdirs() }
+    InstrumentationRegistry.getInstrumentation().context.assets.open("$variant/arm64-v8a/libvec0.so")
+        .use { input -> out.outputStream().use { input.copyTo(it) } }
+    val sha = java.security.MessageDigest.getInstance("SHA-256").digest(out.readBytes()).joinToString("") { "%02x".format(it) }
+    return out.absolutePath to sha
+}
+
 /** Total PSS in MB after two GCs (EYKO-100 memory tests). */
 fun pssMb(): Double {
     repeat(2) { Runtime.getRuntime().gc(); System.runFinalization() }

@@ -114,6 +114,11 @@ R2 (requery) and R3 (SQLCipher) load **the same sqlite-vec code** into a differe
 decrypts every page it reads, so it can only be slower. **Proposed:** close EYKO-106 and EYKO-107 as
 "not needed: same engine as R1 and R4". This needs the owner's yes on the board.
 
+**Note, 8 Nov (after R2 ran and was diagnosed):** R2 first measured **2.1× slower** than R1 (486 against 230 ms
+at 100k). The diagnosis showed the cause is requery's default **1 KB page size**, not its engine. On the same file, both
+engines are within 1 % (233.8 against 235.8 ms). So the reasoning above holds for the engine, but **page size**
+also sets the speed. See `2026-11-08-route-r2-requery.md`, "Why R2 was 2× slower".
+
 **Update, 8 Nov:** the lead (Taha) asked to test R2 anyway, because requery may help. It plugs into Room 2.6.1
 as it is, so it may avoid the androidx.sqlite version jump above. R2 is next (EYKO-106). R3 stays proposed for closing.
 

@@ -15,7 +15,6 @@ import androidx.test.platform.app.InstrumentationRegistry
 import org.junit.Test
 import org.junit.runner.RunWith
 import java.io.File
-import java.security.MessageDigest
 import java.util.Locale
 
 /**
@@ -32,15 +31,6 @@ class RouteR1Test {
     private val queryCount = 20
     private val topK = 20
     private val source = "real"
-
-    /** Copies our sqlite-vec build [variant] out of the test assets; returns its path and SHA256. */
-    private fun plugin(context: Context, variant: String): Pair<String, String> {
-        val out = File(context.filesDir, "sqlite-vec/$variant/libvec0.so").apply { parentFile!!.mkdirs() }
-        InstrumentationRegistry.getInstrumentation().context.assets.open("$variant/arm64-v8a/libvec0.so")
-            .use { input -> out.outputStream().use { input.copyTo(it) } }
-        val sha = MessageDigest.getInstance("SHA-256").digest(out.readBytes()).joinToString("") { "%02x".format(it) }
-        return out.absolutePath to sha
-    }
 
     private fun open(pluginPath: String, file: File): SQLiteConnection =
         BundledSQLiteDriver().apply { addExtension(pluginPath, "sqlite3_vec_init") }
@@ -88,8 +78,8 @@ class RouteR1Test {
         val sizes = (args.getString("sizes") ?: "1k,5k,20k,50k,100k").split(",").map { parseSize(it) }
         val runs = args.getString("runs")?.toInt() ?: 5
         val neonSizes = (args.getString("neonSizes") ?: "20k,100k").split(",").map { parseSize(it) }.toSet()
-        val (neon, neonSha) = plugin(context, "neon")
-        val (plain, plainSha) = plugin(context, "no-neon")
+        val (neon, neonSha) = sqliteVecPlugin(context, "neon")
+        val (plain, plainSha) = sqliteVecPlugin(context, "no-neon")
         Log.i(tag, "R1 plugin neon: $neon sha256 $neonSha")
         Log.i(tag, "R1 plugin no-neon: $plain sha256 $plainSha")
 
@@ -166,7 +156,7 @@ class RouteR1Test {
         val context = ApplicationProvider.getApplicationContext<Context>()
         val args = InstrumentationRegistry.getArguments()
         val sizes = (args.getString("sizes") ?: "20k,50k,100k").split(",").map { parseSize(it) }
-        val neon: String = plugin(context, "neon").first
+        val neon: String = sqliteVecPlugin(context, "neon").first
         val tables: List<Pair<String, Int>> = listOf("image_vec" to 512, "text_vec" to 384, "audio_vec" to 512)
         val queries: Map<String, FloatArray> = tables.associate { it.first to TestVectors.queries(source, it.second, 1)[0] }
         val probe = context.getDatabasePath("eyko105_probe.db").apply { parentFile?.mkdirs(); delete() }
@@ -199,4 +189,4 @@ class RouteR1Test {
 }
 
 /** `use` for the bundled driver's AutoCloseable connections and statements. */
-private inline fun <T : AutoCloseable, R> T.closing(block: (T) -> R): R = try { block(this) } finally { close() }
+internal inline fun <T : AutoCloseable, R> T.closing(block: (T) -> R): R = try { block(this) } finally { close() }
