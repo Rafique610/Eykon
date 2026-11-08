@@ -134,6 +134,58 @@ each other, so that rise may come from the session rather than heat or battery).
 cable was in for the first 2 minutes, so the low-battery condition covers the later part of the run only.
 One phone, one session per condition, so small differences (a few percent) should not be read as effects.
 
+## Results: Samsung A32, cool run (8 Nov 2026, 17:49 to 18:02, Rafique, EYKO-112)
+
+Session facts: Samsung A32 (SM-A325F), Android 13, platform SQLite 3.32.2, the same kit as the Infinix runs
+(`phone-kit-2026-11-03`, commit a637e1d, both APK SHA256 checked), `random_unit_seed31` vectors, 5 runs per size.
+**Fully unplugged:** unlike the Infinix runs, the test was not started over USB. It was scheduled on the phone with a
+60-second timer (`nohup sh -c 'sleep 60; am instrument …'`), set at 17:48:16 with the cable in. The cable was pulled and
+flight mode turned on before the test began at 17:49:18. The test finished at 18:02:33 and the cable went back after that.
+Battery 100 % at the start, 99 % at the end (a charging phone stays at 100 %). Battery temperature 27.8 C before, 26.9 C in the
+first row, 29.4 C in the last. Apps cleared, screen on. Room about 20 C (the user's estimate, not measured).
+Raw files: `docs/results/vectors/a32-2026-11-08-eyko112-cool.csv` (pulled unedited),
+`proof/a32-2026-11-08-eyko112-cool-logcat.txt` (raw `logcat -s EYKO31`), `proof/a32-2026-11-08-eyko112-cool-device.txt`.
+**Check:** all 65 timed rows in the CSV match their median and worst in the raw log.
+
+Median of the 5 run medians in ms (range of the 5 in brackets):
+
+| n | disk | memory (app's way) | fast | worst p95 (memory) | peak PSS (MB) |
+|---|---|---|---|---|---|
+| 1,000 | 53.2 (39.7 to 64.6) | 3.1 (3.1 to 3.3) | 1.2 (1.2 to 1.3) | 4.9 | 65 |
+| 5,000 | 240.7 (240.1 to 243.2) | 16.2 (16.1 to 17.5) | 4.9 | 70.7 | 86 |
+| 20,000 | 1,948.7 (1,552.4 to 1,949.8) | 111.0 (110.2 to 111.4) | 25.6 | 152.8 | 121 |
+| 50,000 | skipped (over 20,000 limit) | 327.8 (322.3 to 329.0) | 63.3 | 334.4 | 175 |
+| 100,000 | skipped | 694.1 (691.1 to 696.4) | 126.1 (126.0 to 126.5) | 739.7 | 281 |
+| 300,000 | skipped | **OutOfMemoryError** (a 614 MB array, Java heap limit 268 MB) | not reached | n/a | n/a |
+
+Where each method crosses our own 200 ms target (no source yet, EYKO-101): **disk** between 1,000 and 5,000 (53 then 241 ms);
+**memory** between 20,000 and 50,000 (111 then 328 ms); **fast** between 50,000 and 100,000 (63 then 126 ms, so not crossed by 100,000).
+
+### Finding: on battery, the A32 is 1.2 to 1.4 times slower than on the cable
+
+Straight after the cool run, the same kit, command and vectors were run again at 20,000 and 100,000 **with the cable
+in** as a control (18:03 to 18:08; not a protocol run; files `a32-2026-11-08-eyko112-plugged-control.csv`,
+`proof/a32-2026-11-08-eyko112-plugged-control-logcat.txt`, `…-plugged-control-device.txt`). Median of the 5 run medians in ms:
+
+| n | method | unplugged (cool run) | cable in (control) | unplugged is slower by |
+|---|---|---|---|---|
+| 20,000 | disk | 1,948.7 | 1,595.7 | 22 % |
+| 20,000 | memory | 111.0 | 82.5 | 35 % |
+| 20,000 | fast | 25.6 | 18.5 | 38 % |
+| 100,000 | memory | 694.1 | 534.4 | 30 % |
+| 100,000 | fast | 126.1 | 90.9 | 39 % |
+
+- **Not noise:** the 5 runs of each size are tight on both sides (fast 100,000: 126.0 to 126.5 unplugged, 90.85 to 90.91 plugged), so the ranges are far apart.
+- **Not heat:** the unplugged run was the cooler one (26.9 to 29.4 C; the control ran at 29.3 to 30.6 C).
+- **Small sizes are not affected:** fast 1,000 and 5,000 are 1.2 and 4.9 ms unplugged, the same as on the cable earlier
+  that day (1.25 and 4.91 ms, EYKO-105). The slowdown appears once a search takes tens of milliseconds.
+- **The cable-in numbers match the A32's earlier runs** (4 Nov: memory 81.8 and 536.8 ms, fast 18.6 and 91.0 ms; EYKO-105 on 8 Nov:
+  fast 18.5 and 91.2 ms). So **every A32 speed we reported before this run was measured on the cable.**
+- **Cause, not tested:** a phone usually runs its CPU at lower clock speeds on battery to save power. The pattern fits that
+  (short searches are unaffected, longer ones slow down), but CPU frequency was not recorded. Recording
+  `/sys/devices/system/cpu/cpu*/cpufreq/scaling_cur_freq` during a run would show it.
+- **The Infinix did not show this clearly**, but its runs were partly on the cable (see its session facts), and it had no same-session cable-in control.
+
 ## Other phones (the lead's earlier runs, not under this protocol)
 
 Files `pixel9proxl-2026-11-04-sweep-real.csv` and `a32-2026-11-04-sweep-real.csv`. They were run on 4 Nov,
@@ -158,7 +210,8 @@ here; cause unknown, the builds differ).
 ## Not done yet
 
 - A hot run that starts straight after the load, at the peak temperature.
-- Pixel and A32 runs under this protocol (the lead's phones).
+- A32: hot run and low-battery run under this protocol (cool run done 8 Nov). Pixel: all three, after EYKO-83 frees its storage (EYKO-112).
+- A cable-in control on the Infinix, and CPU frequency logging on battery, to confirm the cause of the A32's slowdown.
 - Sizes between 50,000 and 100,000 (to find the 200 ms crossing more exactly).
 - Device sheet for the Infinix is in `docs/results/vectors/proof/infinix-2026-11-05-device.txt`; the lead's
   sheets for the other two are in the same folder.

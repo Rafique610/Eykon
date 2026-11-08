@@ -1,0 +1,9 @@
+# A32 plugged-in control (not a protocol run): same kit a637e1d, same command, sizes 20k,100k, cable IN, flight mode as the user left it
+# before: 2026-11-08 18:03:18 +0500
+  USB powered: true
+  level: 99
+  temperature: 293
+# after: 2026-11-08 18:08:40 +0500
+  USB powered: true
+  level: 100
+  temperature: 306

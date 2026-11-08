@@ -197,7 +197,7 @@ const weak = [
   ['Open', 'Our own sqlite-vec file for Android is built and checked (EYKO-104), but not yet run through a bundled SQLite on a phone, the only way left to run sqlite-vec on Android (EYKO-105–107).'],
   ['Open', 'No chosen plan yet for libraries past 20k–50k frames (EYKO-98).'],
   ['Partly', 'The 200 ms pass mark and the "1 hour of video a day" estimate have no source yet (EYKO-101).'],
-  ['Open', 'Hot phone and low battery not measured; runs were on phones plugged in by cable (EYKO-95).'],
+  ['Partly', 'On battery the A32 searches 1.2–1.4× slower than on the cable, and our earlier A32 speeds were all on the cable (8 Nov, EYKO-112). Heat and low battery were not measurable on the Infinix; A32 hot / low battery and the Pixel are still to run.'],
   ['Partly', 'The whole search in the app is still 302 ms on the cheap phone at 20k, and the first search after opening takes 2.0 s.'],
 ];
 body.push(new Table({
@@ -303,10 +303,10 @@ const Q = [
     'Mostly our code. In the test, a smarter loop gave the same top 20 on all 400 checks and was 5.9× faster on the A32 at 100k (537 → 91 ms). Its faster scoring is now in the app, with a faster ranking: the whole search got 4.3× faster on the A32 at 20k (1.3 s → 302 ms), identical hits.',
     'E6, E7, Figure 3 · Head 7',
     'The laptop has not been rerun with the new loop, so the remaining phone-vs-laptop gap is not measured yet.', 'EYKO-91'],
-  ['B6', 'B', 'Does a hot phone or a low battery slow it down?', 'Open',
-    'Not measured yet. The 3 Nov Pixel run was charging at 36 °C, so it is not a clean baseline.',
-    'E4 (conditions row)',
-    'Planned: cool, hot (after 10 minutes of load) and low-battery runs under a fixed protocol.', 'EYKO-95, EYKO-90'],
+  ['B6', 'B', 'Does a hot phone or a low battery slow it down?', 'Partly',
+    'Heat and low battery: not measurably on the Infinix (within 1 % of the cool run; 5 C warmer, 24 % battery). Being on battery: yes on the A32. Unplugged it searched **1.2 to 1.4× slower** than with the cable in (same build, same day; fast loop at 100k: 126 against 91 ms). Every earlier A32 speed was measured on the cable.',
+    '`docs/results/2026-11-05-vectors-phone-sweep.md` (Infinix cool / hot / low battery; A32 cool run + cable-in control)',
+    'Cause not tested: probably lower CPU clock speeds on battery (short searches are unaffected). Still to run: A32 hot and low battery, the Pixel, and CPU frequency logging.', 'EYKO-95, EYKO-112'],
   ['B7', 'B', 'Brute force will not scale. What is the plan past the limit?', 'Partly',
     'Speed is fine up to 100k with the new loop (91 ms on the A32). Memory is the wall, between 20k and 50k rows. The options are researched with sources; the plan is a proposal, not chosen: (1) vectors outside Java memory as int8 or float16, still exact; (2) bundled sqlite-vec, measured for memory and file size; (3) an approximate index (usearch) past about 200k.',
     'E6, E8, E11',
