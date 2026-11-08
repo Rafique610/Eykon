@@ -1,0 +1,50 @@
+# AOSP external/sqlite dist/Android.bp: where load_extension is compiled out
+# fetched 2026-11-05T03:27Z from https://android.googlesource.com/platform/external/sqlite/+/refs/heads/<branch>/dist/Android.bp
+## android11-release
+18:    //   SQLITE_ENABLE_FTS3   enables usage of FTS3 - NOT FTS1 or 2.
+31:        "-DSQLITE_ENABLE_FTS3",
+32:        "-DSQLITE_ENABLE_FTS3_BACKWARDS",
+33:        "-DSQLITE_ENABLE_FTS4",
+36:        "-DSQLITE_OMIT_LOAD_EXTENSION",
+## android13-release
+48:    //   SQLITE_ENABLE_FTS3   enables usage of FTS3 - NOT FTS1 or 2.
+61:        "-DSQLITE_ENABLE_FTS3",
+62:        "-DSQLITE_ENABLE_FTS3_BACKWARDS",
+63:        "-DSQLITE_ENABLE_FTS4",
+66:        "-DSQLITE_OMIT_LOAD_EXTENSION",
+## android14-release
+48:    //   SQLITE_ENABLE_FTS3   enables usage of FTS3 - NOT FTS1 or 2.
+61:        "-DSQLITE_ENABLE_FTS3",
+62:        "-DSQLITE_ENABLE_FTS3_BACKWARDS",
+63:        "-DSQLITE_ENABLE_FTS4",
+66:        "-DSQLITE_OMIT_LOAD_EXTENSION",
+## android15-release
+48:    //   SQLITE_ENABLE_FTS3   enables usage of FTS3 - NOT FTS1 or 2.
+61:        "-DSQLITE_ENABLE_FTS3",
+62:        "-DSQLITE_ENABLE_FTS3_BACKWARDS",
+63:        "-DSQLITE_ENABLE_FTS4",
+66:        "-DSQLITE_OMIT_LOAD_EXTENSION",
+## android16-release
+48:    //   SQLITE_ENABLE_FTS3   enables usage of FTS3 - NOT FTS1 or 2.
+62:        "-DSQLITE_ENABLE_FTS3",
+63:        "-DSQLITE_ENABLE_FTS3_BACKWARDS",
+64:        "-DSQLITE_ENABLE_FTS4",
+67:        "-DSQLITE_OMIT_LOAD_EXTENSION",
+## main
+48:    //   SQLITE_ENABLE_FTS3   enables usage of FTS3 - NOT FTS1 or 2.
+62:        "-DSQLITE_ENABLE_FTS3",
+63:        "-DSQLITE_ENABLE_FTS3_BACKWARDS",
+64:        "-DSQLITE_ENABLE_FTS4",
+67:        "-DSQLITE_OMIT_LOAD_EXTENSION",
+## main: module chain (libsqlite -> sqlite-defaults -> sqlite-minimal-defaults)
+38:    name: "sqlite-minimal-defaults",
+90:    name: "sqlite-defaults",
+91:    defaults: ["sqlite-minimal-defaults"],
+137:        "sqlite-defaults",
+143:    name: "libsqlite",
+145:        "sqlite-defaults",
+211:        "sqlite-defaults",
+
+## frameworks/base core/jni/android_database_SQLiteConnection.cpp (main), fetched 2026-11-05
+lines: 1036; sqlite3_open_v2 calls: 1; lines mentioning 'extension' (case-insensitive): 0
+-> the Java/JNI layer of android.database.sqlite never enables or loads extensions

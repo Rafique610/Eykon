@@ -111,8 +111,8 @@ body.push(P('Where the vectors live, how the tables are shaped, and the ground r
 
 body.push(grid([2100, W - 2100], null, [
   ['**Last updated**', '7 Nov 2026'],
-  ['**Overall status**', 'Built and in the app. Re-tested on two phones with real vectors; the failure confirmed on a third phone, and the setup reproduced on a second laptop. Memory limit found; plan for it still open.'],
-  ['**Cards**', 'EYKO-1 (tables), EYKO-31 (storage test), EYKO-30 (pytest), EYKO-90 (size sweep), EYKO-100 (full test), EYKO-102 (faster search in app), EYKO-94 (three-phone proof pack), EYKO-92 (clean clone), EYKO-84 (second phone, whole pipeline)'],
+  ['**Overall status**', 'Built and in the app. Re-tested on two phones with real vectors; the failure confirmed on a third phone, and the setup reproduced on a second laptop. Memory limit found; plan for it still open. Why Android blocks plugins is now traced to its source, and the routes around it are researched (not yet tried on a phone).'],
+  ['**Cards**', 'EYKO-1 (tables), EYKO-31 (storage test), EYKO-30 (pytest), EYKO-90 (size sweep), EYKO-100 (full test), EYKO-102 (faster search in app), EYKO-94 (three-phone proof pack), EYKO-92 (clean clone), EYKO-84 (second phone, whole pipeline), EYKO-89 (why Android blocks plugins, routes around it)'],
 ], { firstColFill: true }));
 
 body.push(LABEL('How to use this document', { before: 240 }));
@@ -226,6 +226,7 @@ const steps = [
   ['Full test · 4 Nov · EYKO-100', 'ok', 'Android blocks every plugin, not just sqlite-vec', 'Even a made-up plugin name gives "no such function: load_extension". Real vectors from our own clips are as fast as random ones. 5 runs × 20 queries, two phones.', 'E5, E6'],
   ['Improvement · EYKO-100 → 102', 'ok', 'Our own loop was the slow part', 'In the test, a smarter loop (four running sums, keep only the best 20) gave the same top 20 on 400 of 400 checks, **5.9× faster** at 100k (537 → 91 ms). The app took the four running sums plus a faster ranking (it needs every frame\'s score to grow its time windows, so it cannot keep only 20): whole search **4.3× faster** on the A32 at 20k, 2,400 of 2,400 hits identical (Head 7).', 'E6, E7'],
   ['Limit found · 4 Nov', 'bad', 'Memory runs out between 20k and 50k rows', 'With all three vector tables loaded, 20k rows each fit, 50k does not. Android gives the app 268 MB, on the 6 GB A32 and on the 16 GB Pixel alike.', 'E8'],
+  ['Research · 5 Nov · EYKO-89', 'ok', 'The reason is one line in Android\'s source', 'Android builds its SQLite with `-DSQLITE_OMIT_LOAD_EXTENSION`, unchanged from Android 11 to today. Three ready-made SQLite builds that do load plugins were found and compared (Google\'s bundled SQLite, requery, SQLCipher). Google\'s is the one to try on the phone. Two new problems found: the ready-made sqlite-vec file is built for 4 KB memory pages and has no NEON speed-up on Android.', 'E10, E11'],
   ['Re-check · 5–7 Nov · EYKO-94, 92', 'ok', 'A third phone and a second laptop agree', 'Zara ran the same test on her Infinix X670 (another maker, another chip): the same two errors, again after a phone restart, and the same memory limit. From a fresh clone on her own laptop the laptop side reproduced too: 14 tests pass and the storage test ranks the methods the same way.', 'E4, E8'],
   ['Still open', null, 'What comes next', 'Try shipping our own SQLite (EYKO-93). Choose a plan past 20k, such as smaller vectors or one table in memory (EYKO-98). Find sources for the 200 ms target and the usage estimate (EYKO-101).', null],
 ];
@@ -264,13 +265,13 @@ const Q = [
     'E4, E5. The proof pack: `docs/results/2026-11-05-sqlite-vec-proof-pack.md` (every raw log and device sheet). Screen recording of the Infinix run: Drive link in the proof pack.',
     'The test is one command from the phone kit (`docs/phone-kit/run-eyko94.ps1`), so anyone can rerun it while you watch.', 'Done: EYKO-94'],
   ['A2', 'A', 'Is that a sqlite-vec problem or an Android problem?', 'Answered',
-    'Android. All three phones refuse to load any plugin at all, even one with a made-up name. Only modules built into Android\'s own SQLite work.',
-    'E5',
-    'Of fts4, fts5 and rtree, only fts4 is built in. Our keyword index uses fts4, so it is safe.', 'EYKO-89 (official reason)'],
-  ['A3', 'A', 'Android apps can ship their own SQLite. Did you try that?', 'Open',
-    'Not yet. Only the built-in SQLite was tried. This is the main open point of the storage decision.',
-    'Nothing yet',
-    'Plan: add a bundled SQLite (androidx sqlite-bundled or requery) with an arm64 sqlite-vec build on a throwaway branch, then time it against BLOBs.', 'EYKO-89, EYKO-93'],
+    'Android. Its own SQLite is built with plugin loading switched off: the line `-DSQLITE_OMIT_LOAD_EXTENSION` in Android\'s source (`external/sqlite/dist/Android.bp`), present from Android 11 to the current version. All three phones also refuse a plugin with a made-up name, so it is not sqlite-vec.',
+    'E10, E5',
+    'The same file explains the rest of the phone log: fts4 is switched on, fts5 and rtree are not, and the compile-options list is empty because that list is switched off too. Android\'s own Java layer never loads plugins either.', 'Done: EYKO-89'],
+  ['A3', 'A', 'Android apps can ship their own SQLite. Did you try that?', 'Partly',
+    'Researched, not yet run on a phone. Three ready-made SQLite builds load plugins on Android: Google\'s bundled SQLite (`BundledSQLiteDriver.addExtension`, since androidx.sqlite 2.6.0), requery, and SQLCipher. We picked Google\'s to try first: officially supported, testable without changing the app, and it brings FTS5 too.',
+    'E11',
+    'Two problems with the ready-made sqlite-vec file: it is built for 4 KB memory pages (16 KB phones and Google Play from 1 Feb 2027 need 16 KB) and has no NEON speed-up on Android. So we build it ourselves with NDK r28. If Google\'s route needs too big a Room change, requery works with our Room 2.6.1 as it is.', 'EYKO-104 to EYKO-108 (one test card per route), EYKO-93'],
   ['A4', 'A', 'Did it fail only on one phone?', 'Answered',
     'No. Three phones from three makers: Samsung A32 (Helio G80, Android 13), Pixel 9 Pro XL (Tensor G4, Android 17) and Infinix X670 (MediaTek MT6781, Android 13). Same failure on all three.',
     'E4',
@@ -304,9 +305,9 @@ const Q = [
     'E4 (conditions row)',
     'Planned: cool, hot (after 10 minutes of load) and low-battery runs under a fixed protocol.', 'EYKO-95, EYKO-90'],
   ['B7', 'B', 'Brute force will not scale. What is the plan past the limit?', 'Partly',
-    'Speed is fine up to 100k with the new loop (91 ms on the A32). Memory is the wall, between 20k and 50k rows. The plan is not chosen yet.',
-    'E6, E8',
-    'Options: int8 or float16 vectors (¼ or ½ the memory), keep only the image table in memory, load in blocks, an approximate index (usearch, hnswlib), or bundled sqlite-vec. Note the whole app search is still 302 ms on the A32 at 20k.', 'EYKO-98'],
+    'Speed is fine up to 100k with the new loop (91 ms on the A32). Memory is the wall, between 20k and 50k rows. The options are researched with sources; the plan is a proposal, not chosen: (1) vectors outside Java memory as int8 or float16, still exact; (2) bundled sqlite-vec, measured for memory and file size; (3) an approximate index (usearch) past about 200k.',
+    'E6, E8, E11',
+    'usearch is the fallback index for the laptop test: approximate, can read its index straight from disk, int8 / float16, official Android build. hnswlib has no Android build; FAISS has no Android package; ObjectBox would replace SQLite. Note the whole app search is still 302 ms on the A32 at 20k.', 'EYKO-91, EYKO-98'],
   ['B8', 'B', 'Why was reading from disk twice as slow on the Pixel as on the cheaper A32?', 'Open',
     'Not explained yet. Reading 20k vectors from SQLite on every search took 3.1–3.5 s on the Pixel vs about 1.6 s on the A32. It does not affect the app, which searches from memory.',
     'E4',
@@ -383,7 +384,7 @@ function ev(id, title, shows) {
 ev('E1', 'Options we considered', 'Why BLOBs in memory won against the other four options.');
 body.push(grid([2000, 2700, 3338, 1600], ['Option', 'What it is', 'Result', 'Verdict'], [
   ['sqlite-vec', 'SQLite plugin with a vector table (vec0)', 'Laptop 31 ms at 20k. Phone: "no such module: vec0"; "no such function: load_extension"', 'Rejected'],
-  ['sqlite-vec via bundled SQLite', 'Ship our own SQLite with a native sqlite-vec per chip type', 'Not attempted: needs a Room upgrade and a native build; no official Android package found', 'Not tried'],
+  ['sqlite-vec via bundled SQLite', 'Ship our own SQLite with a native sqlite-vec per chip type', '12 Oct: not attempted. 5 Nov research (E11): Google\'s bundled SQLite loads plugins (`addExtension`, androidx.sqlite 2.6.0); sqlite-vec ships Android files but they need rebuilding (4 KB pages, no NEON)', 'Not tried yet (EYKO-93)'],
   ['BLOBs read every search', 'Read every vector from SQLite on each search', 'Phone 1.38 s at 20k (laptop 92 ms)', 'Rejected'],
   ['**BLOBs in memory**', 'Load each vector table once, dot product in Kotlin / numpy', 'Phone **81 ms** at 20k (laptop 1.5 ms)', '**Adopted**'],
   ['Room entities / ORM', 'Map tables to Kotlin classes', 'Would drift from the laptop\'s sqlite3 code', 'Rejected'],
@@ -484,6 +485,32 @@ body.push(grid([2338, 4700, 2600], ['Table', 'What one row holds', 'Written by']
 ], { firstColBold: true }));
 body.push(SRC('src/video_memory/schema.py · android/…/video/VideoSchema.kt'));
 
+ev('E10', 'Why Android blocks plugins: the line in its source (5 Nov)', 'Android\'s own SQLite is compiled with plugin loading removed, in every release from Android 11 to today. Not a sqlite-vec bug, and not fixed by a newer Android.');
+body.push(grid([3238, 3200, 3200], ['Android source branch', 'Line in `dist/Android.bp`', 'Our phone on it'], [
+  ['android11-release', '36: `-DSQLITE_OMIT_LOAD_EXTENSION`', '—'],
+  ['android13-release', '66: same line', 'Samsung A32 (Android 13, SQLite 3.32.2)'],
+  ['android14-release / 15-release', '66: same line', '—'],
+  ['android16-release', '67: same line', '—'],
+  ['main (current)', '67: same line', 'Pixel 9 Pro XL (Android 17, SQLite 3.50.6)'],
+], { firstColBold: true }));
+body.push(P('**How the phone log follows from the same file:** fts3 / fts4 are switched on, fts5 and rtree are not, and `-DSQLITE_OMIT_COMPILEOPTION_DIAGS` is why the compile-options list is empty (E5). The Java layer, `android_database_SQLiteConnection.cpp` (1,036 lines), never mentions plugins at all.', { run: { size: 20 }, before: 100 }));
+body.push(SRC('docs/results/eyko-89-android-sqlite-extensions/01-why-android-blocks-extensions.md · evidence/aosp-android-bp-flags.txt'));
+
+ev('E11', 'Ways to ship our own SQLite, and the vector options (5 Nov)', 'Three ready-made SQLite builds load plugins on Android. Google\'s is the one to try first. The ready-made sqlite-vec file needs rebuilding before it is used.');
+body.push(grid([2200, 2600, 2600, 2238], ['Route', 'Plugin loading', 'Cost for our app', 'Verdict'], [
+  ['**Google bundled SQLite** (androidx sqlite-bundled)', '`addExtension(file, entryPoint)` since 2.6.0; SQLite 3.53.4, FTS5 on', 'Test: none (open it inside the test). App: Room 2.6.1 → 2.8 + support wrapper', '**Try first** (EYKO-93)'],
+  ['requery sqlite-android', '`customExtensions`; FTS5 on; ~1.7 MB arm64', 'Works with Room 2.6.1 as it is', 'Fallback: no update since Oct 2025'],
+  ['SQLCipher', 'Turned on for every connection; FTS5 on', 'Room 2 factory, but needs a password and key storage', 'Not now: encryption no card asks for'],
+  ['Our own NDK build', 'Not needed: sqlite-vec compiled in', 'Our own native build and JNI', 'Last resort'],
+], { firstColBold: true }));
+body.push(P('**Each route has its own test card**, all under one shared protocol and the same pass marks: EYKO-104 (build our own sqlite-vec file), EYKO-105 (R1 Google bundled), EYKO-106 (R2 requery), EYKO-107 (R3 SQLCipher), EYKO-108 (R4 own NDK build). Option O1, vectors outside Java memory: EYKO-109.', { run: { size: 20 }, before: 100 }));
+body.push(grid([3238, 3200, 3200], ['Ready-made Android file (checked with `readelf`)', 'Memory-page alignment', 'Speed-up (NEON)'], [
+  ['sqlite-vec v0.1.9 `vec0.so` (arm64)', '**4 KB** (`0x1000`); 16 KB needed on 16 KB phones and by Google Play from 1 Feb 2027', '**None**: the build script turns NEON on only for Mac'],
+  ['usearch v2.26.6 `libusearch_c.so` (arm64)', '**4 KB** (`0x1000`)', 'not checked'],
+], { firstColBold: true }));
+body.push(P('**Past brute force (B7), a proposal:** (1) vectors outside Java memory, as int8 or float16, still exact; (2) bundled sqlite-vec, judged on memory and file size, since without NEON it may be slower than our loop; (3) usearch, an approximate index that reads from disk, tested on the laptop first for recall@20 ≥ 0.95 (EYKO-91).', { run: { size: 20 }, before: 100 }));
+body.push(SRC('docs/results/eyko-89-android-sqlite-extensions/ (README, 02, 03, 04, sources.md, evidence/prebuilt-so-alignment.txt)'));
+
 body.push(H2('Limits: how these numbers could mislead'));
 [
   'All runs were on phones plugged in by cable, so this is not a controlled protocol yet (EYKO-95).',
@@ -525,6 +552,7 @@ body.push(grid([800, 3938, 1600, 1100, 2200], ['Gap', 'What is missing', 'Card',
   ['G17', 'Two broken tools: frame_report pull needs Python 3.12; task test-android / build-android call bare gradlew.bat.', 'EYKO-70', 'Low', ''],
   ['G19', 'Licences to re-decide before release: MobileCLIP research-only, YOLOE AGPL.', 'EYKO-88', 'Low', ''],
   ['G12', 'Speech tables exist but nothing writes them.', 'EYKO-86', 'Low', ''],
+  ['G24', 'Native files built for 4 KB memory pages: the ready-made sqlite-vec and usearch files (checked). The app\'s own ONNX Runtime 1.18.0 and LiteRT-LM files are not checked. Google Play blocks such updates from 1 Feb 2027.', 'no card yet', 'Medium', 'Found 5 Nov (EYKO-89).'],
 ]));
 
 body.push(H2('How to update this document'));
