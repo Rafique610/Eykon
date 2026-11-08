@@ -1,0 +1,23 @@
+--------- beginning of main
+11-08 13:52:00.650 I/TestRunner(11225): run started: 1 tests
+11-08 13:52:00.653 I/TestRunner(11225): started: memoryWithAllThreeTables(com.eykon.memory.spike.RouteR1Test)
+11-08 13:52:00.743 I/EYKO31  (11225): device sheet: samsung SM-A325F, Android 13 (API 33), sqlite 3.50.1, commit 29ac8b5+r1test-uncommitted, date 2026-11-08
+11-08 13:52:00.744 I/EYKO31  (11225): device sheet: RAM 5.9 GB, java heap limit 268 MB, free storage 57.2 GB, vectors real_own_clips_90+noise
+11-08 13:52:22.810 I/EYKO31  (11225): n=20000 vec0 all tables: PSS 55 -> 57 MB, java heap 3 MB, 60 hits
+11-08 13:52:22.827 I/EYKO31  (11225): n=20000 memory_all_tables_vec0: pss_before_mb=55; pss_after_mb=57; java_heap_mb=3; tables_searched=3 of 3; hits=60
+11-08 13:53:13.378 I/EYKO31  (11225): n=50000 vec0 all tables: PSS 55 -> 58 MB, java heap 3 MB, 60 hits
+11-08 13:53:13.396 I/EYKO31  (11225): n=50000 memory_all_tables_vec0: pss_before_mb=55; pss_after_mb=58; java_heap_mb=3; tables_searched=3 of 3; hits=60
+11-08 13:54:51.845 I/EYKO31  (11225): n=100000 vec0 all tables: PSS 55 -> 55 MB, java heap 3 MB, 60 hits
+11-08 13:54:51.861 I/EYKO31  (11225): n=100000 memory_all_tables_vec0: pss_before_mb=55; pss_after_mb=55; java_heap_mb=3; tables_searched=3 of 3; hits=60
+11-08 13:54:52.059 I/EYKO31  (11225): csv written: /storage/emulated/0/Android/data/com.eykon.memory/files/results/eyko105-route-r1-memory-SM_A325F-20261108-1352.csv
+11-08 13:54:52.059 I/EYKO31  (11225): pull it with: adb pull /storage/emulated/0/Android/data/com.eykon.memory/files/results/eyko105-route-r1-memory-SM_A325F-20261108-1352.csv
+11-08 13:54:52.060 I/TestRunner(11225): finished: memoryWithAllThreeTables(com.eykon.memory.spike.RouteR1Test)
+11-08 13:54:52.064 I/TestRunner(11225): run finished: 1 tests, 0 failed, 0 ignored
+11-08 14:45:43.313 I/TestRunner(17752): run started: 1 tests
+11-08 14:45:43.315 I/TestRunner(17752): started: sweep(com.eykon.memory.spike.RouteR4StaticTest)
+11-08 14:47:51.429 I/TestRunner(17752): finished: sweep(com.eykon.memory.spike.RouteR4StaticTest)
+11-08 14:47:51.433 I/TestRunner(17752): run finished: 1 tests, 0 failed, 0 ignored
+11-08 14:47:55.035 I/TestRunner(17849): run started: 1 tests
+11-08 14:47:55.038 I/TestRunner(17849): started: sweep(com.eykon.memory.spike.RouteR4StaticTest)
+11-08 14:49:29.425 I/TestRunner(17849): finished: sweep(com.eykon.memory.spike.RouteR4StaticTest)
+11-08 14:49:29.431 I/TestRunner(17849): run finished: 1 tests, 0 failed, 0 ignored

@@ -1,0 +1,66 @@
+--------- beginning of main
+11-08 14:45:43.313 I/TestRunner(17752): run started: 1 tests
+11-08 14:45:43.315 I/TestRunner(17752): started: sweep(com.eykon.memory.spike.RouteR4StaticTest)
+11-08 14:45:43.356 I/EYKO108 (17752): device sheet: samsung SM-A325F, Android 13 (API 33), sqlite 3.32.2, commit b202f89-zara-r4-built-by-rafique, date 2026-11-08
+11-08 14:45:43.357 I/EYKO108 (17752): device sheet: RAM 5.9 GB, java heap limit 268 MB, free storage 57.1 GB, vectors real_own_clips_90+noise
+11-08 14:45:44.670 I/EYKO108 (17752): n=1000 (sqlite_vec_static) open 0.7 ms, insert+exact 1233 ms, file 2.2 MB
+11-08 14:45:44.724 I/EYKO108 (17752): n=1000 (sqlite_vec_static) recall@20 1.0000 (400 of 400); open_ms=0.7; insert_ms=1233
+11-08 14:45:44.787 I/EYKO108 (17752): n=1000 sqlite_vec_static run 1: median 2.38 ms, worst 2.49 ms
+11-08 14:45:44.846 I/EYKO108 (17752): n=1000 sqlite_vec_static run 2: median 2.32 ms, worst 2.46 ms
+11-08 14:45:44.906 I/EYKO108 (17752): n=1000 sqlite_vec_static run 3: median 2.32 ms, worst 2.44 ms
+11-08 14:45:44.965 I/EYKO108 (17752): n=1000 sqlite_vec_static run 4: median 2.32 ms, worst 2.45 ms
+11-08 14:45:45.024 I/EYKO108 (17752): n=1000 sqlite_vec_static run 5: median 2.32 ms, worst 2.46 ms
+11-08 14:45:47.402 I/EYKO108 (17752): n=5000 (sqlite_vec_static) open 0.3 ms, insert+exact 2331 ms, file 10.6 MB
+11-08 14:45:47.809 I/EYKO108 (17752): n=5000 (sqlite_vec_static) recall@20 1.0000 (400 of 400); open_ms=0.3; insert_ms=2331
+11-08 14:45:48.105 I/EYKO108 (17752): n=5000 sqlite_vec_static run 1: median 13.55 ms, worst 14.72 ms
+11-08 14:45:48.445 I/EYKO108 (17752): n=5000 sqlite_vec_static run 2: median 14.61 ms, worst 35.54 ms
+11-08 14:45:48.744 I/EYKO108 (17752): n=5000 sqlite_vec_static run 3: median 13.85 ms, worst 14.93 ms
+11-08 14:45:49.037 I/EYKO108 (17752): n=5000 sqlite_vec_static run 4: median 13.56 ms, worst 14.40 ms
+11-08 14:45:49.347 I/EYKO108 (17752): n=5000 sqlite_vec_static run 5: median 14.35 ms, worst 18.24 ms
+11-08 14:45:58.860 I/EYKO108 (17752): n=20000 (sqlite_vec_static) open 0.6 ms, insert+exact 9436 ms, file 42.5 MB
+11-08 14:46:00.060 I/EYKO108 (17752): n=20000 (sqlite_vec_static) recall@20 1.0000 (400 of 400); open_ms=0.6; insert_ms=9436
+11-08 14:46:01.104 I/EYKO108 (17752): n=20000 sqlite_vec_static run 1: median 51.08 ms, worst 91.85 ms
+11-08 14:46:02.181 I/EYKO108 (17752): n=20000 sqlite_vec_static run 2: median 50.77 ms, worst 77.90 ms
+11-08 14:46:03.272 I/EYKO108 (17752): n=20000 sqlite_vec_static run 3: median 52.21 ms, worst 89.45 ms
+11-08 14:46:04.306 I/EYKO108 (17752): n=20000 sqlite_vec_static run 4: median 50.16 ms, worst 53.80 ms
+11-08 14:46:05.348 I/EYKO108 (17752): n=20000 sqlite_vec_static run 5: median 50.44 ms, worst 54.40 ms
+11-08 14:46:27.736 I/EYKO108 (17752): n=50000 (sqlite_vec_static) open 0.5 ms, insert+exact 22297 ms, file 104.1 MB
+11-08 14:46:30.282 I/EYKO108 (17752): n=50000 (sqlite_vec_static) recall@20 1.0000 (400 of 400); open_ms=0.5; insert_ms=22297
+11-08 14:46:32.530 I/EYKO108 (17752): n=50000 sqlite_vec_static run 1: median 106.73 ms, worst 163.43 ms
+11-08 14:46:35.037 I/EYKO108 (17752): n=50000 sqlite_vec_static run 2: median 123.70 ms, worst 134.94 ms
+11-08 14:46:37.600 I/EYKO108 (17752): n=50000 sqlite_vec_static run 3: median 124.23 ms, worst 197.43 ms
+11-08 14:46:40.106 I/EYKO108 (17752): n=50000 sqlite_vec_static run 4: median 122.33 ms, worst 143.67 ms
+11-08 14:46:42.160 I/EYKO108 (17752): n=50000 sqlite_vec_static run 5: median 97.80 ms, worst 144.72 ms
+11-08 14:47:24.857 I/EYKO108 (17752): n=100000 (sqlite_vec_static) open 0.3 ms, insert+exact 42526 ms, file 208.2 MB
+11-08 14:47:29.872 I/EYKO108 (17752): n=100000 (sqlite_vec_static) recall@20 1.0000 (400 of 400); open_ms=0.3; insert_ms=42526
+11-08 14:47:34.484 I/EYKO108 (17752): n=100000 sqlite_vec_static run 1: median 231.75 ms, worst 235.65 ms
+11-08 14:47:39.119 I/EYKO108 (17752): n=100000 sqlite_vec_static run 2: median 231.07 ms, worst 233.37 ms
+11-08 14:47:42.941 I/EYKO108 (17752): n=100000 sqlite_vec_static run 3: median 171.84 ms, worst 231.06 ms
+11-08 14:47:46.744 I/EYKO108 (17752): n=100000 sqlite_vec_static run 4: median 171.20 ms, worst 232.09 ms
+11-08 14:47:51.356 I/EYKO108 (17752): n=100000 sqlite_vec_static run 5: median 230.98 ms, worst 238.82 ms
+11-08 14:47:51.428 I/EYKO108 (17752): csv written: /storage/emulated/0/Android/data/com.eykon.memory/files/results/eyko108-r4-neon-SM_A325F-20261108-1445.csv
+11-08 14:47:51.428 I/EYKO108 (17752): pull it with: adb pull /storage/emulated/0/Android/data/com.eykon.memory/files/results/eyko108-r4-neon-SM_A325F-20261108-1445.csv
+11-08 14:47:51.429 I/TestRunner(17752): finished: sweep(com.eykon.memory.spike.RouteR4StaticTest)
+11-08 14:47:51.433 I/TestRunner(17752): run finished: 1 tests, 0 failed, 0 ignored
+11-08 14:47:55.035 I/TestRunner(17849): run started: 1 tests
+11-08 14:47:55.038 I/TestRunner(17849): started: sweep(com.eykon.memory.spike.RouteR4StaticTest)
+11-08 14:47:55.087 I/EYKO108 (17849): device sheet: samsung SM-A325F, Android 13 (API 33), sqlite 3.32.2, commit b202f89-zara-r4-built-by-rafique, date 2026-11-08
+11-08 14:47:55.089 I/EYKO108 (17849): device sheet: RAM 5.9 GB, java heap limit 268 MB, free storage 57.1 GB, vectors real_own_clips_90+noise
+11-08 14:48:05.497 I/EYKO108 (17849): n=20000 (sqlite_vec_static_noneon) open 0.8 ms, insert+exact 10233 ms, file 42.5 MB
+11-08 14:48:06.710 I/EYKO108 (17849): n=20000 (sqlite_vec_static_noneon) recall@20 1.0000 (400 of 400); open_ms=0.8; insert_ms=10233
+11-08 14:48:07.891 I/EYKO108 (17849): n=20000 sqlite_vec_static_noneon run 1: median 57.90 ms, worst 58.48 ms
+11-08 14:48:09.070 I/EYKO108 (17849): n=20000 sqlite_vec_static_noneon run 2: median 58.05 ms, worst 58.42 ms
+11-08 14:48:10.248 I/EYKO108 (17849): n=20000 sqlite_vec_static_noneon run 3: median 57.98 ms, worst 58.65 ms
+11-08 14:48:11.298 I/EYKO108 (17849): n=20000 sqlite_vec_static_noneon run 4: median 49.34 ms, worst 58.96 ms
+11-08 14:48:12.237 I/EYKO108 (17849): n=20000 sqlite_vec_static_noneon run 5: median 46.30 ms, worst 47.46 ms
+11-08 14:48:54.935 I/EYKO108 (17849): n=100000 (sqlite_vec_static_noneon) open 0.4 ms, insert+exact 42639 ms, file 208.2 MB
+11-08 14:49:00.959 I/EYKO108 (17849): n=100000 (sqlite_vec_static_noneon) recall@20 1.0000 (400 of 400); open_ms=0.4; insert_ms=42639
+11-08 14:49:06.598 I/EYKO108 (17849): n=100000 sqlite_vec_static_noneon run 1: median 283.31 ms, worst 305.81 ms
+11-08 14:49:12.294 I/EYKO108 (17849): n=100000 sqlite_vec_static_noneon run 2: median 283.60 ms, worst 287.69 ms
+11-08 14:49:17.983 I/EYKO108 (17849): n=100000 sqlite_vec_static_noneon run 3: median 283.90 ms, worst 287.49 ms
+11-08 14:49:23.665 I/EYKO108 (17849): n=100000 sqlite_vec_static_noneon run 4: median 283.19 ms, worst 286.68 ms
+11-08 14:49:29.353 I/EYKO108 (17849): n=100000 sqlite_vec_static_noneon run 5: median 283.59 ms, worst 287.74 ms
+11-08 14:49:29.425 I/EYKO108 (17849): csv written: /storage/emulated/0/Android/data/com.eykon.memory/files/results/eyko108-r4-noneon-SM_A325F-20261108-1447.csv
+11-08 14:49:29.425 I/EYKO108 (17849): pull it with: adb pull /storage/emulated/0/Android/data/com.eykon.memory/files/results/eyko108-r4-noneon-SM_A325F-20261108-1447.csv
+11-08 14:49:29.425 I/TestRunner(17849): finished: sweep(com.eykon.memory.spike.RouteR4StaticTest)
+11-08 14:49:29.431 I/TestRunner(17849): run finished: 1 tests, 0 failed, 0 ignored
