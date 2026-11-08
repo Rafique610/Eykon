@@ -247,6 +247,59 @@ def fig_all_tables(data):
     save(fig, "head2-vector-all-tables.png")
 
 
+# EYKO-109: the five ways of holding the vectors, Infinix X670 only (colour follows the way, not its rank).
+VARIANTS = {
+    "heap_f32": ("Java array (as before)", "#0b0b0b", "o"),
+    "offheap_f32": ("float32, direct buffers", "#2a78d6", "s"),
+    "offheap_f16": ("float16, direct buffers", "#eb6834", "^"),
+    "offheap_i8_rescore": ("int8 + exact re-check", "#6250d6", "D"),
+    "offheap_mapped_f32": ("float32, memory-mapped file", "#1baf7a", "v"),
+}
+
+
+def variant_rows(kind):
+    """Rows of the EYKO-109 Infinix CSVs (offheap/*eyko109-<kind>-*.csv); a later file replaces an earlier one for the same (method, n)."""
+    rows = {}
+    for path in sorted((RESULTS / "offheap").glob(f"*eyko109-{kind}-*.csv")):
+        for r in csv.DictReader(path.open(encoding="utf-8")):
+            rows.setdefault((r["method"].removeprefix("memory_"), int(r["n"])), []).append((path.name, r))
+    return {k: v[-1][1] if kind == "memory" else [x[1] for x in v if x[0] == v[-1][0]] for k, v in rows.items()}
+
+
+def fig_variants():
+    """EYKO-109: Java memory after loading three tables, and search time, for each way of holding the vectors."""
+    memory, speed = variant_rows("memory"), variant_rows("speed")
+    fig, (left, right) = plt.subplots(1, 2, figsize=(10.2, 3.9), dpi=200)
+    for method, (label, colour, marker) in VARIANTS.items():
+        pts = sorted((n, r) for (m, n), r in memory.items() if m == method)
+        xs, ys, bad = [], [], []
+        for n, r in pts:
+            note = dict(part.strip().split("=", 1) for part in r["note"].split(";") if "=" in part)
+            (xs if note["tables_loaded"].startswith("3") else bad).append((n, float(note["java_after_mb"])))
+        shift = 1 + (list(VARIANTS).index(method) - 2) * 0.04
+        left.plot([n * shift for n, _ in xs], [v for _, v in xs], color=colour, marker=marker, markersize=6, linewidth=1.8,
+                  markeredgecolor="white", markeredgewidth=1, label=label)
+        left.scatter([n * shift for n, _ in bad], [v for _, v in bad], color=colour, marker="x", s=55, linewidths=2, zorder=3)
+        sp = sorted((n, [float(r["median_ms"]) for r in rs if r["median_ms"]]) for (m, n), rs in speed.items() if m == method)
+        sp = [(n, statistics.median(v)) for n, v in sp if v]
+        right.plot([n for n, _ in sp], [v for _, v in sp], color=colour, marker=marker, markersize=6, linewidth=1.8,
+                   markeredgecolor="white", markeredgewidth=1, label=label)
+    limit_line(left, HEAP_LIMIT_MB, f"Java heap limit: {HEAP_LIMIT_MB} MB")
+    axes(left, "Java memory after loading the three tables (MB)")
+    axes(right, "Search time, all rows scored (ms, median)")
+    right.set_yscale("log")
+    left.set_xlabel("Rows in each of the three tables   (x = ran out of memory on the next table)", color=MUTED)
+    right.set_xlabel("Rows in the image table (512 numbers each)", color=MUTED)
+    for ax in (left, right):
+        ax.set_xticks([5_000, 20_000, 50_000, 100_000, 200_000, 300_000], ["5k", "20k", "50k", "100k", "200k", "300k"])
+        ax.set_xlim(3_500, 400_000)
+    right.set_xlim(3_500, 150_000)
+    left.legend(frameon=False, loc="lower right", bbox_to_anchor=(1.0, 0.10), fontsize=7)
+    left.set_title("Memory: where each way runs out (Infinix X670)", color=INK, fontsize=10, loc="left")
+    right.set_title("Speed: the same ways, one phone", color=INK, fontsize=10, loc="left")
+    save(fig, "head2-vector-variants.png")
+
+
 def save(fig, name):
     fig.tight_layout()
     fig.savefig(HERE / name, facecolor="#fcfcfb")
@@ -262,3 +315,4 @@ if __name__ == "__main__":
     fig_heap(real)
     fig_fast_loop(real)
     fig_all_tables(load("*-memory.csv"))
+    fig_variants()
