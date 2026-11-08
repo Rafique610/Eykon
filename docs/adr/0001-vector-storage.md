@@ -60,6 +60,18 @@ In code: `android/app/src/main/java/com/eykon/memory/video/VideoVectors.kt`, `Ve
 Files: `docs/results/2026-11-08-mapped-fast.md` (EYKO-114), `docs/results/2026-11-08-adopt-mapped.md` (EYKO-115), CSVs and raw logs under
 `docs/results/vectors/offheap/` and `docs/results/vectors/proof/`.
 
+### Under real conditions (EYKO-111, 8–9 Nov, on battery)
+
+`MAPPED_NATIVE` against `HEAP_F32`, same build (`5555e3e`), same phone, same condition. Median ms, then the ratio:
+
+| Phone, condition | 20k | 50k | 100k | Same answers |
+|---|---|---|---|---|
+| A32 hot (after 10 min of pipeline load) | 21.2 vs 19.9 (1.07) | 51.9 vs 48.3 (1.07) | 112.1 vs 131.3 (0.85) | 20/20 at every size |
+| Pixel 9 Pro XL low battery (25–27 %) | 3.2 vs 8.1 (0.40) | 8.1 vs 20.0 (0.41) | 13.8 vs 39.5 (0.35) | 20/20 at every size |
+
+No more than 7 % slower anywhere, so trigger 1 did not fire. Full tables, a second hot run, power-saver runs and CPU clocks:
+`docs/results/2026-11-09-final-setup-conditions.md`.
+
 ## What we accept (the costs)
 
 - **Extra storage:** the search copy duplicates the vectors, about **205 MB per 100k image vectors** (563 MB for 100k rows in all three tables).
@@ -72,8 +84,10 @@ Files: `docs/results/2026-11-08-mapped-fast.md` (EYKO-114), `docs/results/2026-1
 
 ## Limits of the evidence
 
-- Speed was measured on the **A32 only, on the cable.** On battery the A32 is 1.2–1.4× slower in general (EYKO-112). The hot and
-  low-battery runs, and the Pixel (EYKO-83 storage), are still to do.
+- Speed on battery was measured for **A32 hot** and **Pixel low battery** only (EYKO-111). The owner closed the run list on 9 Nov, so
+  **A32 cool and low battery with this build, and Pixel cool and hot, were not run.** On battery the A32 caps its fast cores at
+  1.44 GHz after about 90 s, which fits its 1.2–1.4 times slowdown on battery (EYKO-112). That cause was seen but not tested.
+- The **background kill** test (trigger 2) was **not run on the A32**. The only evidence is the Infinix hold (EYKO-109).
 - Only the **vector part** of search was timed. The whole app search (`VideoSearch.frames`, its frames query) is Head 7's (G23).
 - Real vectors were our own clips plus noise. Larger real libraries do not exist yet.
 
@@ -81,8 +95,8 @@ Files: `docs/results/2026-11-08-mapped-fast.md` (EYKO-114), `docs/results/2026-1
 
 Reopen this ADR if any of these happens:
 1. On the A32 hot, A32 low battery or the Pixel, `MAPPED_NATIVE` is **more than 10 % slower than the old way** in the same condition, or
-   answers stop being identical (EYKO-112).
-2. The app is **killed in the background** on the A32 because of the mapped pages (background test, still to run on the A32).
+   answers stop being identical (EYKO-112). *Checked 9 Nov (EYKO-111): did not fire.*
+2. The app is **killed in the background** on the A32 because of the mapped pages. *Not tested on the A32 (EYKO-111 closed without it).*
 3. A table passes **300k rows** (the largest size measured, EYKO-109), or one search passes our own 200 ms target on the A32 on battery.
 4. The **storage copy** becomes a problem on a real phone (EYKO-83, G18), or "delete a video" (EYKO-66) makes rebuilds frequent.
 5. A laptop result (EYKO-91) shows an approximate index keeping recall@20 ≥ 0.99 **and** a way to give every frame a score.

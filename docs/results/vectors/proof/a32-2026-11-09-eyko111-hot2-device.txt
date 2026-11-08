@@ -1,0 +1,13 @@
+# a32 (RF8T20H8G5W), commit 5555e3e, EYKO-111 condition: hot2
+# before (cable in, timer set): 2026-11-09 00:25:44 +0500
+  AC powered: false
+  USB powered: true
+  level: 42
+  temperature: 374
+/dev/block/dm-47 107G  55G   52G  52% /data/user/0
+# after (cable back in): 2026-11-09 00:32:58 +0500
+  AC powered: false
+  USB powered: true
+  level: 41
+  temperature: 352
+/dev/block/dm-47 107G  55G   52G  52% /data/user/0

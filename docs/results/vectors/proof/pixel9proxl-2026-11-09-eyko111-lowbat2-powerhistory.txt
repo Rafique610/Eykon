@@ -1,0 +1,8 @@
+  11-09 00:36:30.638 026 plug=none temp=307 charge=1170 -plugged -cellular_high_tx_power
+  11-09 00:36:30.819 026 +power_save
+  11-09 00:41:20.199 025 plug=ac temp=316 volt=3687 +plugged
+  11-09 00:41:20.302 025 -power_save
+  11-09 00:43:38.945 025 plug=none volt=3819 charge=1130 -plugged +cellular_high_tx_power
+  11-09 00:43:39.070 025 +power_save
+  11-09 00:46:08.150 025 plug=ac volt=3755 +plugged -cellular_high_tx_power screenwake=1000:"android.server.power:PLUGGED:true"
+  11-09 00:46:08.335 025 +sensor -power_save +state=10249:"sensor:0x1010005"

@@ -1,0 +1,13 @@
+# Samsung A32 (SM-A325F), commit 5555e3e, EYKO-111 condition: hot (re-labelled warm: no real load before it, 33.8 C)
+# before (cable in, timer set): 2026-11-08 23:49:17 +0500
+  AC powered: false
+  USB powered: true
+  level: 43
+  temperature: 356
+/dev/block/dm-47 107G  54G   53G  51% /data/user/0
+# after (cable back in): 2026-11-08 23:58:28 +0500
+  AC powered: false
+  USB powered: true
+  level: 41
+  temperature: 351
+/dev/block/dm-47 107G  54G   53G  51% /data/user/0

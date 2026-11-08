@@ -1,0 +1,4 @@
+  11-09 00:49:36.681 026 plug=none temp=297 volt=3809 charge=1160 -plugged
+  11-09 00:49:36.814 026 +power_save
+  11-09 00:49:45.710 026 -power_save
+  11-09 00:56:21.927 025 plug=ac temp=309 volt=3739 +plugged

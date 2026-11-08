@@ -1,0 +1,25 @@
+# pixel9proxl (4C031FDAS000NV), commit 5555e3e, EYKO-111 condition: lowbat2
+# before (cable in, timer set): 2026-11-09 00:36:21 +0500
+  AC powered: true
+  USB powered: false
+  level: 26
+  temperature: 310
+  Capacity level: 2
+/dev/block/dm-78 109G 101G  7.8G  93% /data/user/0
+  battery saver (settings global low_power) at timer: 0
+# after (cable back in): 2026-11-09 00:41:31 +0500
+  AC powered: true
+  USB powered: false
+  level: 25
+  temperature: 316
+  Capacity level: 2
+/dev/block/dm-78 109G 102G  7.5G  94% /data/user/0
+  battery saver (settings global low_power) after: 0
+# after (cable back in): 2026-11-09 00:46:27 +0500
+  AC powered: true
+  USB powered: false
+  level: 25
+  temperature: 302
+  Capacity level: 2
+/dev/block/dm-78 109G 101G  7.8G  93% /data/user/0
+  note: the first 'after' block (00:41) was read mid-run, when the cable went back in too early; see -powerhistory.txt
