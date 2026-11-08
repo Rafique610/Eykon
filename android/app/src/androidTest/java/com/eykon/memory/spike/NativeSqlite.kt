@@ -27,6 +27,8 @@ object NativeSqlite {
     @JvmStatic external fun nativeColumnDouble(stmt: Long, index: Int): Double
     @JvmStatic external fun nativeColumnText(stmt: Long, index: Int): String?
     @JvmStatic external fun nativeColumnBlob(stmt: Long, index: Int): ByteArray?
+    @JvmStatic external fun nativeHogStep(megabytes: Int): Int
+    @JvmStatic external fun nativeHogFree()
 
     /** Runs [sql] and returns the first column of the first row as text (versions, counts). */
     fun scalar(db: Long, sql: String): String? {

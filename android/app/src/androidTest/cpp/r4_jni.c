@@ -2,6 +2,7 @@
  * so nothing is loaded at run time (no load_extension, no dlopen of a second file). */
 #include <jni.h>
 #include <string.h>
+#include <stdlib.h>
 #include "sqlite3.h"
 #include "sqlite-vec.h"
 
@@ -85,4 +86,23 @@ JNIEXPORT jbyteArray FN(nativeColumnBlob)(JNIEnv *env, jclass c, jlong st, jint 
     jbyteArray a = (*env)->NewByteArray(env, n);
     (*env)->SetByteArrayRegion(env, a, 0, n, (const jbyte *)p);
     return a;
+}
+
+/* Memory pressure for the EYKO-108 background test: takes [mb] more megabytes of real RAM (touched), returns the total taken. */
+#define MAX_HOG 8192
+static void *hog[MAX_HOG];
+static int hogCount = 0;
+
+JNIEXPORT jint FN(nativeHogStep)(JNIEnv *env, jclass c, jint mb) {
+    for (int i = 0; i < mb && hogCount < MAX_HOG; i++) {
+        void *p = malloc(1 << 20);
+        if (!p) break;
+        memset(p, 1, 1 << 20);
+        hog[hogCount++] = p;
+    }
+    return hogCount;
+}
+
+JNIEXPORT void FN(nativeHogFree)(JNIEnv *env, jclass c) {
+    while (hogCount > 0) free(hog[--hogCount]);
 }

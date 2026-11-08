@@ -210,6 +210,61 @@ class RouteR4StaticTest {
         }
     }
 
+    private fun memAvailableMb(): Long = File("/proc/meminfo").readLines().first { it.startsWith("MemAvailable:") }.filter { it.isDigit() }.toLong() / 1024
+
+    /**
+     * Does Android take the vectors back under memory pressure? Three vec0 tables (image 512, text 384, audio-sized 512), `n` rows
+     * each (default 100k); one query per table is timed (cold = first after the build, then 2 repeats); then this process takes real
+     * RAM step by step until MemAvailable is below `floorMb` (default 700) or `maxMb` (default 6000), holds `holdSeconds` (default 60),
+     * frees it, and times the first query per table again, then a repeat. Android closes background apps to make room.
+     */
+    @Test
+    fun pressure() {
+        val context = ApplicationProvider.getApplicationContext<Context>()
+        val args = InstrumentationRegistry.getArguments()
+        val n = parseSize(args.getString("n") ?: "100k")
+        val floorMb = args.getString("floorMb")?.toLong() ?: 700
+        val maxMb = args.getString("maxMb")?.toInt() ?: 6000
+        val holdSeconds = args.getString("holdSeconds")?.toLong() ?: 60
+        NativeSqlite.load(neon)
+        val (db, _) = open(context, "eyko108_pressure.db")
+        val file: File = context.getDatabasePath("eyko108_pressure.db")
+        val tables = listOf(Triple("image_vec", 512, 31L), Triple("text_vec", 384, 32L), Triple("audio_vec", 512, 33L))
+        try {
+            for ((table, size, seed) in tables) {
+                exec(db, "CREATE VIRTUAL TABLE $table USING vec0(embedding float[$size])")
+                insertAndScore(db, table, size, n, seed, emptyList(), emptyList())
+            }
+            fun timed(label: String) {
+                for ((table, size, _) in tables) {
+                    val q = TestVectors.queries("real", size, 1)[0]
+                    val st = NativeSqlite.nativePrepare(db, "SELECT rowid FROM $table WHERE embedding MATCH ?1 ORDER BY distance LIMIT $topK")
+                    val ms = (1..2).map {
+                        NativeSqlite.nativeReset(st)
+                        NativeSqlite.nativeBindBlob(st, 1, TestVectors.toBlob(q))
+                        timeMs { while (NativeSqlite.nativeStep(st) == NativeSqlite.ROW) Unit }
+                    }
+                    NativeSqlite.nativeFinalize(st)
+                    Log.i(tag, "pressure: $label $table first %.0f ms, repeat %.0f ms".format(Locale.ROOT, ms[0], ms[1]))
+                }
+            }
+            Log.i(tag, "pressure: pid ${android.os.Process.myPid()}, MemAvailable ${memAvailableMb()} MB, tables built, $n rows each")
+            timed("before pressure,")
+            var taken = 0
+            while (memAvailableMb() > floorMb && taken < maxMb) taken = NativeSqlite.nativeHogStep(100)
+            Log.i(tag, "pressure: took $taken MB, MemAvailable now ${memAvailableMb()} MB, holding $holdSeconds s")
+            Thread.sleep(holdSeconds * 1000)
+            Log.i(tag, "pressure: after hold, MemAvailable ${memAvailableMb()} MB, still pid ${android.os.Process.myPid()}")
+            NativeSqlite.nativeHogFree()
+            Thread.sleep(2000)
+            timed("after pressure,")
+        } finally {
+            NativeSqlite.nativeHogFree()
+            NativeSqlite.nativeClose(db)
+            file.delete()
+        }
+    }
+
     /** Memory with all three tables (image 512, text 384, audio-sized 512), n rows each, in vec0 tables. */
     @Test
     fun memoryAllTables() {
