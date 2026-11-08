@@ -1,0 +1,10 @@
+11-08 19:34:07.827 22875 22889 I EYKO109 : n=100000 file step 'first search, writes the file': 23578 ms
+11-08 19:34:07.928 22875 22889 I EYKO109 : n=100000 file step 'repeat search': 100 ms
+11-08 19:34:08.091 22875 22889 I EYKO109 : n=100000 file step 'first search after restart, file reused': 162 ms
+11-08 19:34:36.163 22875 22889 I EYKO109 : n=100000 file step 'after restart': rows 100000, identical to heap on 20 of 20 queries
+11-08 19:34:36.636 22875 22889 I EYKO109 : n=100000 file step '1,000 new rows, appended': 151 ms
+11-08 19:35:04.771 22875 22889 I EYKO109 : n=100000 file step 'after append': rows 101000, identical to heap on 20 of 20 queries
+11-08 19:35:28.055 22875 22889 I EYKO109 : n=100000 file step '10 rows deleted with forget, rebuilt': 23210 ms
+11-08 19:35:55.960 22875 22889 I EYKO109 : n=100000 file step 'after delete': rows 100990, identical to heap on 20 of 20 queries
+11-08 19:36:52.685 22875 22889 I EYKO109 : n=100000 file step 'database made again, old file present': 23285 ms
+11-08 19:37:19.981 22875 22889 I EYKO109 : n=100000 file step 'database made again': rows 100000, identical to heap on 20 of 20 queries

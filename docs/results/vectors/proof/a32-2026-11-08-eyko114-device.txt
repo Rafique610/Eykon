@@ -1,0 +1,11 @@
+# A32 (SM-A325F), EYKO-114, cable IN for every mode (EYKO-112: unplugged is 1.2-1.4x slower), libeykonvec.so sha256 95f1122d...1451
+# speed before: 2026-11-08 18:25:35 +0500
+  USB powered: true
+  level: 100
+  temperature: 276
+# memory before: 2026-11-08 18:38:01 +0500
+  level: 100
+  temperature: 279
+# after: 2026-11-08 18:45:42 +0500
+  level: 100
+  temperature: 280
