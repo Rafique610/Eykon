@@ -129,8 +129,8 @@ As with R1, the vectors stay in the file and PSS leaves out the file cache.
 
 - **The loader and engine do not set the speed; the database's page size does.** All three sqlite-vec routes measured on the
   A32 (R1, R2 with 4 KB pages, R4) land at 230–234 ms at 100k.
-- **R3 (SQLCipher, EYKO-107):** the close proposal still holds. SQLCipher would run the same search, also decrypt every page
-  it reads, and no card asks for encryption. The lead already agreed to leave R3. If it is ever run, its page size must be checked first.
+- **R3 (SQLCipher, EYKO-107): dropped** by the owner on 8 Nov, with the lead's agreement. SQLCipher would run the same
+  search, also decrypt every page it reads, and no card asks for encryption. If it is ever revisited, check its page size first.
 - **EYKO-98:** every sqlite-vec route is about 2.5× slower than today's in-memory search on the A32. The memory fix without that
   cost is still EYKO-109's mapped file.
 - **For any future SQLite work:** record `PRAGMA page_size` with every timing. It can halve the speed of large BLOB reads.

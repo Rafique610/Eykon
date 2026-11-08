@@ -274,7 +274,7 @@ const Q = [
   ['A3', 'A', 'Android apps can ship their own SQLite. Did you try that?', 'Answered',
     'Yes, on the A32. Google\'s bundled SQLite (`BundledSQLiteDriver.addExtension`) loaded our own sqlite-vec file: same top 20 as our search at every size, and three tables at 100k fit in about 56 MB. But it is 2.5× slower than our in-memory search (230 against 91 ms at 100k) and returns at most 4,096 rows. Zara\'s own SQLite build (R4) is just as fast on the same phone. So we did not adopt it.',
     'E11 · `docs/results/2026-11-08-route-r1-bundled.md`',
-    'Before the test: we rebuilt sqlite-vec ourselves (4 KB pages and no NEON in the ready-made file). Even testing it raised the app\'s androidx.sqlite from 2.4.0 to 2.7.1, because Android\'s build tools keep test and app on one version. The Pixel and Infinix runs are not done. R2 (requery, EYKO-106) also works. It first measured 486 ms at 100k because of its 1 KB default page size; with 4 KB pages it matches R1. R3 is proposed for closing.', 'EYKO-104, 105, 106, 108; 107 (proposed closed)'],
+    'Before the test: we rebuilt sqlite-vec ourselves (4 KB pages and no NEON in the ready-made file). Even testing it raised the app\'s androidx.sqlite from 2.4.0 to 2.7.1, because Android\'s build tools keep test and app on one version. The Pixel and Infinix runs are not done. R2 (requery, EYKO-106) also works. It first measured 486 ms at 100k because of its 1 KB default page size; with 4 KB pages it matches R1. R3 (SQLCipher) was dropped by the owner on 8 Nov: same search, plus decryption on every read, and no card asks for encryption.', 'EYKO-104, 105, 106, 108; 107 (dropped)'],
   ['A4', 'A', 'Did it fail only on one phone?', 'Answered',
     'No. Three phones from three makers: Samsung A32 (Helio G80, Android 13), Pixel 9 Pro XL (Tensor G4, Android 17) and Infinix X670 (MediaTek MT6781, Android 13). Same failure on all three.',
     'E4',
@@ -503,7 +503,7 @@ ev('E11', 'Ways to ship our own SQLite, and the vector options (5 Nov)', 'Three 
 body.push(grid([2200, 2600, 2600, 2238], ['Route', 'Plugin loading', 'Cost for our app', 'Verdict'], [
   ['**Google bundled SQLite** (androidx sqlite-bundled)', '`addExtension(file, entryPoint)` since 2.6.0; SQLite 3.53.4, FTS5 on', 'Test: app androidx.sqlite 2.4.0 → 2.7.1 (build tools keep test and app on one version). App: Room 2.6.1 → 2.8 + support wrapper', 'Tried 8 Nov (EYKO-105): works, 2.5× slower, **not adopted**'],
   ['requery sqlite-android', '`customExtensions`; FTS5 on; ~1.7 MB arm64', 'Works with Room 2.6.1 as it is (needs only androidx.sqlite 2.4.0). New databases get 1 KB pages unless set to 4 KB', 'Tried 8 Nov (EYKO-106): works, same speed as R1 with 4 KB pages, **not adopted**'],
-  ['SQLCipher', 'Turned on for every connection; FTS5 on', 'Room 2 factory, but needs a password and key storage', 'Not now: encryption no card asks for'],
+  ['SQLCipher', 'Turned on for every connection; FTS5 on', 'Room 2 factory, but needs a password and key storage', '**Dropped** 8 Nov (EYKO-107): same search plus decryption, no card asks for encryption'],
   ['Our own NDK build', 'Not needed: sqlite-vec compiled in', 'Our own native build and JNI', 'Last resort'],
 ], { firstColBold: true }));
 body.push(P('**Result on the phone (8 Nov, Samsung A32, EYKO-105):** median ms of 5 runs × 20 queries, top 20, same vectors and queries; recall@20 = 1.0 everywhere.', { run: { size: 20 }, before: 100 }));
@@ -521,7 +521,7 @@ body.push(grid([2400, 1400, 1900, 1900, 2038], ['File', 'Page size', 'Google sea
   ['written by requery', '1,024 B', '**485.0**', '485.1', '482.1'],
 ], { firstColBold: true }));
 body.push(SRC('docs/results/2026-11-08-route-r2-requery.md · proof/a32-2026-11-08-route-r2-diagnose-logcat.txt · RouteR2DiagnoseTest.kt'));
-body.push(P('**Each route has its own test card**, all under one shared protocol and the same pass marks: EYKO-104 (build our own sqlite-vec file), EYKO-105 (R1 Google bundled), EYKO-106 (R2 requery), EYKO-107 (R3 SQLCipher), EYKO-108 (R4 own NDK build). Option O1, vectors outside Java memory: EYKO-109.', { run: { size: 20 }, before: 100 }));
+body.push(P('**Each route has its own test card**, all under one shared protocol and the same pass marks: EYKO-104 (build our own sqlite-vec file), EYKO-105 (R1 Google bundled), EYKO-106 (R2 requery), EYKO-107 (R3 SQLCipher, dropped 8 Nov), EYKO-108 (R4 own NDK build). Option O1, vectors outside Java memory: EYKO-109.', { run: { size: 20 }, before: 100 }));
 body.push(grid([3238, 3200, 3200], ['Ready-made Android file (checked with `readelf`)', 'Memory-page alignment', 'Speed-up (NEON)'], [
   ['sqlite-vec v0.1.9 `vec0.so` (arm64)', '**4 KB** (`0x1000`); 16 KB needed on 16 KB phones and by Google Play from 1 Feb 2027', '**None**: the build script turns NEON on only for Mac'],
   ['usearch v2.26.6 `libusearch_c.so` (arm64)', '**4 KB** (`0x1000`)', 'not checked'],

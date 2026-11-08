@@ -120,7 +120,7 @@ engines are within 1 % (233.8 against 235.8 ms). So the reasoning above holds fo
 also sets the speed. See `2026-11-08-route-r2-requery.md`, "Why R2 was 2× slower".
 
 **Update, 8 Nov:** the lead (Taha) asked to test R2 anyway, because requery may help. It plugs into Room 2.6.1
-as it is, so it may avoid the androidx.sqlite version jump above. R2 is next (EYKO-106). R3 stays proposed for closing.
+as it is, so it may avoid the androidx.sqlite version jump above. R2 is next (EYKO-106). R3 (EYKO-107) was dropped by the owner on 8 Nov.
 
 ## Limits
 
