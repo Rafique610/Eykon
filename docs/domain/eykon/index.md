@@ -97,7 +97,7 @@ match; the phone code is its real home.
 | Sound embeddings | CLAP | optional, later (EYKO-13) |
 | LLM | Gemma 4 E2B-it via LiteRT-LM — optional answer layer | in use (text RAG) |
 | Database | SQLite (`data/memories.db`), raw `sqlite3`, FTS5 | in use |
-| Vector storage | float32 BLOB columns, loaded into memory once, dot-product search (no sqlite-vec) | decided (EYKO-31, `docs/results/`) |
+| Vector storage | float32 BLOB columns stay the source of truth; search reads a memory-mapped copy (`<db>.<table>.vec`) scored in place by NEON (`libeykonvec.so`), old in-memory search as fallback; no sqlite-vec | accepted 8 Nov, `docs/adr/0001-vector-storage.md` (EYKO-98); replaces EYKO-31's "loaded into memory once" |
 | Search | Dense cosine + BM25 fused with RRF (k=60) | in use |
 | Config | Pydantic Settings (`MEMORY_` prefix) | in use |
 | Package manager / tasks | `uv`, `Taskfile.yml` | in use |

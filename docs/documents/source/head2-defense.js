@@ -185,7 +185,7 @@ body.push(new Table({
 
 body.push(LABEL('Decisions and the reason for each'));
 body.push(grid([3700, 4338, 1600], ['Decision', 'Because', 'Show'], [
-  ['Vectors are float32 BLOBs, loaded into memory once, searched by dot product. No sqlite-vec.', 'sqlite-vec does not load on Android. BLOBs in memory took 81 ms at 20k on the cheap phone; reading them from SQLite on every search took 1.4 s.', 'E2, E4, E5'],
+  ['Vectors stay float32 BLOBs in SQLite (the source of truth, same as the laptop). Search reads a copy in a memory-mapped file, scored in place by NEON C code, with the old in-memory way as fallback (8 Nov, ADR 0001, accepted by the owner).', 'sqlite-vec cannot load in Android\'s SQLite, and through our own SQLite it is 2.5× slower and top-k only. The old in-memory way runs out of memory at 50k rows. The mapped file is bit-identical, fits 3 × 100k in 5 MB of Java memory, and searches 100k in 102.5 ms on the A32 (was 565 ms). It replaces the 12 Oct choice of BLOBs in one Java array.', '`docs/adr/0001-vector-storage.md` · E2, E4, E5, E8, E11'],
   ['`src/video_memory/schema.py` is the single table design; the phone copies it.', 'One design in two languages, so they cannot drift apart.', 'E9'],
   ['Raw SQL, no ORM (no Room entities).', 'The same SQL statements run on the laptop and the phone.', 'E1'],
   ['pytest as the laptop test runner (EYKO-30).', 'One runner: `task test`, `task smoke`.', '—'],
