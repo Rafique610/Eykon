@@ -36,7 +36,8 @@ object VideoEmbedImages {
         db.beginTransaction()
         try {
             // Idempotent: this video's vectors from an earlier run go first.
-            db.execSQL("DELETE FROM image_vec WHERE frame_id IN (SELECT id FROM frames WHERE video_id = ?)", arrayOf(videoId))
+            // EYKO-115: if a re-run removed vectors, the vector file is stale too, so it is dropped and rebuilt at the next search.
+            if (db.delete("image_vec", "frame_id IN (SELECT id FROM frames WHERE video_id = ?)", arrayOf(videoId)) > 0) VideoVectors.forget(db, "image_vec")
             vectors.forEach { (id, vector) -> VideoVectors.put(db, "image_vec", id, vector) }
             db.setTransactionSuccessful()
         } finally {

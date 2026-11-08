@@ -552,14 +552,14 @@
                 "The first search after opening the app loads every vector from SQLite: 2.0 s (A32) / 3.6 s (Pixel) at 20k kept frames, 7.8 s / 22.2 s at 50k.",
                 "EYKO-103 (parked until Head 7)",
                 "High",
-                ""
+                "Vector part fixed 8 Nov (EYKO-115, A32, cable in): the vectors are kept in a file next to the database, written once and appended to, so the first search after a restart reads no BLOBs: 113 ms at 20k and 162 ms at 100k rows (was 1.6 s and 23.6 s). Still to measure: the whole app search after a restart, and the Pixel."
               ],
               [
                 "G23",
                 "Even after EYKO-102 the search takes 302 ms on the A32 at 20k kept frames, and 745 ms (A32) / 440 ms (Pixel) at 50k. The frames query reads every frame row (12 dropped per kept).",
                 "EYKO-103 (parked until Head 7)",
                 "Medium",
-                ""
+                "Partly 8 Nov (EYKO-114/115, A32, cable in): 85 % of the vector search was a COUNT(*) change check on every search (479 of 565 ms at 100k). Removed: the vector search is now 21.3 ms at 20k and 102.5 ms at 100k rows (was 115.9 and 573.8). Not yet measured: the whole app search (VideoSearch.frames), whose frames query is the other cost named here."
               ],
               [
                 "G9",

@@ -1,0 +1,17 @@
+--------- beginning of main
+11-08 18:46:49.873 I/TestRunner(12847): run started: 1 tests
+11-08 18:46:49.881 I/TestRunner(12847): started: changeCheckCost(com.eykon.memory.video.OffHeapVectorTest)
+11-08 18:47:01.236 I/EYKO109 (12847): n=20000 change check 'SELECT COUNT(*), IFNULL(MAX(frame_id), 0) FROM image_vec': median 113.76 ms, worst 132.83 ms
+11-08 18:47:03.860 I/EYKO109 (12847): n=20000 change check 'SELECT COUNT(*) FROM image_vec': median 118.81 ms, worst 178.23 ms
+11-08 18:47:03.866 I/EYKO109 (12847): n=20000 change check 'SELECT IFNULL(MAX(frame_id), 0) FROM image_vec': median 0.19 ms, worst 0.33 ms
+11-08 18:47:03.871 I/EYKO109 (12847): n=20000 change check 'SELECT MAX(rowid) FROM image_vec': median 0.14 ms, worst 0.31 ms
+11-08 18:47:03.910 I/TestRunner(12847): finished: changeCheckCost(com.eykon.memory.video.OffHeapVectorTest)
+11-08 18:47:03.915 I/TestRunner(12847): run finished: 1 tests, 0 failed, 0 ignored
+11-08 18:47:07.357 I/TestRunner(13510): run started: 1 tests
+11-08 18:47:07.360 I/TestRunner(13510): started: changeCheckCost(com.eykon.memory.video.OffHeapVectorTest)
+11-08 18:47:53.878 I/EYKO109 (13510): n=100000 change check 'SELECT COUNT(*), IFNULL(MAX(frame_id), 0) FROM image_vec': median 479.28 ms, worst 501.63 ms
+11-08 18:48:03.922 I/EYKO109 (13510): n=100000 change check 'SELECT COUNT(*) FROM image_vec': median 454.70 ms, worst 471.01 ms
+11-08 18:48:03.926 I/EYKO109 (13510): n=100000 change check 'SELECT IFNULL(MAX(frame_id), 0) FROM image_vec': median 0.13 ms, worst 0.23 ms
+11-08 18:48:03.930 I/EYKO109 (13510): n=100000 change check 'SELECT MAX(rowid) FROM image_vec': median 0.12 ms, worst 0.17 ms
+11-08 18:48:04.069 I/TestRunner(13510): finished: changeCheckCost(com.eykon.memory.video.OffHeapVectorTest)
+11-08 18:48:04.073 I/TestRunner(13510): run finished: 1 tests, 0 failed, 0 ignored
