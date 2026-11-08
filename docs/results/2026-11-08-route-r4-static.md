@@ -2,8 +2,10 @@
 
 Run by Zara Tahir on her Infinix X670 only, 8 November 2026 (build and runs 00:55 to 02:35 phone and laptop clock).
 Answers supervisor questions A3 ("can an app ship its own SQLite?") and B7 for this route. **One phone out of the
-two the card asks for: the A32 and the Pixel were not run.** The card's pass marks say the lead confirms them before the
-run; that was not obtained, so the verdicts use the marks as written, on one phone.
+two the card asks for: the A32 and the Pixel were not run on this branch** (the A32 and Pixel runs under the same marks are
+EYKO-111). Pass marks as revised by the reviewer on 8 Nov: the 200 ms target is dropped (it is our own, with no source, EYKO-101) and R4 is
+"worth keeping" only if three tables at 50k load without an OutOfMemoryError, or it is faster than `blob_memory_fast` at 100k on the same phone.
+Recall 1.0 and the 4,096 k limit stand as written.
 
 ## What was built
 
@@ -83,8 +85,8 @@ The app's search needs every frame's score, not only the top 20, to grow its tim
 `k value in knn query too large, provided 20000 and the limit is 4096` (same at 5,000; 0 rows returned at 20k and 100k). So sqlite-vec's nearest-neighbour
 query returns at most **4,096 rows**. Within that limit it is much slower than asking for 20: at 100,000 rows, `LIMIT 1000` took 296 ms and `LIMIT 4096` took
 306 ms, against 110 ms for `LIMIT 20` (median of 3 queries each; raw in `proof/infinix-2026-11-08-route-r4-logcat.txt`, tag EYKO108).
-So R4 as built cannot be the app's `scores()`; the app would have to change how it grows windows (top 4,096 only), which was not tried. At the
-card's 200 ms target, ranking 1,000 or more rows at 100,000 rows already fails.
+So R4 as built cannot be the app's `scores()`; the app would have to change how it grows windows (top 4,096 only), which was not tried. Ranking 1,000 or
+more rows at 100,000 rows takes about 300 ms, nearly three times the 110 ms of a top-20 search.
 
 ## APK size added (step: APK Analyzer)
 
@@ -107,13 +109,13 @@ in the test APK are 9.4 MB each.
 
 - **Loads: yes on the Infinix.** A32 and Pixel not run, so A3 is answered for this route on one phone only.
 - **Correct: yes**, recall@20 = 1.0000 at 1k, 5k, 20k, 50k and 100k.
-- **Worth adopting only if (a) or (b), and nothing past the 200 ms target:** (a) three tables at 50k no longer run out of memory:
-  **met** (all three tables build at 100,000 rows with a flat 56 MB PSS; today's array fails at 50,000). (b) faster than
-  `blob_memory_fast` at 100k on the A32: **not met on the Infinix** (110 against 69 ms); the A32 was not run. 110 ms at 100,000 rows is under the 200 ms target
-  (our own target, no source yet, EYKO-101).
-- **Verdict (one phone): works, exact and memory problem solved at 100k rows, but 1.6 to 1.9 times slower than the fast in-memory loop, it cannot rank more than 4,096
-  rows (the app needs all of them), and the effort (own native build and JNI layer) is not proven small.** Whether it beats R1 to R3 and the memory-mapped float32 file from EYKO-109 is the lead's
-  decision (EYKO-98).
+- **Worth keeping only if (a) or (b)** (revised marks): (a) three tables at 50k load without an OutOfMemoryError: **met** (all three tables
+  build at 100,000 rows with a flat 56 MB PSS; today's array fails at 50,000). (b) faster than `blob_memory_fast` at 100k on the same phone:
+  **not met** (110.3 ms against 69.1 ms on the Infinix; the unplugged repeat gave 114.8 ms). The A32 and Pixel are EYKO-111.
+- **Verdict (one phone): R4 is worth keeping on mark (a).** It works, answers are exact, and the memory problem is solved at 100k rows. Against
+  that: it is 1.6 to 1.9 times slower than the fast in-memory loop, it cannot rank more than 4,096 rows (the app needs all of them), and the
+  effort (own native build and JNI layer) is not proven small. The choice between R4, R1 to R3 and the memory-mapped file from EYKO-109 is
+  made in EYKO-98.
 
 ## Not tested / limits
 
@@ -123,6 +125,7 @@ in the test APK are 9.4 MB each.
 - The first sweep (00:00 to 02:05) was done with the phone plugged in and not in flight mode; the controlled run below was repeated unplugged.
 - Android's APK Analyzer would not start from this folder (the space in the user name); the APK size comes from the APK's own file list instead.
 - The no-NEON build was run at 20k and 100k only, as the card says.
+- A memory-pressure test (does Android drop the cached vector pages?) has code in the branch (`pressure` in `RouteR4StaticTest`) but its result is **not in this file**: it is to be re-run, and no number from it is claimed here.
 
 ## Evidence files
 

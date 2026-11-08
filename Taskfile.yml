@@ -264,3 +264,11 @@ tasks:
   yoloe-phone:
     desc: "EYKO-32 — YOLOE-11L (AGPL, academic) on the Pixel: export and write inputs (inputs), then score the pulled phone result (score)"
     cmd: uv run --with ultralytics --with onnx --with onnxslim --with onnxruntime python -m src.benchmarks.yoloe_phone {{.CLI_ARGS}}
+
+  build-sqlite-vec-android:
+    desc: "EYKO-104 — build our own sqlite-vec libvec0.so for Android arm64 (NEON and no-NEON, 16 KB pages) with the NDK, then save readelf checks and SHA256 to docs/results (binaries stay in D:/eykon-cache/sqlite-vec-android/out); pass -- --ndk <dir> for another NDK"
+    cmd: uv run python src/benchmarks/build_sqlite_vec_android.py {{.CLI_ARGS}}
+
+  build-vector-native:
+    desc: "EYKO-114 — build libeykonvec.so (NEON dot products over the memory-mapped vector file) into android/app/src/main/jniLibs/arm64-v8a with the NDK, and check 16 KB alignment and the JNI symbol; pass -- --ndk <dir> for another NDK"
+    cmd: uv run python src/benchmarks/build_vector_native.py {{.CLI_ARGS}}

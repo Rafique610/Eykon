@@ -1,0 +1,90 @@
+--------- beginning of main
+11-08 17:49:20.789 I/TestRunner( 7240): run started: 1 tests
+11-08 17:49:20.790 I/TestRunner( 7240): started: blobColumnWithBruteForceSearch(com.eykon.memory.spike.VectorStorageSpikeTest)
+11-08 17:49:20.836 I/EYKO31  ( 7240): device sheet: samsung SM-A325F, Android 13 (API 33), sqlite 3.32.2, commit a637e1d, date 2026-11-08
+11-08 17:49:20.839 I/EYKO31  ( 7240): device sheet: RAM 5.9 GB, java heap limit 268 MB, free storage 57.1 GB, vectors random_unit_seed31
+11-08 17:49:20.844 I/EYKO31  ( 7240): sweep: sizes [1000, 5000, 20000, 50000, 100000, 300000], runs 5, diskMax 20000, source random
+11-08 17:49:21.864 I/EYKO31  ( 7240): n=1000 insert all: 954 ms, file 4.1 MB
+11-08 17:49:23.036 I/EYKO31  ( 7240): n=1000 blob_disk_dot run 1: median 46.40 ms, worst 90.21 ms
+11-08 17:49:24.205 I/EYKO31  ( 7240): n=1000 blob_disk_dot run 2: median 64.57 ms, worst 88.67 ms
+11-08 17:49:25.545 I/EYKO31  ( 7240): n=1000 blob_disk_dot run 3: median 59.85 ms, worst 146.37 ms
+11-08 17:49:26.635 I/EYKO31  ( 7240): n=1000 blob_disk_dot run 4: median 39.74 ms, worst 81.01 ms
+11-08 17:49:27.679 I/EYKO31  ( 7240): n=1000 blob_disk_dot run 5: median 53.22 ms, worst 81.62 ms
+11-08 17:49:27.837 I/EYKO31  ( 7240): n=1000 blob_memory_dot run 1: median 3.06 ms, worst 46.66 ms
+11-08 17:49:27.972 I/EYKO31  ( 7240): n=1000 blob_memory_dot run 2: median 3.24 ms, worst 52.73 ms
+11-08 17:49:28.093 I/EYKO31  ( 7240): n=1000 blob_memory_dot run 3: median 3.27 ms, worst 4.40 ms
+11-08 17:49:28.176 I/EYKO31  ( 7240): n=1000 blob_memory_dot run 4: median 3.08 ms, worst 4.12 ms
+11-08 17:49:28.312 I/EYKO31  ( 7240): n=1000 blob_memory_dot run 5: median 3.06 ms, worst 57.82 ms
+11-08 17:49:28.507 I/EYKO31  ( 7240): n=1000 fast top-20 equals the app's: 400 of 400
+11-08 17:49:28.595 I/EYKO31  ( 7240): n=1000 blob_memory_fast run 1: median 1.27 ms, worst 5.37 ms
+11-08 17:49:28.637 I/EYKO31  ( 7240): n=1000 blob_memory_fast run 2: median 1.16 ms, worst 1.32 ms
+11-08 17:49:28.679 I/EYKO31  ( 7240): n=1000 blob_memory_fast run 3: median 1.18 ms, worst 1.31 ms
+11-08 17:49:28.720 I/EYKO31  ( 7240): n=1000 blob_memory_fast run 4: median 1.16 ms, worst 1.41 ms
+11-08 17:49:28.762 I/EYKO31  ( 7240): n=1000 blob_memory_fast run 5: median 1.18 ms, worst 1.32 ms
+11-08 17:49:30.669 I/EYKO31  ( 7240): n=5000 insert all: 1850 ms, file 20.6 MB
+11-08 17:49:35.847 I/EYKO31  ( 7240): n=5000 blob_disk_dot run 1: median 240.08 ms, worst 262.24 ms
+11-08 17:49:40.777 I/EYKO31  ( 7240): n=5000 blob_disk_dot run 2: median 243.21 ms, worst 277.57 ms
+11-08 17:49:45.669 I/EYKO31  ( 7240): n=5000 blob_disk_dot run 3: median 240.45 ms, worst 297.49 ms
+11-08 17:49:50.505 I/EYKO31  ( 7240): n=5000 blob_disk_dot run 4: median 240.65 ms, worst 250.44 ms
+11-08 17:49:55.391 I/EYKO31  ( 7240): n=5000 blob_disk_dot run 5: median 243.23 ms, worst 294.99 ms
+11-08 17:49:56.120 I/EYKO31  ( 7240): n=5000 blob_memory_dot run 1: median 17.48 ms, worst 71.30 ms
+11-08 17:49:56.595 I/EYKO31  ( 7240): n=5000 blob_memory_dot run 2: median 16.18 ms, worst 69.39 ms
+11-08 17:49:57.042 I/EYKO31  ( 7240): n=5000 blob_memory_dot run 3: median 16.49 ms, worst 61.84 ms
+11-08 17:49:57.500 I/EYKO31  ( 7240): n=5000 blob_memory_dot run 4: median 16.09 ms, worst 69.47 ms
+11-08 17:49:57.966 I/EYKO31  ( 7240): n=5000 blob_memory_dot run 5: median 16.10 ms, worst 70.73 ms
+11-08 17:49:58.506 I/EYKO31  ( 7240): n=5000 fast top-20 equals the app's: 400 of 400
+11-08 17:49:58.630 I/EYKO31  ( 7240): n=5000 blob_memory_fast run 1: median 4.90 ms, worst 5.05 ms
+11-08 17:49:58.748 I/EYKO31  ( 7240): n=5000 blob_memory_fast run 2: median 4.92 ms, worst 5.25 ms
+11-08 17:49:58.866 I/EYKO31  ( 7240): n=5000 blob_memory_fast run 3: median 4.89 ms, worst 4.97 ms
+11-08 17:49:58.984 I/EYKO31  ( 7240): n=5000 blob_memory_fast run 4: median 4.89 ms, worst 5.01 ms
+11-08 17:49:59.102 I/EYKO31  ( 7240): n=5000 blob_memory_fast run 5: median 4.89 ms, worst 5.01 ms
+11-08 17:50:06.207 I/EYKO31  ( 7240): n=20000 insert all: 7055 ms, file 82.2 MB
+11-08 17:50:38.795 I/EYKO31  ( 7240): n=20000 blob_disk_dot run 1: median 1552.41 ms, worst 1572.32 ms
+11-08 17:51:14.836 I/EYKO31  ( 7240): n=20000 blob_disk_dot run 2: median 1923.91 ms, worst 1964.45 ms
+11-08 17:51:53.779 I/EYKO31  ( 7240): n=20000 blob_disk_dot run 3: median 1949.81 ms, worst 1962.93 ms
+11-08 17:52:32.731 I/EYKO31  ( 7240): n=20000 blob_disk_dot run 4: median 1948.93 ms, worst 1989.51 ms
+11-08 17:53:11.785 I/EYKO31  ( 7240): n=20000 blob_disk_dot run 5: median 1948.73 ms, worst 1992.41 ms
+11-08 17:53:16.169 I/EYKO31  ( 7240): n=20000 blob_memory_dot run 1: median 111.04 ms, worst 162.26 ms
+11-08 17:53:18.528 I/EYKO31  ( 7240): n=20000 blob_memory_dot run 2: median 111.36 ms, worst 155.88 ms
+11-08 17:53:20.895 I/EYKO31  ( 7240): n=20000 blob_memory_dot run 3: median 110.16 ms, worst 151.45 ms
+11-08 17:53:23.275 I/EYKO31  ( 7240): n=20000 blob_memory_dot run 4: median 110.89 ms, worst 154.20 ms
+11-08 17:53:25.682 I/EYKO31  ( 7240): n=20000 blob_memory_dot run 5: median 110.98 ms, worst 159.64 ms
+11-08 17:53:28.562 I/EYKO31  ( 7240): n=20000 fast top-20 equals the app's: 400 of 400
+11-08 17:53:29.122 I/EYKO31  ( 7240): n=20000 blob_memory_fast run 1: median 25.58 ms, worst 25.80 ms
+11-08 17:53:29.656 I/EYKO31  ( 7240): n=20000 blob_memory_fast run 2: median 25.60 ms, worst 25.85 ms
+11-08 17:53:30.189 I/EYKO31  ( 7240): n=20000 blob_memory_fast run 3: median 25.54 ms, worst 25.98 ms
+11-08 17:53:30.724 I/EYKO31  ( 7240): n=20000 blob_memory_fast run 4: median 25.59 ms, worst 25.88 ms
+11-08 17:53:31.258 I/EYKO31  ( 7240): n=20000 blob_memory_fast run 5: median 25.59 ms, worst 25.88 ms
+11-08 17:53:53.947 I/EYKO31  ( 7240): n=50000 insert all: 22584 ms, file 205.6 MB
+11-08 17:53:53.967 I/EYKO31  ( 7240): n=50000 blob_disk_dot: skipped: over diskMax 20000
+11-08 17:54:09.059 I/EYKO31  ( 7240): n=50000 blob_memory_dot run 1: median 328.09 ms, worst 334.82 ms
+11-08 17:54:15.617 I/EYKO31  ( 7240): n=50000 blob_memory_dot run 2: median 328.96 ms, worst 332.08 ms
+11-08 17:54:22.177 I/EYKO31  ( 7240): n=50000 blob_memory_dot run 3: median 327.83 ms, worst 331.54 ms
+11-08 17:54:28.658 I/EYKO31  ( 7240): n=50000 blob_memory_dot run 4: median 323.21 ms, worst 330.18 ms
+11-08 17:54:35.056 I/EYKO31  ( 7240): n=50000 blob_memory_dot run 5: median 322.28 ms, worst 332.00 ms
+11-08 17:54:42.852 I/EYKO31  ( 7240): n=50000 fast top-20 equals the app's: 400 of 400
+11-08 17:54:44.209 I/EYKO31  ( 7240): n=50000 blob_memory_fast run 1: median 63.24 ms, worst 63.61 ms
+11-08 17:54:45.505 I/EYKO31  ( 7240): n=50000 blob_memory_fast run 2: median 63.51 ms, worst 63.87 ms
+11-08 17:54:46.800 I/EYKO31  ( 7240): n=50000 blob_memory_fast run 3: median 63.28 ms, worst 63.71 ms
+11-08 17:54:48.093 I/EYKO31  ( 7240): n=50000 blob_memory_fast run 4: median 63.21 ms, worst 64.21 ms
+11-08 17:54:49.390 I/EYKO31  ( 7240): n=50000 blob_memory_fast run 5: median 63.36 ms, worst 64.15 ms
+11-08 17:55:33.595 I/EYKO31  ( 7240): n=100000 insert all: 44014 ms, file 411.1 MB
+11-08 17:55:33.627 I/EYKO31  ( 7240): n=100000 blob_disk_dot: skipped: over diskMax 20000
+11-08 17:56:17.459 I/EYKO31  ( 7240): n=100000 blob_memory_dot run 1: median 695.03 ms, worst 724.85 ms
+11-08 17:56:31.413 I/EYKO31  ( 7240): n=100000 blob_memory_dot run 2: median 694.09 ms, worst 736.15 ms
+11-08 17:56:45.345 I/EYKO31  ( 7240): n=100000 blob_memory_dot run 3: median 692.87 ms, worst 725.34 ms
+11-08 17:56:59.288 I/EYKO31  ( 7240): n=100000 blob_memory_dot run 4: median 691.09 ms, worst 726.82 ms
+11-08 17:57:13.506 I/EYKO31  ( 7240): n=100000 blob_memory_dot run 5: median 696.40 ms, worst 820.65 ms
+11-08 17:57:30.001 I/EYKO31  ( 7240): n=100000 fast top-20 equals the app's: 400 of 400
+11-08 17:57:32.684 I/EYKO31  ( 7240): n=100000 blob_memory_fast run 1: median 126.04 ms, worst 127.11 ms
+11-08 17:57:35.232 I/EYKO31  ( 7240): n=100000 blob_memory_fast run 2: median 126.07 ms, worst 127.60 ms
+11-08 17:57:37.810 I/EYKO31  ( 7240): n=100000 blob_memory_fast run 3: median 126.13 ms, worst 146.98 ms
+11-08 17:57:40.370 I/EYKO31  ( 7240): n=100000 blob_memory_fast run 4: median 126.19 ms, worst 129.35 ms
+11-08 17:57:42.951 I/EYKO31  ( 7240): n=100000 blob_memory_fast run 5: median 126.47 ms, worst 132.20 ms
+11-08 18:02:32.297 I/EYKO31  ( 7240): n=300000 insert all: 155081 ms, file 1233.4 MB
+11-08 18:02:32.329 I/EYKO31  ( 7240): n=300000 blob_disk_dot: skipped: over diskMax 20000
+11-08 18:02:32.719 I/EYKO31  ( 7240): n=300000 blob_memory_dot: OutOfMemoryError: Failed to allocate a 614400016 byte allocation with 6291456 free bytes and 253MB until OOM, target footprint 8995736, growth limit 268435456
+11-08 18:02:33.080 I/EYKO31  ( 7240): csv written: /storage/emulated/0/Android/data/com.eykon.memory/files/results/eyko90-SM_A325F-20261108-1749.csv
+11-08 18:02:33.080 I/EYKO31  ( 7240): pull it with: adb pull /storage/emulated/0/Android/data/com.eykon.memory/files/results/eyko90-SM_A325F-20261108-1749.csv
+11-08 18:02:33.080 I/TestRunner( 7240): finished: blobColumnWithBruteForceSearch(com.eykon.memory.spike.VectorStorageSpikeTest)
+11-08 18:02:33.085 I/TestRunner( 7240): run finished: 1 tests, 0 failed, 0 ignored

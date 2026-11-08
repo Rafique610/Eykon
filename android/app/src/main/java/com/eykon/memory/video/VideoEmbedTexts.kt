@@ -35,7 +35,8 @@ object VideoEmbedTexts {
         db.beginTransaction()
         try {
             // Idempotent: this video's vectors and texts from an earlier run go first (the triggers clean the keyword index).
-            db.execSQL("DELETE FROM text_vec WHERE text_id IN (SELECT id FROM video_texts WHERE video_id = ?)", arrayOf(videoId))
+            // EYKO-115: if a re-run removed vectors, the vector file is stale too, so it is dropped and rebuilt at the next search.
+            if (db.delete("text_vec", "text_id IN (SELECT id FROM video_texts WHERE video_id = ?)", arrayOf(videoId)) > 0) VideoVectors.forget(db, "text_vec")
             db.execSQL("DELETE FROM video_texts WHERE video_id = ?", arrayOf(videoId))
             db.compileStatement("INSERT INTO video_texts (video_id, source, ref_id, start_s, end_s, text) VALUES (?, ?, ?, ?, ?, ?)").use { insert ->
                 texts.forEachIndexed { i, text ->

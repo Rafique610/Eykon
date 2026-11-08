@@ -1,0 +1,456 @@
+--------- beginning of main
+11-08 18:25:39.157 I/TestRunner(11821): run started: 1 tests
+11-08 18:25:39.159 I/TestRunner(11821): started: speedAndAnswers(com.eykon.memory.video.OffHeapVectorTest)
+11-08 18:25:39.203 I/EYKO109 (11821): device sheet: samsung SM-A325F, Android 13 (API 33), sqlite 3.32.2, commit d7af093+eyko114-uncommitted, date 2026-11-08
+11-08 18:25:39.207 I/EYKO109 (11821): device sheet: RAM 5.9 GB, java heap limit 268 MB, free storage 57.0 GB, vectors real_own_clips_90+noise
+11-08 18:25:55.158 I/EYKO109 (11821): n=20000 heap_f32: first search (loads the table) 1670 ms; identical scores on 20 of 20 queries; recall@20 1.0000 (400 of 400)
+11-08 18:25:57.488 I/EYKO109 (11821): n=20000 heap_f32 run 1: median 115.20 ms, worst 116.58 ms
+11-08 18:25:59.808 I/EYKO109 (11821): n=20000 heap_f32 run 2: median 114.93 ms, worst 115.59 ms
+11-08 18:26:02.140 I/EYKO109 (11821): n=20000 heap_f32 run 3: median 115.08 ms, worst 118.51 ms
+11-08 18:26:04.477 I/EYKO109 (11821): n=20000 heap_f32 run 4: median 115.26 ms, worst 122.40 ms
+11-08 18:26:06.811 I/EYKO109 (11821): n=20000 heap_f32 run 5: median 115.23 ms, worst 120.17 ms
+11-08 18:26:11.359 I/EYKO109 (11821): n=20000 offheap_mapped_f32: first search (loads the table) 1717 ms; identical scores on 20 of 20 queries; recall@20 1.0000 (400 of 400)
+11-08 18:26:13.964 I/EYKO109 (11821): n=20000 offheap_mapped_f32 run 1: median 128.97 ms, worst 133.76 ms
+11-08 18:26:16.621 I/EYKO109 (11821): n=20000 offheap_mapped_f32 run 2: median 129.28 ms, worst 177.10 ms
+11-08 18:26:19.228 I/EYKO109 (11821): n=20000 offheap_mapped_f32 run 3: median 129.36 ms, worst 130.52 ms
+11-08 18:26:21.839 I/EYKO109 (11821): n=20000 offheap_mapped_f32 run 4: median 129.28 ms, worst 131.40 ms
+11-08 18:26:24.443 I/EYKO109 (11821): n=20000 offheap_mapped_f32 run 5: median 129.14 ms, worst 129.95 ms
+11-08 18:26:29.008 I/EYKO109 (11821): n=20000 offheap_mapped_block: first search (loads the table) 1656 ms; identical scores on 20 of 20 queries; recall@20 1.0000 (400 of 400)
+11-08 18:26:31.813 I/EYKO109 (11821): n=20000 offheap_mapped_block run 1: median 127.62 ms, worst 171.90 ms
+11-08 18:26:34.547 I/EYKO109 (11821): n=20000 offheap_mapped_block run 2: median 126.76 ms, worst 172.29 ms
+11-08 18:26:37.322 I/EYKO109 (11821): n=20000 offheap_mapped_block run 3: median 126.47 ms, worst 173.97 ms
+11-08 18:26:40.067 I/EYKO109 (11821): n=20000 offheap_mapped_block run 4: median 126.79 ms, worst 171.81 ms
+11-08 18:26:42.808 I/EYKO109 (11821): n=20000 offheap_mapped_block run 5: median 126.78 ms, worst 171.45 ms
+11-08 18:26:46.929 I/EYKO109 (11821): n=20000 offheap_mapped_native: first search (loads the table) 1632 ms; identical scores on 20 of 20 queries; recall@20 1.0000 (400 of 400)
+11-08 18:26:49.310 I/EYKO109 (11821): n=20000 offheap_mapped_native run 1: median 116.13 ms, worst 162.19 ms
+11-08 18:26:51.639 I/EYKO109 (11821): n=20000 offheap_mapped_native run 2: median 115.63 ms, worst 116.83 ms
+11-08 18:26:53.969 I/EYKO109 (11821): n=20000 offheap_mapped_native run 3: median 115.96 ms, worst 117.44 ms
+11-08 18:26:56.345 I/EYKO109 (11821): n=20000 offheap_mapped_native run 4: median 115.94 ms, worst 162.02 ms
+11-08 18:26:58.672 I/EYKO109 (11821): n=20000 offheap_mapped_native run 5: median 115.80 ms, worst 117.03 ms
+11-08 18:27:42.457 I/EYKO109 (11821): n=50000 heap_f32: first search (loads the table) 7082 ms; identical scores on 20 of 20 queries; recall@20 1.0000 (400 of 400)
+11-08 18:27:48.164 I/EYKO109 (11821): n=50000 heap_f32 run 1: median 283.67 ms, worst 288.09 ms
+11-08 18:27:53.872 I/EYKO109 (11821): n=50000 heap_f32 run 2: median 284.03 ms, worst 285.79 ms
+11-08 18:27:59.618 I/EYKO109 (11821): n=50000 heap_f32 run 3: median 283.71 ms, worst 330.66 ms
+11-08 18:28:05.320 I/EYKO109 (11821): n=50000 heap_f32 run 4: median 283.81 ms, worst 285.21 ms
+11-08 18:28:11.019 I/EYKO109 (11821): n=50000 heap_f32 run 5: median 283.38 ms, worst 288.23 ms
+11-08 18:28:24.661 I/EYKO109 (11821): n=50000 offheap_mapped_f32: first search (loads the table) 6800 ms; identical scores on 20 of 20 queries; recall@20 1.0000 (400 of 400)
+11-08 18:28:31.071 I/EYKO109 (11821): n=50000 offheap_mapped_f32 run 1: median 319.30 ms, worst 321.39 ms
+11-08 18:28:37.533 I/EYKO109 (11821): n=50000 offheap_mapped_f32 run 2: median 319.67 ms, worst 366.30 ms
+11-08 18:28:43.939 I/EYKO109 (11821): n=50000 offheap_mapped_f32 run 3: median 318.95 ms, worst 321.08 ms
+11-08 18:28:50.394 I/EYKO109 (11821): n=50000 offheap_mapped_f32 run 4: median 319.01 ms, worst 368.00 ms
+11-08 18:28:56.806 I/EYKO109 (11821): n=50000 offheap_mapped_f32 run 5: median 319.18 ms, worst 323.00 ms
+11-08 18:29:10.273 I/EYKO109 (11821): n=50000 offheap_mapped_block: first search (loads the table) 6732 ms; identical scores on 20 of 20 queries; recall@20 1.0000 (400 of 400)
+11-08 18:29:16.653 I/EYKO109 (11821): n=50000 offheap_mapped_block run 1: median 307.56 ms, worst 361.21 ms
+11-08 18:29:23.043 I/EYKO109 (11821): n=50000 offheap_mapped_block run 2: median 308.01 ms, worst 363.96 ms
+11-08 18:29:29.402 I/EYKO109 (11821): n=50000 offheap_mapped_block run 3: median 307.28 ms, worst 357.13 ms
+11-08 18:29:35.809 I/EYKO109 (11821): n=50000 offheap_mapped_block run 4: median 306.93 ms, worst 398.10 ms
+11-08 18:29:42.162 I/EYKO109 (11821): n=50000 offheap_mapped_block run 5: median 306.67 ms, worst 359.13 ms
+11-08 18:29:54.953 I/EYKO109 (11821): n=50000 offheap_mapped_native: first search (loads the table) 6666 ms; identical scores on 20 of 20 queries; recall@20 1.0000 (400 of 400)
+11-08 18:30:00.698 I/EYKO109 (11821): n=50000 offheap_mapped_native run 1: median 286.17 ms, worst 319.00 ms
+11-08 18:30:06.407 I/EYKO109 (11821): n=50000 offheap_mapped_native run 2: median 285.27 ms, worst 287.69 ms
+11-08 18:30:12.182 I/EYKO109 (11821): n=50000 offheap_mapped_native run 3: median 285.62 ms, worst 333.20 ms
+11-08 18:30:17.989 I/EYKO109 (11821): n=50000 offheap_mapped_native run 4: median 288.69 ms, worst 301.08 ms
+11-08 18:30:23.790 I/EYKO109 (11821): n=50000 offheap_mapped_native run 5: median 287.72 ms, worst 333.67 ms
+11-08 18:32:07.560 I/EYKO109 (11821): n=100000 heap_f32: first search (loads the table) 23854 ms; identical scores on 20 of 20 queries; recall@20 1.0000 (400 of 400)
+11-08 18:32:18.897 I/EYKO109 (11821): n=100000 heap_f32 run 1: median 565.07 ms, worst 569.77 ms
+11-08 18:32:30.260 I/EYKO109 (11821): n=100000 heap_f32 run 2: median 565.40 ms, worst 581.29 ms
+11-08 18:32:41.657 I/EYKO109 (11821): n=100000 heap_f32 run 3: median 565.41 ms, worst 619.08 ms
+11-08 18:32:52.995 I/EYKO109 (11821): n=100000 heap_f32 run 4: median 565.13 ms, worst 570.31 ms
+11-08 18:33:04.392 I/EYKO109 (11821): n=100000 heap_f32 run 5: median 565.21 ms, worst 629.52 ms
+11-08 18:33:41.145 I/EYKO109 (11821): n=100000 offheap_mapped_f32: first search (loads the table) 23240 ms; identical scores on 20 of 20 queries; recall@20 1.0000 (400 of 400)
+11-08 18:33:53.958 I/EYKO109 (11821): n=100000 offheap_mapped_f32 run 1: median 636.68 ms, worst 679.43 ms
+11-08 18:34:06.961 I/EYKO109 (11821): n=100000 offheap_mapped_f32 run 2: median 636.99 ms, worst 724.88 ms
+11-08 18:34:19.725 I/EYKO109 (11821): n=100000 offheap_mapped_f32 run 3: median 636.76 ms, worst 639.29 ms
+11-08 18:34:32.575 I/EYKO109 (11821): n=100000 offheap_mapped_f32 run 4: median 636.64 ms, worst 686.06 ms
+11-08 18:34:45.376 I/EYKO109 (11821): n=100000 offheap_mapped_f32 run 5: median 636.43 ms, worst 685.05 ms
+11-08 18:35:25.969 I/EYKO109 (11821): n=100000 offheap_mapped_block: first search (loads the table) 24418 ms; identical scores on 20 of 20 queries; recall@20 1.0000 (400 of 400)
+11-08 18:35:38.556 I/EYKO109 (11821): n=100000 offheap_mapped_block run 1: median 616.44 ms, worst 676.03 ms
+11-08 18:35:51.000 I/EYKO109 (11821): n=100000 offheap_mapped_block run 2: median 613.22 ms, worst 661.59 ms
+11-08 18:36:03.463 I/EYKO109 (11821): n=100000 offheap_mapped_block run 3: median 612.37 ms, worst 675.35 ms
+11-08 18:36:15.944 I/EYKO109 (11821): n=100000 offheap_mapped_block run 4: median 612.82 ms, worst 667.92 ms
+11-08 18:36:28.391 I/EYKO109 (11821): n=100000 offheap_mapped_block run 5: median 612.98 ms, worst 667.68 ms
+11-08 18:37:03.775 I/EYKO109 (11821): n=100000 offheap_mapped_native: first search (loads the table) 23075 ms; identical scores on 20 of 20 queries; recall@20 1.0000 (400 of 400)
+11-08 18:37:15.270 I/EYKO109 (11821): n=100000 offheap_mapped_native run 1: median 573.78 ms, worst 608.02 ms
+11-08 18:37:26.762 I/EYKO109 (11821): n=100000 offheap_mapped_native run 2: median 574.54 ms, worst 593.99 ms
+11-08 18:37:38.345 I/EYKO109 (11821): n=100000 offheap_mapped_native run 3: median 574.97 ms, worst 618.92 ms
+11-08 18:37:49.809 I/EYKO109 (11821): n=100000 offheap_mapped_native run 4: median 573.67 ms, worst 581.24 ms
+11-08 18:38:01.249 I/EYKO109 (11821): n=100000 offheap_mapped_native run 5: median 571.81 ms, worst 617.80 ms
+11-08 18:38:01.392 I/EYKO109 (11821): csv written: /storage/emulated/0/Android/data/com.eykon.memory/files/results/eyko109-speed-SM_A325F-20261108-1825.csv
+11-08 18:38:01.392 I/EYKO109 (11821): pull it with: adb pull /storage/emulated/0/Android/data/com.eykon.memory/files/results/eyko109-speed-SM_A325F-20261108-1825.csv
+11-08 18:38:01.392 I/TestRunner(11821): finished: speedAndAnswers(com.eykon.memory.video.OffHeapVectorTest)
+11-08 18:38:01.397 I/TestRunner(11821): run finished: 1 tests, 0 failed, 0 ignored
+11-08 18:38:06.089 I/TestRunner(12254): run started: 1 tests
+11-08 18:38:06.092 I/TestRunner(12254): started: memoryAllTables(com.eykon.memory.video.OffHeapVectorTest)
+11-08 18:38:06.139 I/EYKO109 (12254): device sheet: samsung SM-A325F, Android 13 (API 33), sqlite 3.32.2, commit d7af093+eyko114-uncommitted, date 2026-11-08
+11-08 18:38:06.141 I/EYKO109 (12254): device sheet: RAM 5.9 GB, java heap limit 268 MB, free storage 57.0 GB, vectors real_own_clips_90+noise
+11-08 18:38:32.184 I/EYKO109 (12254): n=20000 heap_f32: pss_before_mb=54; pss_after_mb=162; java_before_mb=3; java_after_mb=116; native_before_mb=11; native_after_mb=11; tables_loaded=3 of 3
+11-08 18:38:32.206 I/EYKO109 (12254): n=20000 memory_heap_f32: pss_before_mb=54; pss_after_mb=162; java_before_mb=3; java_after_mb=116; native_before_mb=11; native_after_mb=11; tables_loaded=3 of 3
+11-08 18:38:37.731 I/EYKO109 (12254): n=20000 offheap_mapped_f32: pss_before_mb=54; pss_after_mb=162; java_before_mb=3; java_after_mb=3; native_before_mb=11; native_after_mb=11; tables_loaded=3 of 3
+11-08 18:38:37.752 I/EYKO109 (12254): n=20000 memory_offheap_mapped_f32: pss_before_mb=54; pss_after_mb=162; java_before_mb=3; java_after_mb=3; native_before_mb=11; native_after_mb=11; tables_loaded=3 of 3
+11-08 18:38:43.075 I/EYKO109 (12254): n=20000 offheap_mapped_block: pss_before_mb=54; pss_after_mb=162; java_before_mb=3; java_after_mb=3; native_before_mb=11; native_after_mb=11; tables_loaded=3 of 3
+11-08 18:38:43.096 I/EYKO109 (12254): n=20000 memory_offheap_mapped_block: pss_before_mb=54; pss_after_mb=162; java_before_mb=3; java_after_mb=3; native_before_mb=11; native_after_mb=11; tables_loaded=3 of 3
+11-08 18:38:48.413 I/EYKO109 (12254): n=20000 offheap_mapped_native: pss_before_mb=54; pss_after_mb=162; java_before_mb=3; java_after_mb=3; native_before_mb=11; native_after_mb=11; tables_loaded=3 of 3
+11-08 18:38:48.434 I/EYKO109 (12254): n=20000 memory_offheap_mapped_native: pss_before_mb=54; pss_after_mb=162; java_before_mb=3; java_after_mb=3; native_before_mb=11; native_after_mb=11; tables_loaded=3 of 3
+11-08 18:39:48.177 I/EYKO109 (12254): n=50000 heap_f32: pss_before_mb=54; pss_after_mb=226; java_before_mb=3; java_after_mb=183; native_before_mb=11; native_after_mb=11; tables_loaded=2 of 3; OutOfMemoryError while loading audio_vec: Failed to allocate a 102400016 byte allocation with 25165824 free bytes and 81MB until OOM, target footprint 208227528, growth limit 268435456
+11-08 18:39:48.202 I/EYKO109 (12254): n=50000 memory_heap_f32: pss_before_mb=54; pss_after_mb=226; java_before_mb=3; java_after_mb=183; native_before_mb=11; native_after_mb=11; tables_loaded=2 of 3; OutOfMemoryError while loading audio_vec: Failed to allocate a 102400016 byte allocation with 25165824 free bytes and 81MB until OOM, target footprint 208227528, growth limit 268435456
+11-08 18:40:06.724 I/EYKO109 (12254): n=50000 offheap_mapped_f32: pss_before_mb=54; pss_after_mb=324; java_before_mb=3; java_after_mb=4; native_before_mb=11; native_after_mb=11; tables_loaded=3 of 3
+11-08 18:40:06.754 I/EYKO109 (12254): n=50000 memory_offheap_mapped_f32: pss_before_mb=54; pss_after_mb=324; java_before_mb=3; java_after_mb=4; native_before_mb=11; native_after_mb=11; tables_loaded=3 of 3
+11-08 18:40:25.613 I/EYKO109 (12254): n=50000 offheap_mapped_block: pss_before_mb=54; pss_after_mb=324; java_before_mb=3; java_after_mb=4; native_before_mb=11; native_after_mb=11; tables_loaded=3 of 3
+11-08 18:40:25.644 I/EYKO109 (12254): n=50000 memory_offheap_mapped_block: pss_before_mb=54; pss_after_mb=324; java_before_mb=3; java_after_mb=4; native_before_mb=11; native_after_mb=11; tables_loaded=3 of 3
+11-08 18:40:44.279 I/EYKO109 (12254): n=50000 offheap_mapped_native: pss_before_mb=54; pss_after_mb=324; java_before_mb=3; java_after_mb=4; native_before_mb=11; native_after_mb=11; tables_loaded=3 of 3
+11-08 18:40:44.309 I/EYKO109 (12254): n=50000 memory_offheap_mapped_native: pss_before_mb=54; pss_after_mb=324; java_before_mb=3; java_after_mb=4; native_before_mb=11; native_after_mb=11; tables_loaded=3 of 3
+11-08 18:42:43.164 I/EYKO109 (12254): n=100000 heap_f32: pss_before_mb=54; pss_after_mb=250; java_before_mb=3; java_after_mb=208; native_before_mb=11; native_after_mb=11; tables_loaded=1 of 3; OutOfMemoryError while loading text_vec: Failed to allocate a 153600016 byte allocation with 25165824 free bytes and 56MB until OOM, target footprint 234242056, growth limit 268435456
+11-08 18:42:43.190 I/EYKO109 (12254): n=100000 memory_heap_f32: pss_before_mb=54; pss_after_mb=250; java_before_mb=3; java_after_mb=208; native_before_mb=11; native_after_mb=11; tables_loaded=1 of 3; OutOfMemoryError while loading text_vec: Failed to allocate a 153600016 byte allocation with 25165824 free bytes and 56MB until OOM, target footprint 234242056, growth limit 268435456
+11-08 18:43:42.514 I/EYKO109 (12254): n=100000 offheap_mapped_f32: pss_before_mb=54; pss_after_mb=594; java_before_mb=3; java_after_mb=5; native_before_mb=11; native_after_mb=11; tables_loaded=3 of 3
+11-08 18:43:42.560 I/EYKO109 (12254): n=100000 memory_offheap_mapped_f32: pss_before_mb=54; pss_after_mb=594; java_before_mb=3; java_after_mb=5; native_before_mb=11; native_after_mb=11; tables_loaded=3 of 3
+11-08 18:44:42.001 I/EYKO109 (12254): n=100000 offheap_mapped_block: pss_before_mb=54; pss_after_mb=594; java_before_mb=3; java_after_mb=5; native_before_mb=11; native_after_mb=11; tables_loaded=3 of 3
+11-08 18:44:42.047 I/EYKO109 (12254): n=100000 memory_offheap_mapped_block: pss_before_mb=54; pss_after_mb=594; java_before_mb=3; java_after_mb=5; native_before_mb=11; native_after_mb=11; tables_loaded=3 of 3
+11-08 18:45:41.306 I/EYKO109 (12254): n=100000 offheap_mapped_native: pss_before_mb=54; pss_after_mb=594; java_before_mb=3; java_after_mb=5; native_before_mb=11; native_after_mb=11; tables_loaded=3 of 3
+11-08 18:45:41.353 I/EYKO109 (12254): n=100000 memory_offheap_mapped_native: pss_before_mb=54; pss_after_mb=594; java_before_mb=3; java_after_mb=5; native_before_mb=11; native_after_mb=11; tables_loaded=3 of 3
+11-08 18:45:41.723 I/EYKO109 (12254): csv written: /storage/emulated/0/Android/data/com.eykon.memory/files/results/eyko109-memory-SM_A325F-20261108-1838.csv
+11-08 18:45:41.723 I/EYKO109 (12254): pull it with: adb pull /storage/emulated/0/Android/data/com.eykon.memory/files/results/eyko109-memory-SM_A325F-20261108-1838.csv
+11-08 18:45:41.724 I/TestRunner(12254): finished: memoryAllTables(com.eykon.memory.video.OffHeapVectorTest)
+11-08 18:45:41.730 I/TestRunner(12254): run finished: 1 tests, 0 failed, 0 ignored
+11-08 18:46:49.873 I/TestRunner(12847): run started: 1 tests
+11-08 18:46:49.881 I/TestRunner(12847): started: changeCheckCost(com.eykon.memory.video.OffHeapVectorTest)
+11-08 18:47:01.236 I/EYKO109 (12847): n=20000 change check 'SELECT COUNT(*), IFNULL(MAX(frame_id), 0) FROM image_vec': median 113.76 ms, worst 132.83 ms
+11-08 18:47:03.860 I/EYKO109 (12847): n=20000 change check 'SELECT COUNT(*) FROM image_vec': median 118.81 ms, worst 178.23 ms
+11-08 18:47:03.866 I/EYKO109 (12847): n=20000 change check 'SELECT IFNULL(MAX(frame_id), 0) FROM image_vec': median 0.19 ms, worst 0.33 ms
+11-08 18:47:03.871 I/EYKO109 (12847): n=20000 change check 'SELECT MAX(rowid) FROM image_vec': median 0.14 ms, worst 0.31 ms
+11-08 18:47:03.910 I/TestRunner(12847): finished: changeCheckCost(com.eykon.memory.video.OffHeapVectorTest)
+11-08 18:47:03.915 I/TestRunner(12847): run finished: 1 tests, 0 failed, 0 ignored
+11-08 18:47:07.357 I/TestRunner(13510): run started: 1 tests
+11-08 18:47:07.360 I/TestRunner(13510): started: changeCheckCost(com.eykon.memory.video.OffHeapVectorTest)
+11-08 18:47:53.878 I/EYKO109 (13510): n=100000 change check 'SELECT COUNT(*), IFNULL(MAX(frame_id), 0) FROM image_vec': median 479.28 ms, worst 501.63 ms
+11-08 18:48:03.922 I/EYKO109 (13510): n=100000 change check 'SELECT COUNT(*) FROM image_vec': median 454.70 ms, worst 471.01 ms
+11-08 18:48:03.926 I/EYKO109 (13510): n=100000 change check 'SELECT IFNULL(MAX(frame_id), 0) FROM image_vec': median 0.13 ms, worst 0.23 ms
+11-08 18:48:03.930 I/EYKO109 (13510): n=100000 change check 'SELECT MAX(rowid) FROM image_vec': median 0.12 ms, worst 0.17 ms
+11-08 18:48:04.069 I/TestRunner(13510): finished: changeCheckCost(com.eykon.memory.video.OffHeapVectorTest)
+11-08 18:48:04.073 I/TestRunner(13510): run finished: 1 tests, 0 failed, 0 ignored
+11-08 19:13:53.173 I/TestRunner(17782): run started: 55 tests
+11-08 19:13:53.187 I/TestRunner(17782): started: theFrameThatPointsTheSameWayAsThePhraseComesFirst(com.eykon.memory.video.VideoSearchTest)
+11-08 19:13:58.013 I/TestRunner(17782): finished: theFrameThatPointsTheSameWayAsThePhraseComesFirst(com.eykon.memory.video.VideoSearchTest)
+11-08 19:13:58.017 I/TestRunner(17782): started: thePhoneGivesTheSameTextVectorsAsTheLaptopWithTheRealModel(com.eykon.memory.video.VideoSearchTest)
+11-08 19:14:06.595 I/TestRunner(17782): finished: thePhoneGivesTheSameTextVectorsAsTheLaptopWithTheRealModel(com.eykon.memory.video.VideoSearchTest)
+11-08 19:14:06.598 I/TestRunner(17782): started: onlyAsManyHitsAsAskedForComeBack(com.eykon.memory.video.VideoSearchTest)
+11-08 19:14:07.981 I/TestRunner(17782): finished: onlyAsManyHitsAsAskedForComeBack(com.eykon.memory.video.VideoSearchTest)
+11-08 19:14:08.018 I/TestRunner(17782): started: anEmptyPhraseOrAnEmptyStoreGivesNothingAndTheModelIsNotAsked(com.eykon.memory.video.VideoSearchTest)
+11-08 19:14:09.450 I/TestRunner(17782): finished: anEmptyPhraseOrAnEmptyStoreGivesNothingAndTheModelIsNotAsked(com.eykon.memory.video.VideoSearchTest)
+11-08 19:14:09.487 I/TestRunner(17782): started: typedPhrasesOverARealClipWithTheRealModels(com.eykon.memory.video.VideoSearchTest)
+11-08 19:14:09.519 E/TestRunner(17782): assumption failed: typedPhrasesOverARealClipWithTheRealModels(com.eykon.memory.video.VideoSearchTest)
+11-08 19:14:09.522 E/TestRunner(17782): ----- begin exception -----
+11-08 19:14:09.522 E/TestRunner(17782): org.junit.AssumptionViolatedException: models or clip4.mp4 not on this phone
+11-08 19:14:09.522 E/TestRunner(17782): 	at org.junit.Assume.assumeTrue(Assume.java:68)
+11-08 19:14:09.522 E/TestRunner(17782): 	at com.eykon.memory.video.VideoSearchTest.typedPhrasesOverARealClipWithTheRealModels(VideoSearchTest.kt:157)
+11-08 19:14:09.522 E/TestRunner(17782): 	at java.lang.reflect.Method.invoke(Native Method)
+11-08 19:14:09.522 E/TestRunner(17782): 	at org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:59)
+11-08 19:14:09.522 E/TestRunner(17782): 	at org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:12)
+11-08 19:14:09.522 E/TestRunner(17782): 	at org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:56)
+11-08 19:14:09.522 E/TestRunner(17782): 	at org.junit.internal.runners.statements.InvokeMethod.evaluate(InvokeMethod.java:17)
+11-08 19:14:09.522 E/TestRunner(17782): 	at androidx.test.internal.runner.junit4.statement.RunBefores.evaluate(RunBefores.java:80)
+11-08 19:14:09.522 E/TestRunner(17782): 	at androidx.test.internal.runner.junit4.statement.RunAfters.evaluate(RunAfters.java:61)
+11-08 19:14:09.522 E/TestRunner(17782): 	at org.junit.runners.ParentRunner$3.evaluate(ParentRunner.java:306)
+11-08 19:14:09.522 E/TestRunner(17782): 	at org.junit.runners.BlockJUnit4ClassRunner$1.evaluate(BlockJUnit4ClassRunner.java:100)
+11-08 19:14:09.522 E/TestRunner(17782): 	at org.junit.runners.ParentRunner.runLeaf(ParentRunner.java:366)
+11-08 19:14:09.522 E/TestRunner(17782): 	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:103)
+11-08 19:14:09.522 E/TestRunner(17782): 	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:63)
+11-08 19:14:09.522 E/TestRunner(17782): 	at org.junit.runners.ParentRunner$4.run(ParentRunner.java:331)
+11-08 19:14:09.522 E/TestRunner(17782): 	at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:79)
+11-08 19:14:09.522 E/TestRunner(17782): 	at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:329)
+11-08 19:14:09.522 E/TestRunner(17782): 	at org.junit.runners.ParentRunner.access$100(ParentRunner.java:66)
+11-08 19:14:09.522 E/TestRunner(17782): 	at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:293)
+11-08 19:14:09.522 E/TestRunner(17782): 	at org.junit.runners.ParentRunner$3.evaluate(ParentRunner.java:306)
+11-08 19:14:09.522 E/TestRunner(17782): 	at org.junit.runners.ParentRunner.run(ParentRunner.java:413)
+11-08 19:14:09.522 E/TestRunner(17782): 	at androidx.test.ext.junit.runners.AndroidJUnit4.run(AndroidJUnit4.java:162)
+11-08 19:14:09.522 E/TestRunner(17782): 	at org.junit.runners.Suite.runChild(Suite.java:128)
+11-08 19:14:09.522 E/TestRunner(17782): 	at org.junit.runners.Suite.runChild(Suite.java:27)
+11-08 19:14:09.522 E/TestRunner(17782): 	at org.junit.runners.ParentRunner$4.run(ParentRunner.java:331)
+11-08 19:14:09.522 E/TestRunner(17782): 	at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:79)
+11-08 19:14:09.522 E/TestRunner(17782): 	at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:329)
+11-08 19:14:09.522 E/TestRunner(17782): 	at org.junit.runners.ParentRunner.access$100(ParentRunner.java:66)
+11-08 19:14:09.522 E/TestRunner(17782): 	at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:293)
+11-08 19:14:09.522 E/TestRunner(17782): 	at org.junit.runners.ParentRunner$3.evaluate(ParentRunner.java:306)
+11-08 19:14:09.522 E/TestRunner(17782): 	at org.junit.runners.ParentRunner.run(ParentRunner.java:413)
+11-08 19:14:09.522 E/TestRunner(17782): 	at org.junit.runner.JUnitCore.run(JUnitCore.java:137)
+11-08 19:14:09.522 E/TestRunner(17782): 	at org.junit.runner.JUnitCore.run(JUnitCore.java:115)
+11-08 19:14:09.522 E/TestRunner(17782): 	at androidx.test.internal.runner.TestExecutor.execute(TestExecutor.java:68)
+11-08 19:14:09.522 E/TestRunner(17782): 	at androidx.test.internal.runner.TestExecutor.execute(TestExecutor.java:59)
+11-08 19:14:09.522 E/TestRunner(17782): 	at androidx.test.runner.AndroidJUnitRunner.onStart(AndroidJUnitRunner.java:463)
+11-08 19:14:09.522 E/TestRunner(17782): 	at android.app.Instrumentation$InstrumentationThread.run(Instrumentation.java:2335)
+11-08 19:14:09.522 E/TestRunner(17782): ----- end exception -----
+11-08 19:14:09.523 I/TestRunner(17782): finished: typedPhrasesOverARealClipWithTheRealModels(com.eykon.memory.video.VideoSearchTest)
+11-08 19:14:09.525 I/TestRunner(17782): started: typedPhrasesOverTheAppsOwnVideosWithTheRealModel(com.eykon.memory.video.VideoSearchTest)
+11-08 19:14:09.557 E/TestRunner(17782): assumption failed: typedPhrasesOverTheAppsOwnVideosWithTheRealModel(com.eykon.memory.video.VideoSearchTest)
+11-08 19:14:09.558 E/TestRunner(17782): ----- begin exception -----
+11-08 19:14:09.558 E/TestRunner(17782): org.junit.AssumptionViolatedException: the app has no stored frame vectors yet
+11-08 19:14:09.558 E/TestRunner(17782): 	at org.junit.Assume.assumeTrue(Assume.java:68)
+11-08 19:14:09.558 E/TestRunner(17782): 	at com.eykon.memory.video.VideoSearchTest.typedPhrasesOverTheAppsOwnVideosWithTheRealModel(VideoSearchTest.kt:142)
+11-08 19:14:09.558 E/TestRunner(17782): 	at java.lang.reflect.Method.invoke(Native Method)
+11-08 19:14:09.558 E/TestRunner(17782): 	at org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:59)
+11-08 19:14:09.558 E/TestRunner(17782): 	at org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:12)
+11-08 19:14:09.558 E/TestRunner(17782): 	at org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:56)
+11-08 19:14:09.558 E/TestRunner(17782): 	at org.junit.internal.runners.statements.InvokeMethod.evaluate(InvokeMethod.java:17)
+11-08 19:14:09.558 E/TestRunner(17782): 	at androidx.test.internal.runner.junit4.statement.RunBefores.evaluate(RunBefores.java:80)
+11-08 19:14:09.558 E/TestRunner(17782): 	at androidx.test.internal.runner.junit4.statement.RunAfters.evaluate(RunAfters.java:61)
+11-08 19:14:09.558 E/TestRunner(17782): 	at org.junit.runners.ParentRunner$3.evaluate(ParentRunner.java:306)
+11-08 19:14:09.558 E/TestRunner(17782): 	at org.junit.runners.BlockJUnit4ClassRunner$1.evaluate(BlockJUnit4ClassRunner.java:100)
+11-08 19:14:09.558 E/TestRunner(17782): 	at org.junit.runners.ParentRunner.runLeaf(ParentRunner.java:366)
+11-08 19:14:09.558 E/TestRunner(17782): 	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:103)
+11-08 19:14:09.558 E/TestRunner(17782): 	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:63)
+11-08 19:14:09.558 E/TestRunner(17782): 	at org.junit.runners.ParentRunner$4.run(ParentRunner.java:331)
+11-08 19:14:09.558 E/TestRunner(17782): 	at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:79)
+11-08 19:14:09.558 E/TestRunner(17782): 	at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:329)
+11-08 19:14:09.558 E/TestRunner(17782): 	at org.junit.runners.ParentRunner.access$100(ParentRunner.java:66)
+11-08 19:14:09.558 E/TestRunner(17782): 	at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:293)
+11-08 19:14:09.558 E/TestRunner(17782): 	at org.junit.runners.ParentRunner$3.evaluate(ParentRunner.java:306)
+11-08 19:14:09.558 E/TestRunner(17782): 	at org.junit.runners.ParentRunner.run(ParentRunner.java:413)
+11-08 19:14:09.558 E/TestRunner(17782): 	at androidx.test.ext.junit.runners.AndroidJUnit4.run(AndroidJUnit4.java:162)
+11-08 19:14:09.558 E/TestRunner(17782): 	at org.junit.runners.Suite.runChild(Suite.java:128)
+11-08 19:14:09.558 E/TestRunner(17782): 	at org.junit.runners.Suite.runChild(Suite.java:27)
+11-08 19:14:09.558 E/TestRunner(17782): 	at org.junit.runners.ParentRunner$4.run(ParentRunner.java:331)
+11-08 19:14:09.558 E/TestRunner(17782): 	at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:79)
+11-08 19:14:09.558 E/TestRunner(17782): 	at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:329)
+11-08 19:14:09.558 E/TestRunner(17782): 	at org.junit.runners.ParentRunner.access$100(ParentRunner.java:66)
+11-08 19:14:09.558 E/TestRunner(17782): 	at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:293)
+11-08 19:14:09.558 E/TestRunner(17782): 	at org.junit.runners.ParentRunner$3.evaluate(ParentRunner.java:306)
+11-08 19:14:09.558 E/TestRunner(17782): 	at org.junit.runners.ParentRunner.run(ParentRunner.java:413)
+11-08 19:14:09.558 E/TestRunner(17782): 	at org.junit.runner.JUnitCore.run(JUnitCore.java:137)
+11-08 19:14:09.558 E/TestRunner(17782): 	at org.junit.runner.JUnitCore.run(JUnitCore.java:115)
+11-08 19:14:09.558 E/TestRunner(17782): 	at androidx.test.internal.runner.TestExecutor.execute(TestExecutor.java:68)
+11-08 19:14:09.558 E/TestRunner(17782): 	at androidx.test.internal.runner.TestExecutor.execute(TestExecutor.java:59)
+11-08 19:14:09.558 E/TestRunner(17782): 	at androidx.test.runner.AndroidJUnitRunner.onStart(AndroidJUnitRunner.java:463)
+11-08 19:14:09.558 E/TestRunner(17782): 	at android.app.Instrumentation$InstrumentationThread.run(Instrumentation.java:2335)
+11-08 19:14:09.558 E/TestRunner(17782): ----- end exception -----
+11-08 19:14:09.559 I/TestRunner(17782): finished: typedPhrasesOverTheAppsOwnVideosWithTheRealModel(com.eykon.memory.video.VideoSearchTest)
+11-08 19:14:09.561 I/TestRunner(17782): started: creatingTwiceChangesNothingAndAllTablesExist(com.eykon.memory.video.VideoStorageTest)
+11-08 19:14:09.597 I/TestRunner(17782): finished: creatingTwiceChangesNothingAndAllTablesExist(com.eykon.memory.video.VideoStorageTest)
+11-08 19:14:09.601 I/TestRunner(17782): started: aVideoRoundTripsThroughTheRepository(com.eykon.memory.video.VideoStorageTest)
+11-08 19:14:09.625 I/TestRunner(17782): finished: aVideoRoundTripsThroughTheRepository(com.eykon.memory.video.VideoStorageTest)
+11-08 19:14:09.628 I/TestRunner(17782): started: deletingAVideoRemovesEverythingThatBelongsToIt(com.eykon.memory.video.VideoStorageTest)
+11-08 19:14:09.659 I/TestRunner(17782): finished: deletingAVideoRemovesEverythingThatBelongsToIt(com.eykon.memory.video.VideoStorageTest)
+11-08 19:14:09.662 I/TestRunner(17782): started: aFrameNeedsAnExistingVideo(com.eykon.memory.video.VideoStorageTest)
+11-08 19:14:09.685 I/TestRunner(17782): finished: aFrameNeedsAnExistingVideo(com.eykon.memory.video.VideoStorageTest)
+11-08 19:14:09.689 I/TestRunner(17782): started: searchSeesRowsAddedOrRemovedSinceTheLastSearch(com.eykon.memory.video.VideoEmbedImagesTest)
+11-08 19:14:11.182 I/TestRunner(17782): finished: searchSeesRowsAddedOrRemovedSinceTheLastSearch(com.eykon.memory.video.VideoEmbedImagesTest)
+11-08 19:14:11.200 I/TestRunner(17782): started: runningTheStageAgainKeepsTheSameVectors(com.eykon.memory.video.VideoEmbedImagesTest)
+11-08 19:14:12.499 I/TestRunner(17782): finished: runningTheStageAgainKeepsTheSameVectors(com.eykon.memory.video.VideoEmbedImagesTest)
+11-08 19:14:12.534 I/TestRunner(17782): started: aKeptFrameWithNoSavedVectorIsEmbeddedHere(com.eykon.memory.video.VideoEmbedImagesTest)
+11-08 19:14:14.159 I/TestRunner(17782): finished: aKeptFrameWithNoSavedVectorIsEmbeddedHere(com.eykon.memory.video.VideoEmbedImagesTest)
+11-08 19:14:14.164 I/TestRunner(17782): started: theWholeJobStoresARealVectorForEveryKeptFrameWithTheRealModels(com.eykon.memory.video.VideoEmbedImagesTest)
+11-08 19:14:28.076 I/TestRunner(17782): finished: theWholeJobStoresARealVectorForEveryKeptFrameWithTheRealModels(com.eykon.memory.video.VideoEmbedImagesTest)
+11-08 19:14:28.080 I/TestRunner(17782): started: theNearestRowsComeBackBestFirst(com.eykon.memory.video.VideoEmbedImagesTest)
+11-08 19:14:29.639 I/TestRunner(17782): finished: theNearestRowsComeBackBestFirst(com.eykon.memory.video.VideoEmbedImagesTest)
+11-08 19:14:29.643 I/TestRunner(17782): started: aVectorOfTheWrongSizeIsRefused(com.eykon.memory.video.VideoEmbedImagesTest)
+11-08 19:14:31.196 I/TestRunner(17782): finished: aVectorOfTheWrongSizeIsRefused(com.eykon.memory.video.VideoEmbedImagesTest)
+11-08 19:14:31.198 I/TestRunner(17782): started: askingWithAFramesOwnVectorReturnsThatFrameFirst(com.eykon.memory.video.VideoEmbedImagesTest)
+11-08 19:14:32.508 I/TestRunner(17782): finished: askingWithAFramesOwnVectorReturnsThatFrameFirst(com.eykon.memory.video.VideoEmbedImagesTest)
+11-08 19:14:32.510 I/TestRunner(17782): started: everyKeptFrameGetsOneVectorAndDroppedFramesGetNone(com.eykon.memory.video.VideoEmbedImagesTest)
+11-08 19:14:33.997 I/TestRunner(17782): finished: everyKeptFrameGetsOneVectorAndDroppedFramesGetNone(com.eykon.memory.video.VideoEmbedImagesTest)
+11-08 19:14:34.001 I/TestRunner(17782): started: thePhoneGivesTheSameVectorsAsTheLaptopWithTheRealModel(com.eykon.memory.video.VideoEmbedTextsTest)
+11-08 19:14:34.999 I/TestRunner(17782): finished: thePhoneGivesTheSameVectorsAsTheLaptopWithTheRealModel(com.eykon.memory.video.VideoEmbedTextsTest)
+11-08 19:14:35.003 I/TestRunner(17782): started: everyCaptionBecomesATextRowAKeywordEntryAndAVector(com.eykon.memory.video.VideoEmbedTextsTest)
+11-08 19:14:36.563 I/TestRunner(17782): finished: everyCaptionBecomesATextRowAKeywordEntryAndAVector(com.eykon.memory.video.VideoEmbedTextsTest)
+11-08 19:14:36.567 I/TestRunner(17782): started: deletingTheVideoRemovesItsTextsKeywordsAndVectors(com.eykon.memory.video.VideoEmbedTextsTest)
+11-08 19:14:38.205 I/TestRunner(17782): finished: deletingTheVideoRemovesItsTextsKeywordsAndVectors(com.eykon.memory.video.VideoEmbedTextsTest)
+11-08 19:14:38.208 I/TestRunner(17782): started: transcriptChunksJoinOnceTheyExist(com.eykon.memory.video.VideoEmbedTextsTest)
+11-08 19:14:39.823 I/TestRunner(17782): finished: transcriptChunksJoinOnceTheyExist(com.eykon.memory.video.VideoEmbedTextsTest)
+11-08 19:14:39.827 I/TestRunner(17782): started: theWholeJobMakesEveryCaptionSearchableWithTheRealModels(com.eykon.memory.video.VideoEmbedTextsTest)
+11-08 19:14:49.784 I/TestRunner(17782): finished: theWholeJobMakesEveryCaptionSearchableWithTheRealModels(com.eykon.memory.video.VideoEmbedTextsTest)
+11-08 19:14:49.788 I/TestRunner(17782): started: aCaptionsOwnVectorFindsThatCaptionFirst(com.eykon.memory.video.VideoEmbedTextsTest)
+11-08 19:14:51.269 I/TestRunner(17782): finished: aCaptionsOwnVectorFindsThatCaptionFirst(com.eykon.memory.video.VideoEmbedTextsTest)
+11-08 19:14:51.272 I/TestRunner(17782): started: aWordFromACaptionIsFoundByKeyword(com.eykon.memory.video.VideoEmbedTextsTest)
+11-08 19:14:52.703 I/TestRunner(17782): finished: aWordFromACaptionIsFoundByKeyword(com.eykon.memory.video.VideoEmbedTextsTest)
+11-08 19:14:52.707 I/TestRunner(17782): started: aVideoWithNothingToSayWritesNothing(com.eykon.memory.video.VideoEmbedTextsTest)
+11-08 19:14:52.741 I/TestRunner(17782): finished: aVideoWithNothingToSayWritesNothing(com.eykon.memory.video.VideoEmbedTextsTest)
+11-08 19:14:52.745 I/TestRunner(17782): started: runningTheStageAgainLeavesNoCopies(com.eykon.memory.video.VideoEmbedTextsTest)
+11-08 19:14:54.461 I/TestRunner(17782): finished: runningTheStageAgainLeavesNoCopies(com.eykon.memory.video.VideoEmbedTextsTest)
+11-08 19:14:54.466 I/TestRunner(17782): started: aFailingCheckFailsTheJobAndTheReasonIsStoredForThePerson(com.eykon.memory.video.VideoLinkTest)
+11-08 19:14:56.036 I/TestRunner(17782): finished: aFailingCheckFailsTheJobAndTheReasonIsStoredForThePerson(com.eykon.memory.video.VideoLinkTest)
+11-08 19:14:56.040 I/TestRunner(17782): started: threeRealClipsPassWithTheRealModels(com.eykon.memory.video.VideoLinkTest)
+11-08 19:14:56.079 E/TestRunner(17782): assumption failed: threeRealClipsPassWithTheRealModels(com.eykon.memory.video.VideoLinkTest)
+11-08 19:14:56.080 E/TestRunner(17782): ----- begin exception -----
+11-08 19:14:56.080 E/TestRunner(17782): org.junit.AssumptionViolatedException: models or clips not on this phone
+11-08 19:14:56.080 E/TestRunner(17782): 	at org.junit.Assume.assumeTrue(Assume.java:68)
+11-08 19:14:56.080 E/TestRunner(17782): 	at com.eykon.memory.video.VideoLinkTest.threeRealClipsPassWithTheRealModels(VideoLinkTest.kt:157)
+11-08 19:14:56.080 E/TestRunner(17782): 	at java.lang.reflect.Method.invoke(Native Method)
+11-08 19:14:56.080 E/TestRunner(17782): 	at org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:59)
+11-08 19:14:56.080 E/TestRunner(17782): 	at org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:12)
+11-08 19:14:56.080 E/TestRunner(17782): 	at org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:56)
+11-08 19:14:56.080 E/TestRunner(17782): 	at org.junit.internal.runners.statements.InvokeMethod.evaluate(InvokeMethod.java:17)
+11-08 19:14:56.080 E/TestRunner(17782): 	at androidx.test.internal.runner.junit4.statement.RunBefores.evaluate(RunBefores.java:80)
+11-08 19:14:56.080 E/TestRunner(17782): 	at androidx.test.internal.runner.junit4.statement.RunAfters.evaluate(RunAfters.java:61)
+11-08 19:14:56.080 E/TestRunner(17782): 	at org.junit.runners.ParentRunner$3.evaluate(ParentRunner.java:306)
+11-08 19:14:56.080 E/TestRunner(17782): 	at org.junit.runners.BlockJUnit4ClassRunner$1.evaluate(BlockJUnit4ClassRunner.java:100)
+11-08 19:14:56.080 E/TestRunner(17782): 	at org.junit.runners.ParentRunner.runLeaf(ParentRunner.java:366)
+11-08 19:14:56.080 E/TestRunner(17782): 	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:103)
+11-08 19:14:56.080 E/TestRunner(17782): 	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:63)
+11-08 19:14:56.080 E/TestRunner(17782): 	at org.junit.runners.ParentRunner$4.run(ParentRunner.java:331)
+11-08 19:14:56.080 E/TestRunner(17782): 	at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:79)
+11-08 19:14:56.080 E/TestRunner(17782): 	at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:329)
+11-08 19:14:56.080 E/TestRunner(17782): 	at org.junit.runners.ParentRunner.access$100(ParentRunner.java:66)
+11-08 19:14:56.080 E/TestRunner(17782): 	at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:293)
+11-08 19:14:56.080 E/TestRunner(17782): 	at org.junit.runners.ParentRunner$3.evaluate(ParentRunner.java:306)
+11-08 19:14:56.080 E/TestRunner(17782): 	at org.junit.runners.ParentRunner.run(ParentRunner.java:413)
+11-08 19:14:56.080 E/TestRunner(17782): 	at androidx.test.ext.junit.runners.AndroidJUnit4.run(AndroidJUnit4.java:162)
+11-08 19:14:56.080 E/TestRunner(17782): 	at org.junit.runners.Suite.runChild(Suite.java:128)
+11-08 19:14:56.080 E/TestRunner(17782): 	at org.junit.runners.Suite.runChild(Suite.java:27)
+11-08 19:14:56.080 E/TestRunner(17782): 	at org.junit.runners.ParentRunner$4.run(ParentRunner.java:331)
+11-08 19:14:56.080 E/TestRunner(17782): 	at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:79)
+11-08 19:14:56.080 E/TestRunner(17782): 	at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:329)
+11-08 19:14:56.080 E/TestRunner(17782): 	at org.junit.runners.ParentRunner.access$100(ParentRunner.java:66)
+11-08 19:14:56.080 E/TestRunner(17782): 	at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:293)
+11-08 19:14:56.080 E/TestRunner(17782): 	at org.junit.runners.ParentRunner$3.evaluate(ParentRunner.java:306)
+11-08 19:14:56.080 E/TestRunner(17782): 	at org.junit.runners.ParentRunner.run(ParentRunner.java:413)
+11-08 19:14:56.080 E/TestRunner(17782): 	at org.junit.runner.JUnitCore.run(JUnitCore.java:137)
+11-08 19:14:56.080 E/TestRunner(17782): 	at org.junit.runner.JUnitCore.run(JUnitCore.java:115)
+11-08 19:14:56.080 E/TestRunner(17782): 	at androidx.test.internal.runner.TestExecutor.execute(TestExecutor.java:68)
+11-08 19:14:56.080 E/TestRunner(17782): 	at androidx.test.internal.runner.TestExecutor.execute(TestExecutor.java:59)
+11-08 19:14:56.080 E/TestRunner(17782): 	at androidx.test.runner.AndroidJUnitRunner.onStart(AndroidJUnitRunner.java:463)
+11-08 19:14:56.080 E/TestRunner(17782): 	at android.app.Instrumentation$InstrumentationThread.run(Instrumentation.java:2335)
+11-08 19:14:56.080 E/TestRunner(17782): ----- end exception -----
+11-08 19:14:56.081 I/TestRunner(17782): finished: threeRealClipsPassWithTheRealModels(com.eykon.memory.video.VideoLinkTest)
+11-08 19:14:56.084 I/TestRunner(17782): started: aMissingImageVectorIsReportedAndTheStageFails(com.eykon.memory.video.VideoLinkTest)
+11-08 19:14:57.558 I/TestRunner(17782): finished: aMissingImageVectorIsReportedAndTheStageFails(com.eykon.memory.video.VideoLinkTest)
+11-08 19:14:57.595 I/TestRunner(17782): started: aVideoWhoseRowsAllHangTogetherPasses(com.eykon.memory.video.VideoLinkTest)
+11-08 19:14:58.889 I/TestRunner(17782): finished: aVideoWhoseRowsAllHangTogetherPasses(com.eykon.memory.video.VideoLinkTest)
+11-08 19:14:58.893 I/TestRunner(17782): started: droppedFramesAreNotExpectedToHaveAnything(com.eykon.memory.video.VideoLinkTest)
+11-08 19:15:00.248 I/TestRunner(17782): finished: droppedFramesAreNotExpectedToHaveAnything(com.eykon.memory.video.VideoLinkTest)
+11-08 19:15:00.251 I/TestRunner(17782): started: everyKindOfGapIsNamedWithItsCount(com.eykon.memory.video.VideoLinkTest)
+11-08 19:15:01.720 I/TestRunner(17782): finished: everyKindOfGapIsNamedWithItsCount(com.eykon.memory.video.VideoLinkTest)
+11-08 19:15:01.724 I/TestRunner(17782): started: aRecordingTimeThatCannotBeReadIsAProblem(com.eykon.memory.video.VideoLinkTest)
+11-08 19:15:03.191 I/TestRunner(17782): finished: aRecordingTimeThatCannotBeReadIsAProblem(com.eykon.memory.video.VideoLinkTest)
+11-08 19:15:03.197 I/TestRunner(17782): started: retryDoesNothingToAJobThatDidNotFail(com.eykon.memory.video.VideoFinishTest)
+11-08 19:15:03.289 I/TestRunner(17782): finished: retryDoesNothingToAJobThatDidNotFail(com.eykon.memory.video.VideoFinishTest)
+11-08 19:15:03.292 I/TestRunner(17782): started: retryStartsAgainAtTheStageThatFailedAndFinishesOnceTheCauseIsGone(com.eykon.memory.video.VideoFinishTest)
+11-08 19:15:03.337 I/TestRunner(17782): finished: retryStartsAgainAtTheStageThatFailedAndFinishesOnceTheCauseIsGone(com.eykon.memory.video.VideoFinishTest)
+11-08 19:15:03.340 I/TestRunner(17782): started: theListShowsRealCountsForEachVideo(com.eykon.memory.video.VideoFinishTest)
+11-08 19:15:03.373 I/TestRunner(17782): finished: theListShowsRealCountsForEachVideo(com.eykon.memory.video.VideoFinishTest)
+11-08 19:15:03.376 I/TestRunner(17782): started: aJobThatKeepsFailingLeavesItsVideoFailedWithTheStageReachedAndTheReason(com.eykon.memory.video.VideoFinishTest)
+11-08 19:15:03.410 I/TestRunner(17782): finished: aJobThatKeepsFailingLeavesItsVideoFailedWithTheStageReachedAndTheReason(com.eykon.memory.video.VideoFinishTest)
+11-08 19:15:03.414 I/TestRunner(17782): started: onlyReadyVideosAreSearched(com.eykon.memory.video.VideoFinishTest)
+11-08 19:15:03.452 I/TestRunner(17782): finished: onlyReadyVideosAreSearched(com.eykon.memory.video.VideoFinishTest)
+11-08 19:15:03.456 I/TestRunner(17782): started: aJobThatGetsThroughEveryStageLeavesItsVideoReadyAndItsJobDone(com.eykon.memory.video.VideoFinishTest)
+11-08 19:15:03.491 I/TestRunner(17782): finished: aJobThatGetsThroughEveryStageLeavesItsVideoReadyAndItsJobDone(com.eykon.memory.video.VideoFinishTest)
+11-08 19:15:03.495 I/TestRunner(17782): started: aVideoWhoseJobIsPutBackBecauseNewStagesExistIsNotReadyUntilItFinishesThem(com.eykon.memory.video.VideoFinishTest)
+11-08 19:15:03.531 I/TestRunner(17782): finished: aVideoWhoseJobIsPutBackBecauseNewStagesExistIsNotReadyUntilItFinishesThem(com.eykon.memory.video.VideoFinishTest)
+11-08 19:15:03.535 I/TestRunner(17782): started: finishDeletesTheFilesOfDroppedFramesAndKeepsTheKeptOnes(com.eykon.memory.video.VideoFinishTest)
+11-08 19:15:03.583 I/TestRunner(17782): finished: finishDeletesTheFilesOfDroppedFramesAndKeepsTheKeptOnes(com.eykon.memory.video.VideoFinishTest)
+11-08 19:15:03.586 I/TestRunner(17782): started: theSameKeysInAnotherRoomAreStillOneLatestSightingAndItSaysTheNewRoom(com.eykon.memory.video.VideoLatestTest)
+11-08 19:15:03.634 I/TestRunner(17782): finished: theSameKeysInAnotherRoomAreStillOneLatestSightingAndItSaysTheNewRoom(com.eykon.memory.video.VideoLatestTest)
+11-08 19:15:03.638 I/TestRunner(17782): started: rerunTheStageOverTheAppsOwnVideosWithTheRealModel(com.eykon.memory.video.VideoLatestTest)
+11-08 19:15:03.664 E/TestRunner(17782): assumption failed: rerunTheStageOverTheAppsOwnVideosWithTheRealModel(com.eykon.memory.video.VideoLatestTest)
+11-08 19:15:03.664 E/TestRunner(17782): ----- begin exception -----
+11-08 19:15:03.664 E/TestRunner(17782): org.junit.AssumptionViolatedException: run by name with -e rerun yes
+11-08 19:15:03.664 E/TestRunner(17782): 	at org.junit.Assume.assumeTrue(Assume.java:68)
+11-08 19:15:03.664 E/TestRunner(17782): 	at com.eykon.memory.video.VideoLatestTest.rerunTheStageOverTheAppsOwnVideosWithTheRealModel(VideoLatestTest.kt:221)
+11-08 19:15:03.664 E/TestRunner(17782): 	at java.lang.reflect.Method.invoke(Native Method)
+11-08 19:15:03.664 E/TestRunner(17782): 	at org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:59)
+11-08 19:15:03.664 E/TestRunner(17782): 	at org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:12)
+11-08 19:15:03.664 E/TestRunner(17782): 	at org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:56)
+11-08 19:15:03.664 E/TestRunner(17782): 	at org.junit.internal.runners.statements.InvokeMethod.evaluate(InvokeMethod.java:17)
+11-08 19:15:03.664 E/TestRunner(17782): 	at androidx.test.internal.runner.junit4.statement.RunBefores.evaluate(RunBefores.java:80)
+11-08 19:15:03.664 E/TestRunner(17782): 	at androidx.test.internal.runner.junit4.statement.RunAfters.evaluate(RunAfters.java:61)
+11-08 19:15:03.664 E/TestRunner(17782): 	at org.junit.runners.ParentRunner$3.evaluate(ParentRunner.java:306)
+11-08 19:15:03.664 E/TestRunner(17782): 	at org.junit.runners.BlockJUnit4ClassRunner$1.evaluate(BlockJUnit4ClassRunner.java:100)
+11-08 19:15:03.664 E/TestRunner(17782): 	at org.junit.runners.ParentRunner.runLeaf(ParentRunner.java:366)
+11-08 19:15:03.664 E/TestRunner(17782): 	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:103)
+11-08 19:15:03.664 E/TestRunner(17782): 	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:63)
+11-08 19:15:03.664 E/TestRunner(17782): 	at org.junit.runners.ParentRunner$4.run(ParentRunner.java:331)
+11-08 19:15:03.664 E/TestRunner(17782): 	at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:79)
+11-08 19:15:03.664 E/TestRunner(17782): 	at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:329)
+11-08 19:15:03.664 E/TestRunner(17782): 	at org.junit.runners.ParentRunner.access$100(ParentRunner.java:66)
+11-08 19:15:03.664 E/TestRunner(17782): 	at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:293)
+11-08 19:15:03.664 E/TestRunner(17782): 	at org.junit.runners.ParentRunner$3.evaluate(ParentRunner.java:306)
+11-08 19:15:03.664 E/TestRunner(17782): 	at org.junit.runners.ParentRunner.run(ParentRunner.java:413)
+11-08 19:15:03.664 E/TestRunner(17782): 	at androidx.test.ext.junit.runners.AndroidJUnit4.run(AndroidJUnit4.java:162)
+11-08 19:15:03.664 E/TestRunner(17782): 	at org.junit.runners.Suite.runChild(Suite.java:128)
+11-08 19:15:03.664 E/TestRunner(17782): 	at org.junit.runners.Suite.runChild(Suite.java:27)
+11-08 19:15:03.664 E/TestRunner(17782): 	at org.junit.runners.ParentRunner$4.run(ParentRunner.java:331)
+11-08 19:15:03.664 E/TestRunner(17782): 	at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:79)
+11-08 19:15:03.664 E/TestRunner(17782): 	at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:329)
+11-08 19:15:03.664 E/TestRunner(17782): 	at org.junit.runners.ParentRunner.access$100(ParentRunner.java:66)
+11-08 19:15:03.664 E/TestRunner(17782): 	at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:293)
+11-08 19:15:03.664 E/TestRunner(17782): 	at org.junit.runners.ParentRunner$3.evaluate(ParentRunner.java:306)
+11-08 19:15:03.664 E/TestRunner(17782): 	at org.junit.runners.ParentRunner.run(ParentRunner.java:413)
+11-08 19:15:03.664 E/TestRunner(17782): 	at org.junit.runner.JUnitCore.run(JUnitCore.java:137)
+11-08 19:15:03.664 E/TestRunner(17782): 	at org.junit.runner.JUnitCore.run(JUnitCore.java:115)
+11-08 19:15:03.664 E/TestRunner(17782): 	at androidx.test.internal.runner.TestExecutor.execute(TestExecutor.java:68)
+11-08 19:15:03.664 E/TestRunner(17782): 	at androidx.test.internal.runner.TestExecutor.execute(TestExecutor.java:59)
+11-08 19:15:03.664 E/TestRunner(17782): 	at androidx.test.runner.AndroidJUnitRunner.onStart(AndroidJUnitRunner.java:463)
+11-08 19:15:03.664 E/TestRunner(17782): 	at android.app.Instrumentation$InstrumentationThread.run(Instrumentation.java:2335)
+11-08 19:15:03.664 E/TestRunner(17782): ----- end exception -----
+11-08 19:15:03.665 I/TestRunner(17782): finished: rerunTheStageOverTheAppsOwnVideosWithTheRealModel(com.eykon.memory.video.VideoLatestTest)
+11-08 19:15:03.667 I/TestRunner(17782): started: aThirdClipWithOtherThingsAddsItsOwnLatestSightingsAndLeavesTheKeysAlone(com.eykon.memory.video.VideoLatestTest)
+11-08 19:15:03.724 I/TestRunner(17782): finished: aThirdClipWithOtherThingsAddsItsOwnLatestSightingsAndLeavesTheKeysAlone(com.eykon.memory.video.VideoLatestTest)
+11-08 19:15:03.727 I/TestRunner(17782): started: aSightingAThirdOfASecondLaterIsTheNewerOne(com.eykon.memory.video.VideoLatestTest)
+11-08 19:15:03.766 I/TestRunner(17782): finished: aSightingAThirdOfASecondLaterIsTheNewerOne(com.eykon.memory.video.VideoLatestTest)
+11-08 19:15:03.771 I/TestRunner(17782): started: runningTheStageAgainOnAClipChangesNothing(com.eykon.memory.video.VideoLatestTest)
+11-08 19:15:03.835 I/TestRunner(17782): finished: runningTheStageAgainOnAClipChangesNothing(com.eykon.memory.video.VideoLatestTest)
+11-08 19:15:03.839 I/TestRunner(17782): started: theWholeJobLeavesASightingForEveryObjectItDescribedWithTheRealModels(com.eykon.memory.video.VideoLatestTest)
+11-08 19:15:03.872 E/TestRunner(17782): assumption failed: theWholeJobLeavesASightingForEveryObjectItDescribedWithTheRealModels(com.eykon.memory.video.VideoLatestTest)
+11-08 19:15:03.873 E/TestRunner(17782): ----- begin exception -----
+11-08 19:15:03.873 E/TestRunner(17782): org.junit.AssumptionViolatedException: models or clip3 not on this phone
+11-08 19:15:03.873 E/TestRunner(17782): 	at org.junit.Assume.assumeTrue(Assume.java:68)
+11-08 19:15:03.873 E/TestRunner(17782): 	at com.eykon.memory.video.VideoLatestTest.theWholeJobLeavesASightingForEveryObjectItDescribedWithTheRealModels(VideoLatestTest.kt:234)
+11-08 19:15:03.873 E/TestRunner(17782): 	at java.lang.reflect.Method.invoke(Native Method)
+11-08 19:15:03.873 E/TestRunner(17782): 	at org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:59)
+11-08 19:15:03.873 E/TestRunner(17782): 	at org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:12)
+11-08 19:15:03.873 E/TestRunner(17782): 	at org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:56)
+11-08 19:15:03.873 E/TestRunner(17782): 	at org.junit.internal.runners.statements.InvokeMethod.evaluate(InvokeMethod.java:17)
+11-08 19:15:03.873 E/TestRunner(17782): 	at androidx.test.internal.runner.junit4.statement.RunBefores.evaluate(RunBefores.java:80)
+11-08 19:15:03.873 E/TestRunner(17782): 	at androidx.test.internal.runner.junit4.statement.RunAfters.evaluate(RunAfters.java:61)
+11-08 19:15:03.873 E/TestRunner(17782): 	at org.junit.runners.ParentRunner$3.evaluate(ParentRunner.java:306)
+11-08 19:15:03.873 E/TestRunner(17782): 	at org.junit.runners.BlockJUnit4ClassRunner$1.evaluate(BlockJUnit4ClassRunner.java:100)
+11-08 19:15:03.873 E/TestRunner(17782): 	at org.junit.runners.ParentRunner.runLeaf(ParentRunner.java:366)
+11-08 19:15:03.873 E/TestRunner(17782): 	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:103)
+11-08 19:15:03.873 E/TestRunner(17782): 	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:63)
+11-08 19:15:03.873 E/TestRunner(17782): 	at org.junit.runners.ParentRunner$4.run(ParentRunner.java:331)
+11-08 19:15:03.873 E/TestRunner(17782): 	at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:79)
+11-08 19:15:03.873 E/TestRunner(17782): 	at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:329)
+11-08 19:15:03.873 E/TestRunner(17782): 	at org.junit.runners.ParentRunner.access$100(ParentRunner.java:66)
+11-08 19:15:03.873 E/TestRunner(17782): 	at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:293)
+11-08 19:15:03.873 E/TestRunner(17782): 	at org.junit.runners.ParentRunner$3.evaluate(ParentRunner.java:306)
+11-08 19:15:03.873 E/TestRunner(17782): 	at org.junit.runners.ParentRunner.run(ParentRunner.java:413)
+11-08 19:15:03.873 E/TestRunner(17782): 	at androidx.test.ext.junit.runners.AndroidJUnit4.run(AndroidJUnit4.java:162)
+11-08 19:15:03.873 E/TestRunner(17782): 	at org.junit.runners.Suite.runChild(Suite.java:128)
+11-08 19:15:03.873 E/TestRunner(17782): 	at org.junit.runners.Suite.runChild(Suite.java:27)
+11-08 19:15:03.873 E/TestRunner(17782): 	at org.junit.runners.ParentRunner$4.run(ParentRunner.java:331)
+11-08 19:15:03.873 E/TestRunner(17782): 	at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:79)
+11-08 19:15:03.873 E/TestRunner(17782): 	at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:329)
+11-08 19:15:03.873 E/TestRunner(17782): 	at org.junit.runners.ParentRunner.access$100(ParentRunner.java:66)
+11-08 19:15:03.873 E/TestRunner(17782): 	at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:293)
+11-08 19:15:03.873 E/TestRunner(17782): 	at org.junit.runners.ParentRunner$3.evaluate(ParentRunner.java:306)
+11-08 19:15:03.873 E/TestRunner(17782): 	at org.junit.runners.ParentRunner.run(ParentRunner.java:413)
+11-08 19:15:03.873 E/TestRunner(17782): 	at org.junit.runner.JUnitCore.run(JUnitCore.java:137)
+11-08 19:15:03.873 E/TestRunner(17782): 	at org.junit.runner.JUnitCore.run(JUnitCore.java:115)
+11-08 19:15:03.873 E/TestRunner(17782): 	at androidx.test.internal.runner.TestExecutor.execute(TestExecutor.java:68)
+11-08 19:15:03.873 E/TestRunner(17782): 	at androidx.test.internal.runner.TestExecutor.execute(TestExecutor.java:59)
+11-08 19:15:03.873 E/TestRunner(17782): 	at androidx.test.runner.AndroidJUnitRunner.onStart(AndroidJUnitRunner.java:463)
+11-08 19:15:03.873 E/TestRunner(17782): 	at android.app.Instrumentation$InstrumentationThread.run(Instrumentation.java:2335)
+11-08 19:15:03.873 E/TestRunner(17782): ----- end exception -----
+11-08 19:15:03.873 I/TestRunner(17782): finished: theWholeJobLeavesASightingForEveryObjectItDescribedWithTheRealModels(com.eykon.memory.video.VideoLatestTest)
+11-08 19:15:03.875 I/TestRunner(17782): started: aBoxTooSmallToJudgeGivesNoSighting(com.eykon.memory.video.VideoLatestTest)
+11-08 19:15:03.908 I/TestRunner(17782): finished: aBoxTooSmallToJudgeGivesNoSighting(com.eykon.memory.video.VideoLatestTest)
+11-08 19:15:03.911 I/TestRunner(17782): started: twoThingsThatLookTheSameInOneFrameBothStayLatest(com.eykon.memory.video.VideoLatestTest)
+11-08 19:15:03.949 I/TestRunner(17782): finished: twoThingsThatLookTheSameInOneFrameBothStayLatest(com.eykon.memory.video.VideoLatestTest)
+11-08 19:15:03.953 I/TestRunner(17782): started: processingTheClipsInTheWrongOrderGivesTheSameResult(com.eykon.memory.video.VideoLatestTest)
+11-08 19:15:04.007 I/TestRunner(17782): finished: processingTheClipsInTheWrongOrderGivesTheSameResult(com.eykon.memory.video.VideoLatestTest)
+11-08 19:15:04.010 I/TestRunner(17782): started: withinOneVideoALaterFrameReplacesAnEarlierOneAndHistoryIsKept(com.eykon.memory.video.VideoLatestTest)
+11-08 19:15:04.049 I/TestRunner(17782): finished: withinOneVideoALaterFrameReplacesAnEarlierOneAndHistoryIsKept(com.eykon.memory.video.VideoLatestTest)
+11-08 19:15:04.052 I/TestRunner(17782): started: whenTheNewerSightingGoesAwayTheOlderOneIsTheLatestAgain(com.eykon.memory.video.VideoLatestTest)
+11-08 19:15:04.101 I/TestRunner(17782): finished: whenTheNewerSightingGoesAwayTheOlderOneIsTheLatestAgain(com.eykon.memory.video.VideoLatestTest)
+11-08 19:15:04.104 I/TestRunner(17782): started: thingsWithDifferentNamesAreNeverTheSameObjectEvenWhenTheyLookAlike(com.eykon.memory.video.VideoLatestTest)
+11-08 19:15:04.145 I/TestRunner(17782): finished: thingsWithDifferentNamesAreNeverTheSameObjectEvenWhenTheyLookAlike(com.eykon.memory.video.VideoLatestTest)
+11-08 19:15:04.148 I/TestRunner(17782): started: theSameKeysInTheSamePlaceOnTwoDaysLeaveOneLatestSightingFromTheNewerClip(com.eykon.memory.video.VideoLatestTest)
+11-08 19:15:04.189 I/TestRunner(17782): finished: theSameKeysInTheSamePlaceOnTwoDaysLeaveOneLatestSightingFromTheNewerClip(com.eykon.memory.video.VideoLatestTest)
+11-08 19:15:04.193 I/TestRunner(17782): run finished: 55 tests, 0 failed, 0 ignored
+11-08 19:15:08.567 I/TestRunner(18434): run started: 1 tests
+11-08 19:15:08.569 I/TestRunner(18434): started: persistentFile(com.eykon.memory.video.OffHeapVectorTest)
+11-08 19:16:11.076 I/EYKO109 (18434): n=100000 file step 'first search, writes the file': 24283 ms
+11-08 19:16:11.191 I/EYKO109 (18434): n=100000 file step 'repeat search': 115 ms
+11-08 19:16:11.358 I/EYKO109 (18434): n=100000 file step 'first search after restart, file reused': 166 ms
+11-08 19:16:40.678 I/EYKO109 (18434): n=100000 file step 'after restart': rows 100000, identical to heap on 20 of 20 queries
+11-08 19:16:41.587 I/EYKO109 (18434): n=100000 file step '1,000 new rows, appended': 169 ms
+11-08 19:17:13.305 I/EYKO109 (18434): n=100000 file step 'after append': rows 101000, identical to heap on 20 of 20 queries
+11-08 19:17:38.046 I/EYKO109 (18434): n=100000 file step '10 rows deleted with forget, rebuilt': 24719 ms
+11-08 19:18:07.714 I/EYKO109 (18434): n=100000 file step 'after delete': rows 100990, identical to heap on 20 of 20 queries

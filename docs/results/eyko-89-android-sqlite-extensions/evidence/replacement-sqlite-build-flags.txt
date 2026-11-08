@@ -1,0 +1,91 @@
+# Compile flags of the three SQLite builds that can replace Android's, fetched 2026-11-05
+
+## androidx sqlite-bundled (frameworks/support, branch androidx-main, sqlite/sqlite-bundled/build.gradle)
+42:        "-DSQLITE_DEFAULT_AUTOVACUUM=1",
+43:        "-DSQLITE_DEFAULT_MEMSTATUS=0",
+44:        "-DSQLITE_DEFAULT_WAL_SYNCHRONOUS=1",
+45:        "-DSQLITE_ENABLE_COLUMN_METADATA",
+46:        "-DSQLITE_ENABLE_FTS3",
+47:        "-DSQLITE_ENABLE_FTS3_PARENTHESIS",
+48:        "-DSQLITE_ENABLE_FTS4",
+49:        "-DSQLITE_ENABLE_FTS5",
+50:        "-DSQLITE_ENABLE_JSON1",
+51:        "-DSQLITE_ENABLE_MATH_FUNCTIONS",
+52:        "-DSQLITE_ENABLE_NORMALIZE",
+53:        "-DSQLITE_ENABLE_RTREE",
+54:        "-DSQLITE_ENABLE_STAT4",
+55:        "-DSQLITE_HAVE_ISNAN",
+56:        "-DSQLITE_OMIT_BUILTIN_TEST",
+57:        "-DSQLITE_OMIT_DEPRECATED",
+58:        "-DSQLITE_OMIT_PROGRESS_CALLBACK",
+59:        "-DSQLITE_OMIT_SHARED_CACHE",
+60:        "-DSQLITE_SECURE_DELETE",
+61:        "-DSQLITE_TEMP_STORE=3",
+62:        "-DSQLITE_THREADSAFE=2",
+73:    it.sqliteVersion.set("3.53.4")
+(no SQLITE_OMIT_LOAD_EXTENSION in the list above = extension loading compiled in)
+
+## requery sqlite-android (master, sqlite-android/src/main/jni/sqlite/Android.mk)
+11:	-DSQLITE_HAVE_ISNAN \
+12:	-DSQLITE_DEFAULT_JOURNAL_SIZE_LIMIT=1048576 \
+13:	-DSQLITE_THREADSAFE=2 \
+14:	-DSQLITE_TEMP_STORE=3 \
+15:	-DSQLITE_POWERSAFE_OVERWRITE=1 \
+16:	-DSQLITE_DEFAULT_FILE_FORMAT=4 \
+17:	-DSQLITE_DEFAULT_AUTOVACUUM=1 \
+18:	-DSQLITE_ENABLE_MEMORY_MANAGEMENT=1 \
+19:	-DSQLITE_ENABLE_FTS3 \
+20:	-DSQLITE_ENABLE_FTS3_PARENTHESIS \
+21:	-DSQLITE_ENABLE_FTS4 \
+22:    -DSQLITE_ENABLE_FTS4_PARENTHESIS \
+23:    -DSQLITE_ENABLE_FTS5 \
+24:    -DSQLITE_ENABLE_FTS5_PARENTHESIS \
+25:	-DSQLITE_ENABLE_JSON1 \
+26:	-DSQLITE_ENABLE_RTREE=1 \
+27:	-DSQLITE_UNTESTABLE \
+28:	-DSQLITE_OMIT_COMPILEOPTION_DIAGS \
+29:	-DSQLITE_DEFAULT_FILE_PERMISSIONS=0600 \
+30:    -DSQLITE_DEFAULT_MEMSTATUS=0 \
+31:    -DSQLITE_MAX_EXPR_DEPTH=0 \
+32:    -DSQLITE_USE_ALLOCA \
+33:    -DSQLITE_ENABLE_BATCH_ATOMIC_WRITE \
+## requery extension hook (SQLiteDatabaseConfiguration.java)
+106:    public final List<SQLiteCustomExtension> customExtensions = new ArrayList<>();
+145:        this.customExtensions.addAll(extensions);
+185:        customExtensions.clear();
+186:        customExtensions.addAll(other.customExtensions);
+
+## SQLCipher for Android (master, sqlcipher/src/main/jni/sqlcipher/Android.mk)
+10:	-DSQLITE_HAS_CODEC                               \
+12:	-DSQLITE_TEMP_STORE=2                            \
+13:	-DSQLITE_THREADSAFE=1                            \
+14:	-DSQLITE_ENABLE_COLUMN_METADATA                  \
+15:	-DSQLITE_ENABLE_FTS3_PARENTHESIS                 \
+16:	-DSQLITE_ENABLE_FTS4                             \
+17:	-DSQLITE_ENABLE_FTS4_UNICODE61                   \
+18:	-DSQLITE_ENABLE_FTS5                             \
+19:	-DSQLITE_ENABLE_MEMORY_MANAGEMENT                \
+20:	-DSQLITE_ENABLE_UNLOCK_NOTIFY                    \
+21:	-DSQLITE_ENABLE_RTREE                            \
+22:	-DSQLITE_SOUNDEX                                 \
+24:	-DSQLITE_ENABLE_LOAD_EXTENSION                   \
+25:	-DSQLITE_ENABLE_STAT3                            \
+26:	-DSQLITE_ENABLE_STAT4                            \
+27:	-DSQLITE_ENABLE_JSON1                            \
+28:	-DSQLITE_ENABLE_EXPLAIN_COMMENTS                 \
+29:	-DSQLITE_DEFAULT_WAL_SYNCHRONOUS=1               \
+30:	-DSQLITE_MAX_VARIABLE_NUMBER=99999               \
+31:	-DSQLITE_DEFAULT_JOURNAL_SIZE_LIMIT=1048576      \
+32:	-DSQLITE_ENABLE_SESSION                          \
+33:	-DSQLITE_ENABLE_PREUPDATE_HOOK                   \
+34:	-DSQLITE_ENABLE_DBSTAT_VTAB                      \
+35:	-DSQLITE_ENABLE_SNAPSHOT                         \
+36:	-DSQLITE_USE_URI                                 \
+37:	-DSQLITE_EXTRA_INIT=sqlcipher_extra_init         \
+38:	-DSQLITE_EXTRA_SHUTDOWN=sqlcipher_extra_shutdown
+## SQLCipher connection open (android_database_SQLiteConnection.cpp)
+234:    sqlite3_enable_load_extension(db, 1);
+
+## sqlite-vec Makefile: NEON only for macOS arm64, Android cross-compiles skip SIMD
+43:	CFLAGS += -mcpu=apple-m1 -DSQLITE_VEC_ENABLE_NEON
+46:	ifeq ($(findstring android,$(CC)),)

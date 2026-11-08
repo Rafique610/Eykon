@@ -1,0 +1,13 @@
+--------- beginning of main
+11-08 19:42:47.143 I/TestRunner(23138): run started: 1 tests
+11-08 19:42:47.145 I/TestRunner(23138): started: memoryAllTables(com.eykon.memory.video.OffHeapVectorTest)
+11-08 19:42:47.189 I/EYKO109 (23138): device sheet: samsung SM-A325F, Android 13 (API 33), sqlite 3.32.2, commit d7af093+eyko114+115-uncommitted, date 2026-11-08
+11-08 19:42:47.191 I/EYKO109 (23138): device sheet: RAM 5.9 GB, java heap limit 268 MB, free storage 56.9 GB, vectors real_own_clips_90+noise
+11-08 19:43:54.459 I/EYKO109 (23138): n=50000 offheap_mapped_native: pss_before_mb=55; pss_after_mb=325; java_before_mb=3; java_after_mb=4; native_before_mb=11; native_after_mb=11; tables_loaded=3 of 3
+11-08 19:43:54.483 I/EYKO109 (23138): n=50000 memory_offheap_mapped_native: pss_before_mb=55; pss_after_mb=325; java_before_mb=3; java_after_mb=4; native_before_mb=11; native_after_mb=11; tables_loaded=3 of 3
+11-08 19:46:25.210 I/EYKO109 (23138): n=100000 offheap_mapped_native: pss_before_mb=55; pss_after_mb=594; java_before_mb=3; java_after_mb=5; native_before_mb=11; native_after_mb=11; tables_loaded=3 of 3
+11-08 19:46:25.250 I/EYKO109 (23138): n=100000 memory_offheap_mapped_native: pss_before_mb=55; pss_after_mb=594; java_before_mb=3; java_after_mb=5; native_before_mb=11; native_after_mb=11; tables_loaded=3 of 3
+11-08 19:46:25.596 I/EYKO109 (23138): csv written: /storage/emulated/0/Android/data/com.eykon.memory/files/results/eyko109-memory-SM_A325F-20261108-1942.csv
+11-08 19:46:25.596 I/EYKO109 (23138): pull it with: adb pull /storage/emulated/0/Android/data/com.eykon.memory/files/results/eyko109-memory-SM_A325F-20261108-1942.csv
+11-08 19:46:25.596 I/TestRunner(23138): finished: memoryAllTables(com.eykon.memory.video.OffHeapVectorTest)
+11-08 19:46:25.600 I/TestRunner(23138): run finished: 1 tests, 0 failed, 0 ignored

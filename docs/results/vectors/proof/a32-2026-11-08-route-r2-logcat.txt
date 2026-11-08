@@ -1,0 +1,108 @@
+--------- beginning of main
+11-08 15:28:32.543 I/TestRunner(22943): run started: 1 tests
+11-08 15:28:32.546 I/TestRunner(22943): started: loadAndSweep(com.eykon.memory.spike.RouteR2Test)
+11-08 15:28:32.635 I/EYKO31  (22943): R2 plugin neon: /data/user/0/com.eykon.memory/files/sqlite-vec/neon/libvec0.so sha256 264ec3266849dc7cd9e1454abacbadae4cc900f55888c7311522f66297fc3e46
+11-08 15:28:32.635 I/EYKO31  (22943): R2 plugin no-neon: /data/user/0/com.eykon.memory/files/sqlite-vec/no-neon/libvec0.so sha256 ccd7178d98dbe081b63688a9259ab40528201dba5b22a9524760e8bde7e38329
+11-08 15:28:32.749 I/EYKO31  (22943): R2 loads: sqlite 3.49.0, vec_version v0.1.9, first open with plugin 105.1 ms
+11-08 15:28:32.749 I/EYKO31  (22943): R2 vec_debug: Version: v0.1.9 | Date: 2026-03-31T08:01:41Z+0000 | Commit: e9f598abfa0c06b328d8fe5da9c3760cce74be10 | Build flags:  neon
+11-08 15:28:32.758 I/EYKO31  (22943): R2 fts5 works: bm25 = -1e-06
+11-08 15:28:32.795 I/EYKO31  (22943): device sheet: samsung SM-A325F, Android 13 (API 33), sqlite 3.49.0, commit 2cb5b26+r2test-uncommitted, date 2026-11-08
+11-08 15:28:32.796 I/EYKO31  (22943): device sheet: RAM 5.9 GB, java heap limit 268 MB, free storage 57.1 GB, vectors real_own_clips_90+noise
+11-08 15:28:34.081 I/EYKO31  (22943): n=1000 vec0 insert all: 1210 ms, file 2.1 MB
+11-08 15:28:34.311 I/EYKO31  (22943): n=1000 sqlite_vec_requery recall@20 1.0000 (400 of 400) against blob_memory_fast
+11-08 15:28:34.482 I/EYKO31  (22943): n=1000 sqlite_vec_requery run 1: median 6.85 ms, worst 7.86 ms
+11-08 15:28:34.637 I/EYKO31  (22943): n=1000 sqlite_vec_requery run 2: median 6.80 ms, worst 6.99 ms
+11-08 15:28:34.794 I/EYKO31  (22943): n=1000 sqlite_vec_requery run 3: median 6.77 ms, worst 8.18 ms
+11-08 15:28:34.950 I/EYKO31  (22943): n=1000 sqlite_vec_requery run 4: median 6.81 ms, worst 7.70 ms
+11-08 15:28:35.106 I/EYKO31  (22943): n=1000 sqlite_vec_requery run 5: median 6.83 ms, worst 7.53 ms
+11-08 15:28:35.152 I/EYKO31  (22943): n=1000 blob_memory_fast run 1: median 1.23 ms, worst 1.40 ms
+11-08 15:28:35.196 I/EYKO31  (22943): n=1000 blob_memory_fast run 2: median 1.24 ms, worst 1.39 ms
+11-08 15:28:35.240 I/EYKO31  (22943): n=1000 blob_memory_fast run 3: median 1.23 ms, worst 1.47 ms
+11-08 15:28:35.284 I/EYKO31  (22943): n=1000 blob_memory_fast run 4: median 1.23 ms, worst 1.45 ms
+11-08 15:28:35.328 I/EYKO31  (22943): n=1000 blob_memory_fast run 5: median 1.24 ms, worst 1.47 ms
+11-08 15:28:38.104 I/EYKO31  (22943): n=5000 vec0 insert all: 2737 ms, file 10.7 MB
+11-08 15:28:38.889 I/EYKO31  (22943): n=5000 sqlite_vec_requery recall@20 1.0000 (400 of 400) against blob_memory_fast
+11-08 15:28:39.480 I/EYKO31  (22943): n=5000 sqlite_vec_requery run 1: median 27.17 ms, worst 27.57 ms
+11-08 15:28:40.051 I/EYKO31  (22943): n=5000 sqlite_vec_requery run 2: median 27.37 ms, worst 29.73 ms
+11-08 15:28:40.615 I/EYKO31  (22943): n=5000 sqlite_vec_requery run 3: median 27.21 ms, worst 28.27 ms
+11-08 15:28:41.182 I/EYKO31  (22943): n=5000 sqlite_vec_requery run 4: median 27.14 ms, worst 29.92 ms
+11-08 15:28:41.744 I/EYKO31  (22943): n=5000 sqlite_vec_requery run 5: median 27.17 ms, worst 27.60 ms
+11-08 15:28:41.869 I/EYKO31  (22943): n=5000 blob_memory_fast run 1: median 4.99 ms, worst 5.15 ms
+11-08 15:28:41.988 I/EYKO31  (22943): n=5000 blob_memory_fast run 2: median 4.96 ms, worst 5.17 ms
+11-08 15:28:42.107 I/EYKO31  (22943): n=5000 blob_memory_fast run 3: median 4.98 ms, worst 5.10 ms
+11-08 15:28:42.226 I/EYKO31  (22943): n=5000 blob_memory_fast run 4: median 5.00 ms, worst 5.08 ms
+11-08 15:28:42.345 I/EYKO31  (22943): n=5000 blob_memory_fast run 5: median 4.97 ms, worst 5.16 ms
+11-08 15:28:53.094 I/EYKO31  (22943): n=20000 vec0 insert all: 10695 ms, file 42.8 MB
+11-08 15:28:55.494 I/EYKO31  (22943): n=20000 sqlite_vec_requery recall@20 1.0000 (400 of 400) against blob_memory_fast
+11-08 15:28:57.705 I/EYKO31  (22943): n=20000 sqlite_vec_requery run 1: median 99.63 ms, worst 136.45 ms
+11-08 15:28:59.941 I/EYKO31  (22943): n=20000 sqlite_vec_requery run 2: median 104.70 ms, worst 184.60 ms
+11-08 15:29:02.091 I/EYKO31  (22943): n=20000 sqlite_vec_requery run 3: median 104.76 ms, worst 127.33 ms
+11-08 15:29:04.240 I/EYKO31  (22943): n=20000 sqlite_vec_requery run 4: median 104.47 ms, worst 120.06 ms
+11-08 15:29:06.347 I/EYKO31  (22943): n=20000 sqlite_vec_requery run 5: median 102.39 ms, worst 116.93 ms
+11-08 15:29:06.796 I/EYKO31  (22943): n=20000 blob_memory_fast run 1: median 20.40 ms, worst 23.47 ms
+11-08 15:29:07.252 I/EYKO31  (22943): n=20000 blob_memory_fast run 2: median 21.59 ms, worst 22.20 ms
+11-08 15:29:07.715 I/EYKO31  (22943): n=20000 blob_memory_fast run 3: median 21.76 ms, worst 25.91 ms
+11-08 15:29:08.124 I/EYKO31  (22943): n=20000 blob_memory_fast run 4: median 18.77 ms, worst 22.15 ms
+11-08 15:29:08.518 I/EYKO31  (22943): n=20000 blob_memory_fast run 5: median 18.70 ms, worst 19.03 ms
+11-08 15:29:10.894 I/EYKO31  (22943): n=20000 sqlite_vec_requery_noneon run 1: median 110.08 ms, worst 137.10 ms
+11-08 15:29:13.078 I/EYKO31  (22943): n=20000 sqlite_vec_requery_noneon run 2: median 107.92 ms, worst 110.60 ms
+11-08 15:29:15.258 I/EYKO31  (22943): n=20000 sqlite_vec_requery_noneon run 3: median 107.81 ms, worst 109.39 ms
+11-08 15:29:17.437 I/EYKO31  (22943): n=20000 sqlite_vec_requery_noneon run 4: median 107.86 ms, worst 109.02 ms
+11-08 15:29:19.618 I/EYKO31  (22943): n=20000 sqlite_vec_requery_noneon run 5: median 108.08 ms, worst 108.94 ms
+11-08 15:29:45.239 I/EYKO31  (22943): n=50000 vec0 insert all: 25529 ms, file 104.8 MB
+11-08 15:29:51.119 I/EYKO31  (22943): n=50000 sqlite_vec_requery recall@20 1.0000 (400 of 400) against blob_memory_fast
+11-08 15:29:56.194 I/EYKO31  (22943): n=50000 sqlite_vec_requery run 1: median 239.71 ms, worst 245.45 ms
+11-08 15:30:01.061 I/EYKO31  (22943): n=50000 sqlite_vec_requery run 2: median 240.50 ms, worst 253.30 ms
+11-08 15:30:05.837 I/EYKO31  (22943): n=50000 sqlite_vec_requery run 3: median 237.48 ms, worst 238.97 ms
+11-08 15:30:10.622 I/EYKO31  (22943): n=50000 sqlite_vec_requery run 4: median 237.84 ms, worst 241.67 ms
+11-08 15:30:15.456 I/EYKO31  (22943): n=50000 sqlite_vec_requery run 5: median 239.81 ms, worst 245.57 ms
+11-08 15:30:16.458 I/EYKO31  (22943): n=50000 blob_memory_fast run 1: median 46.51 ms, worst 47.26 ms
+11-08 15:30:17.408 I/EYKO31  (22943): n=50000 blob_memory_fast run 2: median 46.31 ms, worst 46.92 ms
+11-08 15:30:18.360 I/EYKO31  (22943): n=50000 blob_memory_fast run 3: median 46.21 ms, worst 47.51 ms
+11-08 15:30:19.310 I/EYKO31  (22943): n=50000 blob_memory_fast run 4: median 46.21 ms, worst 46.94 ms
+11-08 15:30:20.257 I/EYKO31  (22943): n=50000 blob_memory_fast run 5: median 46.10 ms, worst 46.67 ms
+11-08 15:31:09.544 I/EYKO31  (22943): n=100000 vec0 insert all: 49175 ms, file 209.6 MB
+11-08 15:31:20.878 I/EYKO31  (22943): n=100000 sqlite_vec_requery recall@20 1.0000 (400 of 400) against blob_memory_fast
+11-08 15:31:30.765 I/EYKO31  (22943): n=100000 sqlite_vec_requery run 1: median 467.94 ms, worst 478.01 ms
+11-08 15:31:40.627 I/EYKO31  (22943): n=100000 sqlite_vec_requery run 2: median 487.19 ms, worst 558.96 ms
+11-08 15:31:50.371 I/EYKO31  (22943): n=100000 sqlite_vec_requery run 3: median 485.77 ms, worst 490.34 ms
+11-08 15:32:00.099 I/EYKO31  (22943): n=100000 sqlite_vec_requery run 4: median 485.97 ms, worst 489.44 ms
+11-08 15:32:09.847 I/EYKO31  (22943): n=100000 sqlite_vec_requery run 5: median 485.61 ms, worst 489.58 ms
+11-08 15:32:11.845 I/EYKO31  (22943): n=100000 blob_memory_fast run 1: median 93.55 ms, worst 97.65 ms
+11-08 15:32:13.746 I/EYKO31  (22943): n=100000 blob_memory_fast run 2: median 93.19 ms, worst 97.08 ms
+11-08 15:32:15.642 I/EYKO31  (22943): n=100000 blob_memory_fast run 3: median 93.40 ms, worst 94.40 ms
+11-08 15:32:17.536 I/EYKO31  (22943): n=100000 blob_memory_fast run 4: median 92.98 ms, worst 95.03 ms
+11-08 15:32:19.432 I/EYKO31  (22943): n=100000 blob_memory_fast run 5: median 93.21 ms, worst 94.84 ms
+11-08 15:32:30.570 I/EYKO31  (22943): n=100000 sqlite_vec_requery_noneon run 1: median 524.75 ms, worst 608.35 ms
+11-08 15:32:41.074 I/EYKO31  (22943): n=100000 sqlite_vec_requery_noneon run 2: median 524.90 ms, worst 527.10 ms
+11-08 15:32:51.586 I/EYKO31  (22943): n=100000 sqlite_vec_requery_noneon run 3: median 524.69 ms, worst 527.64 ms
+11-08 15:33:02.141 I/EYKO31  (22943): n=100000 sqlite_vec_requery_noneon run 4: median 525.10 ms, worst 560.74 ms
+11-08 15:33:12.666 I/EYKO31  (22943): n=100000 sqlite_vec_requery_noneon run 5: median 525.17 ms, worst 527.85 ms
+11-08 15:33:12.740 I/EYKO31  (22943): csv written: /storage/emulated/0/Android/data/com.eykon.memory/files/results/eyko106-route-r2-SM_A325F-20261108-1528.csv
+11-08 15:33:12.740 I/EYKO31  (22943): pull it with: adb pull /storage/emulated/0/Android/data/com.eykon.memory/files/results/eyko106-route-r2-SM_A325F-20261108-1528.csv
+11-08 15:33:12.740 I/TestRunner(22943): finished: loadAndSweep(com.eykon.memory.spike.RouteR2Test)
+11-08 15:33:12.745 I/TestRunner(22943): run finished: 1 tests, 0 failed, 0 ignored
+11-08 15:33:16.922 I/TestRunner(23272): run started: 1 tests
+11-08 15:33:16.926 I/TestRunner(23272): started: memoryWithAllThreeTables(com.eykon.memory.spike.RouteR2Test)
+11-08 15:33:17.200 I/EYKO31  (23272): device sheet: samsung SM-A325F, Android 13 (API 33), sqlite 3.49.0, commit 2cb5b26+r2test-uncommitted, date 2026-11-08
+11-08 15:33:17.202 I/EYKO31  (23272): device sheet: RAM 5.9 GB, java heap limit 268 MB, free storage 57.1 GB, vectors real_own_clips_90+noise
+11-08 15:33:49.533 I/EYKO31  (23272): n=20000 vec0 all tables (requery): PSS 56 -> 58 MB, java heap 3 MB, 60 hits
+11-08 15:33:49.550 I/EYKO31  (23272): n=20000 memory_all_tables_vec0_requery: pss_before_mb=56; pss_after_mb=58; java_heap_mb=3; tables_searched=3 of 3; hits=60
+11-08 15:35:01.065 I/EYKO31  (23272): n=50000 vec0 all tables (requery): PSS 56 -> 60 MB, java heap 3 MB, 60 hits
+11-08 15:35:01.081 I/EYKO31  (23272): n=50000 memory_all_tables_vec0_requery: pss_before_mb=56; pss_after_mb=60; java_heap_mb=3; tables_searched=3 of 3; hits=60
+11-08 15:37:23.679 I/EYKO31  (23272): n=100000 vec0 all tables (requery): PSS 56 -> 60 MB, java heap 3 MB, 60 hits
+11-08 15:37:23.697 I/EYKO31  (23272): n=100000 memory_all_tables_vec0_requery: pss_before_mb=56; pss_after_mb=60; java_heap_mb=3; tables_searched=3 of 3; hits=60
+11-08 15:37:23.898 I/EYKO31  (23272): csv written: /storage/emulated/0/Android/data/com.eykon.memory/files/results/eyko106-route-r2-memory-SM_A325F-20261108-1533.csv
+11-08 15:37:23.899 I/EYKO31  (23272): pull it with: adb pull /storage/emulated/0/Android/data/com.eykon.memory/files/results/eyko106-route-r2-memory-SM_A325F-20261108-1533.csv
+11-08 15:37:23.899 I/TestRunner(23272): finished: memoryWithAllThreeTables(com.eykon.memory.spike.RouteR2Test)
+11-08 15:37:23.903 I/TestRunner(23272): run finished: 1 tests, 0 failed, 0 ignored
+11-08 15:48:47.305 I/TestRunner(25573): run started: 1 tests
+11-08 15:48:47.309 I/TestRunner(25573): started: sameFilesBothEngines(com.eykon.memory.spike.RouteR2DiagnoseTest)
+11-08 15:50:32.352 I/EYKO31  (25573): diag n=100000 file written-by-google (208.4 MB): google settings {page_size=4096, cache_size=-2000, mmap_size=0, journal_mode=delete, locking_mode=normal, temp_store=0, cache_spill=483, soft_heap_limit=0, hard_heap_limit=0, threads=0, auto_vacuum=1, synchronous=2}
+11-08 15:50:32.368 I/EYKO31  (25573): diag n=100000 file written-by-google: requery settings {page_size=4096, cache_size=-2000, mmap_size=0, journal_mode=truncate, locking_mode=normal, temp_store=0, cache_spill=483, soft_heap_limit=8388608, hard_heap_limit=0, threads=0, auto_vacuum=1, synchronous=2}; differ: [journal_mode, soft_heap_limit]
+11-08 15:51:00.873 I/EYKO31  (25573): diag n=100000 file written-by-google: median ms google 235.8, requery 233.8, requery with google's settings 233.0 (now {journal_mode=truncate, soft_heap_limit=0})
+11-08 15:51:30.577 I/EYKO31  (25573): diag n=100000 file written-by-requery (209.6 MB): google settings {page_size=1024, cache_size=-2000, mmap_size=0, journal_mode=delete, locking_mode=normal, temp_store=0, cache_spill=1765, soft_heap_limit=0, hard_heap_limit=0, threads=0, auto_vacuum=1, synchronous=2}
+11-08 15:51:30.584 I/EYKO31  (25573): diag n=100000 file written-by-requery: requery settings {page_size=1024, cache_size=-2000, mmap_size=0, journal_mode=truncate, locking_mode=normal, temp_store=0, cache_spill=1765, soft_heap_limit=0, hard_heap_limit=0, threads=0, auto_vacuum=1, synchronous=2}; differ: [journal_mode]
+11-08 15:52:30.560 I/EYKO31  (25573): diag n=100000 file written-by-requery: median ms google 485.0, requery 485.1, requery with google's settings 482.1 (now {journal_mode=truncate})
+11-08 15:52:30.763 I/TestRunner(25573): finished: sameFilesBothEngines(com.eykon.memory.spike.RouteR2DiagnoseTest)
+11-08 15:52:30.768 I/TestRunner(25573): run finished: 1 tests, 0 failed, 0 ignored
