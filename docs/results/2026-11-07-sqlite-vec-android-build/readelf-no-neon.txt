@@ -1,0 +1,69 @@
+# D:\eykon-cache\sqlite-vec-android\out\no-neon\arm64-v8a\libvec0.so
+# size 142760 bytes, sha256 ccd7178d98dbe081b63688a9259ab40528201dba5b22a9524760e8bde7e38329
+# arm64 4-lane float instructions in the disassembly: 473
+
+$ llvm-readelf -lW libvec0.so
+
+Elf file type is DYN (Shared object file)
+Entry point 0x0
+There are 10 program headers, starting at offset 64
+
+Program Headers:
+  Type           Offset   VirtAddr           PhysAddr           FileSiz  MemSiz   Flg Align
+  PHDR           0x000040 0x0000000000000040 0x0000000000000040 0x000230 0x000230 R   0x8
+  LOAD           0x000000 0x0000000000000000 0x0000000000000000 0x00aa28 0x00aa28 R   0x4000
+  LOAD           0x00aa28 0x000000000000ea28 0x000000000000ea28 0x014788 0x014788 R E 0x4000
+  LOAD           0x01f1b0 0x00000000000271b0 0x00000000000271b0 0x000600 0x000e50 RW  0x4000
+  LOAD           0x01f7b0 0x000000000002b7b0 0x000000000002b7b0 0x0003f0 0x0003f8 RW  0x4000
+  DYNAMIC        0x01f3a8 0x00000000000273a8 0x00000000000273a8 0x000180 0x000180 RW  0x8
+  GNU_RELRO      0x01f1b0 0x00000000000271b0 0x00000000000271b0 0x000600 0x000e50 R   0x1
+  GNU_EH_FRAME   0x007c34 0x0000000000007c34 0x0000000000007c34 0x00060c 0x00060c R   0x4
+  GNU_STACK      0x000000 0x0000000000000000 0x0000000000000000 0x000000 0x000000 RW  0x0
+  NOTE           0x000270 0x0000000000000270 0x0000000000000270 0x000098 0x000098 R   0x4
+
+ Section to Segment mapping:
+  Segment Sections...
+   00     
+   01     .note.android.ident .dynsym .gnu.version .gnu.version_r .gnu.hash .dynstr .rela.dyn .rela.plt .rodata .eh_frame_hdr .eh_frame 
+   02     .text .plt 
+   03     .data.rel.ro .fini_array .dynamic .got .got.plt .relro_padding 
+   04     .data .bss 
+   05     .dynamic 
+   06     .data.rel.ro .fini_array .dynamic .got .got.plt .relro_padding 
+   07     .eh_frame_hdr 
+   08     
+   09     .note.android.ident 
+   None   .comment .symtab .shstrtab .strtab 
+
+$ llvm-readelf -dW libvec0.so
+Dynamic section at offset 0x1f3a8 contains 24 entries:
+  Tag                Type           Name/Value
+  0x0000000000000001 (NEEDED)       Shared library: [libm.so]
+  0x0000000000000001 (NEEDED)       Shared library: [libdl.so]
+  0x0000000000000001 (NEEDED)       Shared library: [libc.so]
+  0x000000000000001e (FLAGS)        BIND_NOW 
+  0x000000006ffffffb (FLAGS_1)      NOW 
+  0x0000000000000007 (RELA)         0x1c60
+  0x0000000000000008 (RELASZ)       2664 (bytes)
+  0x0000000000000009 (RELAENT)      24 (bytes)
+  0x000000006ffffff9 (RELACOUNT)    108
+  0x0000000000000017 (JMPREL)       0x26c8
+  0x0000000000000002 (PLTRELSZ)     1800 (bytes)
+  0x0000000000000003 (PLTGOT)       0x27540
+  0x0000000000000014 (PLTREL)       RELA
+  0x0000000000000006 (SYMTAB)       0x308
+  0x000000000000000b (SYMENT)       24 (bytes)
+  0x0000000000000005 (STRTAB)       0x12b4
+  0x000000000000000a (STRSZ)        2473 (bytes)
+  0x000000006ffffef5 (GNU_HASH)     0xfa8
+  0x000000000000001a (FINI_ARRAY)   0x27398
+  0x000000000000001c (FINI_ARRAYSZ) 16 (bytes)
+  0x000000006ffffff0 (VERSYM)       0xe90
+  0x000000006ffffffe (VERNEED)      0xf88
+  0x000000006fffffff (VERNEEDNUM)   1
+  0x0000000000000000 (NULL)         0x0
+
+$ llvm-readelf -sW --dyn-syms libvec0.so | grep sqlite3_vec_init
+    63: 000000000001abc8   484 FUNC    GLOBAL DEFAULT    12 sqlite3_vec_init
+    34: 00000000000271b8   384 OBJECT  LOCAL  DEFAULT    14 sqlite3_vec_init.aFunc
+   247: 000000000001abc8   484 FUNC    GLOBAL DEFAULT    12 sqlite3_vec_init
