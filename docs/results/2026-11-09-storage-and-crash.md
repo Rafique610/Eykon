@@ -10,7 +10,7 @@ database for 27.8 min on the Pixel (`docs/results/2026-10-20-ego4d-baseline.md`)
 |---|---|
 | Phone | Infinix X670, Android 13 |
 | Build | `feature/video-memory` at `43d610e`, installed with `adb install -r` (never `connectedDebugAndroidTest`) |
-| Source of the video | _what the clips are, where they came from, bitrate; say if it is a screen recording or camera video_ |
+| Source of the video | A 7 h 30 min screen recording of a work session (1920x1080, 60 fps, H.264 + AAC, 1.25 Mbps), no faces and no security concern (confirmed by Zara). Cut without re-encoding into pieces of 5, 10, 15 and 30 min (part 2) and nine of about 3 min (part 3). **Not camera video**: a screen recording is low-bitrate (about 0.12 MB per second against about 2.4 for the phone's own clips), so video copies per minute will be far smaller than for real phone video, and a still screen keeps few frames. Do not quote the numbers as the cost of an hour of camera video. |
 | Free storage before | _ GB (`df -h /data`) |
 
 ## Part 2: storage by minutes of video
