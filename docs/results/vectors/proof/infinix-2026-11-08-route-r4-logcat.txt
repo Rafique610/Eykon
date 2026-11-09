@@ -1,0 +1,70 @@
+--------- beginning of main
+11-08 02:00:28.115 19248 19270 I EYKO108 : device sheet: INFINIX Infinix X670, Android 13 (API 33), sqlite 3.32.2, commit eyko108-wip, date 2026-11-08
+11-08 02:00:28.118 19248 19270 I EYKO108 : device sheet: RAM 8.1 GB, java heap limit 268 MB, free storage 13.9 GB, vectors real_own_clips_90+noise
+11-08 02:00:28.695 19248 19270 I EYKO108 : n=1000 (sqlite_vec_static) open 0.4 ms, insert+exact 527 ms, file 2.2 MB
+11-08 02:00:28.746 19248 19270 I EYKO108 : n=1000 (sqlite_vec_static) recall@20 1.0000 (400 of 400); open_ms=0.4; insert_ms=527
+11-08 02:00:28.807 19248 19270 I EYKO108 : n=1000 sqlite_vec_static run 1: median 2.43 ms, worst 2.68 ms
+11-08 02:00:28.862 19248 19270 I EYKO108 : n=1000 sqlite_vec_static run 2: median 2.31 ms, worst 2.49 ms
+11-08 02:00:28.916 19248 19270 I EYKO108 : n=1000 sqlite_vec_static run 3: median 2.31 ms, worst 2.50 ms
+11-08 02:00:28.973 19248 19270 I EYKO108 : n=1000 sqlite_vec_static run 4: median 2.39 ms, worst 2.84 ms
+11-08 02:00:29.035 19248 19270 I EYKO108 : n=1000 sqlite_vec_static run 5: median 2.43 ms, worst 4.59 ms
+11-08 02:00:30.576 19248 19270 I EYKO108 : n=5000 (sqlite_vec_static) open 0.2 ms, insert+exact 1536 ms, file 10.6 MB
+11-08 02:00:30.728 19248 19270 I EYKO108 : n=5000 (sqlite_vec_static) recall@20 1.0000 (400 of 400); open_ms=0.2; insert_ms=1536
+11-08 02:00:30.878 19248 19270 I EYKO108 : n=5000 sqlite_vec_static run 1: median 7.09 ms, worst 7.37 ms
+11-08 02:00:31.027 19248 19270 I EYKO108 : n=5000 sqlite_vec_static run 2: median 7.01 ms, worst 7.38 ms
+11-08 02:00:31.177 19248 19270 I EYKO108 : n=5000 sqlite_vec_static run 3: median 7.06 ms, worst 7.25 ms
+11-08 02:00:31.326 19248 19270 I EYKO108 : n=5000 sqlite_vec_static run 4: median 7.05 ms, worst 7.20 ms
+11-08 02:00:31.476 19248 19270 I EYKO108 : n=5000 sqlite_vec_static run 5: median 7.01 ms, worst 7.52 ms
+11-08 02:00:37.844 19248 19270 I EYKO108 : n=20000 (sqlite_vec_static) open 0.2 ms, insert+exact 6360 ms, file 42.5 MB
+11-08 02:00:38.377 19248 19270 I EYKO108 : n=20000 (sqlite_vec_static) recall@20 1.0000 (400 of 400); open_ms=0.2; insert_ms=6360
+11-08 02:00:38.881 19248 19270 I EYKO108 : n=20000 sqlite_vec_static run 1: median 24.62 ms, worst 26.07 ms
+11-08 02:00:39.379 19248 19270 I EYKO108 : n=20000 sqlite_vec_static run 2: median 24.52 ms, worst 25.06 ms
+11-08 02:00:39.877 19248 19270 I EYKO108 : n=20000 sqlite_vec_static run 3: median 24.71 ms, worst 25.38 ms
+11-08 02:00:40.374 19248 19270 I EYKO108 : n=20000 sqlite_vec_static run 4: median 24.56 ms, worst 25.35 ms
+11-08 02:00:40.870 19248 19270 I EYKO108 : n=20000 sqlite_vec_static run 5: median 24.46 ms, worst 25.27 ms
+11-08 02:00:56.710 19248 19270 I EYKO108 : n=50000 (sqlite_vec_static) open 0.2 ms, insert+exact 15825 ms, file 104.1 MB
+11-08 02:00:57.987 19248 19270 I EYKO108 : n=50000 (sqlite_vec_static) recall@20 1.0000 (400 of 400); open_ms=0.2; insert_ms=15825
+11-08 02:00:59.145 19248 19270 I EYKO108 : n=50000 sqlite_vec_static run 1: median 57.55 ms, worst 58.79 ms
+11-08 02:01:00.318 19248 19270 I EYKO108 : n=50000 sqlite_vec_static run 2: median 58.14 ms, worst 62.03 ms
+11-08 02:01:01.486 19248 19270 I EYKO108 : n=50000 sqlite_vec_static run 3: median 58.05 ms, worst 59.40 ms
+11-08 02:01:02.651 19248 19270 I EYKO108 : n=50000 sqlite_vec_static run 4: median 58.00 ms, worst 58.89 ms
+11-08 02:01:03.816 19248 19270 I EYKO108 : n=50000 sqlite_vec_static run 5: median 57.93 ms, worst 59.13 ms
+11-08 02:01:34.841 19248 19270 I EYKO108 : n=100000 (sqlite_vec_static) open 0.3 ms, insert+exact 31000 ms, file 208.2 MB
+11-08 02:01:37.231 19248 19270 I EYKO108 : n=100000 (sqlite_vec_static) recall@20 1.0000 (400 of 400); open_ms=0.3; insert_ms=31000
+11-08 02:01:39.434 19248 19270 I EYKO108 : n=100000 sqlite_vec_static run 1: median 109.71 ms, worst 111.32 ms
+11-08 02:01:41.668 19248 19270 I EYKO108 : n=100000 sqlite_vec_static run 2: median 111.15 ms, worst 115.13 ms
+11-08 02:01:43.884 19248 19270 I EYKO108 : n=100000 sqlite_vec_static run 3: median 110.32 ms, worst 112.28 ms
+11-08 02:01:46.101 19248 19270 I EYKO108 : n=100000 sqlite_vec_static run 4: median 110.21 ms, worst 112.55 ms
+11-08 02:01:48.356 19248 19270 I EYKO108 : n=100000 sqlite_vec_static run 5: median 112.36 ms, worst 115.66 ms
+11-08 02:01:48.392 19248 19270 I EYKO108 : csv written: /storage/emulated/0/Android/data/com.eykon.memory/files/results/eyko108-r4-neon-Infinix_X670-20261108-0200.csv
+11-08 02:01:48.392 19248 19270 I EYKO108 : pull it with: adb pull /storage/emulated/0/Android/data/com.eykon.memory/files/results/eyko108-r4-neon-Infinix_X670-20261108-0200.csv
+11-08 02:02:51.572 20286 20306 I EYKO108 : device sheet: INFINIX Infinix X670, Android 13 (API 33), sqlite 3.32.2, commit eyko108-wip, date 2026-11-08
+11-08 02:02:51.574 20286 20306 I EYKO108 : device sheet: RAM 8.1 GB, java heap limit 268 MB, free storage 12.4 GB, vectors real_own_clips_90+noise
+11-08 02:02:58.792 20286 20306 I EYKO108 : n=20000 (sqlite_vec_static_noneon) open 0.3 ms, insert+exact 7170 ms, file 42.5 MB
+11-08 02:02:59.485 20286 20306 I EYKO108 : n=20000 (sqlite_vec_static_noneon) recall@20 1.0000 (400 of 400); open_ms=0.3; insert_ms=7170
+11-08 02:03:00.131 20286 20306 I EYKO108 : n=20000 sqlite_vec_static_noneon run 1: median 31.56 ms, worst 32.37 ms
+11-08 02:03:00.770 20286 20306 I EYKO108 : n=20000 sqlite_vec_static_noneon run 2: median 31.47 ms, worst 31.84 ms
+11-08 02:03:01.407 20286 20306 I EYKO108 : n=20000 sqlite_vec_static_noneon run 3: median 31.48 ms, worst 31.78 ms
+11-08 02:03:02.046 20286 20306 I EYKO108 : n=20000 sqlite_vec_static_noneon run 4: median 31.51 ms, worst 31.87 ms
+11-08 02:03:02.685 20286 20306 I EYKO108 : n=20000 sqlite_vec_static_noneon run 5: median 31.61 ms, worst 31.84 ms
+11-08 02:03:33.759 20286 20306 I EYKO108 : n=100000 (sqlite_vec_static_noneon) open 0.2 ms, insert+exact 31060 ms, file 208.2 MB
+11-08 02:03:37.086 20286 20306 I EYKO108 : n=100000 (sqlite_vec_static_noneon) recall@20 1.0000 (400 of 400); open_ms=0.2; insert_ms=31060
+11-08 02:03:40.131 20286 20306 I EYKO108 : n=100000 sqlite_vec_static_noneon run 1: median 151.93 ms, worst 153.28 ms
+11-08 02:03:43.184 20286 20306 I EYKO108 : n=100000 sqlite_vec_static_noneon run 2: median 152.36 ms, worst 153.25 ms
+11-08 02:03:46.232 20286 20306 I EYKO108 : n=100000 sqlite_vec_static_noneon run 3: median 152.18 ms, worst 153.67 ms
+11-08 02:03:49.286 20286 20306 I EYKO108 : n=100000 sqlite_vec_static_noneon run 4: median 152.34 ms, worst 155.23 ms
+11-08 02:03:52.344 20286 20306 I EYKO108 : n=100000 sqlite_vec_static_noneon run 5: median 152.32 ms, worst 156.72 ms
+11-08 02:03:52.383 20286 20306 I EYKO108 : csv written: /storage/emulated/0/Android/data/com.eykon.memory/files/results/eyko108-r4-noneon-Infinix_X670-20261108-0202.csv
+11-08 02:03:52.383 20286 20306 I EYKO108 : pull it with: adb pull /storage/emulated/0/Android/data/com.eykon.memory/files/results/eyko108-r4-noneon-Infinix_X670-20261108-0202.csv
+11-08 02:04:55.292 20831 20851 I EYKO108 : device sheet: INFINIX Infinix X670, Android 13 (API 33), sqlite 3.32.2, commit eyko108-wip, date 2026-11-08
+11-08 02:04:55.293 20831 20851 I EYKO108 : device sheet: RAM 8.1 GB, java heap limit 268 MB, free storage 12.2 GB, vectors real_own_clips_90+noise
+11-08 02:04:59.954 20831 20851 I EYKO108 : n=5000 (sqlite_vec_static) pss_before_mb=58; pss_after_mb=56; native_after_mb=8; java_after_mb=3; tables_built=3 of 3; open_ms=0.4
+11-08 02:04:59.968 20831 20851 I EYKO108 : n=5000 memory_sqlite_vec_static: pss_before_mb=58; pss_after_mb=56; native_after_mb=8; java_after_mb=3; tables_built=3 of 3; open_ms=0.4
+11-08 02:05:15.987 20831 20851 I EYKO108 : n=20000 (sqlite_vec_static) pss_before_mb=56; pss_after_mb=56; native_after_mb=8; java_after_mb=3; tables_built=3 of 3; open_ms=0.4
+11-08 02:05:16.001 20831 20851 I EYKO108 : n=20000 memory_sqlite_vec_static: pss_before_mb=56; pss_after_mb=56; native_after_mb=8; java_after_mb=3; tables_built=3 of 3; open_ms=0.4
+11-08 02:05:54.054 20831 20851 I EYKO108 : n=50000 (sqlite_vec_static) pss_before_mb=56; pss_after_mb=56; native_after_mb=8; java_after_mb=3; tables_built=3 of 3; open_ms=0.4
+11-08 02:05:54.066 20831 20851 I EYKO108 : n=50000 memory_sqlite_vec_static: pss_before_mb=56; pss_after_mb=56; native_after_mb=8; java_after_mb=3; tables_built=3 of 3; open_ms=0.4
+11-08 02:07:10.298 20831 20851 I EYKO108 : n=100000 (sqlite_vec_static) pss_before_mb=56; pss_after_mb=56; native_after_mb=8; java_after_mb=3; tables_built=3 of 3; open_ms=0.4
+11-08 02:07:10.310 20831 20851 I EYKO108 : n=100000 memory_sqlite_vec_static: pss_before_mb=56; pss_after_mb=56; native_after_mb=8; java_after_mb=3; tables_built=3 of 3; open_ms=0.4
+11-08 02:07:10.443 20831 20851 I EYKO108 : csv written: /storage/emulated/0/Android/data/com.eykon.memory/files/results/eyko108-r4-memory-neon-Infinix_X670-20261108-0204.csv
+11-08 02:07:10.444 20831 20851 I EYKO108 : pull it with: adb pull /storage/emulated/0/Android/data/com.eykon.memory/files/results/eyko108-r4-memory-neon-Infinix_X670-20261108-0204.csv

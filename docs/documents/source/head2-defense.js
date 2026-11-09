@@ -277,7 +277,7 @@ const Q = [
   ['A3', 'A', 'Android apps can ship their own SQLite. Did you try that?', 'Answered',
     'Yes, on the A32. Google\'s bundled SQLite (`BundledSQLiteDriver.addExtension`) loaded our own sqlite-vec file: same top 20 as our search at every size, and three tables at 100k fit in about 56 MB. But it is 2.5× slower than our in-memory search (230 against 91 ms at 100k) and returns at most 4,096 rows. Zara\'s own SQLite build (R4) is just as fast on the same phone. So we did not adopt it.',
     'E11 · `docs/results/2026-11-08-route-r1-bundled.md`',
-    'Before the test: we rebuilt sqlite-vec ourselves (4 KB pages and no NEON in the ready-made file). Even testing it raised the app\'s androidx.sqlite from 2.4.0 to 2.7.1, because Android\'s build tools keep test and app on one version. The Pixel and Infinix runs are not done. R2 (requery, EYKO-106) also works. It first measured 486 ms at 100k because of its 1 KB default page size; with 4 KB pages it matches R1. R3 (SQLCipher) was dropped by the owner on 8 Nov: same search, plus decryption on every read, and no card asks for encryption.', 'EYKO-104, 105, 106, 108; 107 (dropped)'],
+    'Before the test: we rebuilt sqlite-vec ourselves (4 KB pages and no NEON in the ready-made file). Even testing it raised the app\'s androidx.sqlite from 2.4.0 to 2.7.1, because Android\'s build tools keep test and app on one version. The Pixel and Infinix runs are not done. R2 (requery, EYKO-106) also works. It first measured 486 ms at 100k because of its 1 KB default page size; with 4 KB pages it matches R1. R3 (SQLCipher) was dropped by the owner on 8 Nov: same search, plus decryption on every read, and no card asks for encryption. On the Infinix our own build (R4, EYKO-108) also gave exact answers and 110 ms at 100k rows (E12).', 'EYKO-104, 105, 106, 108; 107 (dropped)'],
   ['A4', 'A', 'Did it fail only on one phone?', 'Answered',
     'No. Three phones from three makers: Samsung A32 (Helio G80, Android 13), Pixel 9 Pro XL (Tensor G4, Android 17) and Infinix X670 (MediaTek MT6781, Android 13). Same failure on all three.',
     'E4',
@@ -534,6 +534,16 @@ body.push(grid([3238, 3200, 3200], ['Ready-made Android file (checked with `read
 ], { firstColBold: true }));
 body.push(P('**Past brute force (B7), a proposal:** (1) vectors outside Java memory, as int8 or float16, still exact; (2) bundled sqlite-vec, judged on memory and file size, since without NEON it may be slower than our loop; (3) usearch, an approximate index that reads from disk, tested on the laptop first for recall@20 ≥ 0.95 (EYKO-91).', { run: { size: 20 }, before: 100 }));
 body.push(SRC('docs/results/eyko-89-android-sqlite-extensions/ (README, 02, 03, 04, sources.md, evidence/prebuilt-so-alignment.txt)'));
+ev('E12', 'Route R4: our own build of SQLite with sqlite-vec inside (Infinix, 8 Nov)', 'SQLite 3.53.4 and sqlite-vec 0.1.9 compiled together with the Android NDK; nothing is loaded at run time. Works on the Infinix and gives exact answers, but search is slower than BLOBs in memory.');
+body.push(grid([1638, 1500, 1500, 1500, 3500], ['Rows', 'sqlite-vec search (ms)', 'Same, no NEON (ms)', 'BLOBs in memory, fast loop (ms)', 'Notes'], [
+  ['1k', '2.4', '', '0.8', 'recall 1.0000'],
+  ['5k', '7.0', '', '3.6', 'recall 1.0000'],
+  ['20k', '24.6', '31.5', '13.9', 'recall 1.0000; NEON 1.3× faster than no NEON'],
+  ['50k', '58.0', '', '34.4', 'recall 1.0000'],
+  ['100k', '110.3', '152.3', '69.1', 'recall 1.0000; NEON 1.4× faster than no NEON'],
+], { firstColBold: true }));
+body.push(P('**What it shows (one phone, Infinix X670):** it works without loading anything (A3), answers are exact (recall 1.0000 on 400 of 400 checks at every size), and three tables at 100k rows build with a flat 56–59 MB process memory (the vectors stay in the database file, not in the 268 MB Java memory). It is 1.6× to 1.9× slower than the fast in-memory loop from the 8 Nov sweep (EYKO-95, random vectors, top 20 only; a different vector source, so only roughly comparable). It adds about 0.85 MB to the app after stripping and compression (one library) and its 16 KB alignment check passes. It took about two hours of building and 489 lines of new code for the test (C, CMake, Kotlin, scripts). Also found: sqlite-vec returns at most 4,096 nearest rows (k limit 4,096), and asking for 1,000 or more rows at 100k took about 300 ms, so it cannot give the app every frame\'s score as it does today. Repeated unplugged in flight mode: 114.8 ms at 100k (recall 1.0000). After the phone was pushed into low memory (3.2 GB taken, 700 MB left) the first search per table was 3.4 to 3.9 times slower (pages re-read from storage), then normal again. Not tested: through Room, the A32 and Pixel. Details: `docs/results/2026-11-08-route-r4-static.md`.', { run: { size: 20 }, before: 100 }));
+body.push(SRC('docs/results/vectors/route-r4/*.csv'));
 
 body.push(H2('Limits: how these numbers could mislead'));
 [

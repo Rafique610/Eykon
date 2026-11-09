@@ -1,0 +1,141 @@
+# EYKO-108 route R4: llvm-readelf from NDK r28c (28.2.13676358), built 8 Nov 2026
+
+=== libeykon_r4.so
+449b8952bbaa90d7c2699d0e252fc3c45d5fefbd3ec001b17ad24ac6879ac61a *android/app/src/androidTest/jniLibs/arm64-v8a/libeykon_r4.so
+--- readelf -lW
+
+Elf file type is DYN (Shared object file)
+Entry point 0x0
+There are 10 program headers, starting at offset 64
+
+Program Headers:
+  Type           Offset   VirtAddr           PhysAddr           FileSiz  MemSiz   Flg Align
+  PHDR           0x000040 0x0000000000000040 0x0000000000000040 0x000230 0x000230 R   0x8
+  LOAD           0x000000 0x0000000000000000 0x0000000000000000 0x045138 0x045138 R   0x4000
+  LOAD           0x045138 0x0000000000049138 0x0000000000049138 0x156038 0x156038 R E 0x4000
+  LOAD           0x19b170 0x00000000001a3170 0x00000000001a3170 0x002148 0x002e90 RW  0x4000
+  LOAD           0x19d2b8 0x00000000001a92b8 0x00000000001a92b8 0x003538 0x003ae8 RW  0x4000
+  DYNAMIC        0x19c9a8 0x00000000001a49a8 0x00000000001a49a8 0x000190 0x000190 RW  0x8
+  GNU_RELRO      0x19b170 0x00000000001a3170 0x00000000001a3170 0x002148 0x002e90 R   0x1
+  GNU_EH_FRAME   0x022760 0x0000000000022760 0x0000000000022760 0x0040ac 0x0040ac R   0x4
+  GNU_STACK      0x000000 0x0000000000000000 0x0000000000000000 0x000000 0x000000 RW  0x0
+  NOTE           0x000270 0x0000000000000270 0x0000000000000270 0x0000bc 0x0000bc R   0x4
+
+ Section to Segment mapping:
+  Segment Sections...
+   00     
+   01     .note.android.ident .note.gnu.build-id .dynsym .gnu.version .gnu.version_r .gnu.hash .dynstr .rela.dyn .rela.plt .rodata .eh_frame_hdr .eh_frame 
+   02     .text .plt 
+   03     .data.rel.ro .fini_array .dynamic .got .got.plt .relro_padding 
+   04     .data .bss 
+   05     .dynamic 
+   06     .data.rel.ro .fini_array .dynamic .got .got.plt .relro_padding 
+   07     .eh_frame_hdr 
+   08     
+   09     .note.android.ident .note.gnu.build-id 
+   None   .comment .debug_loc .debug_abbrev .debug_info .debug_ranges .debug_str .debug_line .symtab .shstrtab .strtab 
+--- readelf -sW --dyn-syms (JNI exports)
+    90: 000000000019de94     8 FUNC    GLOBAL DEFAULT    13 Java_com_eykon_memory_spike_NativeSqlite_nativeClose
+    96: 000000000019e0a4    16 FUNC    GLOBAL DEFAULT    13 Java_com_eykon_memory_spike_NativeSqlite_nativeBindLong
+   101: 000000000019e08c     8 FUNC    GLOBAL DEFAULT    13 Java_com_eykon_memory_spike_NativeSqlite_nativeStep
+   102: 000000000019e164   136 FUNC    GLOBAL DEFAULT    13 Java_com_eykon_memory_spike_NativeSqlite_nativeBindText
+   112: 000000000019e09c     8 FUNC    GLOBAL DEFAULT    13 Java_com_eykon_memory_spike_NativeSqlite_nativeFinalize
+   172: 000000000019e0b4    12 FUNC    GLOBAL DEFAULT    13 Java_com_eykon_memory_spike_NativeSqlite_nativeBindDouble
+   240: 000000000019e24c   164 FUNC    GLOBAL DEFAULT    13 Java_com_eykon_memory_spike_NativeSqlite_nativeColumnBlob
+   255: 000000000019de9c    60 FUNC    GLOBAL DEFAULT    13 Java_com_eykon_memory_spike_NativeSqlite_nativeErrmsg
+   278: 000000000019e1ec    12 FUNC    GLOBAL DEFAULT    13 Java_com_eykon_memory_spike_NativeSqlite_nativeColumnLong
+   281: 000000000019e204    72 FUNC    GLOBAL DEFAULT    13 Java_com_eykon_memory_spike_NativeSqlite_nativeColumnText
+   288: 000000000019ded8   252 FUNC    GLOBAL DEFAULT    13 Java_com_eykon_memory_spike_NativeSqlite_nativeExec
+   289: 000000000019e094     8 FUNC    GLOBAL DEFAULT    13 Java_com_eykon_memory_spike_NativeSqlite_nativeReset
+   373: 000000000019e1f8    12 FUNC    GLOBAL DEFAULT    13 Java_com_eykon_memory_spike_NativeSqlite_nativeColumnDouble
+   380: 000000000019dde8   172 FUNC    GLOBAL DEFAULT    13 Java_com_eykon_memory_spike_NativeSqlite_nativeOpen
+   415: 000000000019ddc4    36 FUNC    GLOBAL DEFAULT    13 JNI_OnLoad
+   449: 000000000019e0c0   164 FUNC    GLOBAL DEFAULT    13 Java_com_eykon_memory_spike_NativeSqlite_nativeBindBlob
+   452: 000000000019dfd4   184 FUNC    GLOBAL DEFAULT    13 Java_com_eykon_memory_spike_NativeSqlite_nativePrepare
+  4651: 000000000019ddc4    36 FUNC    GLOBAL DEFAULT    13 JNI_OnLoad
+  4652: 000000000019dde8   172 FUNC    GLOBAL DEFAULT    13 Java_com_eykon_memory_spike_NativeSqlite_nativeOpen
+  4653: 000000000019de94     8 FUNC    GLOBAL DEFAULT    13 Java_com_eykon_memory_spike_NativeSqlite_nativeClose
+  4654: 000000000019de9c    60 FUNC    GLOBAL DEFAULT    13 Java_com_eykon_memory_spike_NativeSqlite_nativeErrmsg
+  4655: 000000000019ded8   252 FUNC    GLOBAL DEFAULT    13 Java_com_eykon_memory_spike_NativeSqlite_nativeExec
+  4656: 000000000019dfd4   184 FUNC    GLOBAL DEFAULT    13 Java_com_eykon_memory_spike_NativeSqlite_nativePrepare
+  4657: 000000000019e08c     8 FUNC    GLOBAL DEFAULT    13 Java_com_eykon_memory_spike_NativeSqlite_nativeStep
+  4658: 000000000019e094     8 FUNC    GLOBAL DEFAULT    13 Java_com_eykon_memory_spike_NativeSqlite_nativeReset
+  4659: 000000000019e09c     8 FUNC    GLOBAL DEFAULT    13 Java_com_eykon_memory_spike_NativeSqlite_nativeFinalize
+  4660: 000000000019e0a4    16 FUNC    GLOBAL DEFAULT    13 Java_com_eykon_memory_spike_NativeSqlite_nativeBindLong
+  4661: 000000000019e0b4    12 FUNC    GLOBAL DEFAULT    13 Java_com_eykon_memory_spike_NativeSqlite_nativeBindDouble
+  4662: 000000000019e0c0   164 FUNC    GLOBAL DEFAULT    13 Java_com_eykon_memory_spike_NativeSqlite_nativeBindBlob
+  4663: 000000000019e164   136 FUNC    GLOBAL DEFAULT    13 Java_com_eykon_memory_spike_NativeSqlite_nativeBindText
+  4664: 000000000019e1ec    12 FUNC    GLOBAL DEFAULT    13 Java_com_eykon_memory_spike_NativeSqlite_nativeColumnLong
+  4665: 000000000019e1f8    12 FUNC    GLOBAL DEFAULT    13 Java_com_eykon_memory_spike_NativeSqlite_nativeColumnDouble
+  4666: 000000000019e204    72 FUNC    GLOBAL DEFAULT    13 Java_com_eykon_memory_spike_NativeSqlite_nativeColumnText
+  4667: 000000000019e24c   164 FUNC    GLOBAL DEFAULT    13 Java_com_eykon_memory_spike_NativeSqlite_nativeColumnBlob
+
+=== libeykon_r4_noneon.so
+948181785cf9a42be22570db07d5d8bf2924b8828f51078733d8157cba0a4b65 *android/app/src/androidTest/jniLibs/arm64-v8a/libeykon_r4_noneon.so
+--- readelf -lW
+
+Elf file type is DYN (Shared object file)
+Entry point 0x0
+There are 10 program headers, starting at offset 64
+
+Program Headers:
+  Type           Offset   VirtAddr           PhysAddr           FileSiz  MemSiz   Flg Align
+  PHDR           0x000040 0x0000000000000040 0x0000000000000040 0x000230 0x000230 R   0x8
+  LOAD           0x000000 0x0000000000000000 0x0000000000000000 0x0450c8 0x0450c8 R   0x4000
+  LOAD           0x0450c8 0x00000000000490c8 0x00000000000490c8 0x155558 0x155558 R E 0x4000
+  LOAD           0x19a620 0x00000000001a2620 0x00000000001a2620 0x002148 0x0029e0 RW  0x4000
+  LOAD           0x19c768 0x00000000001a8768 0x00000000001a8768 0x003538 0x003ae8 RW  0x4000
+  DYNAMIC        0x19be58 0x00000000001a3e58 0x00000000001a3e58 0x000190 0x000190 RW  0x8
+  GNU_RELRO      0x19a620 0x00000000001a2620 0x00000000001a2620 0x002148 0x0029e0 R   0x1
+  GNU_EH_FRAME   0x022760 0x0000000000022760 0x0000000000022760 0x00408c 0x00408c R   0x4
+  GNU_STACK      0x000000 0x0000000000000000 0x0000000000000000 0x000000 0x000000 RW  0x0
+  NOTE           0x000270 0x0000000000000270 0x0000000000000270 0x0000bc 0x0000bc R   0x4
+
+ Section to Segment mapping:
+  Segment Sections...
+   00     
+   01     .note.android.ident .note.gnu.build-id .dynsym .gnu.version .gnu.version_r .gnu.hash .dynstr .rela.dyn .rela.plt .rodata .eh_frame_hdr .eh_frame 
+   02     .text .plt 
+   03     .data.rel.ro .fini_array .dynamic .got .got.plt .relro_padding 
+   04     .data .bss 
+   05     .dynamic 
+   06     .data.rel.ro .fini_array .dynamic .got .got.plt .relro_padding 
+   07     .eh_frame_hdr 
+   08     
+   09     .note.android.ident .note.gnu.build-id 
+   None   .comment .debug_loc .debug_abbrev .debug_info .debug_ranges .debug_str .debug_line .symtab .shstrtab .strtab 
+--- readelf -sW --dyn-syms (JNI exports)
+    90: 000000000019d33c     8 FUNC    GLOBAL DEFAULT    13 Java_com_eykon_memory_spike_NativeSqlite_nativeClose
+    96: 000000000019d54c    16 FUNC    GLOBAL DEFAULT    13 Java_com_eykon_memory_spike_NativeSqlite_nativeBindLong
+   101: 000000000019d534     8 FUNC    GLOBAL DEFAULT    13 Java_com_eykon_memory_spike_NativeSqlite_nativeStep
+   102: 000000000019d60c   136 FUNC    GLOBAL DEFAULT    13 Java_com_eykon_memory_spike_NativeSqlite_nativeBindText
+   112: 000000000019d544     8 FUNC    GLOBAL DEFAULT    13 Java_com_eykon_memory_spike_NativeSqlite_nativeFinalize
+   172: 000000000019d55c    12 FUNC    GLOBAL DEFAULT    13 Java_com_eykon_memory_spike_NativeSqlite_nativeBindDouble
+   240: 000000000019d6f4   164 FUNC    GLOBAL DEFAULT    13 Java_com_eykon_memory_spike_NativeSqlite_nativeColumnBlob
+   255: 000000000019d344    60 FUNC    GLOBAL DEFAULT    13 Java_com_eykon_memory_spike_NativeSqlite_nativeErrmsg
+   278: 000000000019d694    12 FUNC    GLOBAL DEFAULT    13 Java_com_eykon_memory_spike_NativeSqlite_nativeColumnLong
+   281: 000000000019d6ac    72 FUNC    GLOBAL DEFAULT    13 Java_com_eykon_memory_spike_NativeSqlite_nativeColumnText
+   288: 000000000019d380   252 FUNC    GLOBAL DEFAULT    13 Java_com_eykon_memory_spike_NativeSqlite_nativeExec
+   289: 000000000019d53c     8 FUNC    GLOBAL DEFAULT    13 Java_com_eykon_memory_spike_NativeSqlite_nativeReset
+   373: 000000000019d6a0    12 FUNC    GLOBAL DEFAULT    13 Java_com_eykon_memory_spike_NativeSqlite_nativeColumnDouble
+   380: 000000000019d290   172 FUNC    GLOBAL DEFAULT    13 Java_com_eykon_memory_spike_NativeSqlite_nativeOpen
+   415: 000000000019d26c    36 FUNC    GLOBAL DEFAULT    13 JNI_OnLoad
+   449: 000000000019d568   164 FUNC    GLOBAL DEFAULT    13 Java_com_eykon_memory_spike_NativeSqlite_nativeBindBlob
+   452: 000000000019d47c   184 FUNC    GLOBAL DEFAULT    13 Java_com_eykon_memory_spike_NativeSqlite_nativePrepare
+  4643: 000000000019d26c    36 FUNC    GLOBAL DEFAULT    13 JNI_OnLoad
+  4644: 000000000019d290   172 FUNC    GLOBAL DEFAULT    13 Java_com_eykon_memory_spike_NativeSqlite_nativeOpen
+  4645: 000000000019d33c     8 FUNC    GLOBAL DEFAULT    13 Java_com_eykon_memory_spike_NativeSqlite_nativeClose
+  4646: 000000000019d344    60 FUNC    GLOBAL DEFAULT    13 Java_com_eykon_memory_spike_NativeSqlite_nativeErrmsg
+  4647: 000000000019d380   252 FUNC    GLOBAL DEFAULT    13 Java_com_eykon_memory_spike_NativeSqlite_nativeExec
+  4648: 000000000019d47c   184 FUNC    GLOBAL DEFAULT    13 Java_com_eykon_memory_spike_NativeSqlite_nativePrepare
+  4649: 000000000019d534     8 FUNC    GLOBAL DEFAULT    13 Java_com_eykon_memory_spike_NativeSqlite_nativeStep
+  4650: 000000000019d53c     8 FUNC    GLOBAL DEFAULT    13 Java_com_eykon_memory_spike_NativeSqlite_nativeReset
+  4651: 000000000019d544     8 FUNC    GLOBAL DEFAULT    13 Java_com_eykon_memory_spike_NativeSqlite_nativeFinalize
+  4652: 000000000019d54c    16 FUNC    GLOBAL DEFAULT    13 Java_com_eykon_memory_spike_NativeSqlite_nativeBindLong
+  4653: 000000000019d55c    12 FUNC    GLOBAL DEFAULT    13 Java_com_eykon_memory_spike_NativeSqlite_nativeBindDouble
+  4654: 000000000019d568   164 FUNC    GLOBAL DEFAULT    13 Java_com_eykon_memory_spike_NativeSqlite_nativeBindBlob
+  4655: 000000000019d60c   136 FUNC    GLOBAL DEFAULT    13 Java_com_eykon_memory_spike_NativeSqlite_nativeBindText
+  4656: 000000000019d694    12 FUNC    GLOBAL DEFAULT    13 Java_com_eykon_memory_spike_NativeSqlite_nativeColumnLong
+  4657: 000000000019d6a0    12 FUNC    GLOBAL DEFAULT    13 Java_com_eykon_memory_spike_NativeSqlite_nativeColumnDouble
+  4658: 000000000019d6ac    72 FUNC    GLOBAL DEFAULT    13 Java_com_eykon_memory_spike_NativeSqlite_nativeColumnText
+  4659: 000000000019d6f4   164 FUNC    GLOBAL DEFAULT    13 Java_com_eykon_memory_spike_NativeSqlite_nativeColumnBlob

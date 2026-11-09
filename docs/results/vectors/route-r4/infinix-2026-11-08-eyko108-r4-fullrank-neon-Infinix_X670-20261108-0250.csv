@@ -1,0 +1,3 @@
+device,android,sqlite_version,commit,date,method,dim,n,run,median_ms,p95_ms,worst_ms,pss_mb,heap_mb,file_mb,temp_c_start,temp_c_end,battery_pct,source_vectors,note
+INFINIX Infinix X670,13,3.32.2,eyko108-wip,2026-11-08,sqlite_vec_static-full-ranking,512,20000,1,0.15,0.23,0.23,60,3,42.5,26.5,26.5,66,real_own_clips_90+noise,all rows ranked: 0 rows returned; first 20 match the exact top 20: 0 of 100
+INFINIX Infinix X670,13,3.32.2,eyko108-wip,2026-11-08,sqlite_vec_static-full-ranking,512,100000,1,0.23,0.28,0.28,58,3,208.2,26.5,26.5,66,real_own_clips_90+noise,all rows ranked: 0 rows returned; first 20 match the exact top 20: 0 of 100
