@@ -10,7 +10,7 @@ Answers, once run: **A5** (same results or just faster?), **B1** (spread), **B2*
 [evidence/smoke-2026-11-07](evidence/smoke-2026-11-07/README.md); full run on S1 + S2, 1k–300k,
 plugged in, 7 Nov: [`laptop-2026-11-07-sweep.csv`](../vectors/laptop-2026-11-07-sweep.csv),
 [`-sweep-real.csv`](../vectors/laptop-2026-11-07-sweep-real.csv),
-[run log](evidence/full-2026-11-07/run-log.txt)). The owner decided D1 and D2 on 6 Nov; D3 (pass
+[run log](evidence/full-2026-11-07/run-log.txt)). Taha (lead) decided D1 and D2 on 6 Nov; D3 (pass
 marks) was decided on 7 Nov, **after** the full run. The marks change the verdict, not the data.
 
 ## The plan in one paragraph
@@ -47,8 +47,8 @@ shared CSV that EYKO-97's graphs read.
 
 | # | Question | Decision |
 |---|---|---|
-| D1 | Varied real vectors (S3): which source? | **EPIC-KITCHENS slice** (decided by the owner, 6 Nov 2026): about 30 videos streamed one by one, frames every 2 s, MobileCLIP-S2 vectors (**updated by the owner, 8 Nov 2026: the 30 longest videos, 20.8 h, one frame every 0.75 s ≈ 100k**; 2 s on 30 typical videos gives only ~7.5k, see [03](03-vector-sources.md)). **Changed again, 8 Nov: S3 = COCO train2017, 100k photos + val2017 captions as queries** (the 30 videos are ≈ 250 GB and the connection was slow; [03](03-vector-sources.md)), narrations as text queries, target 100k vectors. **Changed back, 10 Nov 2026: S3 = EPIC-KITCHENS, the 30 longest videos**, one frame every 0.745 s (0.75 s gives 99,774, 226 short of 100k) ≈ 100.4k vectors, 21 validation narrations as queries. The ≈ 250 GB download is handed to a helper with a fast connection (EYKO-113); the benchmark still runs on this laptop |
-| D2 | CSV file name | **One file per source** (decided by the owner, 6 Nov 2026): `laptop-<date>-sweep.csv` (random, the same suffix as the phones' random sweep), `-sweep-real.csv`, `-sweep-varied.csv`, named like the phone files so EYKO-97's graphs pick the laptop up. This differs from the card's single `laptop-<date>.csv`; the card comment will say so |
+| D1 | Varied real vectors (S3): which source? | **EPIC-KITCHENS slice** (decided by Taha (lead), 6 Nov 2026): about 30 videos streamed one by one, frames every 2 s, MobileCLIP-S2 vectors (**updated by Taha (lead), 8 Nov 2026: the 30 longest videos, 20.8 h, one frame every 0.75 s ≈ 100k**; 2 s on 30 typical videos gives only ~7.5k, see [03](03-vector-sources.md)). **Changed again, 8 Nov: S3 = COCO train2017, 100k photos + val2017 captions as queries** (the 30 videos are ≈ 250 GB and the connection was slow; [03](03-vector-sources.md)), narrations as text queries, target 100k vectors. **Changed back, 10 Nov 2026: S3 = EPIC-KITCHENS, the 30 longest videos**, one frame every 0.745 s (0.75 s gives 99,774, 226 short of 100k) ≈ 100.4k vectors, 21 validation narrations as queries. The ≈ 250 GB download is handed to a helper with a fast connection (EYKO-113); the benchmark still runs on this laptop |
+| D2 | CSV file name | **One file per source** (decided by Taha (lead), 6 Nov 2026): `laptop-<date>-sweep.csv` (random, the same suffix as the phones' random sweep), `-sweep-real.csv`, `-sweep-varied.csv`, named like the phone files so EYKO-97's graphs pick the laptop up. This differs from the card's single `laptop-<date>.csv`; the card comment will say so |
 | D3 | Pass marks (for the lead, on the card) | **Decided 7 Nov 2026** by the lead (Taha Ahmed), agreed by the reviewer (Rafique, EYKO-91 comment, 15:41 UTC): (1) the index is judged on S3 (varied real, EPIC-KITCHENS) at its largest size, not on random vectors "at 300k"; (2) "in-memory BLOB" = `blob_memory_numpy_1t`, with the all-threads `blob_memory_numpy` reported next to it; (3) float16 / int8 mark recall@20 ≥ 0.99, ties counted. **The 7 Nov full run (S1 + S2, 14:44 UTC) finished before D3 was written down**; D3 changes how the rows are judged, not the rows |
 
 ## Files

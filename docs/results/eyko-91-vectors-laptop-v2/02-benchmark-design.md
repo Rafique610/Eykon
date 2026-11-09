@@ -82,7 +82,7 @@ device,android,sqlite_version,commit,date,method,dim,n,run,median_ms,p95_ms,wors
 - `commit`: `git rev-parse --short HEAD`, with `-dirty` if the tree has changes.
 - `temp_c_start` / `temp_c_end`: CPU package temperature (`psutil.sensors_temperatures()`, coretemp).
   `battery_pct`: `psutil.sensors_battery()`; the note says whether the charger was in.
-- **File name: one per source (owner's decision D2, 6 Nov).** The card says `docs/results/vectors/laptop-<date>.csv`. The Head 2
+- **File name: one per source (D2, decided by Taha (lead), 6 Nov).** The card says `docs/results/vectors/laptop-<date>.csv`. The Head 2
   figure script picks up only `*-sweep-real.csv`, so the laptop would not appear in the graphs EYKO-97
   draws. So: one file per source,
   `laptop-<date>-sweep.csv` (S1 random: the figure script finds random sweeps with `*-sweep.csv`, as the phones' 3 Nov files), `laptop-<date>-sweep-real.csv` (S2, the same data as the phones'

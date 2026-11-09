@@ -1,7 +1,7 @@
 """EYKO-91 S3: embed frames of the 30 longest EPIC-KITCHENS-100 videos with MobileCLIP-S2. Run: task epic-vectors
 
-Owner's choice, 10 Nov 2026: S3 is first-person kitchen video, as decided on 8 Nov (D1). The 30
-videos are about 250 GB, too much for the owner's connection, so this runs on a helper machine
+Taha's choice (lead), 10 Nov 2026: S3 is first-person kitchen video, as decided on 8 Nov (D1). The 30
+videos are about 250 GB, too much for Taha's connection, so this runs on a helper machine
 (EYKO-113). One video is fetched at a time into data/eyko91_epic/tmp/, one frame is taken every
 STEP seconds, the frames are embedded, and the video is deleted: about 15 GB of free disk is enough.
 Only the vectors are kept, in data/eyko91_epic/ (git-ignored, never committed; EPIC-KITCHENS is
