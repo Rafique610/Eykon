@@ -300,6 +300,52 @@ def fig_variants():
     save(fig, "head2-vector-variants.png")
 
 
+# EYKO-111: the app's setup against the old way, on battery. One file per panel (the clean run of that condition).
+CONDITIONS = [
+    ("Samsung A32, hot (after 10 min of video processing)", "a32-*-eyko111-hot2-*.csv"),
+    ("Pixel 9 Pro XL, low battery (26 %, power saver off)", "pixel9proxl-*-eyko111-lowbat-nosaver-*.csv"),
+]
+SETUPS = [("heap_f32", "Java array (the old way)", "#0b0b0b"),
+          ("offheap_mapped_native", "Mapped file + NEON (the app now)", "#1baf7a")]
+
+
+def fig_conditions():
+    """EYKO-111: median search time of 5 runs (bar) and their range (whisker), each phone on its own scale."""
+    fig, panels = plt.subplots(1, len(CONDITIONS), figsize=(10.2, 3.6), dpi=200)
+    width = 0.38
+    for ax, (title, pattern) in zip(panels, CONDITIONS):
+        (path,) = sorted((RESULTS / "offheap").glob(pattern))
+        runs = defaultdict(list)
+        for r in csv.DictReader(path.open(encoding="utf-8")):
+            runs[(r["method"], int(r["n"]))].append(float(r["median_ms"]))
+        sizes = sorted({n for _, n in runs})
+        for i, (method, label, colour) in enumerate(SETUPS):
+            xs = [k + (i - 0.5) * (width + 0.02) for k in range(len(sizes))]
+            vals = [runs[(method, n)] for n in sizes]
+            med = [statistics.median(v) for v in vals]
+            err = [[m - min(v) for m, v in zip(med, vals)], [max(v) - m for m, v in zip(med, vals)]]
+            ax.bar(xs, med, width, color=colour, label=label, yerr=err, ecolor=MUTED, capsize=2, zorder=2)
+        for k, n in enumerate(sizes):
+            old = statistics.median(runs[("heap_f32", n)])
+            new = statistics.median(runs[("offheap_mapped_native", n)])
+            top = max(runs[("offheap_mapped_native", n)])  # above the whisker, not on it
+            ax.annotate(f"{new / old:.2f}×", (k + 0.2, top), xytext=(0, 4), textcoords="offset points",
+                        ha="center", color=INK, fontsize=8)
+        ax.set_xticks(range(len(sizes)), [f"{n // 1000}k" for n in sizes])
+        ax.set_xlabel("Vectors in the table (512 numbers each)", color=MUTED)
+        ax.set_ylabel("Search time, median of 5 runs (ms)", color=MUTED)
+        ax.grid(True, axis="y", color=GRID, linewidth=0.8)
+        ax.set_axisbelow(True)
+        for side in ("top", "right"):
+            ax.spines[side].set_visible(False)
+        for side in ("left", "bottom"):
+            ax.spines[side].set_color(MUTED)
+        ax.tick_params(colors=MUTED)
+        ax.set_title(title, color=INK, fontsize=10, loc="left")
+    panels[0].legend(frameon=False, loc="upper left", fontsize=8)
+    save(fig, "head2-vector-conditions.png")
+
+
 def save(fig, name):
     fig.tight_layout()
     fig.savefig(HERE / name, facecolor="#fcfcfb")
@@ -316,3 +362,4 @@ if __name__ == "__main__":
     fig_fast_loop(real)
     fig_all_tables(load("*-memory.csv"))
     fig_variants()
+    fig_conditions()
