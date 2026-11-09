@@ -24,6 +24,7 @@ def main() -> None:
     ap.add_argument("--delay", type=float, default=5, help="seconds after the previous stage's end line")
     ap.add_argument("--wait", type=int, default=900, help="seconds to keep watching after the reopen")
     ap.add_argument("--log", required=True)
+    ap.add_argument("--replay", help="test without a phone: read EykonVideo lines from this text file and only print what would be done")
     a = ap.parse_args()
     previous = ORDER[ORDER.index(a.stage) - 1]
     out = open(a.log, "w", encoding="utf-8")
@@ -35,7 +36,13 @@ def main() -> None:
         out.flush()
 
     say(f"waiting for the end of '{previous}' to kill inside '{a.stage}' (delay {a.delay}s)")
-    p = subprocess.Popen([a.adb, "logcat", "-v", "time", "-s", "EykonVideo"], stdout=subprocess.PIPE, text=True, encoding="utf-8", errors="replace")
+    if a.replay:
+        class _Fake:
+            stdout = open(a.replay, encoding="utf-8", errors="replace")
+            def terminate(self): pass
+        p = _Fake()
+    else:
+        p = subprocess.Popen([a.adb, "logcat", "-v", "time", "-s", "EykonVideo"], stdout=subprocess.PIPE, text=True, encoding="utf-8", errors="replace")
     killed = False
     reopened_at = None
     video = None
@@ -50,6 +57,10 @@ def main() -> None:
             if m and video is None:
                 video = m.group(2)
             if not killed and stage == previous:
+                if a.replay:
+                    say(f"[replay] would sleep {a.delay}s, then run: adb shell am force-stop com.eykon.memory, then reopen the app")
+                    killed = True
+                    continue
                 time.sleep(a.delay)
                 subprocess.run([a.adb, "shell", "am", "force-stop", "com.eykon.memory"])
                 killed = True
