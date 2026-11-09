@@ -1,0 +1,68 @@
+ACTIVITY MANAGER PROCESS EXIT INFO (dumpsys activity exit-info)
+Last Timestamp of Persistence Into Persistent Storage: 2026-11-09 23:38:04.358
+  package: com.eykon.memory
+    Historical Process Exit for uid=10199
+        ApplicationExitInfo #0:
+          timestamp=2026-11-09 23:46:53.769 pid=20827 realUid=10199 packageUid=10199 definingUid=10199 user=0
+          process=com.eykon.memory reason=10 (USER REQUESTED) subreason=21 (FORCE STOP) status=0
+          importance=125 pss=226MB rss=336MB description=stop com.eykon.memory due to finished inst state=empty trace=null
+        ApplicationExitInfo #1:
+          timestamp=2026-11-09 23:32:20.084 pid=16622 realUid=10199 packageUid=10199 definingUid=10199 user=0
+          process=com.eykon.memory reason=2 (SIGNALED) subreason=0 (UNKNOWN) status=9
+          importance=125 pss=332MB rss=442MB description=null state=empty trace=null
+        ApplicationExitInfo #2:
+          timestamp=2026-11-09 23:24:29.535 pid=15217 realUid=10199 packageUid=10199 definingUid=10199 user=0
+          process=com.eykon.memory reason=10 (USER REQUESTED) subreason=21 (FORCE STOP) status=0
+          importance=125 pss=171MB rss=281MB description=stop com.eykon.memory due to finished inst state=empty trace=null
+        ApplicationExitInfo #3:
+          timestamp=2026-11-09 22:57:13.355 pid=8197 realUid=10199 packageUid=10199 definingUid=10199 user=0
+          process=com.eykon.memory reason=2 (SIGNALED) subreason=0 (UNKNOWN) status=9
+          importance=125 pss=174MB rss=283MB description=null state=empty trace=null
+        ApplicationExitInfo #4:
+          timestamp=2026-11-09 22:51:34.062 pid=6113 realUid=10199 packageUid=10199 definingUid=10199 user=0
+          process=com.eykon.memory reason=10 (USER REQUESTED) subreason=21 (FORCE STOP) status=0
+          importance=125 pss=183MB rss=293MB description=stop com.eykon.memory due to finished inst state=empty trace=null
+        ApplicationExitInfo #5:
+          timestamp=2026-11-09 22:45:51.388 pid=5716 realUid=10199 packageUid=10199 definingUid=10199 user=0
+          process=com.eykon.memory reason=10 (USER REQUESTED) subreason=21 (FORCE STOP) status=0
+          importance=125 pss=58MB rss=168MB description=stop com.eykon.memory due to finished inst state=empty trace=null
+        ApplicationExitInfo #6:
+          timestamp=2026-11-09 22:41:51.894 pid=28856 realUid=10199 packageUid=10199 definingUid=10199 user=0
+          process=com.eykon.memory reason=2 (SIGNALED) subreason=0 (UNKNOWN) status=9
+          importance=125 pss=38MB rss=118MB description=null state=empty trace=null
+        ApplicationExitInfo #7:
+          timestamp=2026-11-09 22:34:23.170 pid=26256 realUid=10199 packageUid=10199 definingUid=10199 user=0
+          process=com.eykon.memory reason=2 (SIGNALED) subreason=0 (UNKNOWN) status=9
+          importance=125 pss=604MB rss=713MB description=null state=empty trace=null
+        ApplicationExitInfo #8:
+          timestamp=2026-11-09 22:14:40.527 pid=20078 realUid=10199 packageUid=10199 definingUid=10199 user=0
+          process=com.eykon.memory reason=10 (USER REQUESTED) subreason=21 (FORCE STOP) status=0
+          importance=125 pss=62MB rss=171MB description=stop com.eykon.memory due to finished inst state=empty trace=null
+        ApplicationExitInfo #9:
+          timestamp=2026-11-09 01:22:59.412 pid=8300 realUid=10199 packageUid=10199 definingUid=10199 user=0
+          process=com.eykon.memory reason=10 (USER REQUESTED) subreason=21 (FORCE STOP) status=0
+          importance=125 pss=0.00 rss=0.00 description=stop com.eykon.memory due to finished inst state=empty trace=null
+        ApplicationExitInfo #10:
+          timestamp=2026-11-09 00:59:40.399 pid=31699 realUid=10199 packageUid=10199 definingUid=10199 user=0
+          process=com.eykon.memory reason=10 (USER REQUESTED) subreason=21 (FORCE STOP) status=0
+          importance=125 pss=3.2GB rss=3.3GB description=stop com.eykon.memory due to finished inst state=empty trace=null
+        ApplicationExitInfo #11:
+          timestamp=2026-11-08 03:35:30.282 pid=21080 realUid=10199 packageUid=10199 definingUid=10199 user=0
+          process=com.eykon.memory reason=10 (USER REQUESTED) subreason=21 (FORCE STOP) status=0
+          importance=125 pss=60MB rss=169MB description=stop com.eykon.memory due to finished inst state=empty trace=null
+        ApplicationExitInfo #12:
+          timestamp=2026-11-08 03:21:41.986 pid=15515 realUid=10199 packageUid=10199 definingUid=10199 user=0
+          process=com.eykon.memory reason=10 (USER REQUESTED) subreason=21 (FORCE STOP) status=0
+          importance=125 pss=55MB rss=165MB description=stop com.eykon.memory due to finished inst state=empty trace=null
+        ApplicationExitInfo #13:
+          timestamp=2026-11-08 02:57:30.259 pid=8936 realUid=10199 packageUid=10199 definingUid=10199 user=0
+          process=com.eykon.memory reason=10 (USER REQUESTED) subreason=21 (FORCE STOP) status=0
+          importance=125 pss=57MB rss=169MB description=stop com.eykon.memory due to finished inst state=empty trace=null
+        ApplicationExitInfo #14:
+          timestamp=2026-11-08 02:53:20.216 pid=7411 realUid=10199 packageUid=10199 definingUid=10199 user=0
+          process=com.eykon.memory reason=10 (USER REQUESTED) subreason=21 (FORCE STOP) status=0
+          importance=125 pss=60MB rss=171MB description=stop com.eykon.memory due to finished inst state=empty trace=null
+        ApplicationExitInfo #15:
+          timestamp=2026-11-08 02:52:48.290 pid=6506 realUid=10199 packageUid=10199 definingUid=10199 user=0
+          process=com.eykon.memory reason=10 (USER REQUESTED) subreason=21 (FORCE STOP) status=0
+          importance=125 pss=0.00 rss=0.00 description=stop com.eykon.memory due to finished inst state=empty trace=null

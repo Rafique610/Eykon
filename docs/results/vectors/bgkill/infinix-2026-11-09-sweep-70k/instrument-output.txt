@@ -1,0 +1,3 @@
+
+com.eykon.memory.video.OffHeapVectorTest:INSTRUMENTATION_RESULT: shortMsg=Process crashed.
+INSTRUMENTATION_CODE: 0

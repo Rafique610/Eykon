@@ -43,6 +43,7 @@ def main() -> int:
     ap.add_argument("--out", required=True)
     ap.add_argument("--seconds", type=int, default=300)
     ap.add_argument("--mode", default="MAPPED_NATIVE")
+    ap.add_argument("--n", default="100k", help="rows per table, e.g. 20k (HEAP_F32 cannot hold 100k x 3 in the 268 MB heap)")
     a = ap.parse_args()
     out = Path(a.out)
     out.mkdir(parents=True, exist_ok=True)
@@ -54,7 +55,7 @@ def main() -> int:
     (out / "meminfo-before.txt").write_text(adb(a, "shell", "dumpsys", "meminfo", PKG), encoding="utf-8")
     adb(a, "logcat", "-G", "16M")
     adb(a, "logcat", "-c")
-    cmd = (f"am instrument -w -e class com.eykon.memory.video.OffHeapVectorTest#holdInBackground -e mode {a.mode} -e n 100k "
+    cmd = (f"am instrument -w -e class com.eykon.memory.video.OffHeapVectorTest#holdInBackground -e mode {a.mode} -e n {a.n} "
            f"-e seconds {a.seconds} -e commit {a.commit} com.eykon.memory.test/androidx.test.runner.AndroidJUnitRunner")
     p = subprocess.Popen([a.adb, "shell", cmd], stdout=subprocess.PIPE, text=True, encoding="utf-8", errors="replace")
     started = time.time()
@@ -72,6 +73,9 @@ def main() -> int:
     (out / "meminfo-after.txt").write_text(adb(a, "shell", "dumpsys", "meminfo", PKG), encoding="utf-8")
     (out / "eyko109-logcat.txt").write_text(adb(a, "logcat", "-d", "-s", "EYKO109"), encoding="utf-8")
     (out / "instrument-output.txt").write_text(test_out, encoding="utf-8")
+    # Android's own record of how the process ended (reason, signal, PSS/RSS at the end) and the whole log around it
+    (out / "exit-info.txt").write_text(adb(a, "shell", "dumpsys", "activity", "exit-info", PKG), encoding="utf-8")
+    (out / "logcat-all-buffers.txt").write_text(adb(a, "logcat", "-d", "-b", "all", "-v", "threadtime"), encoding="utf-8")
     log = (out / "eyko109-logcat.txt").read_text(encoding="utf-8")
     pids = set(re.findall(r"pid (\d+)", log))
     print("pids seen in the log:", pids, "(one pid = not killed)")

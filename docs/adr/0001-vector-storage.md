@@ -87,7 +87,8 @@ No more than 7 % slower anywhere, so trigger 1 did not fire. Full tables, a seco
 - Speed on battery was measured for **A32 hot** and **Pixel low battery** only (EYKO-111). The owner closed the run list on 9 Nov, so
   **A32 cool and low battery with this build, and Pixel cool and hot, were not run.** On battery the A32 caps its fast cores at
   1.44 GHz after about 90 s, which fits its 1.2–1.4 times slowdown on battery (EYKO-112). That cause was seen but not tested.
-- The **background kill** test (trigger 2) was **not run on the A32**. The only evidence is the Infinix hold (EYKO-109).
+- The **background kill** test (trigger 2) was **not run on the A32**. The evidence is the Infinix holds: EYKO-109 (not killed, `MAPPED_F32`, 8 Nov)
+  and EYKO-116 (killed at 40,000 rows x 3 and above, `MAPPED_NATIVE`, 9 Nov). They disagree and the reason is not known.
 - Only the **vector part** of search was timed. The whole app search (`VideoSearch.frames`, its frames query) is Head 7's (G23).
 - Real vectors were our own clips plus noise. Larger real libraries do not exist yet.
 
@@ -96,7 +97,7 @@ No more than 7 % slower anywhere, so trigger 1 did not fire. Full tables, a seco
 Reopen this ADR if any of these happens:
 1. On the A32 hot, A32 low battery or the Pixel, `MAPPED_NATIVE` is **more than 10 % slower than the old way** in the same condition, or
    answers stop being identical (EYKO-112). *Checked 9 Nov (EYKO-111): did not fire.*
-2. The app is **killed in the background** on the A32 because of the mapped pages. *Not tested on the A32 (EYKO-111 closed without it); card EYKO-116.*
+2. The app is **killed in the background** on the A32 because of the mapped pages. *Not tested on the A32 (EYKO-111 closed without it). Checked 9 Nov on the Infinix (EYKO-116): **fired for large tables.** `MAPPED_NATIVE` at 3 x 100,000 rows was killed in 3 of 3 holds (after 187 to 218 s of 300); 20,000 and 30,000 rows survived, 40,000 and above were killed. Android records the kills as plain SIGNALED/9, not low memory; the cause (probably the Infinix power manager) is not proven. EYKO-109 on 8 Nov (`MAPPED_F32`, same size) had not been killed, and why is not known. Needs a decision from the owner: `docs/results/2026-11-09-background-kill-mapped-native.md`.*
 3. A table passes **300k rows** (the largest size measured, EYKO-109), or one search passes our own 200 ms target on the A32 on battery.
 4. The **storage copy** becomes a problem on a real phone (EYKO-83, G18), or "delete a video" (EYKO-66) makes rebuilds frequent.
 5. A laptop result (EYKO-91) shows an approximate index keeping recall@20 ≥ 0.99 **and** a way to give every frame a score.
