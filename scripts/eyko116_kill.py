@@ -10,11 +10,28 @@ Stage order: split, filter, dedup, scene, small_objects, embed_images, embed_tex
 import argparse
 import datetime
 import re
+import sqlite3
 import subprocess
+import tempfile
 import time
+from pathlib import Path
 
 ORDER = ["split", "filter", "dedup", "scene", "small_objects", "embed_images", "embed_texts", "link", "latest"]
-LINE = re.compile(r"EykonVideo\s*:\s*(\w+)\s+([0-9a-f]{32})")
+# `logcat -v time` prints "I/EykonVideo(17657): split <id>: ..."; a hand-copied console prints "EykonVideo: split <id>: ..."
+LINE = re.compile(r"EykonVideo\s*(?:\(\s*\d+\))?\s*:\s*(\w+)\s+([0-9a-f]{32})")
+
+
+def job_row(adb: str) -> str:
+    """The job as the database says right after the kill: status, saved stage, attempts (the stage it will resume at)."""
+    with tempfile.TemporaryDirectory() as tmp:
+        for name in ("memories.db", "memories.db-wal", "memories.db-shm"):
+            data = subprocess.run([adb, "exec-out", "run-as", "com.eykon.memory", "cat", f"databases/{name}"], capture_output=True).stdout
+            if data:
+                (Path(tmp) / name).write_bytes(data)
+        db = sqlite3.connect(str(Path(tmp) / "memories.db"))
+        rows = db.execute("SELECT video_id, status, stage, attempts FROM jobs").fetchall()
+        db.close()
+    return "; ".join(f"video {r[0][:8]} status={r[1]} stage={r[2]!r} attempts={r[3]}" for r in rows) or "no job rows"
 
 
 def main() -> None:
@@ -68,6 +85,7 @@ def main() -> None:
                 time.sleep(3)
                 alive = subprocess.run([a.adb, "shell", "pidof", "com.eykon.memory"], capture_output=True, text=True).stdout.strip()
                 say(f"app process after the kill: {alive or 'none (killed)'}")
+                say("job in the database right after the kill: " + job_row(a.adb))
                 subprocess.run([a.adb, "shell", "monkey", "-p", "com.eykon.memory", "-c", "android.intent.category.LAUNCHER", "1"], capture_output=True)
                 reopened_at = time.time()
                 say("reopened the app")
