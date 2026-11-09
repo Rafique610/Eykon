@@ -96,7 +96,7 @@ No more than 7 % slower anywhere, so trigger 1 did not fire. Full tables, a seco
 Reopen this ADR if any of these happens:
 1. On the A32 hot, A32 low battery or the Pixel, `MAPPED_NATIVE` is **more than 10 % slower than the old way** in the same condition, or
    answers stop being identical (EYKO-112). *Checked 9 Nov (EYKO-111): did not fire.*
-2. The app is **killed in the background** on the A32 because of the mapped pages. *Not tested on the A32 (EYKO-111 closed without it).*
+2. The app is **killed in the background** on the A32 because of the mapped pages. *Not tested on the A32 (EYKO-111 closed without it); card EYKO-116.*
 3. A table passes **300k rows** (the largest size measured, EYKO-109), or one search passes our own 200 ms target on the A32 on battery.
 4. The **storage copy** becomes a problem on a real phone (EYKO-83, G18), or "delete a video" (EYKO-66) makes rebuilds frequent.
 5. A laptop result (EYKO-91) shows an approximate index keeping recall@20 ≥ 0.99 **and** a way to give every frame a score.

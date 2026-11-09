@@ -2,6 +2,9 @@
 
 Run 12 October 2026. Card: EYKO-31 on the Synverk board.
 
+> **Superseded in part, 8 Nov 2026:** the BLOB tables below still hold. How the phone searches them is now
+> decided in ADR 0001 (`docs/adr/0001-vector-storage.md`): a mapped copy with native scoring (EYKO-114, 115).
+
 ## Question
 
 Can the phone use the same vector tables as the laptop? The first plan

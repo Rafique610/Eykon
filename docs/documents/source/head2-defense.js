@@ -111,7 +111,7 @@ body.push(P('Where the vectors live, how the tables are shaped, and the ground r
 
 body.push(grid([2100, W - 2100], null, [
   ['**Last updated**', '7 Nov 2026'],
-  ['**Overall status**', 'Built and in the app. Re-tested on two phones with real vectors; the failure confirmed on a third phone, and the setup reproduced on a second laptop. Memory limit found; plan for it still open. Why Android blocks plugins is now traced to its source, and the routes around it are researched (not yet tried on a phone).'],
+  ['**Overall status**', 'Built and in the app. Re-tested on two phones with real vectors; the failure confirmed on a third phone, and the setup reproduced on a second laptop. **Closed 9 Nov (EYKO-98).** Why Android blocks plugins is traced to its source, and three routes around it were tried on the phone with our own sqlite-vec build (R1, R2, R4): they work but are slower, so none is used. The memory limit is fixed in the app with a mapped vector file and native scoring: exact, three tables at 100k, checked on a hot phone and a low battery. The decision is ADR 0001 (`docs/adr/0001-vector-storage.md`); an automatic test keeps the laptop and phone table designs identical.'],
   ['**Cards**', 'EYKO-1 (tables), EYKO-31 (storage test), EYKO-30 (pytest), EYKO-90 (size sweep), EYKO-100 (full test), EYKO-102 (faster search in app), EYKO-94 (three-phone proof pack), EYKO-92 (clean clone), EYKO-84 (second phone, whole pipeline), EYKO-89 (why Android blocks plugins, routes around it)'],
 ], { firstColFill: true }));
 
@@ -234,7 +234,8 @@ const steps = [
   ['Test · 8 Nov · EYKO-114', 'ok', 'Memory fixed at today\'s speed', 'Zara\'s memory-mapped file (EYKO-109) fixed memory but was 12–15 % slower, because it copied every row before scoring it. We added a small NEON C function that scores the vectors in place in the mapped file. On the A32, three tables now load at 100k rows with 5 MB of Java memory (today runs out at 50k). The scores are bit-identical to today\'s, and it is only +0.6 to +1.5 % slower. It also showed that 85 % of today\'s search time is a `COUNT(*)` change check, not scoring (479 of 565 ms at 100k).', 'E8'],
   ['Build · 8 Nov · EYKO-115', 'ok', 'Adopted in the app, and the search got 5.5× faster', 'The app now keeps vectors in the mapped file with native scoring, falling back to the old way if the library does not load. The change check reads `MAX(id)` (0.13 ms) instead of `COUNT(*)` (479 ms at 100k). The vector file is written once and new rows are appended. On the A32 the vector search went from 574 to **102.5 ms** at 100k and from 116 to **21.3 ms** at 20k. The first search after a restart went from 23.6 s to **162 ms**. Answers stayed bit-identical, and the app\'s 55 video tests pass. The cost: about 7–10 % slower than the old in-memory way without `COUNT(*)` (95.5 ms at 100k), for not running out of memory.', 'E8'],
   ['Check · 9 Nov · EYKO-111', 'ok', 'The chosen setup holds on a hot phone and a low battery', 'On battery, same build, same phone: on the A32 after 10 minutes of pipeline load, the mapped native search was **at most 7 % slower** than the old in-memory way (21.2 against 19.9 ms at 20k) and 15 % faster at 100k (112 against 131 ms). On the Pixel at 25–27 % battery it was **2.4 to 2.9× faster** (13.8 against 39.5 ms at 100k), with power saver on or off. Scores were bit-identical in every run (20 of 20 queries). The A32 caps its fast cores at 1.44 GHz after about 90 s on battery. Not run: A32 cool and low battery with this build, Pixel cool and hot, and the background kill test (owner\'s call).', 'B6, G20'],
-  ['Still open', null, 'What comes next', 'The background kill test on the A32 (ADR 0001 trigger 2). Decide the extra storage of the vector file (EYKO-98). Find sources for the 200 ms target and the usage estimate (EYKO-101).', null],
+  ['Close · 9 Nov · EYKO-98', 'ok', 'Head 2 closed', 'The decision is ADR 0001: vectors stay as BLOBs in SQLite (the same bytes on the laptop and the phone), and the phone searches a mapped copy with native NEON scoring. It is exact, fits three tables at 100k, and held on a hot phone and a low battery. A new test checks that the laptop and phone table designs stay identical. The extra storage of the vector file (about 205 MB per 100k image vectors) is accepted in the ADR.', 'C1, B2'],
+  ['Still open', null, 'What comes next', 'The background kill test with the adopted setup (ADR 0001 trigger 2, EYKO-116, Zara). A source for the one-hour-a-day usage figure (EYKO-101, Taha). An approximate index for libraries past 300k rows (EYKO-91).', null],
 ];
 steps.forEach((s, i) => {
   const [kind, tone, title, text, show] = s;
@@ -290,10 +291,10 @@ const Q = [
     'No: 20 queries × 5 runs after a warm-up, with real vectors. The run medians stay close: at 20k, A32 81.5–83.1 ms, Pixel 37.3–37.9 ms.',
     'E6 and Figures 2–3 (the bars show the range of the 5 runs)',
     'The phones were plugged in. Controlled runs (cool, hot, low battery, third phone) are planned.', 'EYKO-95'],
-  ['B2', 'B', 'Why only up to 20,000 vectors? When does a real user reach that?', 'Partly',
-    'We measured up to 100k with real vectors and 300k with random ones. 20k is where memory says stop when all three tables are loaded. A user reaches 20k in about 25 days and 50k in about 2 months, if they record one hour of video a day.',
-    'E6, E8',
-    'The "one hour a day" has no source yet. The rate of about 13.4 kept frames per minute comes from the Ego4D phone run (Head 8).', 'EYKO-101'],
+  ['B2', 'B', 'Why only up to 20,000 vectors? When does a real user reach that?', 'Answered',
+    'Memory no longer stops at 20k. Since EYKO-115 the vectors sit in a mapped file: three tables load at 100k with 5 MB of Java memory on the A32, and three tables at 300k loaded on the Infinix (EYKO-109). What grows is search time. At about 13.4 kept frames per minute and one hour of video a day, a user has 20k image vectors after about 25 days, 100k after about 4 months and 300k after about a year. At 100k one vector search took **112 ms on a hot A32 on battery and 14 ms on the Pixel** (EYKO-111). Time grows in step with the rows, so the A32 would be near 340 ms at 300k (estimated from 100k, not measured).',
+    'E6, E8 · ADR 0001 · `docs/results/2026-11-09-final-setup-conditions.md`',
+    'The "one hour a day" is an assumption with no source (EYKO-101). The rate of 13.4 kept frames per minute comes from the Ego4D phone run (Head 8). Speed past 100k is not measured on a phone; a table past 300k reopens ADR 0001 (trigger 3).', 'EYKO-101, EYKO-111'],
   ['B3', 'B', 'Random vectors are not real ones. Does it hold with real data?', 'Answered',
     'For speed, yes. Real vectors from our own clips take the same time: at 20k, A32 82 ms real vs 80 ms random; Pixel 37 vs 40 ms.',
     'E6',
@@ -318,10 +319,10 @@ const Q = [
     'Not explained yet. Reading 20k vectors from SQLite on every search took 3.1–3.5 s on the Pixel vs about 1.6 s on the A32. It does not affect the app, which searches from memory.',
     'E4',
     'The Pixel was charging, its storage was almost full and it reached 38 °C. We will repeat after freeing storage and under the protocol.', 'EYKO-83, EYKO-95'],
-  ['C1', 'C', 'Prove the phone and the laptop store the same thing.', 'Partly',
+  ['C1', 'C', 'Prove the phone and the laptop store the same thing.', 'Answered',
     'There is one table design, copied into the phone. On 4 Ego4D clips the phone and laptop kept the same frames (354 of 372 at the same second), with 99 % the same place and 96 % the same action.',
     '`docs/results/2026-10-20-ego4d-baseline.md` (On the phone)',
-    'There is no automatic test that the two table designs are identical. That test is planned.', 'EYKO-98'],
+    'Since 9 Nov an automatic test (`tests/test_schema_parity.py`) builds both table designs in empty databases and fails if any table, column, key, foreign key or index differs. It caught a renamed column, a missing index and a dropped cascade when we planted them. Intended differences are listed in the test: the phone has a `jobs` table, and its keyword index is fts4 because Android has no FTS5. The stored values are covered by the Ego4D run above, not by this test.', 'EYKO-98'],
   ['C2', 'C', 'What does an hour of video cost in storage?', 'Partly',
     'One measured point: the database grew about 7 MB for 27.8 minutes of video, with every vector. Frame pictures were 8.8 MB per minute before dropped frames were deleted.',
     '`docs/results/2026-10-20-ego4d-baseline.md`',
