@@ -61,16 +61,29 @@ def test_text_table_has_384_numbers():
     assert vs.vectors("real", 200, dim=384).shape == (200, 384)
 
 
-def test_varied_reads_first_rows_of_the_coco_files(tmp_path, monkeypatch):
+def test_varied_takes_the_same_spread_rows_for_each_size(tmp_path, monkeypatch):
     rows = np.random.default_rng(0).standard_normal((300, 512)).astype("<f4")
     rows.tofile(tmp_path / "images_512.f32")
-    rows[:30].tofile(tmp_path / "queries_512.f32")
+    rows[:21].tofile(tmp_path / "queries_512.f32")
     monkeypatch.setattr(vs, "VARIED", tmp_path)
     small, large = vs.vectors("varied", 100), vs.vectors("varied", 300)
-    np.testing.assert_array_equal(small, large[:100])
-    np.testing.assert_allclose(np.linalg.norm(large, axis=1), 1.0, atol=1e-5)
-    np.testing.assert_allclose(large[0], rows[0] / np.linalg.norm(rows[0]), rtol=1e-5)
+    np.testing.assert_allclose(large, rows / np.linalg.norm(rows, axis=1, keepdims=True), rtol=1e-5)
+    assert {r.tobytes() for r in small} <= {r.tobytes() for r in large}  # smaller sizes nest
+    np.testing.assert_array_equal(small, vs.vectors("varied", 100))  # same rows every run
+    picked = [int(np.flatnonzero((large == r).all(axis=1))[0]) for r in small]
+    assert picked == sorted(picked) and picked[0] < 30 and picked[-1] > 270  # time order, spans the file
     assert vs.queries("varied", 21).shape == (21, 512)
-    with pytest.raises(ValueError, match="coco-vectors"):
+    with pytest.raises(ValueError, match="epic-vectors"):
         vs.vectors("varied", 301)
-    assert vs.label("varied") == "real_coco_train2017_mobileclip_s2"
+    assert vs.label("varied") == "real_epic_kitchens_30_longest_mobileclip_s2"
+
+
+def test_epic_frame_picking_and_urls():
+    from src.benchmarks import embed_epic as ee
+    frames = [(i / 59.94, i) for i in range(int(59.94 * 10))]  # 10 s at 59.94 fps
+    times = [t for t, _ in ee.pick(frames, 0.745)]
+    assert len(times) == 14 and times[0] == 0.0  # 0, 0.745, ... 9.685
+    assert all(abs(t - k * 0.745) < 1 / 59.94 and t >= k * 0.745 - 1e-9 for k, t in enumerate(times))
+    assert ee.video_urls("P01_109") == ["https://data.bris.ac.uk/datasets/2g1n6qdydwa9u22shpxqzp0t8m/P01/videos/P01_109.MP4"]
+    assert [u.split("/")[-3] for u in ee.video_urls("P01_18")] == ["train", "test"]
+    assert len(set(ee.VIDEOS)) == 30
