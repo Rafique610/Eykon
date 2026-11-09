@@ -1,0 +1,8 @@
+--------- beginning of main
+11-09 22:21:34.065 22330 22344 I EYKO109 : hold: MAPPED_NATIVE, 100000 rows x 3 tables loaded, pid 22330, holding 300 s: open other apps now
+11-09 22:22:04.144 22330 22344 I EYKO109 : hold: 30s, pid 22330, PSS 535 MB, java heap 5 MB
+11-09 22:22:34.187 22330 22344 I EYKO109 : hold: 60s, pid 22330, PSS 388 MB, java heap 5 MB
+11-09 22:23:04.227 22330 22344 I EYKO109 : hold: 90s, pid 22330, PSS 388 MB, java heap 5 MB
+11-09 22:23:34.281 22330 22344 I EYKO109 : hold: 120s, pid 22330, PSS 339 MB, java heap 5 MB
+11-09 22:24:04.321 22330 22344 I EYKO109 : hold: 150s, pid 22330, PSS 339 MB, java heap 5 MB
+11-09 22:24:34.381 22330 22344 I EYKO109 : hold: 180s, pid 22330, PSS 339 MB, java heap 5 MB

@@ -1,0 +1,15 @@
+--------- beginning of main
+11-09 23:19:28.962 15217 15232 I EYKO109 : hold: MAPPED_NATIVE, 20000 rows x 3 tables loaded, pid 15217, holding 300 s: open other apps now
+11-09 23:19:59.000 15217 15232 I EYKO109 : hold: 30s, pid 15217, PSS 170 MB, java heap 9 MB
+11-09 23:20:29.038 15217 15232 I EYKO109 : hold: 60s, pid 15217, PSS 171 MB, java heap 9 MB
+11-09 23:20:59.080 15217 15232 I EYKO109 : hold: 90s, pid 15217, PSS 171 MB, java heap 9 MB
+11-09 23:21:29.124 15217 15232 I EYKO109 : hold: 120s, pid 15217, PSS 170 MB, java heap 9 MB
+11-09 23:21:59.168 15217 15232 I EYKO109 : hold: 150s, pid 15217, PSS 171 MB, java heap 9 MB
+11-09 23:22:29.207 15217 15232 I EYKO109 : hold: 180s, pid 15217, PSS 171 MB, java heap 9 MB
+11-09 23:22:59.268 15217 15232 I EYKO109 : hold: 210s, pid 15217, PSS 171 MB, java heap 9 MB
+11-09 23:23:29.327 15217 15232 I EYKO109 : hold: 240s, pid 15217, PSS 171 MB, java heap 9 MB
+11-09 23:23:59.384 15217 15232 I EYKO109 : hold: 270s, pid 15217, PSS 171 MB, java heap 9 MB
+11-09 23:24:29.437 15217 15232 I EYKO109 : hold: 300s, pid 15217, PSS 171 MB, java heap 9 MB
+11-09 23:24:29.455 15217 15232 I EYKO109 : hold: after 300 s, image_vec search 9 ms, repeat 8 ms, still the same process (pid 15217)
+11-09 23:24:29.468 15217 15232 I EYKO109 : hold: after 300 s, text_vec search 7 ms, repeat 6 ms, still the same process (pid 15217)
+11-09 23:24:29.479 15217 15232 I EYKO109 : hold: after 300 s, audio_vec search 6 ms, repeat 5 ms, still the same process (pid 15217)
