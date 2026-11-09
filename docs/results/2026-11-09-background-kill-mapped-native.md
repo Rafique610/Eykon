@@ -34,6 +34,7 @@ All rows `MAPPED_NATIVE` unless noted. "Vectors" is the float32 data in the thre
 | 1 | 100,000 | ~560 MB | 339 to 535 MB | 5 MB | **killed at 187 s** |
 | 2 | 100,000 | ~560 MB | 604 MB | 11 MB | **killed at 211 s** |
 | 3 (Zara using the phone) | 100,000 | ~560 MB | 38 to 338 MB | 14 MB | **killed at 218 s** |
+| 8 (`MAPPED_F32`, 10 Nov) | 100,000 | ~560 MB | 606 MB | 15 MB | **killed at 194 s** |
 | 4 (`HEAP_F32`) | 100,000 | ~560 MB | n/a | n/a | did not load: `OutOfMemoryError` (268 MB Java heap limit) |
 
 What every kill has in common (Android's own `dumpsys activity exit-info`, saved for the sweep runs):
@@ -56,14 +57,17 @@ What every kill has in common (Android's own `dumpsys activity exit-info`, saved
 4. A design that stays below about 200 MB of vectors per process (roughly 35,000 rows across three tables of this shape on this phone)
    passed every time. What to do about larger libraries (cap, shards, smaller vectors) is for Rafique to decide.
 
-## This disagrees with EYKO-109, and the reason is not known
+## This disagrees with EYKO-109; the mode is ruled out, the cause is not known
 
-The EYKO-109 hold (8 Nov, same phone, same 3 x 100,000 rows, 300 s) was **not killed**: pid 22330 stayed, PSS 598 to 567 MB. Today's three
-runs of the same size were killed. What differed: the mode (`MAPPED_F32`, Java `FileChannel.map`, against `MAPPED_NATIVE` today), the
-day and the phone's state (battery, how long it had been on, what the power manager had learnt), and in EYKO-109 the laptop opened five apps
-during the hold. Whether the **mode** matters (for example, the native code touching every page of the file) was **not tested today**. The
-missing check is one `MAPPED_F32` hold at 100,000 x 3 on today's phone state. Until it is run, "MAPPED_NATIVE is killed and MAPPED_F32 is
-not" and "the phone changed since 8 Nov" are both possible.
+The EYKO-109 hold (8 Nov, same phone, same 3 x 100,000 rows, 300 s) was **not killed**: pid 22330 stayed, PSS 598 to 567 MB. Today's
+three runs of the same size were killed. To test whether the **mode** explains it, I ran EYKO-109's own mode, `MAPPED_F32` (Java
+`FileChannel.map`), at 3 x 100,000 rows on 10 Nov (00:15, battery 74 %, plugged in, untouched): **killed at 194 s**, the same way (SIGNALED/9,
+PSS 606 MB, `importance=125`, Griffin line just before). So the mode is not the difference.
+
+What did differ from EYKO-109: the day and the phone's state (what the power manager had learnt, how long it had been on), and in EYKO-109
+the laptop opened five apps in turn during the hold, which may have changed how the system ranked the test process. Neither was tested here.
+All 7 holds at 40,000 rows x 3 or more were killed; none at 30,000 or fewer. The EYKO-109 "not killed" result for 100,000 rows should be
+read as "not killed on 8 Nov, under those conditions", not as a guarantee.
 
 ## Not tested / limits
 
@@ -82,6 +86,6 @@ not" and "the phone changed since 8 Nov" are both possible.
 ## Evidence files
 
 `docs/results/vectors/bgkill/infinix-2026-11-09-run1`, `-run2`, `-run3`, `-run4-heap-100k-oom`, `-run5-heap-20k-control`, `-run6-mapped-20k`,
-`-run7-mapped-50k`, `-sweep-30k`, `-sweep-40k`, `-sweep-70k`: `device-sheet.txt`, `meminfo-before.txt`, `meminfo-after.txt`,
+`-run7-mapped-50k`, `-sweep-30k`, `-sweep-40k`, `-sweep-70k` and `infinix-2026-11-10-mapped-f32-100k`: `device-sheet.txt`, `meminfo-before.txt`, `meminfo-after.txt`,
 `eyko109-logcat.txt` (raw `logcat -d -s EYKO109`), `instrument-output.txt`, `kill-moment-logcat.txt` (runs 1 to 3 and 7) and, for the three sweep
 runs and `exit-info.txt` (the full all-buffers logs hold other apps, so they are kept off the repo, in `C:eykon-kitbgkill-full-logs`; `kill-moment-logcat.txt` is the filtered excerpt). A logcat screenshot is on the EYKO-116 card.
