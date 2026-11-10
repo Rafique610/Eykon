@@ -1,19 +1,18 @@
 """EYKO-91 S3: embed frames of the 30 longest EPIC-KITCHENS-100 videos with MobileCLIP-S2. Run: task epic-vectors
 
-Taha's choice (lead), 10 Nov 2026: S3 is first-person kitchen video, as decided on 8 Nov (D1). The 30
-videos are about 250 GB, too much for Taha's connection, so this runs on a helper machine
-(EYKO-113). One video is fetched at a time into data/eyko91_epic/tmp/, one frame is taken every
-STEP seconds, the frames are embedded, and the video is deleted: about 15 GB of free disk is enough.
-Only the vectors are kept, in data/eyko91_epic/ (git-ignored, never committed; EPIC-KITCHENS is
-CC BY-NC 4.0).
+Taha's choice (lead), 10 Nov 2026: S3 is first-person kitchen video, as decided on 8 Nov (D1). The
+30 videos are 258 GB (largest 13.9 GB), more than the laptop's free disk, so no video is ever saved:
+each one is streamed from EPIC's server over several parallel range requests (the server gives
+about 0.1-0.5 MB/s per connection), decoded as it arrives, and one frame is taken every STEP
+seconds. About 200 MB of memory holds the chunks in flight (48 of 4 MB). Only the vectors are kept, in
+data/eyko91_epic/ (git-ignored, never committed; EPIC-KITCHENS is CC BY-NC 4.0).
 
 The model is the app's (MobileCLIP-S2, datacompdr) run through open_clip in PyTorch. Its ONNX
 export, which the phone runs, agrees with it to cosine >= 0.999 (export_clip.py checks that).
 
 A video's rows are written only once the whole video is embedded, so a stopped run resumes at the
-next video, and a half-fetched video resumes its download. Queries are 21 distinct narrations
-(seed 90) from EPIC's validation videos, none from the 30 stored ones: real text, through the text
-encoder.
+next video. Queries are 21 distinct narrations (seed 90) from EPIC's validation videos, none from
+the 30 stored ones: real text, through the text encoder.
 """
 import argparse
 import csv
@@ -23,6 +22,7 @@ import math
 import sys
 import time
 import urllib.request
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 import numpy as np
@@ -39,6 +39,7 @@ ANNOTATIONS = "https://raw.githubusercontent.com/epic-kitchens/epic-kitchens-100
 EPIC55 = "https://data.bris.ac.uk/datasets/3h91syskeag572hl6tvuovwv4d/videos/{split}/{p}/{v}.MP4"
 EPIC100 = "https://data.bris.ac.uk/datasets/2g1n6qdydwa9u22shpxqzp0t8m/{p}/videos/{v}.MP4"
 QUERIES = 21  # 1 warm-up + 20 timed, as the benchmark uses
+CHUNK = 4 << 20
 
 
 def video_urls(video_id: str) -> list:
@@ -58,31 +59,98 @@ def pick(frames, step: float = STEP):
             target = (math.floor(t / step + 1e-9) + 1) * step
 
 
-def fetch(video_id: str) -> Path:
-    """Download one video into OUT/tmp (resuming a partial file) and return its path."""
-    tmp = OUT / "tmp"
-    tmp.mkdir(exist_ok=True)
-    path = tmp / f"{video_id}.MP4"
+def locate(video_id: str):
+    """(url, size in bytes) of a video on EPIC's server."""
     for url in video_urls(video_id):
         try:
             with urllib.request.urlopen(urllib.request.Request(url, method="HEAD"), timeout=60) as r:
-                size = int(r.headers["Content-Length"])
+                return url, int(r.headers["Content-Length"])
         except OSError:
             continue
-        for attempt in range(20):
-            have = path.stat().st_size if path.exists() else 0
-            if have == size:
-                return path
-            try:
-                req = urllib.request.Request(url, headers={"Range": f"bytes={have}-"} if 0 < have < size else {})
-                with urllib.request.urlopen(req, timeout=120) as r, path.open("ab" if r.status == 206 else "wb") as f:
-                    while chunk := r.read(1 << 22):
-                        f.write(chunk)
-            except OSError as e:
-                print(f"  {video_id}: {e}, retrying", flush=True)
-                time.sleep(min(2 ** attempt, 60))
-        sys.exit(f"{video_id}: could not finish the download from {url}")
     sys.exit(f"{video_id}: not found at {video_urls(video_id)}")
+
+
+def get_range(url: str, start: int, end: int, tries: int = 20) -> bytes:
+    """Bytes start..end-1 of url, retrying broken or short reads."""
+    for attempt in range(tries):
+        try:
+            req = urllib.request.Request(url, headers={"Range": f"bytes={start}-{end - 1}"})
+            with urllib.request.urlopen(req, timeout=120) as r:
+                data = r.read()
+            if r.status == 206 and len(data) == end - start:
+                return data
+            err = f"got {len(data)} bytes, status {r.status}"
+        except OSError as e:
+            err = e
+        print(f"  bytes {start}-{end}: {err}, retrying", flush=True)
+        time.sleep(min(2 ** attempt, 60))
+    raise OSError(f"could not read bytes {start}-{end} of {url}")
+
+
+class RemoteFile(io.RawIOBase):
+    """A seekable read-only file over HTTP range requests, fetching the next chunks in parallel.
+
+    Only the chunks around the read position are kept, so a 14 GB video never touches the disk.
+    Read-ahead starts at one chunk and grows with each read near the last one, so the far jumps a demuxer makes
+    while opening a file (MP4 keeps its index at the end) do not queue chunks nobody reads.
+    """
+
+    def __init__(self, url: str, size: int, fetch=get_range, workers: int = 24, ahead: int = 48, chunk: int = CHUNK):
+        self.url, self.size, self.fetch, self.ahead, self.chunk = url, size, fetch, ahead, chunk
+        self.pool, self.jobs, self.pos, self.run = ThreadPoolExecutor(workers), {}, 0, 0
+        self.got = self.waited = 0  # bytes downloaded, seconds spent waiting for them
+
+    def readable(self):
+        return True
+
+    def seekable(self):
+        return True
+
+    def tell(self):
+        return self.pos
+
+    def seek(self, offset, whence=io.SEEK_SET):
+        pos = {io.SEEK_SET: 0, io.SEEK_CUR: self.pos, io.SEEK_END: self.size}[whence] + offset
+        if abs(pos - self.pos) > 2 * self.chunk:  # a far jump; small ones (audio next to video) keep it
+            self.run = 0
+        self.pos = pos
+        return self.pos
+
+    def _job(self, i):
+        if i not in self.jobs:
+            start = i * self.chunk
+            self.jobs[i] = self.pool.submit(self.fetch, self.url, start, min(start + self.chunk, self.size))
+        return self.jobs[i]
+
+    def readinto(self, buf):
+        if self.pos >= self.size:
+            return 0
+        i, last = self.pos // self.chunk, (self.size - 1) // self.chunk
+        ahead = min(self.ahead, self.run)
+        for j in [j for j in self.jobs if j < i - 1 or j > i + max(ahead, 1)]:  # keep one chunk behind
+            self.jobs.pop(j).cancel()
+        for j in range(i, min(i + ahead, last) + 1):
+            self._job(j)
+        self.run += 1
+        job = self.jobs[i]
+        if not job.done():
+            waited = time.perf_counter()
+            job.result()
+            self.waited += time.perf_counter() - waited
+        data = job.result()
+        if not getattr(job, "counted", False):
+            job.counted = True
+            self.got += len(data)
+        off = self.pos - i * self.chunk
+        n = min(len(buf), len(data) - off)
+        buf[:n] = data[off:off + n]
+        self.pos += n
+        return n
+
+    def close(self):
+        self.pool.shutdown(wait=False, cancel_futures=True)
+        self.jobs.clear()
+        super().close()
 
 
 def narrations() -> list:
@@ -98,6 +166,7 @@ def main():
     p = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     p.add_argument("--videos", type=int, default=len(VIDEOS), help="embed only the first N videos (a test run)")
     p.add_argument("--batch", type=int, default=64)
+    p.add_argument("--connections", type=int, default=24, help="parallel range requests (24 gave ~4.5 MB/s, 10 Nov)")
     a = p.parse_args()
 
     import av
@@ -128,16 +197,17 @@ def main():
     for k, video_id in enumerate(VIDEOS[: a.videos], 1):
         if video_id in done:
             continue
-        print(f"[{k}/{a.videos}] {video_id}: fetching", flush=True)
-        path = fetch(video_id)
-        vecs, times, batch = [], [], []
+        url, size = locate(video_id)
+        print(f"[{k}/{a.videos}] {video_id}: streaming {size / 1e9:.1f} GB", flush=True)
+        began, vecs, times, batch = time.perf_counter(), [], [], []
 
         def flush():
             with torch.no_grad():
                 vecs.append(torch.nn.functional.normalize(model.encode_image(torch.stack(batch)), dim=-1).numpy())
             batch.clear()
 
-        with av.open(str(path)) as box:
+        remote = RemoteFile(url, size, workers=a.connections, ahead=2 * a.connections)
+        with av.open(remote) as box:
             stream = box.streams.video[0]
             stream.thread_type = "AUTO"
             decoded = ((float(f.pts * stream.time_base), f) for f in box.decode(stream) if f.pts is not None)
@@ -146,14 +216,20 @@ def main():
                 times.append(t)
                 if len(batch) == a.batch:
                     flush()
+                if len(times) % 500 == 0:
+                    s = time.perf_counter() - began
+                    print(f"  {t / 60:5.1f} min of video, {len(times)} frames, {remote.got / s / 1e6:.2f} MB/s, "
+                          f"{remote.waited / s:.0%} of the time waiting for the network", flush=True)
             if batch:
                 flush()
+        remote.close()
         with vec_path.open("ab") as vf, row_path.open("a") as rf:
             vf.write(np.concatenate(vecs).astype("<f4").tobytes())
             rf.write("".join(f"{video_id},{t:.3f}\n" for t in times))
-        path.unlink()
         total += len(times)
-        print(f"  {len(times)} frames, {total} rows in all, {(time.perf_counter() - start) / 3600:.1f} h so far", flush=True)
+        took = time.perf_counter() - began
+        print(f"  {len(times)} frames in {took / 60:.0f} min ({size / took / 1e6:.2f} MB/s), {total} rows in all, "
+              f"{(time.perf_counter() - start) / 3600:.1f} h so far", flush=True)
     print(f"written: {vec_path} ({total} x {DIM}), {queries_path} ({QUERIES} x {DIM})")
 
 

@@ -87,3 +87,24 @@ def test_epic_frame_picking_and_urls():
     assert ee.video_urls("P01_109") == ["https://data.bris.ac.uk/datasets/2g1n6qdydwa9u22shpxqzp0t8m/P01/videos/P01_109.MP4"]
     assert [u.split("/")[-3] for u in ee.video_urls("P01_18")] == ["train", "test"]
     assert len(set(ee.VIDEOS)) == 30
+
+
+def test_remote_file_reads_and_seeks_like_a_local_file():
+    import io
+    from src.benchmarks import embed_epic as ee
+    blob = np.random.default_rng(1).integers(0, 256, 10_000, dtype=np.uint8).tobytes()
+    calls = []
+
+    def fetch(url, start, end):
+        calls.append(start)
+        return blob[start:end]
+
+    f = ee.RemoteFile("x", len(blob), fetch=fetch, workers=3, ahead=4, chunk=1000)
+    reader = io.BufferedReader(f, 777)
+    assert reader.read(2500) == blob[:2500]
+    reader.seek(-10, io.SEEK_END)
+    assert reader.read() == blob[-10:]
+    reader.seek(4321)
+    assert reader.read(3000) == blob[4321:7321]
+    assert f.tell() >= 7321 and len(f.jobs) <= 6  # only chunks near the read position are kept
+    reader.close()
