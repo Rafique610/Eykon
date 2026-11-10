@@ -97,7 +97,9 @@ the stage the job resumed after. Only the interrupted stage was done twice, so t
 
 - **Part 2 limits:** one video source (a screen recording, 1.25 Mbps), one phone; **no search was run in this part, so the memory-mapped search copy (`*.vec`, `*.ids`)
   was never built and shows 0.** From the row counts it would be tiny here (21 vectors per table, 43 KB for the 512-number images); a library with many more
-  kept frames is what EYKO-109 and the Part 1 sweep measure. Settings' own "App size / Data / Cache" figures are on the card as screenshots, not in this file.
+  kept frames is what EYKO-109 and the Part 1 sweep measure. Settings (Apps, Eykon, Storage) after the test:
+  App size 162 MB, **User data 847 MB**, Cache 111 kB, Total 1.01 GB. The 847 MB agrees with the measured 827,331 KB (827,331 x 1024 = 847.2 million bytes). A first Settings
+  screenshot taken at 22:19 still showed the figures from before the test (User data 51.74 MB): Settings keeps a cached figure, so use the reading after it refreshes. Screenshot on the card.
 - **Part 3 used `am force-stop`**, a clean kill by the system. A kill by the phone's power manager or by memory pressure (signal 9 from `system_server`,
   see `2026-11-09-background-kill-mapped-native.md`) was not tried here. I expect the same resume, because the job row does not depend on how the process ends, but I did not measure it.
 - **Where inside a stage the kill landed is known only to the stage**, not to the frame. `embed_texts` lasts about 0.4 to 1.7 s, so the kill is inside it
