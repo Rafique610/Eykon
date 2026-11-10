@@ -4,8 +4,10 @@ import android.app.Application
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.eykon.memory.data.MemoryDatabase
 import com.eykon.memory.video.VideoJobs
+import com.eykon.memory.video.VideoJobScheduler
 import com.eykon.memory.video.VideoPipeline
 import com.eykon.memory.video.VideoWorker
+import androidx.work.WorkManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -22,10 +24,13 @@ class MemoryApp : Application() {
 
     private val videoDb: () -> SupportSQLiteDatabase = { database.openHelper.writableDatabase }
     val videoJobs: VideoJobs by lazy { VideoJobs(videoDb) }
-    private val videoWorker: VideoWorker by lazy { VideoWorker(videoDb, videoJobs) }
+    val videoWorker: VideoWorker by lazy { VideoWorker(videoDb, videoJobs) }
 
-    /** Start working through queued video jobs in the background. */
-    fun kickVideoWorker() = videoWorker.kick(applicationScope)
+    /**
+     * Start working through queued video jobs. EYKO-44: through WorkManager as long-running work with a foreground notification (see
+     * VideoJobWorker), so it carries on with the app in the background or closed. No timer, no polling: called when a job is added or the app starts.
+     */
+    fun kickVideoWorker() = VideoJobScheduler.enqueue(WorkManager.getInstance(this))
 
     override fun onCreate() {
         super.onCreate()

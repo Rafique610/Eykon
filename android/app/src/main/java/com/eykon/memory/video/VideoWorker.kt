@@ -1,6 +1,7 @@
 package com.eykon.memory.video
 
 import androidx.sqlite.db.SupportSQLiteDatabase
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import java.util.concurrent.atomic.AtomicBoolean
@@ -17,18 +18,43 @@ class VideoWorker(
 ) {
     private val draining = AtomicBoolean(false)
 
+    /** The video and stage being worked on right now (EYKO-44 shows it in the notification); null between jobs. */
+    @Volatile
+    var current: Pair<String, String>? = null
+        private set
+
     /** Run one job. False when the queue is empty. */
     fun runOnce(): Boolean {
         val job = jobs.claim() ?: return false
         try {
             for ((name, stage) in stagesAfter(job.stage)) {
+                current = job.videoId to name
                 stage(db(), job.videoId)
                 jobs.stageDone(job.id, name)
             }
             jobs.done(job.id)
+        } catch (e: CancellationException) {
+            throw e // being stopped is not a failed attempt: the job stays `running` and is requeued the next time the app or the worker starts
         } catch (e: Exception) {
             // Class and a short message only: never a stack trace in the database.
             jobs.attemptFailed(job, "${e.javaClass.simpleName}: ${e.message.orEmpty().take(200)}".trimEnd(':', ' '), retries)
+        }
+        current = null
+        return true
+    }
+
+    /**
+     * EYKO-44: one loop at a time in this process, whoever asks (the old in-app `kick` or the WorkManager worker). Requeues jobs cut short by an
+     * earlier stop, then works through the queue. False when another loop is already running (it must not be requeued while it works).
+     */
+    fun drainWhenIdle(): Boolean {
+        if (!draining.compareAndSet(false, true)) return false
+        try {
+            jobs.requeueInterrupted()
+            drain()
+        } finally {
+            current = null
+            draining.set(false)
         }
         return true
     }

@@ -68,6 +68,7 @@ dependencies {
     val roomVersion = "2.6.1"
     val coroutinesVersion = "1.9.0"
     val serializationVersion = "1.7.1"
+    val workVersion = "2.9.1"
 
     // Core & Lifecycle
     implementation("androidx.core:core-ktx:1.13.1")
@@ -95,6 +96,9 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$serializationVersion")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutinesVersion")
 
+    // EYKO-44: WorkManager runs the video jobs as long-running work with a foreground notification. Apache License 2.0 (owner/lead approved on the card, 10 Nov 2026).
+    implementation("androidx.work:work-runtime-ktx:$workVersion")
+
     // Google AI Edge LiteRT-LM On-Device LLM Runtime
     implementation("com.google.ai.edge.litertlm:litertlm-android:0.16.1")
 
@@ -110,6 +114,8 @@ dependencies {
     androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     androidTestImplementation("androidx.room:room-testing:$roomVersion")
+    // EYKO-44: test-only, checks the unique work is enqueued once. Apache License 2.0 (approved on the card, 10 Nov 2026).
+    androidTestImplementation("androidx.work:work-testing:$workVersion")
     // EYKO-105 route R1: Google's bundled SQLite, which can load sqlite-vec. The test alone needs
     // androidx.sqlite 2.7.1 (the driver API), and AGP makes the app use the same version as its tests,
     // so the app's androidx.sqlite goes 2.4.0 -> 2.7.1 on this throwaway branch (Room 2.6.1 unchanged).
