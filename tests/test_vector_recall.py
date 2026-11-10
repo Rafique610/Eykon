@@ -73,9 +73,9 @@ def test_varied_takes_the_same_spread_rows_for_each_size(tmp_path, monkeypatch):
     picked = [int(np.flatnonzero((large == r).all(axis=1))[0]) for r in small]
     assert picked == sorted(picked) and picked[0] < 30 and picked[-1] > 270  # time order, spans the file
     assert vs.queries("varied", 21).shape == (21, 512)
-    with pytest.raises(ValueError, match="epic-vectors"):
+    with pytest.raises(ValueError, match="coco-vectors"):
         vs.vectors("varied", 301)
-    assert vs.label("varied") == "real_epic_kitchens_30_longest_mobileclip_s2"
+    assert vs.label("varied") == "real_coco_train2017_mobileclip_s2"
 
 
 def test_epic_frame_picking_and_urls():

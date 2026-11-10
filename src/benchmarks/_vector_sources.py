@@ -4,9 +4,9 @@ S1 "random": Gaussian unit vectors, seed 31; queries seed 90 (as EYKO-90 and v1)
 S2 "real": the phones' own-clip vectors (90 per table), then noisy copies (0.01 per number);
 queries are own frames with noise 0.05, seed 90. Same recipe as BenchKit.kt TestVectors, drawn
 with numpy, so it matches the phones in kind but not bit for bit.
-S3 "varied": frames of the 30 longest EPIC-KITCHENS-100 videos, one every 0.745 s, embedded with
-MobileCLIP-S2 (embed_epic.py); queries are real validation narrations through the text encoder.
-Files in data/eyko91_epic/.
+S3 "varied": the first 100k COCO train2017 photos embedded with MobileCLIP-S2 (embed_coco.py);
+queries are real val2017 captions through the text encoder. Files in data/eyko91_coco/.
+(embed_epic.py writes the same files for EPIC-KITCHENS into data/eyko91_epic/; paused 10 Nov.)
 """
 from pathlib import Path
 
@@ -14,8 +14,8 @@ import numpy as np
 
 ROOT = Path(__file__).resolve().parents[2]
 ASSETS = ROOT / "android/app/src/androidTest/assets/vectors"
-VARIED = ROOT / "data/eyko91_epic"  # written by embed_epic.py, git-ignored
-LABELS = {"random": "random_unit_seed31", "real": "real_own_clips_90+noise", "varied": "real_epic_kitchens_30_longest_mobileclip_s2"}
+VARIED = ROOT / "data/eyko91_coco"  # written by embed_coco.py, git-ignored
+LABELS = {"random": "random_unit_seed31", "real": "real_own_clips_90+noise", "varied": "real_coco_train2017_mobileclip_s2"}
 TIE_TOLERANCE = 1e-6
 
 
@@ -34,14 +34,14 @@ def own_vectors(dim: int = 512) -> np.ndarray:
 def varied(name: str, count: int, dim: int) -> np.ndarray:
     """count rows of an S3 file as unit vectors, fixed for each count (fails if the file holds fewer).
 
-    The file is video after video, so its first rows would all be one kitchen. Each size instead
-    takes a seeded random set of rows, kept in file (time) order: the frames of a smaller size are
-    always among a larger size's, and every size spans all 30 videos.
+    Each size takes a seeded random set of rows, kept in file order: a smaller size's rows are
+    always among a larger size's, and every size spans the whole file (for EPIC, which is video
+    after video, the first rows would all be one kitchen).
     """
     path = VARIED / name
     have = path.stat().st_size // (4 * dim) if path.exists() else 0
     if dim != 512 or have < count:
-        raise ValueError(f"S3 needs {count} x 512 rows in {path}, has {have}: run task epic-vectors")
+        raise ValueError(f"S3 needs {count} x 512 rows in {path}, has {have}: run task coco-vectors")
     rows = np.sort(np.random.default_rng(91).permutation(have)[:count])
     return unit(np.memmap(path, dtype="<f4", mode="r", shape=(have, dim))[rows])
 
