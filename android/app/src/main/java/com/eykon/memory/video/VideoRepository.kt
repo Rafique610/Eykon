@@ -12,6 +12,8 @@ data class Video(
     val lat: Double? = null,
     val lon: Double? = null,
     val status: String = "processing",
+    /** SHA-256 of the copied file (EYKO-71); null for videos saved before the column existed. */
+    val contentHash: String? = null,
 )
 
 /** A video with its newest job and real counts of what is stored for it. */
@@ -32,14 +34,20 @@ class VideoRepository(private val db: () -> SupportSQLiteDatabase) {
 
     fun insert(video: Video) {
         db().execSQL(
-            "INSERT INTO videos (video_id, file_path, recorded_at, created_at, duration_s, lat, lon, status) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+            "INSERT INTO videos (video_id, file_path, recorded_at, created_at, duration_s, lat, lon, status, content_hash) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
             arrayOf(
                 video.videoId, video.filePath, video.recordedAt, video.createdAt,
-                video.durationS, video.lat, video.lon, video.status,
+                video.durationS, video.lat, video.lon, video.status, video.contentHash,
             ),
         )
     }
+
+    /** The oldest saved video with exactly these bytes, or null. */
+    fun findByHash(contentHash: String): Video? =
+        db().query("SELECT $COLUMNS FROM videos WHERE content_hash = ? ORDER BY created_at LIMIT 1", arrayOf(contentHash)).use { cursor ->
+            if (cursor.moveToFirst()) cursor.toVideo() else null
+        }
 
     fun get(videoId: String): Video? =
         db().query("SELECT $COLUMNS FROM videos WHERE video_id = ?", arrayOf(videoId)).use { cursor ->
@@ -67,14 +75,15 @@ class VideoRepository(private val db: () -> SupportSQLiteDatabase) {
                     add(
                         VideoWithJob(
                             video = cursor.toVideo(),
-                            jobStatus = if (cursor.isNull(8)) null else cursor.getString(8),
-                            jobStage = if (cursor.isNull(9)) "" else cursor.getString(9),
-                            jobAttempts = if (cursor.isNull(10)) 0 else cursor.getInt(10),
-                            jobError = if (cursor.isNull(11)) null else cursor.getString(11),
-                            jobId = if (cursor.isNull(12)) null else cursor.getLong(12),
-                            keptFrames = cursor.getInt(13),
-                            speechSegments = cursor.getInt(14),
-                            transcriptChunks = cursor.getInt(15),
+                            // the video's nine columns come first (0 to 8), then the job's
+                            jobStatus = if (cursor.isNull(9)) null else cursor.getString(9),
+                            jobStage = if (cursor.isNull(10)) "" else cursor.getString(10),
+                            jobAttempts = if (cursor.isNull(11)) 0 else cursor.getInt(11),
+                            jobError = if (cursor.isNull(12)) null else cursor.getString(12),
+                            jobId = if (cursor.isNull(13)) null else cursor.getLong(13),
+                            keptFrames = cursor.getInt(14),
+                            speechSegments = cursor.getInt(15),
+                            transcriptChunks = cursor.getInt(16),
                         ),
                     )
                 }
@@ -101,9 +110,10 @@ class VideoRepository(private val db: () -> SupportSQLiteDatabase) {
         lat = if (isNull(5)) null else getDouble(5),
         lon = if (isNull(6)) null else getDouble(6),
         status = getString(7),
+        contentHash = if (isNull(8)) null else getString(8),
     )
 
     private companion object {
-        const val COLUMNS = "video_id, file_path, recorded_at, created_at, duration_s, lat, lon, status"
+        const val COLUMNS = "video_id, file_path, recorded_at, created_at, duration_s, lat, lon, status, content_hash"
     }
 }
