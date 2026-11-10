@@ -108,3 +108,27 @@ def test_remote_file_reads_and_seeks_like_a_local_file():
     assert reader.read(3000) == blob[4321:7321]
     assert f.tell() >= 7321 and len(f.jobs) <= 6  # only chunks near the read position are kept
     reader.close()
+
+
+def test_get_range_retries_a_cut_off_download(monkeypatch):
+    import http.client
+    from src.benchmarks import embed_epic as ee
+    attempts = []
+
+    class Reply:
+        status = 206
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *a):
+            return False
+
+        def read(self):
+            if len(attempts) == 1:
+                raise http.client.IncompleteRead(b"ab", 2)
+            return b"abcd"
+
+    monkeypatch.setattr(ee.urllib.request, "urlopen", lambda req, timeout: attempts.append(req) or Reply())
+    assert ee.get_range("https://x/v.MP4", 0, 4, wait=lambda s: None) == b"abcd"
+    assert len(attempts) == 2 and attempts[0].headers["Range"] == "bytes=0-3"

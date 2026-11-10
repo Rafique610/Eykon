@@ -16,6 +16,7 @@ the 30 stored ones: real text, through the text encoder.
 """
 import argparse
 import csv
+import http.client
 import io
 import json
 import math
@@ -70,7 +71,7 @@ def locate(video_id: str):
     sys.exit(f"{video_id}: not found at {video_urls(video_id)}")
 
 
-def get_range(url: str, start: int, end: int, tries: int = 20) -> bytes:
+def get_range(url: str, start: int, end: int, tries: int = 20, wait=time.sleep) -> bytes:
     """Bytes start..end-1 of url, retrying broken or short reads."""
     for attempt in range(tries):
         try:
@@ -80,10 +81,10 @@ def get_range(url: str, start: int, end: int, tries: int = 20) -> bytes:
             if r.status == 206 and len(data) == end - start:
                 return data
             err = f"got {len(data)} bytes, status {r.status}"
-        except OSError as e:
+        except (OSError, http.client.HTTPException) as e:  # IncompleteRead is not an OSError
             err = e
         print(f"  bytes {start}-{end}: {err}, retrying", flush=True)
-        time.sleep(min(2 ** attempt, 60))
+        wait(min(2 ** attempt, 60))
     raise OSError(f"could not read bytes {start}-{end} of {url}")
 
 
