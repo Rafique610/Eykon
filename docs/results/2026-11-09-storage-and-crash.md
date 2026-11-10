@@ -1,6 +1,6 @@
 # Storage per hour of video, and killing the app mid-stage (EYKO-116 parts 2 and 3)
 
-**Part 3 (kill mid-stage) is DONE; part 2 (storage) has not been run yet.** Run by Zara Tahir on her Infinix X670. Answers supervisor questions C2 ("what does an hour
+**Parts 2 (storage) and 3 (kill mid-stage) are both DONE** (10 Nov 2026). Run by Zara Tahir on her Infinix X670. Answers supervisor questions C2 ("what does an hour
 of video cost in storage?") and C3 ("what if the app is killed mid-write?"). Before this card there was one storage point: about 7 MB of
 database for 27.8 min on the Pixel (`docs/results/2026-10-20-ego4d-baseline.md`).
 
@@ -11,23 +11,58 @@ database for 27.8 min on the Pixel (`docs/results/2026-10-20-ego4d-baseline.md`)
 | Phone | Infinix X670, Android 13 |
 | Build | `feature/video-memory` at `43d610e`, installed with `adb install -r` (never `connectedDebugAndroidTest`) |
 | Source of the video | A 7 h 30 min screen recording of a work session (1920x1080, 60 fps, H.264 + AAC, 1.25 Mbps), no faces and no security concern (confirmed by Zara). Cut without re-encoding into pieces of 5, 10, 15 and 30 min (part 2) and nine of about 3 min (part 3). **Not camera video**: a screen recording is low-bitrate (about 0.12 MB per second against about 2.4 for the phone's own clips), so video copies per minute will be far smaller than for real phone video, and a still screen keeps few frames. Do not quote the numbers as the cost of an hour of camera video. |
-| Free storage before | _ GB (`df -h /data`) |
+| Free storage before | 54 GB of 110 GB (`df -h /data`), 20:48 on 10 Nov; battery 83 %, plugged in, 31 C |
 
-## Part 2: storage by minutes of video
+## Part 2: storage by minutes of video (done, 10 Nov 2026, 20:48 to 21:46)
 
-Taken with `python -I scripts/eyko116_storage.py --minutes <total so far> --label "<step>" --csv docs/results/vectors/storage/infinix-<date>-storage.csv`
-(database and vector files in bytes, folders in KB; only sizes are read). Before any video: the app's data size in Settings and the
-`memories.db` size are recorded first.
+The app was reset to 0 videos (database 135 KB; the app's data folder held 50 MB of leftovers from earlier test cards, so every growth figure below is
+measured against that baseline). Four clips were added one after another and processed as one queue (about 58 minutes of processing for 60 minutes of video):
+5, 10, 15 and 30 min (`p2-a` to `p2-d`, cut without re-encoding from the screen recording). `scripts/eyko116_storage_watch.py` took a reading each time a video
+reached `ready`, with the running total of minutes finished (from the audio length in the log). Raw: `docs/results/vectors/storage/infinix-2026-11-10-storage.csv`
+and the log `...-eykonvideo-watch.txt`. Database and vector files in bytes, folders in KB (`du -sk`, 1 KB = 1024 bytes).
 
-| Video added in total (min) | Database | Vector files (`*.vec`, `*.ids`) | Video copies | Frame files | Total app data | MB per minute of video |
-|---|---|---|---|---|---|---|
-| 0 (before) | _ | _ | _ | _ | _ | n/a |
-| ~5 | _ | _ | _ | _ | _ | _ |
-| ~15 | _ | _ | _ | _ | _ | _ |
-| ~30 | _ | _ | _ | _ | _ | _ |
-| ~60 | _ | _ | _ | _ | _ | _ |
+**What the app keeps:** the full copy of each clip (made the moment the clip is added, **not** when it is processed), the 16 kHz audio file
+(`audio16k.wav`, kept after processing), the database (all frames' rows, the kept frames' vectors, captions, sightings), `clip_vectors.bin`, and the frames
+that survived the filters (the others are deleted at `finish`).
 
-**Reading:** _MB per minute for each part, which part grows fastest, what an hour costs; and what the video copies are (the app keeps a full copy of the clip)._
+### Readings (growth against the baseline)
+
+| Video finished in total (min) | Database | Database growth | Vector files (`*.vec`, `*.ids`) | Frame files | Total app data | App data growth | Growth per minute of video |
+|---|---|---|---|---|---|---|---|
+| 0 (baseline) | 135,168 B | n/a | 0 | 0 | 50,293 KB | n/a | n/a |
+| 5.0 | 706,944 B | +558 KB | 0 | 248 KB | 721,366 KB | +671,073 KB | 131 MiB (all four copies are already in) |
+| 15.0 | 1,096,208 B | +939 KB | 0 | 952 KB | 741,262 KB | +690,969 KB | 45 MiB |
+| 30.0 | 1,703,936 B | +1,532 KB | 0 | 816 KB | 769,790 KB | +719,497 KB | 23 MiB |
+| 60.1 | 2,727,936 B | +2,532 KB | 0 | 936 KB | 827,331 KB | +777,038 KB | **12.6 MiB** |
+
+**Read the last column with care.** The four copies (676 MB) were all in the folder from the first reading, because the app copies a clip when it is added. So the per-minute
+figure falls only because the minutes finished catch up with the copies already stored. The per-minute figure to use is the one at 60.1 minutes, when every clip is processed:
+**about 12.6 MiB per minute of this video, 757 MiB (0.74 GiB) per hour.**
+
+### Where the bytes are (60.1 minutes in total)
+
+| Part | Size | Per minute of video | Per hour of video | Share of the growth |
+|---|---|---|---|---|
+| Full video copies (4 files) | 675.8 MB (660,656 KB) | 11.2 MB (7.3 to 8.1 MB for three clips, 14.7 for the 30-min one) | 675 MB | 85 % |
+| 16 kHz audio files (`audio16k.wav`, kept) | 115.4 MB | 1.92 MB (exactly 16,000 Hz x 2 bytes) | 115 MB | 14.5 % |
+| Database (rows, vectors, text index) | +2,532 KB | 42 KB | 2.5 MB | 0.3 % |
+| Frame files kept | 936 KB | 16 KB | 0.9 MB | 0.1 % |
+| `clip_vectors.bin` | 43 KB | 0.7 KB | 0.04 MB | under 0.01 % |
+
+(Shares are of the total growth, 777,038 KB = 795.7 MB = 758.8 MiB. Sizes of files are in decimal MB; folder sizes from `du` are in 1024-byte KB, so the total growth is quoted in MiB: 12.6 MiB per minute, 757 MiB per hour.) Per clip:
+`p2-a` 37.1 MB (7.4 MB/min), `p2-b` 73.4 MB (7.3), `p2-c` 122.1 MB (8.1), `p2-d` 443.2 MB (14.7); audio files 9.6, 19.2, 28.8 and 57.7 MB.
+
+**What is in the database:** 4 videos, **10,820 frame rows but only 21 kept frames** (21 rows each in `image_vec` and `text_vec`, 21 texts, 48 sightings, 0 audio
+windows because the screen recording has no speech). The `frames` table (1.35 MB) and its index (0.53 MB) are about 70 % of the database: the rows of dropped frames
+stay, only their picture files are deleted.
+
+**Reading:** an hour of this video costs about **0.75 GiB**, and **the copy of the video is almost all of it** (0.66 GiB), then the audio (0.11 GiB). The database,
+the vectors and the frame pictures together are under 1 % (about 3.5 MB per hour). The number does not shrink if the video is processed more cleverly: the app keeps the
+original file. Only deleting the copy after processing would change it (a product decision, not tested).
+
+**Do not quote these numbers as the cost of an hour of camera video** (the source is a screen recording; the phone's own clips are about 2.4 MB/s, so a camera
+hour would be about 8.6 GB for the copy alone, which is the same copy rule at a higher bitrate, not measured here). A still screen keeps almost no frames (21 of 10,820), so the
+database and vector growth are far below what moving camera video would give (the 5 Nov camera clips kept 10 and 16 of 224 frames in 75 s).
 
 ## Part 3: kill the app in the middle of a stage (done, 10 Nov 2026, 01:29 to 02:08)
 
@@ -60,7 +95,9 @@ the stage the job resumed after. Only the interrupted stage was done twice, so t
 
 ## Not tested / limits
 
-- **Part 2 (storage by minutes of video) is not run yet**; its table above is empty.
+- **Part 2 limits:** one video source (a screen recording, 1.25 Mbps), one phone; **no search was run in this part, so the memory-mapped search copy (`*.vec`, `*.ids`)
+  was never built and shows 0.** From the row counts it would be tiny here (21 vectors per table, 43 KB for the 512-number images); a library with many more
+  kept frames is what EYKO-109 and the Part 1 sweep measure. Settings' own "App size / Data / Cache" figures are on the card as screenshots, not in this file.
 - **Part 3 used `am force-stop`**, a clean kill by the system. A kill by the phone's power manager or by memory pressure (signal 9 from `system_server`,
   see `2026-11-09-background-kill-mapped-native.md`) was not tried here. I expect the same resume, because the job row does not depend on how the process ends, but I did not measure it.
 - **Where inside a stage the kill landed is known only to the stage**, not to the frame. `embed_texts` lasts about 0.4 to 1.7 s, so the kill is inside it
@@ -76,4 +113,4 @@ the stage the job resumed after. Only the interrupted stage was done twice, so t
 
 ## Evidence files
 
-`docs/results/vectors/storage/` (part 2, not yet), `docs/results/vectors/crash/` (the nine raw kill logs `infinix-2026-11-10-kill-<stage>-run<n>.txt`, the link-check CSV and the uninterrupted-clip log); a screenshot is on the EYKO-116 card.
+`docs/results/vectors/storage/` (part 2: the readings CSV and the watch log), `docs/results/vectors/crash/` (the nine raw kill logs `infinix-2026-11-10-kill-<stage>-run<n>.txt`, the link-check CSV and the uninterrupted-clip log); a screenshot is on the EYKO-116 card.
