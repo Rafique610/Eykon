@@ -52,10 +52,12 @@ What every kill has in common (Android's own `dumpsys activity exit-info`, saved
 1. On this phone the process is killed once it holds more than about **225 to 276 MB of PSS**: between 30,000 and 40,000 rows x 3 tables,
    about **170 to 225 MB of vectors**. Below that line the whole 300 s passes and the first search after the hold is as fast as before.
 2. The planned size of 100,000 rows x 3 tables fails the ADR's pass mark three times out of three. ADR 0001 trigger 2 has fired for
-   large tables.3. It is not evidence against the mapped file in itself: the plain heap copy cannot load 100,000 x 3 at all (run 4), and at 20,000 both modes
+   large tables.
+3. It is not evidence against the mapped file in itself: the plain heap copy cannot load 100,000 x 3 at all (run 4), and at 20,000 both modes
    behave the same (runs 5 and 6). The mapped file is what lets the larger sizes load; the phone then kills the process that holds them.
 4. A design that stays below about 200 MB of vectors per process (roughly 35,000 rows across three tables of this shape on this phone)
-   passed every time. What to do about larger libraries (cap, shards, smaller vectors) is for Rafique to decide.
+   passed every time. **Decision (Rafique, lead, 10 Nov): no vector cap.** The card closes with the result as it stands: Infinix only, the test process (an instrumentation
+   process, `importance=125`) and not a normal installed app, and the A32 not run. Run 3 was also killed at 38 MB of PSS, so "about 200 MB" is not a clean threshold; the safe statement is "killed at 40,000 rows x 3 and above".
 
 ## This disagrees with EYKO-109; the mode is ruled out, the cause is not known
 
@@ -88,4 +90,4 @@ read as "not killed on 8 Nov, under those conditions", not as a guarantee.
 `docs/results/vectors/bgkill/infinix-2026-11-09-run1`, `-run2`, `-run3`, `-run4-heap-100k-oom`, `-run5-heap-20k-control`, `-run6-mapped-20k`,
 `-run7-mapped-50k`, `-sweep-30k`, `-sweep-40k`, `-sweep-70k` and `infinix-2026-11-10-mapped-f32-100k`: `device-sheet.txt`, `meminfo-before.txt`, `meminfo-after.txt`,
 `eyko109-logcat.txt` (raw `logcat -d -s EYKO109`), `instrument-output.txt`, `kill-moment-logcat.txt` (runs 1 to 3 and 7) and, for the three sweep
-runs and `exit-info.txt` (the full all-buffers logs hold other apps, so they are kept off the repo, in `C:eykon-kitbgkill-full-logs`; `kill-moment-logcat.txt` is the filtered excerpt). A logcat screenshot is on the EYKO-116 card.
+runs and `exit-info.txt` (the full all-buffers logs hold other apps, so they are kept off the repo, in `C:\eykon-kitgkill-full-logs`; `kill-moment-logcat.txt` is the filtered excerpt). A logcat screenshot is on the EYKO-116 card.
