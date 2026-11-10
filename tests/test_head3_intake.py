@@ -54,3 +54,33 @@ def test_queue_of_two_videos_and_midnight():
 def test_job_without_a_finish_line_is_not_ready():
     v = h.parse_log(f"11-10 01:00:00.000 I/EykonVideo(1): split {VID}: 10 frames in 5 ms (one pass), audio 1.0 s in 5 ms\n")[VID]
     assert not v["ready"]  # no finish line: the summary counts it as unfinished
+
+
+def test_copy_line_gives_copy_and_hash_time():
+    text = f"11-10 01:00:00.000 I/EykonVideo(1): copy {VID}: 26832141 bytes in 208 ms (hash 22 ms)\n" + TIME
+    v = h.parse_log(text)[VID]
+    assert v["copy_ms"] == 208
+    assert ("copy", 208, None, None) in v["rows"] and ("hash", 22, None, None) in v["rows"]
+
+
+def test_refused_duplicate_is_not_an_unfinished_video():
+    dup = "b" * 32
+    videos = h.parse_log(TIME + f"11-10 01:20:00.000 I/EykonVideo(1): copy {dup}: 100 bytes in 5 ms (hash 1 ms)\n")
+    assert videos[dup]["started"] is False and videos[VID]["ready"]
+
+
+def test_backfill_marks_one_finished_video(tmp_path):
+    import sqlite3
+    from types import SimpleNamespace
+
+    db = tmp_path / "memories.db"
+    con = sqlite3.connect(str(db))
+    con.execute("CREATE TABLE jobs (id INTEGER PRIMARY KEY, video_id TEXT, status TEXT, stage TEXT)")
+    con.executemany("INSERT INTO jobs (video_id, status, stage) VALUES (?, ?, ?)", [("a" * 32, "done", "finish"), ("b" * 32, "done", "finish"), ("c" * 32, "running", "scene")])
+    con.commit()
+    con.close()
+    assert h.cmd_backfill(SimpleNamespace(db=str(db), video_id="b" * 32, stage="latest")) == 0
+    con = sqlite3.connect(str(db))
+    assert con.execute("SELECT video_id, stage FROM jobs ORDER BY id").fetchall() == [("a" * 32, "finish"), ("b" * 32, "latest"), ("c" * 32, "scene")]
+    assert h.cmd_backfill(SimpleNamespace(db=str(db), video_id=None, stage="link")) == 0  # newest finished video (b)
+    assert con.execute("SELECT stage FROM jobs WHERE video_id = ?", ("b" * 32,)).fetchone()[0] == "link"

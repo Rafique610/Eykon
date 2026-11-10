@@ -3,13 +3,16 @@
 # Usage (from the repo root, PowerShell):
 #   powershell -ExecutionPolicy Bypass -File docs\phone-kit\run-head3.ps1 -Serial <adb serial> -Scenario S1 -Run 1 -Clip C:\path\PXL_20261014_094359202.mp4
 #   S1  one kit clip alone, app in front (-Videos 1, three runs per clip: -Run 1, 2, 3)
-#   S2  queue of ten: add both kit clips 5 times (-Videos 10; delete them afterwards)
-#   S3  copy time: the largest kit clip (-Videos 1); the copy time is measured by watching the file grow in the app's folder
-#   S4  back-fill: NOT automated yet (waits for Rafique's SQL that marks one stage missing); the script says so and stops
-# What it does: device sheet -> clears logcat -> starts watching (battery and temperature every 30 s, the copy of each new video) ->
-# YOU add the clip(s) through the Video tab picker when it says so -> waits until every video is `ready` (or -TimeoutMin) -> saves the raw
-# `logcat -d -s EykonVideo`, the job table result and the end battery -> runs src\benchmarks\head3_intake.py to append
-# stage_times.csv and run_summary.csv in -Out. Never runs connectedDebugAndroidTest. Reads only the app's own folder and the battery.
+#   S2  queue of ten: add both kit clips 5 times (-Videos 10; delete them afterwards; run S2 on a build before EYKO-71 or note the build)
+#   S3  copy time: the largest kit clip (-Videos 1). Taken from the app's `copy` log line when the build has it (EYKO-71), else by watching the file grow
+#   S4  back-fill: -Scenario S4 [-VideoId <32 hex>] [-BackfillStage latest]. Force-stops the app, marks ONE finished video's saved stage as
+#       <BackfillStage> in memories.db (WAL checkpointed first), puts the database back, opens the app, and records which stages run again.
+#       With `latest` only `finish` should rerun (clean control); `link` reruns latest and finish.
+# What S1-S3 do: device sheet -> clears logcat -> notes the files already in the app's video folder -> starts watching (every 5 s: is every video
+# ready?; every 30 s: battery and temperature; the copy of each NEW video) -> YOU add the clip(s) through the Video tab picker when it says so ->
+# waits until every video is `ready` (or -TimeoutMin) -> reads the battery at once -> saves the raw `logcat -d -s EykonVideo` -> runs
+# src\benchmarks\head3_intake.py to append stage_times.csv and run_summary.csv in -Out.
+# Never runs connectedDebugAndroidTest. Reads only the app's own folder and the battery.
 # -ReplayLog <file> skips the phone completely and feeds a saved log to the parser (a test of the pipeline without a phone).
 param(
     [string]$Serial = "",
@@ -21,15 +24,13 @@ param(
     [string]$Out = "docs\results\head3",
     [int]$TimeoutMin = 30,
     [string]$Adb = "adb",
-    [string]$ReplayLog = ""
+    [string]$ReplayLog = "",
+    [string]$VideoId = "",
+    [string]$BackfillStage = "latest"
 )
 
 $ErrorActionPreference = "Stop"
 $Pkg = "com.eykon.memory"
-if ($Scenario -eq "S4") {
-    Write-Host "S4 (back-fill) is not automated yet: it needs the SQL that marks one stage missing for an old video (ask Rafique on EYKO-117)." -ForegroundColor Yellow
-    exit 2
-}
 
 function Adb-Run([string[]]$ArgList) {
     if ($Serial) { & $Adb -s $Serial @ArgList } else { & $Adb @ArgList }
@@ -40,6 +41,23 @@ function Battery-Reading {
     $level = [int]([regex]::Match($text, "level:\s*(\d+)").Groups[1].Value)
     $temp = [double]([regex]::Match($text, "temperature:\s*(\d+)").Groups[1].Value) / 10.0
     return [pscustomobject]@{ Level = $level; Temp = $temp }
+}
+
+# the files in the app's video folder as "path -> size"; $null when run-as does not work (not a debug build, or the app is not installed)
+function Video-Files {
+    $listing = (Adb-Run @("shell", "run-as $Pkg sh -c 'ls -l files/videos/*/* 2>&1'")) -join "`n"
+    if ($listing -match "run-as:|not debuggable|Unknown package|Permission denied") { return $null }
+    $found = @{}
+    foreach ($m in [regex]::Matches($listing, "(\d+)\s+\d{4}-\d\d-\d\d\s+\d\d:\d\d\s+(\S+)")) {
+        if ($m.Groups[2].Value.Contains("/")) { $found[$m.Groups[2].Value] = [long]$m.Groups[1].Value }
+    }
+    return $found
+}
+
+function Pull-File([string]$Remote, [string]$Local) {
+    $serialPart = if ($Serial) { "-s $Serial " } else { "" }
+    $line = "$Adb $serialPart" + "exec-out run-as $Pkg cat $Remote > `"$Local`""
+    cmd /c $line
 }
 
 $date = Get-Date -Format "yyyy-MM-dd"
@@ -72,7 +90,7 @@ $sheet += "manufacturer: " + ((Adb-Run @("shell", "getprop", "ro.product.manufac
 $sheet += "soc: " + ((Adb-Run @("shell", "getprop", "ro.soc.model")) -join "").Trim()
 $sheet += "android: " + ((Adb-Run @("shell", "getprop", "ro.build.version.release")) -join "").Trim()
 $sheet += "commit (repo HEAD or -Commit; the installed APK may differ, check KIT-VERSION.txt): $Commit"
-$sheet += "app version: " + ((Adb-Run @("shell", "dumpsys", "package", $Pkg)) | Select-String "versionName|lastUpdateTime" | ForEach-Object { $_.Line.Trim() }) -join "; "
+$sheet += "app version: " + (((Adb-Run @("shell", "dumpsys", "package", $Pkg)) | Select-String "versionName|lastUpdateTime" | ForEach-Object { $_.Line.Trim() }) -join "; ")
 $sheet += "--- dumpsys battery"
 $sheet += Adb-Run @("shell", "dumpsys", "battery")
 $sheet += "--- thermalservice (first lines; empty on phones without it)"
@@ -83,63 +101,121 @@ $sheet += "--- MemTotal / MemAvailable"
 $sheet += (Adb-Run @("shell", "cat", "/proc/meminfo")) | Select-String "MemTotal|MemAvailable"
 $sheet | Out-File -Encoding utf8 (Join-Path $raw "device-sheet.txt")
 
-# ---- start --------------------------------------------------------------------------------------------------------------
-Adb-Run @("logcat", "-G", "16M") | Out-Null
-Adb-Run @("logcat", "-c") | Out-Null
 $battery = Join-Path $raw "battery.csv"
 "time,level_pct,temp_c" | Out-File -Encoding ascii $battery
+
+# ---- S4: back-fill ------------------------------------------------------------------------------------------------------
+if ($Scenario -eq "S4") {
+    $dbDir = Join-Path $raw "db"
+    New-Item -ItemType Directory -Force $dbDir | Out-Null
+    Adb-Run @("shell", "am", "force-stop", $Pkg) | Out-Null
+    foreach ($n in "memories.db", "memories.db-wal", "memories.db-shm") { Pull-File "databases/$n" (Join-Path $dbDir $n) }
+    Copy-Item (Join-Path $dbDir "memories.db") (Join-Path $raw "memories.db.before-backfill") -Force
+    $pyArgs = @("run", "python", "src\benchmarks\head3_intake.py", "backfill", "--db", (Join-Path $dbDir "memories.db"), "--stage", $BackfillStage)
+    if ($VideoId) { $pyArgs += @("--video-id", $VideoId) }
+    $changed = (& uv @pyArgs) -join "`n"
+    Write-Host $changed
+    if ($LASTEXITCODE -ne 0) { throw "backfill step failed: $changed" }
+    $picked = [regex]::Match($changed, "video ([0-9a-f]{32})").Groups[1].Value
+    Adb-Run @("push", (Join-Path $dbDir "memories.db"), "/data/local/tmp/memories.db") | Out-Null
+    Adb-Run @("shell", "run-as $Pkg sh -c 'rm -f databases/memories.db-wal databases/memories.db-shm; cp /data/local/tmp/memories.db databases/memories.db; chmod 660 databases/memories.db'") | Out-Null
+    Adb-Run @("shell", "rm", "/data/local/tmp/memories.db") | Out-Null
+    Adb-Run @("logcat", "-G", "16M") | Out-Null
+    Adb-Run @("logcat", "-c") | Out-Null
+    $b0 = Battery-Reading
+    "$(Get-Date -Format s),$($b0.Level),$($b0.Temp)" | Out-File -Encoding ascii -Append $battery
+    Adb-Run @("shell", "monkey", "-p", $Pkg, "-c", "android.intent.category.LAUNCHER", "1") | Out-Null
+    Write-Host ">>> S4: app opened; waiting for video $picked to finish again (timeout $TimeoutMin min)." -ForegroundColor Green
+    $clock4 = [System.Diagnostics.Stopwatch]::StartNew()
+    $done = $false
+    while ($clock4.Elapsed.TotalMinutes -lt $TimeoutMin) {
+        $log = (Adb-Run @("logcat", "-d", "-s", "EykonVideo")) -join "`n"
+        if ($log -match "finish $picked") { $done = $true; break }
+        Start-Sleep -Seconds 3
+    }
+    $b1 = Battery-Reading
+    "$(Get-Date -Format s),$($b1.Level),$($b1.Temp)" | Out-File -Encoding ascii -Append $battery
+    $logFile = Join-Path $raw "eykonvideo-logcat.txt"
+    (Adb-Run @("logcat", "-d", "-v", "time", "-s", "EykonVideo")) | Out-File -Encoding utf8 $logFile
+    $stagesRun = [regex]::Matches((Get-Content $logFile -Raw), "EykonVideo\s*(?:\(\s*\d+\))?\s*:\s*(\w+) $picked") | ForEach-Object { $_.Groups[1].Value }
+    Write-Host ("Stages that ran again for {0} (stage set to '{1}'): {2}" -f $picked, $BackfillStage, ($stagesRun -join ", ")) -ForegroundColor Cyan
+    $notes = "back-fill: saved stage set to '$BackfillStage' for $picked; stages that ran again: $($stagesRun -join ' ')"
+    uv run python src\benchmarks\head3_intake.py parse --log $logFile --out $Out --phone $model --commit $Commit --scenario S4 --run $Run --battery $battery --notes $notes
+    if (-not $done) { Write-Host "Timed out: the video did not reach ready again." -ForegroundColor Red; exit 3 }
+    exit 0
+}
+
+# ---- S1-S3: start -------------------------------------------------------------------------------------------------------
+Adb-Run @("logcat", "-G", "16M") | Out-Null
+Adb-Run @("logcat", "-c") | Out-Null
 $b0 = Battery-Reading
 "$(Get-Date -Format s),$($b0.Level),$($b0.Temp)" | Out-File -Encoding ascii -Append $battery
 $clipBytes = 0
 if ($Clip -and (Test-Path $Clip)) { $clipBytes = (Get-Item $Clip).Length }
 
+# files already in the app's folder do not count as new copies (an earlier copy of the same clip would otherwise read as a copy that took 0 ms)
+$existing = Video-Files
+$runAsOk = ($null -ne $existing)
+if (-not $runAsOk) {
+    Write-Host "WARNING: run-as does not work on this phone (not a debug build?). Copy time by file growth is not available; it will be blank unless the build logs a 'copy' line." -ForegroundColor Yellow
+    $existing = @{}
+}
+
 Write-Host ""
 Write-Host ">>> $Scenario run $Run on $model. NOW add $Videos video(s) through the app's Video tab and leave the app in front." -ForegroundColor Green
-Write-Host ">>> Battery $($b0.Level) %, $($b0.Temp) C. Timeout $TimeoutMin min." -ForegroundColor Green
+Write-Host ">>> Battery $($b0.Level) %, $($b0.Temp) C. $($existing.Count) file(s) already in the app's video folder are ignored. Timeout $TimeoutMin min." -ForegroundColor Green
 
 $clock = [System.Diagnostics.Stopwatch]::StartNew()
-$copy = @{}          # file name -> @{ first = ms; lastChange = ms; size = bytes }
+$copy = @{}          # file path -> @{ first = ms; lastChange = ms; size = bytes }
 $nextBattery = 30000
+$nextReady = 0
 $ready = 0
 while ($clock.Elapsed.TotalMinutes -lt $TimeoutMin) {
-    $listing = (Adb-Run @("shell", "run-as $Pkg sh -c 'ls -l files/videos/*/* 2>/dev/null'")) -join "`n"
-    foreach ($m in [regex]::Matches($listing, "(\d+)\s+\d{4}-\d\d-\d\d\s+\d\d:\d\d\s+(\S+)")) {
-        $size = [long]$m.Groups[1].Value
-        $name = $m.Groups[2].Value
-        if (-not $name.Contains("/")) { continue }
-        $now = $clock.ElapsedMilliseconds
-        if (-not $copy.ContainsKey($name)) { $copy[$name] = @{ first = $now; lastChange = $now; size = $size } }
-        elseif ($copy[$name].size -ne $size) { $copy[$name].lastChange = $now; $copy[$name].size = $size }
+    if ($runAsOk) {
+        $files = Video-Files
+        if ($null -ne $files) {
+            foreach ($name in $files.Keys) {
+                if ($existing.ContainsKey($name)) { continue }
+                $size = $files[$name]
+                $now = $clock.ElapsedMilliseconds
+                if (-not $copy.ContainsKey($name)) { $copy[$name] = @{ first = $now; lastChange = $now; size = $size } }
+                elseif ($copy[$name].size -ne $size) { $copy[$name].lastChange = $now; $copy[$name].size = $size }
+            }
+        }
+    }
+    if ($clock.ElapsedMilliseconds -ge $nextReady) {
+        $log = (Adb-Run @("logcat", "-d", "-s", "EykonVideo")) -join "`n"
+        $ready = ([regex]::Matches($log, "finish [0-9a-f]{32}: ready")).Count
+        $nextReady = $clock.ElapsedMilliseconds + 5000
+        if ($ready -ge $Videos) { break }
     }
     if ($clock.ElapsedMilliseconds -ge $nextBattery) {
         $b = Battery-Reading
         "$(Get-Date -Format s),$($b.Level),$($b.Temp)" | Out-File -Encoding ascii -Append $battery
         $nextBattery += 30000
-        $log = (Adb-Run @("logcat", "-d", "-s", "EykonVideo")) -join "`n"
-        $ready = ([regex]::Matches($log, "finish [0-9a-f]{32}: ready")).Count
         Write-Host ("  {0,5:N0} s  battery {1} %  {2} C  videos ready {3}/{4}" -f $clock.Elapsed.TotalSeconds, $b.Level, $b.Temp, $ready, $Videos)
-        if ($ready -ge $Videos) { break }
     }
     Start-Sleep -Milliseconds 400
 }
 $timedOut = ($ready -lt $Videos)
 
-# ---- end ----------------------------------------------------------------------------------------------------------------
+# ---- end: battery first, at once ----------------------------------------------------------------------------------------
 $b1 = Battery-Reading
 "$(Get-Date -Format s),$($b1.Level),$($b1.Temp)" | Out-File -Encoding ascii -Append $battery
 $logFile = Join-Path $raw "eykonvideo-logcat.txt"
 (Adb-Run @("logcat", "-d", "-v", "time", "-s", "EykonVideo")) | Out-File -Encoding utf8 $logFile
 (Adb-Run @("shell", "dumpsys", "battery")) | Out-File -Encoding utf8 (Join-Path $raw "battery-end.txt")
 
-# copy time: from the moment a video file first showed up to the last time its size changed, only files that reached the clip's size
+# copy time by file growth: from the first sight of a NEW file to the last change of its size; only files that reached the clip's size
 $copyMs = @()
 foreach ($name in $copy.Keys) {
     $c = $copy[$name]
     if ($clipBytes -gt 0 -and $c.size -ne $clipBytes) { continue }
     $copyMs += [int]($c.lastChange - $c.first)
 }
-$copyNote = "copy time = first sight of the file to its last size change, polled about every 0.5 s, so it is a bit low or high by that much; a file already complete at the first look counts as 0"
+$copyNote = "file-growth copy time (used only when the log has no copy line): first sight of a new file to its last size change, polled about every 0.5 s"
 $notes = if ($timedOut) { "TIMED OUT after $TimeoutMin min with $ready of $Videos ready. $copyNote" } else { $copyNote }
+if (-not $runAsOk) { $notes += " run-as did not work on this phone." }
 
 $args2 = @("run", "python", "src\benchmarks\head3_intake.py", "parse", "--log", $logFile, "--out", $Out, "--phone", $model, "--commit", $Commit,
     "--scenario", $Scenario, "--run", $Run, "--battery", $battery, "--notes", $notes)
@@ -149,4 +225,3 @@ $code = $LASTEXITCODE
 Write-Host "Raw files: $raw" -ForegroundColor Cyan
 if ($timedOut) { Write-Host "Timed out: not every video reached ready." -ForegroundColor Red; exit 3 }
 exit $code
-
