@@ -152,6 +152,7 @@ powershell -ExecutionPolicy Bypass -File docs\phone-kit\run-head3.ps1 -Serial <a
 (`-Backfill`, see the script header). The script prints when to add the clip(s) in the app's Video tab, waits until every video is `ready`,
 then appends `stage_times.csv` and `run_summary.csv` in `docs\results\head3` and keeps the raw files in `docs\results\head3\raw\`.
 Chart: `uv run src\benchmarks\head3_intake.py chart --scenario S1`. Test without a phone: add `-ReplayLog <saved EykonVideo log>`.
+S2 first makes byte-different copies of the two kit clips on the phone (the app refuses identical bytes since EYKO-71: copy N is the clip plus N empty `free` atoms), rescans them so the picker lists them, and prints the 10 files to add; delete them afterwards. S4 keeps all three database files (`memories.db`, `-wal`, `-shm`) as they were before it replaces the database.
 It never runs `connectedDebugAndroidTest`, and it changes no app code. The copy time comes from the app's `copy` log line when the build has it
 (EYKO-71), otherwise from watching the file grow.
 

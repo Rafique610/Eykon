@@ -3,7 +3,8 @@
 # Usage (from the repo root, PowerShell):
 #   powershell -ExecutionPolicy Bypass -File docs\phone-kit\run-head3.ps1 -Serial <adb serial> -Scenario S1 -Run 1 -Clip C:\path\PXL_20261014_094359202.mp4
 #   S1  one kit clip alone, app in front (-Videos 1, three runs per clip: -Run 1, 2, 3)
-#   S2  queue of ten: add both kit clips 5 times (-Videos 10; delete them afterwards; run S2 on a build before EYKO-71 or note the build)
+#   S2  queue of ten (-Videos 10): the script makes byte-different copies of the two kit clips on the phone (the app refuses identical bytes since
+#       EYKO-71), 5 per clip, rescans them so the picker lists them, and tells you which 10 files to add. Delete them from the phone afterwards.
 #   S3  copy time: the largest kit clip (-Videos 1). Taken from the app's `copy` log line when the build has it (EYKO-71), else by watching the file grow
 #   S4  back-fill: -Scenario S4 [-VideoId <32 hex>] [-BackfillStage latest]. Force-stops the app, marks ONE finished video's saved stage as
 #       <BackfillStage> in memories.db (WAL checkpointed first), puts the database back, opens the app, and records which stages run again.
@@ -26,7 +27,10 @@ param(
     [string]$Adb = "adb",
     [string]$ReplayLog = "",
     [string]$VideoId = "",
-    [string]$BackfillStage = "latest"
+    [string]$BackfillStage = "latest",
+    # S2: the two kit clips as they sit on the phone; byte-different copies of them are made (the app refuses identical bytes since EYKO-71)
+    [string]$SourceClips = "PXL_20261014_094359202.mp4,PXL_20261014_094903187.mp4",
+    [string]$PhoneFolder = "/sdcard/Movies"
 )
 
 $ErrorActionPreference = "Stop"
@@ -52,6 +56,32 @@ function Video-Files {
         if ($m.Groups[2].Value.Contains("/")) { $found[$m.Groups[2].Value] = [long]$m.Groups[1].Value }
     }
     return $found
+}
+
+# S2: the app refuses a video whose bytes it already has (EYKO-71), so adding the same two clips five times fails. Make byte-different copies:
+# copy N of a clip is the clip plus N empty "free" atoms (8 bytes each: 00 00 00 08 "free"); players and MediaStore read them as the same video.
+# The originals are variant 0. Result: 5 distinct files per clip = 10 videos.
+function Prepare-S2Files {
+    $atom = Join-Path ([System.IO.Path]::GetTempPath()) "free-atom.bin"
+    [System.IO.File]::WriteAllBytes($atom, [byte[]](0, 0, 0, 8, 102, 114, 101, 101))
+    Adb-Run @("push", $atom, "/data/local/tmp/free-atom.bin") | Out-Null
+    $names = @()
+    foreach ($clipName in ($SourceClips -split ",")) {
+        $clipName = $clipName.Trim()
+        $names += $clipName
+        $base = [System.IO.Path]::GetFileNameWithoutExtension($clipName)
+        foreach ($n in 1..4) {
+            $copyName = "$base-s2-$n.mp4"
+            Adb-Run @("shell", "cp", "$PhoneFolder/$clipName", "$PhoneFolder/$copyName") | Out-Null
+            foreach ($i in 1..$n) { Adb-Run @("shell", "cat /data/local/tmp/free-atom.bin >> $PhoneFolder/$copyName") | Out-Null }
+            $names += $copyName
+        }
+    }
+    foreach ($name in $names) {
+        Adb-Run @("shell", "am", "broadcast", "-a", "android.intent.action.MEDIA_SCANNER_SCAN_FILE", "-d", "file://$PhoneFolder/$name") | Out-Null
+    }
+    Adb-Run @("shell", "rm", "-f", "/data/local/tmp/free-atom.bin") | Out-Null
+    return $names
 }
 
 function Pull-File([string]$Remote, [string]$Local) {
@@ -110,7 +140,11 @@ if ($Scenario -eq "S4") {
     New-Item -ItemType Directory -Force $dbDir | Out-Null
     Adb-Run @("shell", "am", "force-stop", $Pkg) | Out-Null
     foreach ($n in "memories.db", "memories.db-wal", "memories.db-shm") { Pull-File "databases/$n" (Join-Path $dbDir $n) }
-    Copy-Item (Join-Path $dbDir "memories.db") (Join-Path $raw "memories.db.before-backfill") -Force
+    # S4 replaces the live database, so keep all three files as they were (the -wal and -shm files can hold recent rows)
+    foreach ($n in "memories.db", "memories.db-wal", "memories.db-shm") {
+        $src = Join-Path $dbDir $n
+        if (Test-Path $src) { Copy-Item $src (Join-Path $raw "$n.before-backfill") -Force }
+    }
     $pyArgs = @("run", "python", "src\benchmarks\head3_intake.py", "backfill", "--db", (Join-Path $dbDir "memories.db"), "--stage", $BackfillStage)
     if ($VideoId) { $pyArgs += @("--video-id", $VideoId) }
     $changed = (& uv @pyArgs) -join "`n"
@@ -159,6 +193,14 @@ $runAsOk = ($null -ne $existing)
 if (-not $runAsOk) {
     Write-Host "WARNING: run-as does not work on this phone (not a debug build?). Copy time by file growth is not available; it will be blank unless the build logs a 'copy' line." -ForegroundColor Yellow
     $existing = @{}
+}
+
+$s2Names = @()
+if ($Scenario -eq "S2") {
+    $s2Names = Prepare-S2Files
+    Write-Host ">>> S2: made byte-different copies on the phone. Add ALL of these $($s2Names.Count) files, one after another:" -ForegroundColor Green
+    $s2Names | ForEach-Object { Write-Host "      $_" }
+    if ($Videos -ne $s2Names.Count) { Write-Host "WARNING: -Videos is $Videos but $($s2Names.Count) files were made; use -Videos $($s2Names.Count)." -ForegroundColor Yellow }
 }
 
 Write-Host ""
