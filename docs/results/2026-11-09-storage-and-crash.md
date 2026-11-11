@@ -116,3 +116,29 @@ the stage the job resumed after. Only the interrupted stage was done twice, so t
 ## Evidence files
 
 `docs/results/vectors/storage/` (part 2: the readings CSV and the watch log), `docs/results/vectors/crash/` (the nine raw kill logs `infinix-2026-11-10-kill-<stage>-run<n>.txt`, the link-check CSV and the uninterrupted-clip log); a screenshot is on the EYKO-116 card.
+
+## Part 2 (b): one hour of camera video, calculated (11 Nov, on request of Rafique's review of PR #12)
+
+`python scripts/eyko116_cost_per_hour.py` (laptop only, no phone). Formula: cost per hour = (video bitrate x 3600 s) + 115 MB audio +
+(kept frames per hour x bytes per kept frame) + one 100-byte `frames` row for every sampled frame (3 per second).
+
+| Input | Value | Source |
+|---|---|---|
+| Camera clips | 1080p HEVC, **20.03 Mbps** (2.50 MB/s) | ffprobe of the two PXL clips |
+| Kept frames | 10 per 74.5 s and 16 per 75 s = **483 to 768 per hour** | Part 3 runs, same as 5 Nov |
+| Bytes per kept frame | picture 44.6 KB + `.vec` 3.6 KB (512 + 384 float32) + text 0.4 KB + sightings (5.3 to 8.4 per kept frame at 2.07 KB) = **about 60 to 66 KB** | `db-after-part2` (21 kept frames, 48 sightings) |
+| Frame rows | 100 B x 3 per second = 1.1 MB per hour | same database, 10,820 rows |
+
+| Clip | Copy | Audio | Kept frames | Frame rows | **Total per hour** |
+|---|---|---|---|---|---|
+| Camera clip 1 | 9.01 GB | 115 MB | 29 MB | 1.1 MB | **9.16 GB** |
+| Camera clip 2 | 9.01 GB | 115 MB | 51 MB | 1.1 MB | **9.18 GB** |
+| Screen recording (check) | 0.67 GB | 115 MB | 1.1 MB | 1.1 MB | 0.79 GB (**measured 757 MiB = 0.79 GB**) |
+
+**Reading:** an hour of this phone's camera video costs about **9.2 GB, calculated, not measured**; the copy of the video is 98 % of it.
+The same formula run on the Part 2 screen recording gives 0.79 GB against 0.79 GB measured, so the formula holds where it can be checked.
+**Copy equals source:** the four Part 2 clips add up to 675,833,518 bytes (675.8 MB) and the copies measured 675.8 MB. This was checked on the
+screen clips only; the rule (a straight copy at add time) does not depend on bitrate, but a camera clip was not pulled to confirm.
+
+**Limits:** the picture size (44.6 KB) comes from screen frames; camera frames may be larger, but at 480 to 770 kept frames per hour even
+3 times larger changes the total by under 0.1 GB. Kept frames per hour comes from two 75-second clips. The movie measurement (a) is still to do.
