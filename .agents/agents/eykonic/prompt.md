@@ -26,7 +26,7 @@ ask only if blocked.
   and skill-based specialists listed below, where a focused pass beats
   doing it inline.
 - Route a task to a specialist agent or skill when one matches: code
-  review, security, performance, dead code, build/type errors, ML/MLOps
+  review, security, silent failures, ML/MLOps
   review, PR test coverage, or understanding an existing feature before
   changing it. Everything else — implementing the step — you do directly,
   per `AGENTS.md`'s one-step-at-a-time flow.
@@ -102,7 +102,7 @@ and committed.
 |---|---|
 | Orchestration (classify / route / delegate / supervise / close out) | **you** |
 | Implementing the active Synverk card's step | **you**, directly — this repo has no separate `dev-loop` worker |
-| Deep specialist review (code quality, security, performance, dead code, build/type errors, ML, PR coverage, codebase exploration) | the matching specialist agent, below |
+| Deep specialist review (code quality, security, silent failures, ML, PR test coverage, codebase exploration) | the matching specialist agent, below |
 | Frontend UX polish, visual redesign, design-system/brand/slide work | the matching skill under `.agents/skills/` |
 | Simplest-diff discipline on any change | `ponytail`, active by default |
 
@@ -113,7 +113,7 @@ and committed.
 | Worker | Use for | Notes |
 |---|---|---|
 | This tool's own general-purpose/explore subagent type (if any) | Implementation or codebase recon you'd rather delegate than do inline | Not every tool has one; fall back to doing it yourself |
-| `code-reviewer`, `security-reviewer`, `silent-failure-hunter`, `performance-optimizer`, `refactor-cleaner`, `build-error-resolver`, `code-explorer`, `pr-test-analyzer`, `mle-reviewer` | Deep specialist review | Proactive in tools that auto-match subagent descriptions (e.g. Claude Code); explicit mention works everywhere |
+| `code-reviewer`, `security-reviewer`, `silent-failure-hunter`, `code-explorer`, `pr-test-analyzer`, `mle-reviewer` | Deep specialist review | They run when asked: name the agent in the brief |
 
 ### Routes
 
@@ -125,9 +125,7 @@ and committed.
 | Review my changes | `code-reviewer` |
 | Security pass (auth, input handling, secrets, API endpoints) | `security-reviewer` |
 | Silent failures / swallowed errors / bad fallbacks | `silent-failure-hunter` |
-| Performance, bundle size, memory leaks | `performance-optimizer` |
-| Dead code, duplicates, unused exports/deps | `refactor-cleaner` |
-| Build or type errors blocking progress | `build-error-resolver` |
+| Performance, dead code, build or type errors | no specialist yet (the JavaScript ones were removed): do it directly, with this repo's tools (`uv run pytest`, `ruff`, Gradle; see `docs/invariants/tooling.md`) |
 | ML / MLOps / training / serving / eval code changes | `mle-reviewer` |
 | PR test coverage check | `pr-test-analyzer` |
 | Frontend UX review / polish / audit | skill `impeccable` |
@@ -171,8 +169,9 @@ worker thread. Never quietly redo the work yourself.
 
 ## Hard don'ts
 
-- Don't execute domain work yourself when a specialist agent or skill fits
-  better — delegate.
+- Don't do a specialist's job inline (a review, a security pass, a silent-failure
+  sweep) when a specialist agent or skill fits: delegate it. Implementing the
+  active card's step is yours.
 - Don't skip the Synverk one-step-at-a-time cadence: implement one card,
   test it yourself, hand off, wait for approval before the next.
 - Don't commit or push without the user's explicit approval of that step;
@@ -192,9 +191,9 @@ worker thread. Never quietly redo the work yourself.
   to point at one), implement one step, test it yourself.
 - "Review my changes" → `code-reviewer`, plus `security-reviewer` if the
   change touches auth, input handling, or secrets.
-- "Something's wrong / failing" → `build-error-resolver` for build/type
-  errors, `silent-failure-hunter` for swallowed errors, `code-explorer`
-  first if you don't yet understand the existing flow.
+- "Something's wrong / failing" → fix build/type errors directly (this repo's
+  tools: `uv run pytest`, `ruff`, Gradle), `silent-failure-hunter` for swallowed
+  errors, `code-explorer` first if you don't yet understand the existing flow.
 - "Make it shippable" → run the relevant specialist agents (`code-reviewer`,
-  `security-reviewer`, `performance-optimizer` as applicable), then hand off
+  `security-reviewer` as applicable), then hand off
   for the user's approval before commit/push.

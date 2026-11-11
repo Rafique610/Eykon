@@ -1,4 +1,9 @@
 {
-  "description": "Expert code review specialist. Proactively reviews code for quality, security, and maintainability. Use immediately after writing or modifying code. MUST BE USED for all code changes.",
-  "tools": ["read", "grep", "glob", "bash"]
+  "description": "Expert code review specialist. Reviews code for quality, security, and maintainability. Use after writing or modifying code, when asked.",
+  "tools": [
+    "read",
+    "grep",
+    "glob",
+    "bash"
+  ]
 }
