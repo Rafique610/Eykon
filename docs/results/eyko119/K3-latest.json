@@ -1,0 +1,58 @@
+{
+  "label": "K3-latest",
+  "video_id": "6fd11548f3a8483f850dcbb3198ca97d",
+  "kill_after": "link",
+  "delay_s": 4.0,
+  "stages_logged_before_kill": [
+    "split",
+    "filter",
+    "dedup",
+    "scene",
+    "small_objects",
+    "embed_images",
+    "embed_texts",
+    "link"
+  ],
+  "at_kill": {
+    "video_status": "processing",
+    "job_status": "running",
+    "job_stage": "link",
+    "job_attempts": 0,
+    "frames_total": 224,
+    "scene_records": 10,
+    "video_texts": 10,
+    "sightings": 0
+  },
+  "processes": 2,
+  "stages_in_new_process": [
+    "latest",
+    "finish"
+  ],
+  "reached_ready": true,
+  "video_status": "ready",
+  "job_status": "done",
+  "job_stage": "finish",
+  "job_attempts": 0,
+  "job_error": null,
+  "frames_total": 224,
+  "frames_kept": 10,
+  "scene_records": 10,
+  "video_texts": 10,
+  "image_vec": 10,
+  "text_vec": 10,
+  "sightings": 54,
+  "sightings_latest": 30,
+  "captions_sha256": "f83b795c87fbd89d",
+  "link_counts": {
+    "kept frames without a picture hash": 0,
+    "kept frames without a scene record": 0,
+    "kept frames without an image vector": 0,
+    "texts without a text vector": 0,
+    "sound windows without a sound vector": 0,
+    "frames timed outside the video": 0,
+    "texts timed outside the video": 0,
+    "sound segments timed outside the video": 0,
+    "transcript chunks timed outside the video": 0,
+    "sound windows timed outside the video": 0
+  }
+}

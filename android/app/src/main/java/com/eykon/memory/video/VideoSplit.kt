@@ -46,7 +46,8 @@ object VideoSplit {
             FrameExtractor.seekEachFrame(filePath, framesDir, times, FRAME_MAX_SIDE, JPEG_QUALITY)
         }
         val framesMs = (System.nanoTime() - startFrames) / 1_000_000
-        if (saved.isEmpty()) throw RuntimeException("no frame could be read from the video")
+        // Both ways of decoding ran and gave nothing: the file cannot be read on this phone, so trying again cannot help.
+        if (saved.isEmpty()) throw PermanentFailure("no frame could be read from the video")
 
         val startAudio = System.nanoTime()
         val audioSamples = AudioExtractor.toWav(filePath, File(folder, AUDIO_FILE), durationS, AUDIO_RATE)
