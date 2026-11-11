@@ -1,0 +1,9 @@
+{
+  "description": "Expert code review specialist. Reviews code for quality, security, and maintainability. Use after writing or modifying code, when asked.",
+  "tools": [
+    "read",
+    "grep",
+    "glob",
+    "bash"
+  ]
+}
