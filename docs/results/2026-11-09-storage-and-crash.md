@@ -137,8 +137,13 @@ the stage the job resumed after. Only the interrupted stage was done twice, so t
 
 **Reading:** an hour of this phone's camera video costs about **9.2 GB, calculated, not measured**; the copy of the video is 98 % of it.
 The same formula run on the Part 2 screen recording gives 0.79 GB against 0.79 GB measured, so the formula holds where it can be checked.
-**Copy equals source:** the four Part 2 clips add up to 675,833,518 bytes (675.8 MB) and the copies measured 675.8 MB. This was checked on the
-screen clips only; the rule (a straight copy at add time) does not depend on bitrate, but a camera clip was not pulled to confirm.
+**Copy equals source (checked on four files, plus Rafique's camera clip on the Pixel):**
+- Part 2, screen clips: the four source clips add up to 675,833,518 bytes and the copies measured 675.8 MB.
+- 11 Nov, movie pieces (`Ballerina.mp4`, cut with `-c copy` to 5, 10, 15 and 25 min): the app's copies in `files/videos/<id>/` were byte for byte the same size as the sources, 78,208,453, 176,247,364, 342,238,760 and 462,150,353 (`ls -l` through `run-as`).
+- Camera clip: not checked on the Infinix. Rafique's Pixel run (EYKO-119) logged a copy of 186,496,604 bytes for a 186,496,604-byte source (kit clip `PXL_20261014_094359202`, 186,496,580 bytes, plus 24 test bytes). The copy is a straight copy at add time, so the rule does not depend on the bitrate.
+
+**Part 2 (a), measuring a movie: not done, and not required.** Rafique accepted the calculation (11 Nov review of 93629a2). A measured run was started on the Infinix on 11 Nov
+with four pieces of a 2.6 Mbps movie; the USB cable dropped twice, the run was not completed, and no figure from it is used here.
 
 **Limits:** the picture size (44.6 KB) comes from screen frames; camera frames may be larger, but at 480 to 770 kept frames per hour even
-3 times larger changes the total by under 0.1 GB. Kept frames per hour comes from two 75-second clips. The movie measurement (a) is still to do.
+3 times larger changes the total by under 0.1 GB. Kept frames per hour comes from two 75-second clips. No hour of video was run: the 9.2 GB figure is **calculated**, from the measured bitrate (ffprobe) and the measured sizes per kept frame, and the same formula reproduces the measured screen-recording run (0.79 GB).

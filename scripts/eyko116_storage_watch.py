@@ -47,6 +47,10 @@ def main() -> int:
     ap.add_argument("--log", required=True)
     ap.add_argument("--videos", type=int, default=4)
     ap.add_argument("--timeout-min", type=int, default=240)
+    # resume after a dropped cable: videos already finished, their minutes, and the lengths (s) of videos whose `split` line was missed
+    ap.add_argument("--start-done", type=int, default=0)
+    ap.add_argument("--start-min", type=float, default=0.0)
+    ap.add_argument("--missed-s", default="", help="comma-separated lengths in seconds, used in order for videos that finish without a seen split line")
     a = ap.parse_args()
     log = open(a.log, "w", encoding="utf-8")
     subprocess.run([a.adb, "logcat", "-G", "16M"], capture_output=True)
@@ -79,8 +83,9 @@ def main() -> int:
     threading.Thread(target=checker, daemon=True).start()
     p = subprocess.Popen([a.adb, "logcat", "-v", "time", "-s", "EykonVideo"], stdout=subprocess.PIPE, text=True, encoding="utf-8", errors="replace")
     seconds: dict[str, float] = {}
-    done_s = 0.0
-    done = 0
+    done_s = a.start_min * 60
+    done = a.start_done
+    missed = [float(x) for x in a.missed_s.split(",") if x]
     started = time.time()
     say(f"watching for {a.videos} video(s); {battery(a.adb)}")
     try:
@@ -98,6 +103,9 @@ def main() -> int:
                     say(f"video {vid[:8]}: split done, {seconds[vid]:.1f} s long")
                 if stage == "finish" and "ready" in rest:
                     done += 1
+                    if vid not in seconds and missed:
+                        seconds[vid] = missed.pop(0)
+                        say(f"video {vid[:8]}: split line not seen (cable dropped), using {seconds[vid]:.0f} s")
                     done_s += seconds.get(vid, 0.0)
                     say(f"video {vid[:8]} ready ({done} of {a.videos}); total finished {done_s / 60:.1f} min: taking the storage reading")
                     r = subprocess.run([sys.executable, "-I", str(Path(__file__).with_name("eyko116_storage.py")), "--adb", a.adb, "--minutes",

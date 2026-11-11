@@ -90,4 +90,4 @@ read as "not killed on 8 Nov, under those conditions", not as a guarantee.
 `docs/results/vectors/bgkill/infinix-2026-11-09-run1`, `-run2`, `-run3`, `-run4-heap-100k-oom`, `-run5-heap-20k-control`, `-run6-mapped-20k`,
 `-run7-mapped-50k`, `-sweep-30k`, `-sweep-40k`, `-sweep-70k` and `infinix-2026-11-10-mapped-f32-100k`: `device-sheet.txt`, `meminfo-before.txt`, `meminfo-after.txt`,
 `eyko109-logcat.txt` (raw `logcat -d -s EYKO109`), `instrument-output.txt`, `kill-moment-logcat.txt` (runs 1 to 3 and 7) and, for the three sweep
-runs and `exit-info.txt` (the full all-buffers logs hold other apps, so they are kept off the repo, in `C:\eykon-kitgkill-full-logs`; `kill-moment-logcat.txt` is the filtered excerpt). A logcat screenshot is on the EYKO-116 card.
+runs and `exit-info.txt` (the full all-buffers logs hold other apps, so they are kept off the repo, in `C:\eykon-kit\bgkill-full-logs`; `kill-moment-logcat.txt` is the filtered excerpt). A logcat screenshot is on the EYKO-116 card.
