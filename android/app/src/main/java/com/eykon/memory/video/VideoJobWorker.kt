@@ -6,6 +6,7 @@ import android.app.NotificationManager
 import android.content.Context
 import android.content.pm.ServiceInfo
 import android.util.Log
+import androidx.work.BackoffPolicy
 import androidx.work.CoroutineWorker
 import androidx.work.ExistingWorkPolicy
 import androidx.work.ForegroundInfo
@@ -13,6 +14,7 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import com.eykon.memory.MemoryApp
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
@@ -20,6 +22,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.util.concurrent.TimeUnit
 
 /**
  * EYKO-44: runs the queued video jobs as WorkManager long-running work with a foreground notification, so they keep going when
@@ -38,21 +41,27 @@ class VideoJobWorker(context: Context, params: WorkerParameters) : CoroutineWork
     override suspend fun doWork(): Result {
         try {
             setForeground(foregroundInfo("Starting"))
-        } catch (e: IllegalStateException) {
-            // Android refuses to start a foreground service from the background in some states (API 31+). Carry on as plain work:
-            // saved stages mean that if the system stops us, the job resumes. Never lose the queue over a notification.
-            Log.w(TAG, "foreground service not allowed here, running as plain work: ${e.message}")
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            // Android refuses a foreground service in some states: from the background (API 31+, IllegalStateException) or without the
+            // right type or permission (API 34+, SecurityException). Carry on as plain work: saved stages mean that if the system stops us,
+            // the job resumes. Never lose the queue over a notification, and say why in the log.
+            Log.w(TAG, "foreground service not allowed here, running as plain work: ${e.javaClass.simpleName}: ${e.message}", e)
         }
         return coroutineScope {
             val progress = launchProgressUpdates()
             try {
-                val ran = withContext(Dispatchers.Default) { app.videoWorker.drainWhenIdle() }
-                when {
-                    !ran -> Result.retry() // another loop in this process is still working: try again later
-                    // A job that arrived just as the loop ended would be ignored by the unique work (KEEP) while we still run: ask for a second turn.
-                    app.videoJobs.hasQueued() -> Result.retry()
-                    else -> Result.success()
+                // The stages cannot be interrupted, so a stop (cancellation) is honoured at the next stage boundary.
+                var ran = true
+                withContext(Dispatchers.Default) {
+                    do {
+                        ran = app.videoWorker.drainWhenIdle { !isActive }
+                    } while (ran && isActive && app.videoJobs.hasQueued()) // a job that arrived as the loop ended: go again
                 }
+                // False: another loop in this process is still working. Try again soon (short linear backoff); a kick that arrives meanwhile
+                // is appended (APPEND_OR_REPLACE) rather than ignored.
+                if (ran) Result.success() else Result.retry()
             } finally {
                 progress.cancel()
             }
@@ -96,9 +105,16 @@ class VideoJobWorker(context: Context, params: WorkerParameters) : CoroutineWork
     }
 }
 
-/** Starts the video job worker once: a second request while one is queued or running is ignored (ExistingWorkPolicy.KEEP). */
+/**
+ * Starts the video job worker. A request while one is running is appended and runs after it (APPEND_OR_REPLACE), so a video added just as
+ * the loop ends is never dropped; the appended turn finds nothing queued and finishes at once if the running one already took the job.
+ * (KEEP would ignore the request while the earlier work waits to retry, leaving the video unprocessed for hours.) Only one runs at a time.
+ */
 object VideoJobScheduler {
     fun enqueue(workManager: WorkManager) {
-        workManager.enqueueUniqueWork(VideoJobWorker.UNIQUE_NAME, ExistingWorkPolicy.KEEP, OneTimeWorkRequestBuilder<VideoJobWorker>().build())
+        val request = OneTimeWorkRequestBuilder<VideoJobWorker>()
+            .setBackoffCriteria(BackoffPolicy.LINEAR, 10, TimeUnit.SECONDS)
+            .build()
+        workManager.enqueueUniqueWork(VideoJobWorker.UNIQUE_NAME, ExistingWorkPolicy.APPEND_OR_REPLACE, request)
     }
 }

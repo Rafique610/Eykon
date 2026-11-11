@@ -7,6 +7,7 @@ import androidx.sqlite.db.framework.FrameworkSQLiteOpenHelperFactory
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.work.Configuration
+import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import androidx.work.testing.WorkManagerTestInitHelper
 import kotlinx.coroutines.CancellationException
@@ -22,7 +23,7 @@ import java.util.concurrent.Executor
 import java.util.concurrent.TimeUnit
 
 /**
- * EYKO-44: the unique work is enqueued once, and a stopped worker does not burn the job's attempts. Run on the phone with
+ * EYKO-44: a second request never runs beside the first, and a stopped worker does not burn the job's attempts. Run on the phone with
  * `adb shell am instrument -w -e class com.eykon.memory.video.VideoJobSchedulingTest ...` (never connectedDebugAndroidTest).
  */
 @RunWith(AndroidJUnit4::class)
@@ -63,7 +64,7 @@ class VideoJobSchedulingTest {
     private fun worker(vararg stages: Pair<String, Stage>) = VideoWorker({ db }, jobs, stages.toList(), retries = 3)
 
     @Test
-    fun askingTwiceEnqueuesTheUniqueWorkOnce() {
+    fun askingTwiceNeverRunsTwoWorkersAtOnce() {
         val context = ApplicationProvider.getApplicationContext<Context>()
         // an executor that never runs anything: only the enqueueing is under test, not the real worker
         WorkManagerTestInitHelper.initializeTestWorkManager(context, Configuration.Builder().setExecutor(Executor { }).build())
@@ -72,8 +73,11 @@ class VideoJobSchedulingTest {
         VideoJobScheduler.enqueue(manager)
         VideoJobScheduler.enqueue(manager)
 
+        // the second request is appended behind the first (APPEND_OR_REPLACE), not dropped and not run beside it
         val infos = manager.getWorkInfosForUniqueWork(VideoJobWorker.UNIQUE_NAME).get(5, TimeUnit.SECONDS)
-        assertEquals(1, infos.size)
+        assertEquals(2, infos.size)
+        assertEquals(1, infos.count { it.state != WorkInfo.State.BLOCKED })
+        assertEquals(1, infos.count { it.state == WorkInfo.State.BLOCKED })
     }
 
     @Test
@@ -91,6 +95,26 @@ class VideoJobSchedulingTest {
 
         // the next start requeues it and it finishes
         assertTrue(worker("one" to { _, _ -> }).drainWhenIdle())
+        assertEquals("done", jobs.get(id)!!.status)
+    }
+
+    @Test
+    fun aStopRequestIsHonouredAtTheNextStageBoundary() {
+        val id = queue()
+        val ran = mutableListOf<String>()
+        var stop = false
+        val w = worker("one" to { _, _ -> ran += "one"; stop = true }, "two" to { _, _ -> ran += "two" })
+        assertTrue(w.drainWhenIdle { stop }) // stopped after stage one: stage two never starts
+        assertEquals(listOf("one"), ran)
+        val job = jobs.get(id)!!
+        assertEquals("running", job.status)
+        assertEquals("one", job.stage)
+        assertEquals(0, job.attempts)
+        assertEquals(null, w.current)
+
+        // the next start requeues it and runs only what is left
+        assertTrue(w.drainWhenIdle())
+        assertEquals(listOf("one", "two"), ran)
         assertEquals("done", jobs.get(id)!!.status)
     }
 

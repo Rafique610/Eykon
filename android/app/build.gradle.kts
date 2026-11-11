@@ -68,7 +68,7 @@ dependencies {
     val roomVersion = "2.6.1"
     val coroutinesVersion = "1.9.0"
     val serializationVersion = "1.7.1"
-    val workVersion = "2.9.1"
+    val workVersion = "2.10.0"
 
     // Core & Lifecycle
     implementation("androidx.core:core-ktx:1.13.1")

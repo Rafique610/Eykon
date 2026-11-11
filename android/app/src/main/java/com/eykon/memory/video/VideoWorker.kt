@@ -23,17 +23,22 @@ class VideoWorker(
     var current: Pair<String, String>? = null
         private set
 
-    /** Run one job. False when the queue is empty. */
-    fun runOnce(): Boolean {
+    /**
+     * Run one job. False when the queue is empty. [shouldStop] is checked before every stage: the stages are blocking and cannot be
+     * interrupted, so a stop (EYKO-44) takes effect at the next stage boundary, not in the middle of one.
+     */
+    fun runOnce(shouldStop: () -> Boolean = { false }): Boolean {
         val job = jobs.claim() ?: return false
         try {
             for ((name, stage) in stagesAfter(job.stage)) {
+                if (shouldStop()) throw CancellationException("stop requested before stage $name")
                 current = job.videoId to name
                 stage(db(), job.videoId)
                 jobs.stageDone(job.id, name)
             }
             jobs.done(job.id)
         } catch (e: CancellationException) {
+            current = null
             throw e // being stopped is not a failed attempt: the job stays `running` and is requeued the next time the app or the worker starts
         } catch (e: Exception) {
             // Class and a short message only: never a stack trace in the database.
@@ -47,11 +52,13 @@ class VideoWorker(
      * EYKO-44: one loop at a time in this process, whoever asks (the old in-app `kick` or the WorkManager worker). Requeues jobs cut short by an
      * earlier stop, then works through the queue. False when another loop is already running (it must not be requeued while it works).
      */
-    fun drainWhenIdle(): Boolean {
+    fun drainWhenIdle(shouldStop: () -> Boolean = { false }): Boolean {
         if (!draining.compareAndSet(false, true)) return false
         try {
             jobs.requeueInterrupted()
-            drain()
+            drain(shouldStop)
+        } catch (e: CancellationException) {
+            // stopped between stages: the saved stage is kept, nothing to do
         } finally {
             current = null
             draining.set(false)
@@ -59,8 +66,8 @@ class VideoWorker(
         return true
     }
 
-    fun drain() {
-        while (runOnce()) Unit
+    fun drain(shouldStop: () -> Boolean = { false }) {
+        while (!shouldStop() && runOnce(shouldStop)) Unit
     }
 
     /** Start working through the queue in the background, unless that is already happening. */
