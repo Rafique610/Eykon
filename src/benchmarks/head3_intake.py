@@ -40,6 +40,7 @@ STAGE_COLUMNS = ["phone", "commit", "scenario", "run", "video_id", "video_second
 SUMMARY_COLUMNS = ["phone", "commit", "scenario", "run", "videos_ready", "videos_unfinished", "video_seconds_total", "stage_ms_total",
                    "work_s_per_video_s", "wall_ms_estimate", "copy_ms", "battery_start_pct", "battery_end_pct", "battery_used_pct",
                    "max_temp_c", "notes"]
+OUTSIDE_THE_TOTAL = ("copy", "hash")  # kept as their own rows and the copy_ms column, but not added into stage_ms_total (EYKO-117 review, 11 Nov)
 STAGE_ORDER = ["copy", "hash", "split_frames", "split_audio", "filter", "dedup", "scene", "small_objects", "embed_images", "embed_texts", "link", "latest"]
 
 LINE = re.compile(r"^(?:(?P<stamp>\d\d-\d\d \d\d:\d\d:\d\d\.\d{3})\s+)?.*?EykonVideo\s*(?:\(\s*\d+\))?\s*:\s*(?P<stage>\w+) (?P<id>[0-9a-f]{32}):?\s*(?P<rest>.*)$")
@@ -154,7 +155,8 @@ def cmd_parse(a) -> int:
         for stage, ms, f_in, f_out in v["rows"]:
             stage_rows.append({**base, "video_id": vid, "video_seconds": v["seconds"] or "", "stage": stage, "ms": "" if ms is None else ms,
                                "frames_in": "" if f_in is None else f_in, "frames_out": "" if f_out is None else f_out})
-            total_ms += ms or 0
+            if stage not in OUTSIDE_THE_TOTAL:  # the copy happens before the job starts, and the hash time is already inside the copy time
+                total_ms += ms or 0
         total_s += v["seconds"] or 0.0
         ready += v["ready"]
         failed += v["started"] and not v["ready"]  # a split line but no "finish ... ready" line: failed or still running. A refused duplicate (copy line only) is not counted

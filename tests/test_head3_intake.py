@@ -63,6 +63,23 @@ def test_copy_line_gives_copy_and_hash_time():
     assert ("copy", 208, None, None) in v["rows"] and ("hash", 22, None, None) in v["rows"]
 
 
+def test_copy_and_hash_stay_out_of_the_stage_total(tmp_path):
+    import csv
+    from types import SimpleNamespace
+
+    log = tmp_path / "log.txt"
+    log.write_text(f"11-10 01:00:00.000 I/EykonVideo(1): copy {VID}: 26832141 bytes in 208 ms (hash 22 ms)\n" + TIME, encoding="utf-8")
+    args = SimpleNamespace(log=str(log), out=str(tmp_path / "out"), phone="t", commit="c", scenario="S1", run="1", battery=None, copy_ms=None, notes="")
+    assert h.cmd_parse(args) == 0
+    summary = list(csv.DictReader((tmp_path / "out" / "run_summary.csv").open(encoding="utf-8")))[0]
+    work = sum(ms or 0 for stage, ms, _, _ in h.parse_log(log.read_text(encoding="utf-8"))[VID]["rows"] if stage not in ("copy", "hash"))
+    assert int(summary["stage_ms_total"]) == work == 132052  # 208 ms copy and 22 ms hash are not in it
+    assert summary["copy_ms"] == "208"  # but the copy time is still reported, in its own column
+    assert summary["work_s_per_video_s"] == str(round(132052 / 1000 / 182.4, 2))
+    stages = [r["stage"] for r in csv.DictReader((tmp_path / "out" / "stage_times.csv").open(encoding="utf-8"))]
+    assert "copy" in stages and "hash" in stages  # the rows themselves are kept
+
+
 def test_refused_duplicate_is_not_an_unfinished_video():
     dup = "b" * 32
     videos = h.parse_log(TIME + f"11-10 01:20:00.000 I/EykonVideo(1): copy {dup}: 100 bytes in 5 ms (hash 1 ms)\n")
