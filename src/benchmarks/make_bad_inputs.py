@@ -13,6 +13,7 @@ Files (10 to 20 s each, cut from the kit clip; B12 is long on purpose):
 
 The app's rules, read from the code: types mp4, mov, m4v, avi (by MIME type); limit 500 MB = 500 * 1024 * 1024 bytes
 (`VideoMetadata.MAX_MB`, `VideoCapture.copy`). Needs ffmpeg and ffprobe (on PATH, or pass --ffmpeg-dir).
+B12 is only about 1 % over the limit (530,000,000 against 524,288,000 bytes): enough for a refusal test, and the result file should say so.
 """
 import argparse
 import csv
@@ -28,7 +29,10 @@ START_S, LENGTH_S = 10, 15
 
 def find_tool(name: str, directory: str | None) -> str:
     if directory:
-        return str(Path(directory) / f"{name}.exe") if (Path(directory) / f"{name}.exe").exists() else str(Path(directory) / name)
+        for candidate in (Path(directory) / f"{name}.exe", Path(directory) / name):
+            if candidate.exists():
+                return str(candidate)
+        sys.exit(f"{name} not found in --ffmpeg-dir {directory}: check the folder (it must hold ffmpeg and ffprobe)")
     found = shutil.which(name)
     if not found:
         sys.exit(f"{name} not found: put it on PATH or pass --ffmpeg-dir")
@@ -55,6 +59,11 @@ def main() -> int:
     # ffmpeg does not carry the clip's recording time over by itself; set it, so that B6 (stripped) differs from the others
     src_info = probe(ffprobe, src) or {}
     recorded = next((st["tags"]["creation_time"] for st in src_info.get("streams", []) if "creation_time" in st.get("tags", {})), "")
+    # Only require a location on the control (B1) if the source clip has one; a clip without GPS cannot show B6 losing it
+    src_tags = {**{k: v for st in src_info.get("streams", []) for k, v in st.get("tags", {}).items()}, **src_info.get("format", {}).get("tags", {})}
+    src_has_location = bool(src_tags.get("location"))
+    if not src_has_location:
+        print("  note: the source clip has no GPS location, so B1 and B6 differ only in the recording time")
     cut = [*cut_plain, *(["-metadata", f"creation_time={recorded}"] if recorded else [])]
     # The Pixel clip is full-range (yuvj420p); convert to the usual limited range so the control file is an ordinary one
     rng = "scale=in_range=pc:out_range=tv"
@@ -130,7 +139,8 @@ def main() -> int:
     expect("B3", by["B3"]["video_codec"] == "hevc" and "10" in by["B3"]["pix_fmt"] and by["B3"]["color_transfer"] == "smpte2084", "not HEVC 10-bit with the HDR transfer tag")
     expect("B4", abs(by["B4"]["rotation"]) == 90, f"rotation is {by['B4']['rotation']}, expected 90")
     expect("B5", by["B5"]["r_frame_rate"] != by["B5"]["avg_frame_rate"], "frame rate is constant")
-    expect("B1", bool(by["B1"]["location"]) and bool(by["B1"]["creation_time"]), "the control has no recording time or location, so B6 would prove nothing")
+    expect("B1", (bool(by["B1"]["location"]) or not src_has_location) and (bool(by["B1"]["creation_time"]) or not recorded),
+           "the control lost the recording time or location the source clip has, so B6 would prove nothing")
     expect("B6", not by["B6"]["location"] and (not by["B6"]["creation_time"] or by["B6"]["creation_time"].startswith("1904")), "still has a recording time or location")
     expect("B7", not by["B7"]["readable_by_ffprobe"], "the truncated file can still be read")
     expect("B8", by["B8"]["video_codec"] == "" and by["B8"]["audio"] != "", "not audio-only")
