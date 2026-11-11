@@ -140,6 +140,22 @@ total memory (PSS) before and after into an `eyko100-memory-...csv` (note column
 | Screen recording on the phone | `adb shell screenrecord /sdcard/rec.mp4` (Ctrl+C to stop), then `adb pull /sdcard/rec.mp4` |
 | Screenshot | `adb exec-out screencap -p > shot.png` |
 
+## Head 3 intake harness (EYKO-117)
+
+One command per run measures stage times, copy time, battery and heat, and writes CSVs. From the repo root, in PowerShell (needs `uv`):
+
+```
+powershell -ExecutionPolicy Bypass -File docs\phone-kit\run-head3.ps1 -Serial <adb serial> -Scenario S1 -Run 1 -Clip <kit clip>.mp4
+```
+
+`-Scenario S1` is one clip alone (three runs per clip), `S2` a queue (`-Videos 10`), `S3` the copy time of the largest clip, `S4` back-fill
+(`-Backfill`, see the script header). The script prints when to add the clip(s) in the app's Video tab, waits until every video is `ready`,
+then appends `stage_times.csv` and `run_summary.csv` in `docs\results\head3` and keeps the raw files in `docs\results\head3\raw\`.
+Chart: `uv run src\benchmarks\head3_intake.py chart --scenario S1`. Test without a phone: add `-ReplayLog <saved EykonVideo log>`.
+S2 first makes byte-different copies of the two kit clips on the phone (the app refuses identical bytes since EYKO-71: copy N is the clip plus N empty `free` atoms), rescans them so the picker lists them, and prints the 10 files to add; delete them afterwards. S4 keeps all three database files (`memories.db`, `-wal`, `-shm`) as they were before it replaces the database.
+It never runs `connectedDebugAndroidTest`, and it changes no app code. The copy time comes from the app's `copy` log line when the build has it
+(EYKO-71), otherwise from watching the file grow.
+
 ## When something fails
 
 Copy the **exact** error text into a comment on your card, with the command you ran. A failure on
