@@ -142,8 +142,29 @@ The same formula run on the Part 2 screen recording gives 0.79 GB against 0.79 G
 - 11 Nov, movie pieces (`Ballerina.mp4`, cut with `-c copy` to 5, 10, 15 and 25 min): the app's copies in `files/videos/<id>/` were byte for byte the same size as the sources, 78,208,453, 176,247,364, 342,238,760 and 462,150,353 (`ls -l` through `run-as`).
 - Camera clip: not checked on the Infinix. Rafique's Pixel run (EYKO-119) logged a copy of 186,496,604 bytes for a 186,496,604-byte source (kit clip `PXL_20261014_094359202`, 186,496,580 bytes, plus 24 test bytes). The copy is a straight copy at add time, so the rule does not depend on the bitrate.
 
-**Part 2 (a), measuring a movie: not done, and not required.** Rafique accepted the calculation (11 Nov review of 93629a2). A measured run was started on the Infinix on 11 Nov
-with four pieces of a 2.6 Mbps movie; the USB cable dropped twice, the run was not completed, and no figure from it is used here.
+**Part 2 (a), measured on a movie (11 to 12 Nov): done.** `Ballerina.mp4` (a feature film, local test file, not in the repo; 1920x804 H.264 at 2.25 Mbps, 5.1 audio) was cut
+with `-c copy` into four non-overlapping pieces of 5, 10, 15 and 25 min (a 30 min piece would be 594 MB, over the app's 500 MB limit): 1,058,844,930 bytes over 3,300 s, 2.57 Mbps.
+The app's data folder grew from 50,296 KB (baseline, 0 videos) to 1,231,422 KB (all four ready), by **1,181,126 KB = 1,209.5 MB for 55 min = 1.32 GB per hour**.
+Raw: `docs/results/vectors/storage/infinix-2026-11-11-storage-movie.csv` and the logs beside it.
 
-**Limits:** the picture size (44.6 KB) comes from screen frames; camera frames may be larger, but at 480 to 770 kept frames per hour even
-3 times larger changes the total by under 0.1 GB. Kept frames per hour comes from two 75-second clips. No hour of video was run: the 9.2 GB figure is **calculated**, from the measured bitrate (ffprobe) and the measured sizes per kept frame, and the same formula reproduces the measured screen-recording run (0.79 GB).
+| Part | Measured (55 min) | Formula (55 min) |
+|---|---|---|
+| Copies of the video | 1,058.8 MB (each copy exactly its source's size; `du` shows 1,035,060 KB) | 1,058.8 MB |
+| 16 kHz audio and other files in the video folders | 107.5 MB (audio is 105.6 MB) | 105.6 MB |
+| Kept frame pictures | 27.5 MB (831 kept of 9,904 frames, 33 KB each) | |
+| Database growth | +14.6 MB (831 kept frames, 1,604 sightings, 17.5 KB per kept frame) | |
+| Kept frames and frame rows together | 42.1 MB | 45.6 MB (picture 44.6 KB from the screen frames, 53 KB per kept frame) |
+| Search copy (`*.vec`) | 0 (no search was run) | |
+| **Total per hour** | **1.32 GB** | **1.32 GB (+0.1 %)** |
+
+**Reading:** the formula predicts both measured runs: the screen recording (0.79 GB per hour, calculated 0.79) and the movie (1.32 GB, calculated 1.32, +0.1 %). The copy and the audio match
+to the byte; the kept-frame term is about 8 % high (picture 44.6 KB from the screen frames against 33 KB here), and the total hides that small error. The movie kept 906 frames per hour
+(camera clips: 483 to 768), so it was a harder case for that term than the camera clips. The 9.2 GB per camera hour is still **calculated**: no hour of camera video was run.
+
+**How the run went (for honesty):** the 5 min video finished at 21:12. The USB cable dropped twice, so the watcher stopped and only two readings exist (after video 1 and at the end). At 23:20,
+right after `link` of the 25 min video, Android killed the app's process in the background ("excessive cpu ... limit=2", `ActivityManager`, line in
+`docs/results/vectors/storage/infinix-2026-11-12-eykonvideo-movie-logcat.txt`). When the app was opened again at 00:00 the job resumed from its saved stage and finished at 00:13
+(`latest` took 740 s for 910 sightings). The storage numbers are not affected; this is another background kill of the pipeline, the case EYKO-44 addresses.
+
+**Limits:** the picture size (44.6 KB) comes from screen frames (33 KB on the movie); camera frames may be larger, but at 480 to 770 kept frames per hour even
+3 times larger changes the total by under 0.1 GB. Kept frames per hour comes from two 75-second clips. No hour of video was run: the 9.2 GB figure is **calculated**, from the measured bitrate (ffprobe) and the measured sizes per kept frame,, and the same formula reproduces two measured runs (screen recording 0.79 GB, movie 1.32 GB).

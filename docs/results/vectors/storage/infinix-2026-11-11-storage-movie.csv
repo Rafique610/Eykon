@@ -1,0 +1,4 @@
+time,label,video_minutes_total,database_bytes,vector_files_bytes,video_copies_kb,frame_files_kb,videos_folder_kb,other_in_videos_kb,app_data_total_kb
+2026-11-11T21:04:41,"baseline, 0 videos (movie run)",0.0,135168,0,0,0,4,4,50296
+2026-11-11T21:12:53,after video 1 (300 s),5.0,1096352,0,1035060,1744,1046129,9325,1097862
+2026-11-12T00:13:46,after all 4 movie pieces (55 min),55.0,14704640,0,1035060,26860,1166854,104934,1231422
