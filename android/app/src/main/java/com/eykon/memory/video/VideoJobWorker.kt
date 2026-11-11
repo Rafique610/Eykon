@@ -11,6 +11,7 @@ import androidx.work.CoroutineWorker
 import androidx.work.ExistingWorkPolicy
 import androidx.work.ForegroundInfo
 import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import com.eykon.memory.MemoryApp
@@ -23,6 +24,7 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.concurrent.TimeUnit
+import java.util.concurrent.atomic.AtomicBoolean
 
 /**
  * EYKO-44: runs the queued video jobs as WorkManager long-running work with a foreground notification, so they keep going when
@@ -39,6 +41,16 @@ class VideoJobWorker(context: Context, params: WorkerParameters) : CoroutineWork
     override suspend fun getForegroundInfo(): ForegroundInfo = foregroundInfo("Starting")
 
     override suspend fun doWork(): Result {
+        try {
+            return run()
+        } catch (e: CancellationException) {
+            // Why Android stopped us (EYKO-44 review): shown in `adb logcat -s EykonVideo`, so the phone checks can say which stop it was.
+            Log.w(TAG, "worker stopped, reason ${stopReasonName(stopReason)} (code $stopReason)")
+            throw e
+        }
+    }
+
+    private suspend fun run(): Result {
         try {
             setForeground(foregroundInfo("Starting"))
         } catch (e: CancellationException) {
@@ -78,15 +90,20 @@ class VideoJobWorker(context: Context, params: WorkerParameters) : CoroutineWork
         }
     }
 
-    private fun foregroundInfo(text: String) =
-        ForegroundInfo(NOTIFICATION_ID, notification(text), ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC)
+    private fun foregroundInfo(text: String): ForegroundInfo {
+        ensureChannel()
+        return ForegroundInfo(NOTIFICATION_ID, notification(text), ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC)
+    }
+
+    /** Created once per process, not on every notification update. */
+    private fun ensureChannel() {
+        if (!channelCreated.compareAndSet(false, true)) return
+        notificationManager().createNotificationChannel(NotificationChannel(CHANNEL_ID, "Video processing", NotificationManager.IMPORTANCE_LOW))
+    }
 
     private fun notificationManager() = applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
     private fun notification(text: String): Notification {
-        notificationManager().createNotificationChannel(
-            NotificationChannel(CHANNEL_ID, "Video processing", NotificationManager.IMPORTANCE_LOW),
-        )
         return Notification.Builder(applicationContext, CHANNEL_ID)
             .setContentTitle("Eykon is processing video")
             .setContentText(text)
@@ -102,6 +119,24 @@ class VideoJobWorker(context: Context, params: WorkerParameters) : CoroutineWork
         private const val NOTIFICATION_ID = 4401
         private const val PROGRESS_EVERY_MS = 3_000L
         private const val TAG = "EykonVideo"
+        private val channelCreated = AtomicBoolean(false)
+
+        /** Readable name for WorkInfo.STOP_REASON_* (API 31+ values; older phones report not-stopped or unknown). */
+        fun stopReasonName(code: Int): String = when (code) {
+            WorkInfo.STOP_REASON_NOT_STOPPED -> "not stopped"
+            WorkInfo.STOP_REASON_CANCELLED_BY_APP -> "cancelled by the app"
+            WorkInfo.STOP_REASON_PREEMPT -> "preempted"
+            WorkInfo.STOP_REASON_TIMEOUT -> "timeout"
+            WorkInfo.STOP_REASON_DEVICE_STATE -> "device state"
+            WorkInfo.STOP_REASON_FOREGROUND_SERVICE_TIMEOUT -> "foreground service timeout (Android 15 dataSync limit)"
+            WorkInfo.STOP_REASON_APP_STANDBY -> "app standby"
+            WorkInfo.STOP_REASON_BACKGROUND_RESTRICTION -> "background restriction"
+            WorkInfo.STOP_REASON_USER -> "stopped by the user"
+            WorkInfo.STOP_REASON_SYSTEM_PROCESSING -> "system processing"
+            WorkInfo.STOP_REASON_ESTIMATED_APP_LAUNCH_TIME_CHANGED -> "launch time changed"
+            WorkInfo.STOP_REASON_UNKNOWN -> "unknown"
+            else -> "other"
+        }
     }
 }
 

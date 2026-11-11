@@ -2,8 +2,6 @@ package com.eykon.memory.video
 
 import androidx.sqlite.db.SupportSQLiteDatabase
 import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 import java.util.concurrent.atomic.AtomicBoolean
 
 /**
@@ -68,19 +66,6 @@ class VideoWorker(
 
     fun drain(shouldStop: () -> Boolean = { false }) {
         while (!shouldStop() && runOnce(shouldStop)) Unit
-    }
-
-    /** Start working through the queue in the background, unless that is already happening. */
-    fun kick(scope: CoroutineScope) {
-        if (!draining.compareAndSet(false, true)) return
-        scope.launch {
-            try {
-                drain()
-            } finally {
-                draining.set(false)
-            }
-            if (jobs.hasQueued()) kick(scope) // a job arrived just as the loop was ending
-        }
     }
 
     private fun stagesAfter(doneStage: String): List<Pair<String, Stage>> {

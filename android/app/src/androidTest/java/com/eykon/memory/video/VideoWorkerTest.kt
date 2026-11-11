@@ -6,11 +6,6 @@ import androidx.sqlite.db.SupportSQLiteOpenHelper
 import androidx.sqlite.db.framework.FrameworkSQLiteOpenHelperFactory
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withTimeout
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -149,16 +144,6 @@ class VideoWorkerTest {
         assertEquals("a", jobs.claim()!!.videoId)
         assertEquals("b", jobs.claim()!!.videoId)
         assertNull(jobs.claim())
-    }
-
-    @Test
-    fun kickRunsQueuedJobsInTheBackground() = runBlocking {
-        val id = queue()
-        worker("one" to frameStage(1)).kick(CoroutineScope(Dispatchers.Default))
-        withTimeout(5_000) {
-            while (jobs.get(id)!!.status != "done") delay(20)
-        }
-        assertEquals(1L, frames())
     }
 
     @Test

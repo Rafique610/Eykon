@@ -36,7 +36,9 @@ class MemoryApp : Application() {
         super.onCreate()
         instance = this
         applicationScope.launch {
-            videoJobs.requeueInterrupted() // jobs cut short when the app last stopped
+            // Jobs cut short when the app last stopped. Harmless next to the WorkManager worker: only one loop runs at a time (VideoWorker.drainWhenIdle),
+            // so a job this puts back to queued while the loop is already working on it is finished by that same loop and never claimed a second time.
+            videoJobs.requeueInterrupted()
             val prefs = getSharedPreferences("video_pipeline", MODE_PRIVATE)
             val redoAfter = VideoPipeline.redoAfter(prefs.getInt("version", 1))
             if (redoAfter != null) { // a middle stage changed: redo finished videos once
