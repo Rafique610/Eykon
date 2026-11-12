@@ -14,7 +14,7 @@ CLIPS = {
     "PXL_20261014_094359202 (camera)": dict(bitrate=20_026_221, seconds=74.5, kept=10, sightings=53),   # ffprobe; kept/sightings: Part 3 runs
     "PXL_20261014_094903187 (camera)": dict(bitrate=20_029_953, seconds=75.0, kept=16, sightings=134),
     "screen recording (Part 2)":       dict(bitrate=round(675_833_518 * 8 / 3606), seconds=3606,  kept=21, sightings=48),  # 4 clips = 675,833,518 B over 60.1 min (= the 675.8 MB of copies measured): 1.5 Mbps, not the nominal 1.25
-    # 11-12 Nov, Ballerina.mp4 cut with -c copy into 5, 10, 15, 25 min: sources 1,058,844,930 B over 3,300.46 s; 831 kept frames, 1,604 sightings
+    # 11-12 Nov, test movie (a feature film) cut with -c copy into 5, 10, 15, 25 min: sources 1,058,844,930 B over 3,300.46 s; 831 kept frames, 1,604 sightings
     "movie, 4 pieces (11 Nov)":        dict(bitrate=round(1_058_844_930 * 8 / 3300.46), seconds=3300.46, kept=831, sightings=1604),
 }
 # Growth of the app's data folder measured on the Infinix (bytes): screen run 757 MiB; movie run 1,181,126 KB (1,231,422 - 50,296 KB)

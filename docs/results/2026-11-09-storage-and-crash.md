@@ -1,6 +1,6 @@
 # Storage per hour of video, and killing the app mid-stage (EYKO-116 parts 2 and 3)
 
-**Parts 2 (storage) and 3 (kill mid-stage) are both DONE** (10 Nov 2026). Run by Zara Tahir on her Infinix X670. Answers supervisor questions C2 ("what does an hour
+**Parts 2 (storage) and 3 (kill mid-stage) are both DONE** (Part 3 on 10 Nov; Part 2 on 10 Nov, calculated for camera video and measured on a movie on 11 to 12 Nov). Run by Zara Tahir on her Infinix X670. Answers supervisor questions C2 ("what does an hour
 of video cost in storage?") and C3 ("what if the app is killed mid-write?"). Before this card there was one storage point: about 7 MB of
 database for 27.8 min on the Pixel (`docs/results/2026-10-20-ego4d-baseline.md`).
 
@@ -60,9 +60,60 @@ stay, only their picture files are deleted.
 the vectors and the frame pictures together are under 1 % (about 3.5 MB per hour). The number does not shrink if the video is processed more cleverly: the app keeps the
 original file. Only deleting the copy after processing would change it (a product decision, not tested).
 
-**Do not quote these numbers as the cost of an hour of camera video** (the source is a screen recording; the phone's own clips are about 2.4 MB/s, so a camera
-hour would be about 8.6 GB for the copy alone, which is the same copy rule at a higher bitrate, not measured here). A still screen keeps almost no frames (21 of 10,820), so the
+**Do not quote these numbers as the cost of an hour of camera video** (the source is a screen recording; for an hour of camera video, about 9.2 GB calculated, see Part 2 (b) below). A still screen keeps almost no frames (21 of 10,820), so the
 database and vector growth are far below what moving camera video would give (the 5 Nov camera clips kept 10 and 16 of 224 frames in 75 s).
+
+## Part 2 (b): one hour of camera video, calculated (11 Nov, on request of Rafique's review of PR #12)
+
+`python scripts/eyko116_cost_per_hour.py` (laptop only, no phone). Formula: cost per hour = (video bitrate x 3600 s) + 115 MB audio +
+(kept frames per hour x bytes per kept frame) + one 100-byte `frames` row for every sampled frame (3 per second).
+
+| Input | Value | Source |
+|---|---|---|
+| Camera clips | 1080p HEVC, **20.03 Mbps** (2.50 MB/s) | ffprobe of the two PXL clips |
+| Kept frames | 10 per 74.5 s and 16 per 75 s = **483 to 768 per hour** | Part 3 runs, same as 5 Nov |
+| Bytes per kept frame | picture 44.6 KB + `.vec` 3.6 KB (512 + 384 float32) + text 0.4 KB + sightings (5.3 to 8.4 per kept frame at 2.07 KB) = **about 60 to 66 KB** | `db-after-part2` (21 kept frames, 48 sightings) |
+| Frame rows | 100 B x 3 per second = 1.1 MB per hour | same database, 10,820 rows |
+
+| Clip | Copy | Audio | Kept frames | Frame rows | **Total per hour** |
+|---|---|---|---|---|---|
+| Camera clip 1 | 9.01 GB | 115 MB | 29 MB | 1.1 MB | **9.16 GB** |
+| Camera clip 2 | 9.01 GB | 115 MB | 51 MB | 1.1 MB | **9.18 GB** |
+| Screen recording (check) | 0.67 GB | 115 MB | 1.1 MB | 1.1 MB | 0.79 GB (**measured 757 MiB = 0.79 GB**) |
+
+**Reading:** an hour of this phone's camera video costs about **9.2 GB, calculated, not measured**; the copy of the video is 98 % of it.
+The same formula run on the Part 2 screen recording gives 0.79 GB against 0.79 GB measured, so the formula holds where it can be checked.
+**Copy equals source (checked on four files, plus Rafique's camera clip on the Pixel):**
+- Part 2, screen clips: the four source clips add up to 675,833,518 bytes and the copies measured 675.8 MB.
+- 11 Nov, movie pieces (the test movie, cut with `-c copy` to 5, 10, 15 and 25 min): the app's copies in `files/videos/<id>/` were byte for byte the same size as the sources, 78,208,453, 176,247,364, 342,238,760 and 462,150,353 (`ls -l` through `run-as`).
+- Camera clip: not checked on the Infinix. Rafique's Pixel run (EYKO-119) logged a copy of 186,496,604 bytes for a 186,496,604-byte source (kit clip `PXL_20261014_094359202`, 186,496,580 bytes, plus 24 test bytes). The copy is a straight copy at add time, so the rule does not depend on the bitrate.
+
+**Part 2 (a), measured on a movie (11 to 12 Nov): done.** The test movie (a feature film, a local file, not in the repo; 1920x804 H.264 at 2.25 Mbps, 5.1 audio) was cut
+with `-c copy` into four non-overlapping pieces of 5, 10, 15 and 25 min (a 30 min piece would be 594 MB, over the app's 500 MB limit): 1,058,844,930 bytes over 3,300 s, 2.57 Mbps.
+The app's data folder grew from 50,296 KB (baseline, 0 videos) to 1,231,422 KB (all four ready), by **1,181,126 KB = 1,209.5 MB for 55 min = 1.32 GB per hour**.
+Raw: `docs/results/vectors/storage/infinix-2026-11-11-storage-movie.csv` and the logs beside it.
+
+| Part | Measured (55 min) | Formula (55 min) |
+|---|---|---|
+| Copies of the video | 1,058.8 MB (each copy exactly its source's size; `du` shows 1,035,060 KB) | 1,058.8 MB |
+| 16 kHz audio and other files in the video folders | 107.5 MB (audio is 105.6 MB) | 105.6 MB |
+| Kept frame pictures | 27.5 MB (831 kept of 9,904 frames, 33 KB each) | |
+| Database growth | +14.6 MB (831 kept frames, 1,604 sightings, 17.5 KB per kept frame) | |
+| Kept frames and frame rows together | 42.1 MB | 45.6 MB (picture 44.6 KB from the screen frames, 53 KB per kept frame) |
+| Search copy (`*.vec`) | 0 (no search was run) | |
+| **Total per hour** | **1.32 GB** | **1.32 GB (+0.1 %)** |
+
+**Reading:** the formula predicts both measured runs: the screen recording (0.79 GB per hour, calculated 0.79) and the movie (1.32 GB, calculated 1.32, +0.1 %). The copy and the audio match
+to the byte; the kept-frame term is about 8 % high (picture 44.6 KB from the screen frames against 33 KB here), and the total hides that small error. The movie kept 906 frames per hour
+(camera clips: 483 to 768), so it was a harder case for that term than the camera clips. The 9.2 GB per camera hour is still **calculated**: no hour of camera video was run.
+
+**How the run went (for honesty):** the 5 min video finished at 21:12. The USB cable dropped twice, so the watcher stopped and only two readings exist (after video 1 and at the end). At 23:20,
+right after `link` of the 25 min video, Android killed the app's process in the background ("excessive cpu ... limit=2", `ActivityManager`, line in
+`docs/results/vectors/storage/infinix-2026-11-12-eykonvideo-movie-logcat.txt`). When the app was opened again at 00:00 the job resumed from its saved stage and finished at 00:13
+(`latest` took 740 s for 910 sightings). The storage numbers are not affected; this is another background kill of the pipeline, the case EYKO-44 addresses.
+
+**Limits:** the picture size (44.6 KB) comes from screen frames (33 KB on the movie); camera frames may be larger, but at 480 to 770 kept frames per hour even
+3 times larger changes the total by under 0.1 GB. Kept frames per hour comes from two 75-second clips. No hour of video was run: the 9.2 GB figure is **calculated**, from the measured bitrate (ffprobe) and the measured sizes per kept frame, and the same formula reproduces two measured runs (screen recording 0.79 GB, movie 1.32 GB).
 
 ## Part 3: kill the app in the middle of a stage (done, 10 Nov 2026, 01:29 to 02:08)
 
@@ -116,55 +167,3 @@ the stage the job resumed after. Only the interrupted stage was done twice, so t
 ## Evidence files
 
 `docs/results/vectors/storage/` (part 2: the readings CSV and the watch log), `docs/results/vectors/crash/` (the nine raw kill logs `infinix-2026-11-10-kill-<stage>-run<n>.txt`, the link-check CSV and the uninterrupted-clip log); a screenshot is on the EYKO-116 card.
-
-## Part 2 (b): one hour of camera video, calculated (11 Nov, on request of Rafique's review of PR #12)
-
-`python scripts/eyko116_cost_per_hour.py` (laptop only, no phone). Formula: cost per hour = (video bitrate x 3600 s) + 115 MB audio +
-(kept frames per hour x bytes per kept frame) + one 100-byte `frames` row for every sampled frame (3 per second).
-
-| Input | Value | Source |
-|---|---|---|
-| Camera clips | 1080p HEVC, **20.03 Mbps** (2.50 MB/s) | ffprobe of the two PXL clips |
-| Kept frames | 10 per 74.5 s and 16 per 75 s = **483 to 768 per hour** | Part 3 runs, same as 5 Nov |
-| Bytes per kept frame | picture 44.6 KB + `.vec` 3.6 KB (512 + 384 float32) + text 0.4 KB + sightings (5.3 to 8.4 per kept frame at 2.07 KB) = **about 60 to 66 KB** | `db-after-part2` (21 kept frames, 48 sightings) |
-| Frame rows | 100 B x 3 per second = 1.1 MB per hour | same database, 10,820 rows |
-
-| Clip | Copy | Audio | Kept frames | Frame rows | **Total per hour** |
-|---|---|---|---|---|---|
-| Camera clip 1 | 9.01 GB | 115 MB | 29 MB | 1.1 MB | **9.16 GB** |
-| Camera clip 2 | 9.01 GB | 115 MB | 51 MB | 1.1 MB | **9.18 GB** |
-| Screen recording (check) | 0.67 GB | 115 MB | 1.1 MB | 1.1 MB | 0.79 GB (**measured 757 MiB = 0.79 GB**) |
-
-**Reading:** an hour of this phone's camera video costs about **9.2 GB, calculated, not measured**; the copy of the video is 98 % of it.
-The same formula run on the Part 2 screen recording gives 0.79 GB against 0.79 GB measured, so the formula holds where it can be checked.
-**Copy equals source (checked on four files, plus Rafique's camera clip on the Pixel):**
-- Part 2, screen clips: the four source clips add up to 675,833,518 bytes and the copies measured 675.8 MB.
-- 11 Nov, movie pieces (`Ballerina.mp4`, cut with `-c copy` to 5, 10, 15 and 25 min): the app's copies in `files/videos/<id>/` were byte for byte the same size as the sources, 78,208,453, 176,247,364, 342,238,760 and 462,150,353 (`ls -l` through `run-as`).
-- Camera clip: not checked on the Infinix. Rafique's Pixel run (EYKO-119) logged a copy of 186,496,604 bytes for a 186,496,604-byte source (kit clip `PXL_20261014_094359202`, 186,496,580 bytes, plus 24 test bytes). The copy is a straight copy at add time, so the rule does not depend on the bitrate.
-
-**Part 2 (a), measured on a movie (11 to 12 Nov): done.** `Ballerina.mp4` (a feature film, local test file, not in the repo; 1920x804 H.264 at 2.25 Mbps, 5.1 audio) was cut
-with `-c copy` into four non-overlapping pieces of 5, 10, 15 and 25 min (a 30 min piece would be 594 MB, over the app's 500 MB limit): 1,058,844,930 bytes over 3,300 s, 2.57 Mbps.
-The app's data folder grew from 50,296 KB (baseline, 0 videos) to 1,231,422 KB (all four ready), by **1,181,126 KB = 1,209.5 MB for 55 min = 1.32 GB per hour**.
-Raw: `docs/results/vectors/storage/infinix-2026-11-11-storage-movie.csv` and the logs beside it.
-
-| Part | Measured (55 min) | Formula (55 min) |
-|---|---|---|
-| Copies of the video | 1,058.8 MB (each copy exactly its source's size; `du` shows 1,035,060 KB) | 1,058.8 MB |
-| 16 kHz audio and other files in the video folders | 107.5 MB (audio is 105.6 MB) | 105.6 MB |
-| Kept frame pictures | 27.5 MB (831 kept of 9,904 frames, 33 KB each) | |
-| Database growth | +14.6 MB (831 kept frames, 1,604 sightings, 17.5 KB per kept frame) | |
-| Kept frames and frame rows together | 42.1 MB | 45.6 MB (picture 44.6 KB from the screen frames, 53 KB per kept frame) |
-| Search copy (`*.vec`) | 0 (no search was run) | |
-| **Total per hour** | **1.32 GB** | **1.32 GB (+0.1 %)** |
-
-**Reading:** the formula predicts both measured runs: the screen recording (0.79 GB per hour, calculated 0.79) and the movie (1.32 GB, calculated 1.32, +0.1 %). The copy and the audio match
-to the byte; the kept-frame term is about 8 % high (picture 44.6 KB from the screen frames against 33 KB here), and the total hides that small error. The movie kept 906 frames per hour
-(camera clips: 483 to 768), so it was a harder case for that term than the camera clips. The 9.2 GB per camera hour is still **calculated**: no hour of camera video was run.
-
-**How the run went (for honesty):** the 5 min video finished at 21:12. The USB cable dropped twice, so the watcher stopped and only two readings exist (after video 1 and at the end). At 23:20,
-right after `link` of the 25 min video, Android killed the app's process in the background ("excessive cpu ... limit=2", `ActivityManager`, line in
-`docs/results/vectors/storage/infinix-2026-11-12-eykonvideo-movie-logcat.txt`). When the app was opened again at 00:00 the job resumed from its saved stage and finished at 00:13
-(`latest` took 740 s for 910 sightings). The storage numbers are not affected; this is another background kill of the pipeline, the case EYKO-44 addresses.
-
-**Limits:** the picture size (44.6 KB) comes from screen frames (33 KB on the movie); camera frames may be larger, but at 480 to 770 kept frames per hour even
-3 times larger changes the total by under 0.1 GB. Kept frames per hour comes from two 75-second clips. No hour of video was run: the 9.2 GB figure is **calculated**, from the measured bitrate (ffprobe) and the measured sizes per kept frame,, and the same formula reproduces two measured runs (screen recording 0.79 GB, movie 1.32 GB).
