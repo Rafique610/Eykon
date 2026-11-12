@@ -9,6 +9,14 @@ tasks:
     desc: Install all Python dependencies via uv
     cmd: uv sync
 
+  agents:sync:
+    desc: Regenerate per-tool agent files (.claude/agents, .opencode/agent, ...) from .agents/agents/
+    cmd: uv run python .agents/scripts/sync_agents.py
+
+  agents:check:
+    desc: Fail if generated agent files are stale vs .agents/agents/ (wire into CI)
+    cmd: uv run python .agents/scripts/sync_agents.py --check
+
   pull-model:
     desc: Download Google Gemma 4 E2B LiteRT-LM model from Hugging Face
     cmd: uv run python -c "from huggingface_hub import hf_hub_download; from src.config import Settings; s = Settings(); print('Downloading Gemma 4 E2B LiteRT-LM (2.4 GB)...'); p = hf_hub_download(s.LITERT_MODEL_REPO, s.LITERT_MODEL_FILE); print('Downloaded to:', p)"
@@ -276,3 +284,11 @@ tasks:
   yoloe-phone:
     desc: "EYKO-32 — YOLOE-11L (AGPL, academic) on the Pixel: export and write inputs (inputs), then score the pulled phone result (score)"
     cmd: uv run --with ultralytics --with onnx --with onnxslim --with onnxruntime python -m src.benchmarks.yoloe_phone {{.CLI_ARGS}}
+
+  build-sqlite-vec-android:
+    desc: "EYKO-104 — build our own sqlite-vec libvec0.so for Android arm64 (NEON and no-NEON, 16 KB pages) with the NDK, then save readelf checks and SHA256 to docs/results (binaries stay in D:/eykon-cache/sqlite-vec-android/out); pass -- --ndk <dir> for another NDK"
+    cmd: uv run python src/benchmarks/build_sqlite_vec_android.py {{.CLI_ARGS}}
+
+  build-vector-native:
+    desc: "EYKO-114 — build libeykonvec.so (NEON dot products over the memory-mapped vector file) into android/app/src/main/jniLibs/arm64-v8a with the NDK, and check 16 KB alignment and the JNI symbol; pass -- --ndk <dir> for another NDK"
+    cmd: uv run python src/benchmarks/build_vector_native.py {{.CLI_ARGS}}

@@ -3,7 +3,6 @@ package com.eykon.memory.spike
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.os.Build
-import android.os.Debug
 import android.util.Log
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -41,49 +40,8 @@ class VectorStorageSpikeTest {
         return (0 until rows).sortedByDescending { scores[it] }.take(topK)
     }
 
-    /**
-     * EYKO-100: the same answer written for speed, to tell the chip from our code (B5): four
-     * running sums per row, and a [topK]-slot min-heap instead of sorting every row.
-     */
-    private fun topKFast(matrix: FloatArray, rows: Int, query: FloatArray): List<Int> {
-        val ids = IntArray(topK)
-        val best = FloatArray(topK)
-        var size = 0
-        for (r in 0 until rows) {
-            val base = r * dim
-            var s0 = 0f
-            var s1 = 0f
-            var s2 = 0f
-            var s3 = 0f
-            var i = 0
-            while (i < dim) {
-                s0 += matrix[base + i] * query[i]
-                s1 += matrix[base + i + 1] * query[i + 1]
-                s2 += matrix[base + i + 2] * query[i + 2]
-                s3 += matrix[base + i + 3] * query[i + 3]
-                i += 4
-            }
-            val score = (s0 + s1) + (s2 + s3)
-            if (size < topK) {
-                var c = size++
-                while (c > 0 && best[(c - 1) / 2] > score) { // sift up
-                    best[c] = best[(c - 1) / 2]; ids[c] = ids[(c - 1) / 2]; c = (c - 1) / 2
-                }
-                best[c] = score; ids[c] = r
-            } else if (score > best[0]) {
-                var c = 0
-                while (true) { // sift down
-                    var child = 2 * c + 1
-                    if (child >= topK) break
-                    if (child + 1 < topK && best[child + 1] < best[child]) child++
-                    if (best[child] >= score) break
-                    best[c] = best[child]; ids[c] = ids[child]; c = child
-                }
-                best[c] = score; ids[c] = r
-            }
-        }
-        return (0 until size).sortedByDescending { best[it] }.map { ids[it] }
-    }
+    /** EYKO-100: the same answer written for speed, to tell the chip from our code (B5). Shared: BenchKit.exactTopK. */
+    private fun topKFast(matrix: FloatArray, rows: Int, query: FloatArray): List<Int> = exactTopK(matrix, rows, dim, query, topK)
 
     private fun readMatrix(db: SQLiteDatabase, table: String, rows: Int, size: Int): FloatArray {
         val matrix = FloatArray(rows * size)
@@ -276,11 +234,5 @@ class VectorStorageSpikeTest {
             }
         }
         sheet.done()
-    }
-
-    private fun pssMb(): Double {
-        repeat(2) { Runtime.getRuntime().gc(); System.runFinalization() }
-        Thread.sleep(300)
-        return Debug.MemoryInfo().also { Debug.getMemoryInfo(it) }.totalPss / 1024.0
     }
 }

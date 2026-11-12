@@ -1,0 +1,7 @@
+device,android,sqlite_version,commit,date,method,dim,n,run,median_ms,p95_ms,worst_ms,pss_mb,heap_mb,file_mb,temp_c_start,temp_c_end,battery_pct,source_vectors,note
+INFINIX Infinix X670,13,3.32.2,eyko109-wip,2026-11-07,app_search_first,512,5000,,696.08,696.08,696.08,64,7,24.9,,28.3,36,real_own_clips_90+noise,kept=5000; dropped_per_kept=12; frames_per_video=600; first search loads the vectors
+INFINIX Infinix X670,13,3.32.2,eyko109-wip,2026-11-07,app_search_frames,512,5000,1,80.78,88.67,90.33,68,13,24.9,28.3,28.3,36,real_own_clips_90+noise,kept=5000; dropped_per_kept=12; frames_per_video=600
+INFINIX Infinix X670,13,3.32.2,eyko109-wip,2026-11-07,app_knn_all,512,5000,1,37.34,39.39,41.10,68,12,24.9,28.3,28.3,36,real_own_clips_90+noise,kept=5000; dropped_per_kept=12; frames_per_video=600
+INFINIX Infinix X670,13,3.32.2,eyko109-wip,2026-11-07,app_search_first,512,20000,,2792.50,2792.50,2792.50,73,18,100.0,,28.4,36,real_own_clips_90+noise,kept=20000; dropped_per_kept=12; frames_per_video=600; first search loads the vectors
+INFINIX Infinix X670,13,3.32.2,eyko109-wip,2026-11-07,app_search_frames,512,20000,1,207.71,213.94,227.67,78,24,100.0,28.4,28.4,36,real_own_clips_90+noise,kept=20000; dropped_per_kept=12; frames_per_video=600
+INFINIX Infinix X670,13,3.32.2,eyko109-wip,2026-11-07,app_knn_all,512,20000,1,92.86,94.30,94.92,69,17,100.0,28.4,28.4,36,real_own_clips_90+noise,kept=20000; dropped_per_kept=12; frames_per_video=600

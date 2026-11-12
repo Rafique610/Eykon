@@ -247,6 +247,105 @@ def fig_all_tables(data):
     save(fig, "head2-vector-all-tables.png")
 
 
+# EYKO-109: the five ways of holding the vectors, Infinix X670 only (colour follows the way, not its rank).
+VARIANTS = {
+    "heap_f32": ("Java array (as before)", "#0b0b0b", "o"),
+    "offheap_f32": ("float32, direct buffers", "#2a78d6", "s"),
+    "offheap_f16": ("float16, direct buffers", "#eb6834", "^"),
+    "offheap_i8_rescore": ("int8 + exact re-check", "#6250d6", "D"),
+    "offheap_mapped_f32": ("float32, memory-mapped file", "#1baf7a", "v"),
+}
+
+
+def variant_rows(kind):
+    """Rows of the EYKO-109 Infinix CSVs (offheap/*eyko109-<kind>-*.csv); a later file replaces an earlier one for the same (method, n)."""
+    rows = {}
+    for path in sorted((RESULTS / "offheap").glob(f"*eyko109-{kind}-*.csv")):
+        for r in csv.DictReader(path.open(encoding="utf-8")):
+            rows.setdefault((r["method"].removeprefix("memory_"), int(r["n"])), []).append((path.name, r))
+    return {k: v[-1][1] if kind == "memory" else [x[1] for x in v if x[0] == v[-1][0]] for k, v in rows.items()}
+
+
+def fig_variants():
+    """EYKO-109: Java memory after loading three tables, and search time, for each way of holding the vectors."""
+    memory, speed = variant_rows("memory"), variant_rows("speed")
+    fig, (left, right) = plt.subplots(1, 2, figsize=(10.2, 3.9), dpi=200)
+    for method, (label, colour, marker) in VARIANTS.items():
+        pts = sorted((n, r) for (m, n), r in memory.items() if m == method)
+        xs, ys, bad = [], [], []
+        for n, r in pts:
+            note = dict(part.strip().split("=", 1) for part in r["note"].split(";") if "=" in part)
+            (xs if note["tables_loaded"].startswith("3") else bad).append((n, float(note["java_after_mb"])))
+        shift = 1 + (list(VARIANTS).index(method) - 2) * 0.04
+        left.plot([n * shift for n, _ in xs], [v for _, v in xs], color=colour, marker=marker, markersize=6, linewidth=1.8,
+                  markeredgecolor="white", markeredgewidth=1, label=label)
+        left.scatter([n * shift for n, _ in bad], [v for _, v in bad], color=colour, marker="x", s=55, linewidths=2, zorder=3)
+        sp = sorted((n, [float(r["median_ms"]) for r in rs if r["median_ms"]]) for (m, n), rs in speed.items() if m == method)
+        sp = [(n, statistics.median(v)) for n, v in sp if v]
+        right.plot([n for n, _ in sp], [v for _, v in sp], color=colour, marker=marker, markersize=6, linewidth=1.8,
+                   markeredgecolor="white", markeredgewidth=1, label=label)
+    limit_line(left, HEAP_LIMIT_MB, f"Java heap limit: {HEAP_LIMIT_MB} MB")
+    axes(left, "Java memory after loading the three tables (MB)")
+    axes(right, "Search time, all rows scored (ms, median)")
+    right.set_yscale("log")
+    left.set_xlabel("Rows in each of the three tables   (x = ran out of memory on the next table)", color=MUTED)
+    right.set_xlabel("Rows in the image table (512 numbers each)", color=MUTED)
+    for ax in (left, right):
+        ax.set_xticks([5_000, 20_000, 50_000, 100_000, 200_000, 300_000], ["5k", "20k", "50k", "100k", "200k", "300k"])
+        ax.set_xlim(3_500, 400_000)
+    right.set_xlim(3_500, 150_000)
+    left.legend(frameon=False, loc="lower right", bbox_to_anchor=(1.0, 0.10), fontsize=7)
+    left.set_title("Memory: where each way runs out (Infinix X670)", color=INK, fontsize=10, loc="left")
+    right.set_title("Speed: the same ways, one phone", color=INK, fontsize=10, loc="left")
+    save(fig, "head2-vector-variants.png")
+
+
+# EYKO-111: the app's setup against the old way, on battery. One file per panel (the clean run of that condition).
+CONDITIONS = [
+    ("Samsung A32, hot (after 10 min of video processing)", "a32-*-eyko111-hot2-*.csv"),
+    ("Pixel 9 Pro XL, low battery (26 %, power saver off)", "pixel9proxl-*-eyko111-lowbat-nosaver-*.csv"),
+]
+SETUPS = [("heap_f32", "Java array (the old way)", "#0b0b0b"),
+          ("offheap_mapped_native", "Mapped file + NEON (the app now)", "#1baf7a")]
+
+
+def fig_conditions():
+    """EYKO-111: median search time of 5 runs (bar) and their range (whisker), each phone on its own scale."""
+    fig, panels = plt.subplots(1, len(CONDITIONS), figsize=(10.2, 3.6), dpi=200)
+    width = 0.38
+    for ax, (title, pattern) in zip(panels, CONDITIONS):
+        (path,) = sorted((RESULTS / "offheap").glob(pattern))
+        runs = defaultdict(list)
+        for r in csv.DictReader(path.open(encoding="utf-8")):
+            runs[(r["method"], int(r["n"]))].append(float(r["median_ms"]))
+        sizes = sorted({n for _, n in runs})
+        for i, (method, label, colour) in enumerate(SETUPS):
+            xs = [k + (i - 0.5) * (width + 0.02) for k in range(len(sizes))]
+            vals = [runs[(method, n)] for n in sizes]
+            med = [statistics.median(v) for v in vals]
+            err = [[m - min(v) for m, v in zip(med, vals)], [max(v) - m for m, v in zip(med, vals)]]
+            ax.bar(xs, med, width, color=colour, label=label, yerr=err, ecolor=MUTED, capsize=2, zorder=2)
+        for k, n in enumerate(sizes):
+            old = statistics.median(runs[("heap_f32", n)])
+            new = statistics.median(runs[("offheap_mapped_native", n)])
+            top = max(runs[("offheap_mapped_native", n)])  # above the whisker, not on it
+            ax.annotate(f"{new / old:.2f}×", (k + 0.2, top), xytext=(0, 4), textcoords="offset points",
+                        ha="center", color=INK, fontsize=8)
+        ax.set_xticks(range(len(sizes)), [f"{n // 1000}k" for n in sizes])
+        ax.set_xlabel("Vectors in the table (512 numbers each)", color=MUTED)
+        ax.set_ylabel("Search time, median of 5 runs (ms)", color=MUTED)
+        ax.grid(True, axis="y", color=GRID, linewidth=0.8)
+        ax.set_axisbelow(True)
+        for side in ("top", "right"):
+            ax.spines[side].set_visible(False)
+        for side in ("left", "bottom"):
+            ax.spines[side].set_color(MUTED)
+        ax.tick_params(colors=MUTED)
+        ax.set_title(title, color=INK, fontsize=10, loc="left")
+    panels[0].legend(frameon=False, loc="upper left", fontsize=8)
+    save(fig, "head2-vector-conditions.png")
+
+
 def save(fig, name):
     fig.tight_layout()
     fig.savefig(HERE / name, facecolor="#fcfcfb")
@@ -262,3 +361,5 @@ if __name__ == "__main__":
     fig_heap(real)
     fig_fast_loop(real)
     fig_all_tables(load("*-memory.csv"))
+    fig_variants()
+    fig_conditions()

@@ -16,8 +16,10 @@ CREATE TABLE IF NOT EXISTS videos (
   duration_s  REAL NOT NULL DEFAULT 0,
   lat REAL, lon REAL,
   status      TEXT NOT NULL DEFAULT 'processing' CHECK (status IN ('processing', 'ready', 'failed')),
-  created_at  TEXT NOT NULL
+  created_at  TEXT NOT NULL,
+  content_hash TEXT                        -- SHA-256 of the file's bytes (EYKO-71); NULL for videos saved before it existed
 );
+CREATE INDEX IF NOT EXISTS videos_content_hash ON videos(content_hash);
 CREATE TABLE IF NOT EXISTS frames (
   id          INTEGER PRIMARY KEY,
   video_id    TEXT NOT NULL REFERENCES videos(video_id) ON DELETE CASCADE,
@@ -95,6 +97,10 @@ def init_db(conn: sqlite3.Connection | None = None) -> None:
     own = conn is None
     conn = conn or db.connect()
     try:
+        # EYKO-71: a database made before content_hash existed gets the column first, then the index on it is made
+        has_videos = conn.execute("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'videos'").fetchone()
+        if has_videos and "content_hash" not in [row[1] for row in conn.execute("PRAGMA table_info(videos)")]:
+            conn.execute("ALTER TABLE videos ADD COLUMN content_hash TEXT")
         conn.executescript(DDL)
     finally:
         if own:

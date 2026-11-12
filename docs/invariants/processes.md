@@ -85,6 +85,42 @@ kept as something that can be opened in a meeting in under a minute:
   one click away. A result that exists only in chat or someone's memory
   doesn't count.
 
+## Team branches, reviews and merges
+
+Set 7 November 2026 by the owner. **Taha Ahmed** is the lead (plans the
+cards, runs decisions with the team), **Zara Tahir** does evaluation, and
+**Rafique** (Rafique610) owns the repo.
+
+- **One branch per card:** `<name>/eyko-<n>-<slug>`, cut from the latest
+  `origin/feature/video-memory`. If the base moved on, merge it into the
+  branch before asking for review.
+- **Every branch ends in a pull request into `feature/video-memory`**, never
+  into `main`. The PR says what changed, how it was checked (exact commands
+  and their output), what is not done, and which head-document parts change.
+- **Rafique reviews every PR**, Zara's and Taha's, the lead's included.
+  Nobody approves their own work. A review reads the diff, checks the
+  numbers against the raw files, runs the tests the PR names, and writes the
+  findings on the card.
+- **Only the owner merges**, after the review approves: into
+  `feature/video-memory` as the normal step, into `main` only with an
+  explicit yes each time. (Zara's 5 Nov merge of the old PR #2 into `main` is
+  kept; this rule is why it should not happen again.)
+- **Card flow:** In progress → Review when the PR is open and the evidence is
+  on the card → reviewer approves → owner merges → **Done. A card is Done
+  only once its branch is merged.**
+- **Head documents in branches:** change only the source
+  (`docs/documents/source/head<N>-defense.js` or `heads/head<N>.json`) and
+  the figure scripts and their data. **Never commit a `.docx` in a branch:**
+  Word files cannot be merged. The owner rebuilds (`npm run build`) after
+  merging and commits the `.docx` with the merge. Two PRs that touch the
+  same head source merge oldest first; the other one updates from the base.
+- **Commits** follow the AGENTS.md Git rules for everyone: `type(scope):
+  subject` under 72 characters that says what changed ("recommendations
+  changed" does not).
+- **Evidence is committed, not described:** raw CSVs, logs and the script
+  that produced them go into `docs/results/`; anything that is not raw
+  (copied by hand, read by an assistant) is labelled as such.
+
 ## Head documents are filled while the work runs
 
 Each pipeline head has a Word document in `docs/documents/`, generated from
@@ -98,8 +134,10 @@ afterwards.
   is the example. Heads without one keep their record doc
   (`heads/head<N>.json`) until their turn.
 - **Same step, same time.** When a run or test on a head produces a finding,
-  update that head's source and rebuild the document in the same step as the
-  card comment. A card doesn't go to review until its head document shows
+  update that head's source in the same branch and in the same step as the
+  card comment; the owner rebuilds the document at merge (see "Team
+  branches, reviews and merges"). A card doesn't go to review until its
+  head source shows
   the result.
 - **Every part covers:** the approach (what we tried and why, and the options
   we ruled out), what we did (steps, exact commands, devices, commit), the

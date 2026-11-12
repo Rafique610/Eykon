@@ -1,0 +1,15 @@
+# pixel9proxl (4C031FDAS000NV), commit 5555e3e, EYKO-111 condition: lowbat-nosaver
+# before (cable in, timer set): 2026-11-09 00:49:19 +0500
+  AC powered: true
+  USB powered: false
+  level: 26
+  temperature: 296
+  Capacity level: 2
+/dev/block/dm-78 109G 101G  7.8G  93% /data/user/0
+# after (cable back in): 2026-11-09 00:56:33 +0500
+  AC powered: true
+  USB powered: false
+  level: 25
+  temperature: 309
+  Capacity level: 2
+/dev/block/dm-78 109G 101G  7.8G  93% /data/user/0

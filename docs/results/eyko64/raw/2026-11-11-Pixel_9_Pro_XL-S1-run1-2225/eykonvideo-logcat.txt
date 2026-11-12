@@ -1,0 +1,12 @@
+﻿--------- beginning of main
+11-11 22:32:22.769 I/EykonVideo(21333): copy d1f423b14ecf416dae8be2ea21522d55: 187772438 bytes in 1099 ms (hash 134 ms)
+11-11 22:32:55.640 I/EykonVideo(21333): split d1f423b14ecf416dae8be2ea21522d55: 225 frames in 26638 ms (one pass), audio 74.9 s in 6173 ms
+11-11 22:32:56.267 I/EykonVideo(21333): filter d1f423b14ecf416dae8be2ea21522d55: kept 25 of 225 (less sharp 200) in 619 ms
+11-11 22:33:06.008 I/EykonVideo(21333): dedup d1f423b14ecf416dae8be2ea21522d55: kept 16 of 25 (hash dropped 9, embedding dropped 0) in 9733 ms; embedded 16 frames, 594 ms each; memory java 64 MB, native 331 MB
+11-11 22:33:14.147 I/EykonVideo(21333): scene d1f423b14ecf416dae8be2ea21522d55: 16 frames described by option A in 8127 ms, 507 ms each
+11-11 22:33:30.926 I/EykonVideo(21333): small_objects d1f423b14ecf416dae8be2ea21522d55: 16 frames looked at, 4 found, in 16720 ms
+11-11 22:33:30.992 I/EykonVideo(21333): embed_images d1f423b14ecf416dae8be2ea21522d55: 16 vectors stored (16 reused, 0 computed) in 7 ms
+11-11 22:33:31.537 I/EykonVideo(21333): embed_texts d1f423b14ecf416dae8be2ea21522d55: 16 texts (16 captions, 0 transcript chunks) in 543 ms
+11-11 22:33:31.538 I/EykonVideo(21333): link d1f423b14ecf416dae8be2ea21522d55: every row points at its video and moment
+11-11 22:34:05.658 I/EykonVideo(21333): latest d1f423b14ecf416dae8be2ea21522d55: 134 sightings (2 boxes too small) in 34119 ms
+11-11 22:34:05.672 I/EykonVideo(21333): finish d1f423b14ecf416dae8be2ea21522d55: ready; 209 dropped frame files deleted

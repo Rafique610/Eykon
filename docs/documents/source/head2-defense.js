@@ -110,9 +110,9 @@ body.push(new Paragraph({ heading: HeadingLevel.TITLE, children: [new TextRun('S
 body.push(P('Where the vectors live, how the tables are shaped, and the ground rules that keep the laptop and the phone in step.', { run: { color: C.muted, size: 22 }, after: 200 }));
 
 body.push(grid([2100, W - 2100], null, [
-  ['**Last updated**', '4 Nov 2026'],
-  ['**Overall status**', 'Built and in the app. Re-tested on two phones with real vectors. Memory limit found; plan for it still open.'],
-  ['**Cards**', 'EYKO-1 (tables), EYKO-31 (storage test), EYKO-30 (pytest), EYKO-90 (size sweep), EYKO-100 (full test), EYKO-102 (faster search in app)'],
+  ['**Last updated**', '7 Nov 2026'],
+  ['**Overall status**', 'Built and in the app. Re-tested on two phones with real vectors; the failure confirmed on a third phone, and the setup reproduced on a second laptop. **Closed 9 Nov (EYKO-98).** Why Android blocks plugins is traced to its source, and three routes around it were tried on the phone with our own sqlite-vec build (R1, R2, R4): they work but are slower, so none is used. The memory limit is fixed in the app with a mapped vector file and native scoring: exact, three tables at 100k, checked on a hot phone and a low battery. The decision is ADR 0001 (`docs/adr/0001-vector-storage.md`); an automatic test keeps the laptop and phone table designs identical.'],
+  ['**Cards**', 'EYKO-1 (tables), EYKO-31 (storage test), EYKO-30 (pytest), EYKO-90 (size sweep), EYKO-100 (full test), EYKO-102 (faster search in app), EYKO-94 (three-phone proof pack), EYKO-92 (clean clone), EYKO-84 (second phone, whole pipeline), EYKO-89 (why Android blocks plugins, routes around it)'],
 ], { firstColFill: true }));
 
 body.push(LABEL('How to use this document', { before: 240 }));
@@ -185,7 +185,7 @@ body.push(new Table({
 
 body.push(LABEL('Decisions and the reason for each'));
 body.push(grid([3700, 4338, 1600], ['Decision', 'Because', 'Show'], [
-  ['Vectors are float32 BLOBs, loaded into memory once, searched by dot product. No sqlite-vec.', 'sqlite-vec does not load on Android. BLOBs in memory took 81 ms at 20k on the cheap phone; reading them from SQLite on every search took 1.4 s.', 'E2, E4, E5'],
+  ['Vectors stay float32 BLOBs in SQLite (the source of truth, same as the laptop). Search reads a copy in a memory-mapped file, scored in place by NEON C code, with the old in-memory way as fallback (8 Nov, ADR 0001, accepted by the owner).', 'sqlite-vec cannot load in Android\'s SQLite, and through our own SQLite it is 2.5× slower and top-k only. The old in-memory way runs out of memory at 50k rows. The mapped file is bit-identical, fits 3 × 100k in 5 MB of Java memory, and searches 100k in 102.5 ms on the A32 (was 565 ms). It replaces the 12 Oct choice of BLOBs in one Java array.', '`docs/adr/0001-vector-storage.md` · E2, E4, E5, E8, E11'],
   ['`src/video_memory/schema.py` is the single table design; the phone copies it.', 'One design in two languages, so they cannot drift apart.', 'E9'],
   ['Raw SQL, no ORM (no Room entities).', 'The same SQL statements run on the laptop and the phone.', 'E1'],
   ['pytest as the laptop test runner (EYKO-30).', 'One runner: `task test`, `task smoke`.', '—'],
@@ -194,11 +194,9 @@ body.push(grid([3700, 4338, 1600], ['Decision', 'Because', 'Show'], [
 
 body.push(LABEL('Weak spots: say these before they find them'));
 const weak = [
-  ['Open', 'Never tried shipping our own SQLite, the only way left to run sqlite-vec on Android (EYKO-93).'],
-  ['Open', 'No chosen plan yet for libraries past 20k–50k frames (EYKO-98).'],
-  ['Partly', 'The 200 ms pass mark and the "1 hour of video a day" estimate have no source yet (EYKO-101).'],
-  ['Open', 'Hot phone and low battery not measured; runs were on phones plugged in by cable (EYKO-95).'],
-  ['Partly', 'The whole search in the app is still 302 ms on the cheap phone at 20k, and the first search after opening takes 2.0 s.'],
+  ['Partly', 'The "one hour of video a day" behind the capacity estimate (B2) has no source yet (EYKO-101, Taha).'],
+  ['Partly', 'The background kill test has not been run with the setup the app uses now, and storage per hour and a kill mid-stage are not measured on a phone (EYKO-116, Zara).'],
+  ['Partly', 'The whole app search was 302 ms on the A32 at 20k before the mapped vectors (EYKO-115) and has not been re-timed since (Head 7, EYKO-103).'],
 ];
 body.push(new Table({
   width: { size: W, type: WidthType.DXA }, columnWidths: [1300, W - 1300], layout: TableLayoutType.FIXED,
@@ -226,7 +224,17 @@ const steps = [
   ['Full test · 4 Nov · EYKO-100', 'ok', 'Android blocks every plugin, not just sqlite-vec', 'Even a made-up plugin name gives "no such function: load_extension". Real vectors from our own clips are as fast as random ones. 5 runs × 20 queries, two phones.', 'E5, E6'],
   ['Improvement · EYKO-100 → 102', 'ok', 'Our own loop was the slow part', 'In the test, a smarter loop (four running sums, keep only the best 20) gave the same top 20 on 400 of 400 checks, **5.9× faster** at 100k (537 → 91 ms). The app took the four running sums plus a faster ranking (it needs every frame\'s score to grow its time windows, so it cannot keep only 20): whole search **4.3× faster** on the A32 at 20k, 2,400 of 2,400 hits identical (Head 7).', 'E6, E7'],
   ['Limit found · 4 Nov', 'bad', 'Memory runs out between 20k and 50k rows', 'With all three vector tables loaded, 20k rows each fit, 50k does not. Android gives the app 268 MB, on the 6 GB A32 and on the 16 GB Pixel alike.', 'E8'],
-  ['Still open', null, 'What comes next', 'Try shipping our own SQLite (EYKO-93). Choose a plan past 20k, such as smaller vectors or one table in memory (EYKO-98). Find sources for the 200 ms target and the usage estimate (EYKO-101).', null],
+  ['Research · 5 Nov · EYKO-89', 'ok', 'The reason is one line in Android\'s source', 'Android builds its SQLite with `-DSQLITE_OMIT_LOAD_EXTENSION`, unchanged from Android 11 to today. Three ready-made SQLite builds that do load plugins were found and compared (Google\'s bundled SQLite, requery, SQLCipher). Google\'s is the one to try on the phone. Two new problems found: the ready-made sqlite-vec file is built for 4 KB memory pages and has no NEON speed-up on Android.', 'E10, E11'],
+  ['Re-check · 5–7 Nov · EYKO-94, 92', 'ok', 'A third phone and a second laptop agree', 'Zara ran the same test on her Infinix X670 (another maker, another chip): the same two errors, again after a phone restart, and the same memory limit. From a fresh clone on her own laptop the laptop side reproduced too: 14 tests pass and the storage test ranks the methods the same way.', 'E4, E8'],
+  ['Build · 7 Nov · EYKO-104', 'ok', 'Our own sqlite-vec file for Android', 'The ready-made Android file of sqlite-vec is aligned for 4 KB pages and has no NEON speed-up (EYKO-89). So we built v0.1.9 ourselves with NDK r28c, once with NEON and once without. Both are aligned for 16 KB pages, export `sqlite3_vec_init` and need only libc, libm and libdl. Rebuilding gives the same SHA256. Not yet loaded on a phone.', 'E1'],
+  ['Test · 8 Nov · EYKO-105', 'ok', 'Our own SQLite works on the phone, but it is slower', 'On the A32, Google\'s bundled SQLite loaded our own sqlite-vec file. It gave the same top 20 as our search at every size (400 of 400), and three tables at 100k rows stayed at about 56 MB, where our way runs out of memory at 50k. But it was **2.5× slower** (230 against 91 ms at 100k), and it can return at most 4,096 rows, while the app needs every frame\'s score. Zara\'s own SQLite build (R4) ran at the same speed on the same phone (231 ms). Verdict: works, not adopted.', 'E11'],
+  ['Test · 8 Nov · EYKO-106', 'bad', 'requery is cheaper to adopt, but no faster', 'The lead asked to try requery too, because it works with our Room as it is. It loaded the same sqlite-vec file on the A32 and gave the same top 20, but first took **486 ms at 100k**, 2.1× Google\'s SQLite. We tested why: requery makes every new database with **1 KB pages** (its default is hard-coded to 1024), and Google uses 4 KB. On the same file both engines run at the same speed (234 against 236 ms). With 4 KB pages requery matches R1, still 2.5× our in-memory search. Verdict: works, not adopted.', 'E11'],
+  ['Test · 8 Nov · EYKO-114', 'ok', 'Memory fixed at today\'s speed', 'Zara\'s memory-mapped file (EYKO-109) fixed memory but was 12–15 % slower, because it copied every row before scoring it. We added a small NEON C function that scores the vectors in place in the mapped file. On the A32, three tables now load at 100k rows with 5 MB of Java memory (today runs out at 50k). The scores are bit-identical to today\'s, and it is only +0.6 to +1.5 % slower. It also showed that 85 % of today\'s search time is a `COUNT(*)` change check, not scoring (479 of 565 ms at 100k).', 'E8'],
+  ['Build · 8 Nov · EYKO-115', 'ok', 'Adopted in the app, and the search got 5.5× faster', 'The app now keeps vectors in the mapped file with native scoring, falling back to the old way if the library does not load. The change check reads `MAX(id)` (0.13 ms) instead of `COUNT(*)` (479 ms at 100k). The vector file is written once and new rows are appended. On the A32 the vector search went from 574 to **102.5 ms** at 100k and from 116 to **21.3 ms** at 20k. The first search after a restart went from 23.6 s to **162 ms**. Answers stayed bit-identical, and the app\'s 55 video tests pass. The cost: about 7–10 % slower than the old in-memory way without `COUNT(*)` (95.5 ms at 100k), for not running out of memory.', 'E8'],
+  ['Check · 9 Nov · EYKO-111', 'ok', 'The chosen setup holds on a hot phone and a low battery', 'On battery, same build, same phone: on the A32 after 10 minutes of pipeline load, the mapped native search was **at most 7 % slower** than the old in-memory way (21.2 against 19.9 ms at 20k) and 15 % faster at 100k (112 against 131 ms). On the Pixel at 25–27 % battery it was **2.4 to 2.9× faster** (13.8 against 39.5 ms at 100k), with power saver on or off. Scores were bit-identical in every run (20 of 20 queries). The A32 caps its fast cores at 1.44 GHz after about 90 s on battery. Not run: A32 cool and low battery with this build, Pixel cool and hot, and the background kill test (owner\'s call).', 'B6, G20'],
+  ['Limit found · 9 Nov · EYKO-116', 'bad', 'The phone killed the test process at 40,000 rows x 3 tables and above', 'On the Infinix, with the setup the app uses (mapped file, native scoring), 3 tables of 100,000 rows were killed in 3 of 3 five-minute holds, after 187 to 218 s. A size sweep: 20,000 and 30,000 rows per table survived; 40,000, 50,000 and 70,000 were killed (267 to 287 s). Android records every kill as plain SIGNALED/9, not low memory, the Java heap stayed under 15 MB, and a power-manager line (Griffin) is the only log line just before each kill. The cause is therefore probably the phone\'s own app limit, but that is not proven. The same size had survived in EYKO-109 (8 Nov); a `MAPPED_F32` hold on 10 Nov was killed too (194 s), so the mode is not the reason, and why 8 Nov differs is not known. Decision (Rafique, lead, 10 Nov): no vector cap. Closed on the Infinix only, test process (not a normal installed app), A32 not run.', 'B6, G20'],
+  ['Close · 9 Nov · EYKO-98', 'ok', 'Head 2 closed', 'The decision is ADR 0001: vectors stay as BLOBs in SQLite (the same bytes on the laptop and the phone), and the phone searches a mapped copy with native NEON scoring. It is exact, fits three tables at 100k, and held on a hot phone and a low battery. A new test checks that the laptop and phone table designs stay identical. The extra storage of the vector file (about 205 MB per 100k image vectors) is accepted in the ADR.', 'C1, B2'],
+  ['Still open', null, 'What comes next', 'Phone checks done on the Infinix (EYKO-116, Zara): background kill (see the 9 Nov row; the lead decided no vector cap), storage per hour (C2) and kill mid-stage (C3). Not run: the A32 and a normal installed app. Laptop: a rerun against the search the phone uses now, a test inventory, and an approximate index for past 300k rows (EYKO-91, Taha). A source for the one-hour-a-day usage figure (EYKO-101, Taha).', null],
 ];
 steps.forEach((s, i) => {
   const [kind, tone, title, text, show] = s;
@@ -259,85 +267,81 @@ body.push(P([
 const Q = [
   // id, group, q, status, say, show, push, card
   ['A1', 'A', 'Did you actually run sqlite-vec on a phone, or just read about it?', 'Answered',
-    'Yes. On two real phones, on three days: the A32 on 12 Oct, 3 Nov and 4 Nov, the Pixel 9 Pro XL on 3 and 4 Nov. Same two errors every time: "no such module: vec0" and "no such function: load_extension".',
-    'E4, E5. Raw logs: `docs/results/vectors/proof/*-2026-11-03-logcat.txt`, `*-2026-11-04-extensions-logcat.txt`',
-    'The test is one command from the phone kit, so anyone can rerun it. A screen recording and a third phone are planned.', 'EYKO-94'],
+    'Yes. On three real phones, run by two people: the A32 on 12 Oct, 3 and 4 Nov and the Pixel 9 Pro XL on 3 and 4 Nov (Rafique), the Infinix X670 on 5 Nov, twice, the second time after a restart (Zara). Same two errors every time: "no such module: vec0" and "no such function: load_extension".',
+    'E4, E5. The proof pack: `docs/results/2026-11-05-sqlite-vec-proof-pack.md` (every raw log and device sheet). Screen recording of the Infinix run: Drive link in the proof pack.',
+    'The test is one command from the phone kit (`docs/phone-kit/run-eyko94.ps1`), so anyone can rerun it while you watch.', 'Done: EYKO-94'],
   ['A2', 'A', 'Is that a sqlite-vec problem or an Android problem?', 'Answered',
-    'Android. Both phones refuse to load any plugin at all, even one with a made-up name. Only modules built into Android\'s own SQLite work.',
-    'E5',
-    'Of fts4, fts5 and rtree, only fts4 is built in. Our keyword index uses fts4, so it is safe.', 'EYKO-89 (official reason)'],
-  ['A3', 'A', 'Android apps can ship their own SQLite. Did you try that?', 'Open',
-    'Not yet. Only the built-in SQLite was tried. This is the main open point of the storage decision.',
-    'Nothing yet',
-    'Plan: add a bundled SQLite (androidx sqlite-bundled or requery) with an arm64 sqlite-vec build on a throwaway branch, then time it against BLOBs.', 'EYKO-89, EYKO-93'],
-  ['A4', 'A', 'Did it fail only on one phone?', 'Partly',
-    'Two phones so far, one cheap and one high-end: Samsung A32 (Helio G80) and Pixel 9 Pro XL (Tensor G4). Same failure on both.',
+    'Android. Its own SQLite is built with plugin loading switched off: the line `-DSQLITE_OMIT_LOAD_EXTENSION` in Android\'s source (`external/sqlite/dist/Android.bp`), present from Android 11 to the current version. All three phones also refuse a plugin with a made-up name, so it is not sqlite-vec.',
+    'E10, E5',
+    'The same file explains the rest of the phone log: fts4 is switched on, fts5 and rtree are not, and the compile-options list is empty because that list is switched off too. Android\'s own Java layer never loads plugins either.', 'Done: EYKO-89'],
+  ['A3', 'A', 'Android apps can ship their own SQLite. Did you try that?', 'Answered',
+    'Yes, on the A32. Google\'s bundled SQLite (`BundledSQLiteDriver.addExtension`) loaded our own sqlite-vec file: same top 20 as our search at every size, and three tables at 100k fit in about 56 MB. But it is 2.5× slower than our in-memory search (230 against 91 ms at 100k) and returns at most 4,096 rows. Zara\'s own SQLite build (R4) is just as fast on the same phone. So we did not adopt it.',
+    'E11 · `docs/results/2026-11-08-route-r1-bundled.md`',
+    'Before the test: we rebuilt sqlite-vec ourselves (4 KB pages and no NEON in the ready-made file). Even testing it raised the app\'s androidx.sqlite from 2.4.0 to 2.7.1, because Android\'s build tools keep test and app on one version. The Pixel and Infinix runs are not done. R2 (requery, EYKO-106) also works. It first measured 486 ms at 100k because of its 1 KB default page size; with 4 KB pages it matches R1. R3 (SQLCipher) was dropped by the owner on 8 Nov: same search, plus decryption on every read, and no card asks for encryption. On the Infinix our own build (R4, EYKO-108) also gave exact answers and 110 ms at 100k rows (E12).', 'EYKO-104, 105, 106, 108; 107 (dropped)'],
+  ['A4', 'A', 'Did it fail only on one phone?', 'Answered',
+    'No. Three phones from three makers: Samsung A32 (Helio G80, Android 13), Pixel 9 Pro XL (Tensor G4, Android 17) and Infinix X670 (MediaTek MT6781, Android 13). Same failure on all three.',
     'E4',
-    'A third phone, Zara\'s Infinix, is planned.', 'EYKO-94'],
-  ['A5', 'A', 'Do sqlite-vec and your BLOB search return the same results, or is one just faster?', 'Open',
-    'Both are exact searches with no shortcuts, so they should return the same top 20. That has not been checked yet.',
-    'Nothing yet',
-    'Do not mix this up with E7: there we did prove our old and new loops give identical results (400 of 400). Planned check: recall@20 against exact numpy search.', 'EYKO-91, EYKO-93'],
+    'Three phones are not every Android version. But the newest SQLite (3.50.6 on the Pixel) fails exactly like the oldest (3.32.2), so it is not an old-version problem.', 'Done: EYKO-94'],
+  ['A5', 'A', 'Do sqlite-vec and your BLOB search return the same results, or is one just faster?', 'Answered',
+    'The same. Every sqlite-vec route we ran gave the same top 20 as our BLOB search, 400 of 400 checks at every size from 1k to 100k (recall@20 = 1.0): R1 and R2 on the A32, R4 on the Infinix and the A32. The routes differ in speed and memory, not in answers.',
+    'E11, E12 · `docs/results/2026-11-08-route-r1-bundled.md`, `2026-11-08-route-r2-requery.md`, `2026-11-08-route-r4-static.md`',
+    'This holds for float32. A quantised (int8) or approximate index would not be exact; that is the laptop test in EYKO-91.', 'EYKO-105, 106, 108'],
   ['B1', 'B', 'One run? What is the spread?', 'Answered',
     'No: 20 queries × 5 runs after a warm-up, with real vectors. The run medians stay close: at 20k, A32 81.5–83.1 ms, Pixel 37.3–37.9 ms.',
     'E6 and Figures 2–3 (the bars show the range of the 5 runs)',
-    'The phones were plugged in. Controlled runs (cool, hot, low battery, third phone) are planned.', 'EYKO-95'],
-  ['B2', 'B', 'Why only up to 20,000 vectors? When does a real user reach that?', 'Partly',
-    'We measured up to 100k with real vectors and 300k with random ones. 20k is where memory says stop when all three tables are loaded. A user reaches 20k in about 25 days and 50k in about 2 months, if they record one hour of video a day.',
-    'E6, E8',
-    'The "one hour a day" has no source yet. The rate of about 13.4 kept frames per minute comes from the Ego4D phone run (Head 8).', 'EYKO-101'],
+    'These first runs were on the cable. Controlled runs followed: cool, hot and low battery on the Infinix (EYKO-95), the A32 unplugged (EYKO-112), and the final setup on a hot A32 and a low-battery Pixel (EYKO-111, Figure 7).', 'EYKO-95, 112, 111'],
+  ['B2', 'B', 'Why only up to 20,000 vectors? When does a real user reach that?', 'Answered',
+    'Memory no longer stops at 20k. Since EYKO-115 the vectors sit in a mapped file: three tables load at 100k with 5 MB of Java memory on the A32, and three tables at 300k loaded on the Infinix (EYKO-109). What grows is search time. At about 13.4 kept frames per minute and one hour of video a day, a user has 20k image vectors after about 25 days, 100k after about 4 months and 300k after about a year. At 100k one vector search took **112 ms on a hot A32 on battery and 14 ms on the Pixel** (EYKO-111). Time grows in step with the rows, so the A32 would be near 340 ms at 300k (estimated from 100k, not measured).',
+    'E6, E8 · ADR 0001 · `docs/results/2026-11-09-final-setup-conditions.md`',
+    'The "one hour a day" is an assumption with no source (EYKO-101). The rate of 13.4 kept frames per minute comes from the Ego4D phone run (Head 8). Speed past 100k is not measured on a phone; a table past 300k reopens ADR 0001 (trigger 3).', 'EYKO-101, EYKO-111'],
   ['B3', 'B', 'Random vectors are not real ones. Does it hold with real data?', 'Answered',
     'For speed, yes. Real vectors from our own clips take the same time: at 20k, A32 82 ms real vs 80 ms random; Pixel 37 vs 40 ms.',
     'E6',
     'This is expected: an exact dot product does the same work whatever the numbers are. Whether search finds the right frames is a retrieval question (Heads 7 and 8), not a storage one.', '—'],
-  ['B4', 'B', '112 MB of memory for one table. What about all three tables, on a 4 GB phone?', 'Partly',
-    'We measured all three loaded together. 20k rows each fits (app grows 53 → 160 MB on the A32). At 50k it runs out of memory on both phones. The limit is the 268 MB Android gives the app, the same on a 6 GB and a 16 GB phone.',
-    'E8 and Figures 4–5',
-    'A 4 GB phone has not been measured. The Infinix is the next test.', 'EYKO-95, EYKO-98'],
+  ['B4', 'B', '112 MB of memory for one table. What about all three tables?', 'Answered',
+    'Before: 20k rows each fit (app grows 53 → 160 MB on the A32) and 50k ran out of memory on both phones, because Android gives the app 268 MB on a 6 GB and a 16 GB phone alike. Now (EYKO-115): the vectors sit in a mapped file outside that limit. **Three tables at 100k load with 5 MB of Java memory on the A32**, with bit-identical scores, and the Infinix loaded three tables at 300k.',
+    'E8 and Figures 4–6 · ADR 0001',
+    'The mapped pages still use ordinary RAM while searching (about 594 MB at three tables × 100k on the A32). Android can drop them, and the next search is then slower. The file is a second copy of the vectors on storage (about 205 MB per 100k image vectors), accepted in ADR 0001.', 'EYKO-109, 114, 115'],
   ['B5', 'B', 'The phone is about 50× slower than the laptop. Is that the chip or your code?', 'Partly',
     'Mostly our code. In the test, a smarter loop gave the same top 20 on all 400 checks and was 5.9× faster on the A32 at 100k (537 → 91 ms). Its faster scoring is now in the app, with a faster ranking: the whole search got 4.3× faster on the A32 at 20k (1.3 s → 302 ms), identical hits.',
     'E6, E7, Figure 3 · Head 7',
-    'The laptop has not been rerun with the new loop, so the remaining phone-vs-laptop gap is not measured yet.', 'EYKO-91'],
-  ['B6', 'B', 'Does a hot phone or a low battery slow it down?', 'Open',
-    'Not measured yet. The 3 Nov Pixel run was charging at 36 °C, so it is not a clean baseline.',
-    'E4 (conditions row)',
-    'Planned: cool, hot (after 10 minutes of load) and low-battery runs under a fixed protocol.', 'EYKO-95, EYKO-90'],
-  ['B7', 'B', 'Brute force will not scale. What is the plan past the limit?', 'Partly',
-    'Speed is fine up to 100k with the new loop (91 ms on the A32). Memory is the wall, between 20k and 50k rows. The plan is not chosen yet.',
-    'E6, E8',
-    'Options: int8 or float16 vectors (¼ or ½ the memory), keep only the image table in memory, load in blocks, an approximate index (usearch, hnswlib), or bundled sqlite-vec. Note the whole app search is still 302 ms on the A32 at 20k.', 'EYKO-98'],
-  ['B8', 'B', 'Why was reading from disk twice as slow on the Pixel as on the cheaper A32?', 'Open',
-    'Not explained yet. Reading 20k vectors from SQLite on every search took 3.1–3.5 s on the Pixel vs about 1.6 s on the A32. It does not affect the app, which searches from memory.',
-    'E4',
-    'The Pixel was charging, its storage was almost full and it reached 38 °C. We will repeat after freeing storage and under the protocol.', 'EYKO-83, EYKO-95'],
-  ['C1', 'C', 'Prove the phone and the laptop store the same thing.', 'Partly',
+    'The laptop has not been rerun against the search the phone uses now, so the remaining phone-vs-laptop gap is not measured yet (EYKO-91, step 8, Taha).', 'EYKO-91'],
+  ['B6', 'B', 'Does a hot phone or a low battery slow it down?', 'Answered',
+    'Not enough to matter for the chosen setup. On the A32 after 10 minutes of video processing, the mapped native search was within 7 % of the old way and 112 ms at 100k; on the Pixel at 26 % battery it was 13.8 ms at 100k, with power saver on or off. Scores were bit-identical in every run (EYKO-111, Figure 7). On the Infinix, heat and low battery were within 1 % of the cool run. Being on battery matters more than heat: the A32 searched **1.2 to 1.4× slower** unplugged than on the cable (same build, same day).',
+    'Figure 7 · `docs/results/2026-11-09-final-setup-conditions.md` · `docs/results/2026-11-05-vectors-phone-sweep.md`',
+    'Why the A32 slows on battery: in all three of its battery runs the fast cores dropped from 2.0 to 1.44 GHz after about 90 s (EYKO-111 CPU log). That fits, but it was not tested on its own.', 'EYKO-95, 112, 111'],
+  ['B7', 'B', 'Brute force will not scale. What is the plan past the limit?', 'Answered',
+    'Decided and in the app (ADR 0001). Memory was the wall, between 20k and 50k rows. The vectors now sit in a memory-mapped file, scored in place by a small NEON C function (EYKO-114, 115). It stays exact: on the A32 three tables load at 100k with 5 MB of Java memory and scores are bit-identical. With the `COUNT(*)` change check removed and the file written once, the vector search on the A32 (cable in) is 21.3 ms at 20k and 102.5 ms at 100k (was 116 and 574 ms), 162 ms for the first search after a restart (was 23.6 s), and it held on a hot A32 and a low-battery Pixel (Figure 7). sqlite-vec also fixes memory but is 2.5× slower and returns at most 4,096 rows (EYKO-105, 106, 108).',
+    'E6, E8, E11, E12, Figure 7 · ADR 0001 · `docs/results/2026-11-08-adopt-mapped.md`',
+    'Past 300k rows (about a year at one hour a day, B2) ADR 0001 is reopened (trigger 3). The fallback then is an approximate index such as usearch (reads its index from disk, int8 / float16, official Android build), tested on the laptop in EYKO-91. hnswlib has no Android build, FAISS has no Android package, and ObjectBox would replace SQLite.', 'EYKO-114, 115, 111, 91'],
+  ['C1', 'C', 'Prove the phone and the laptop store the same thing.', 'Answered',
     'There is one table design, copied into the phone. On 4 Ego4D clips the phone and laptop kept the same frames (354 of 372 at the same second), with 99 % the same place and 96 % the same action.',
     '`docs/results/2026-10-20-ego4d-baseline.md` (On the phone)',
-    'There is no automatic test that the two table designs are identical. That test is planned.', 'EYKO-98'],
-  ['C2', 'C', 'What does an hour of video cost in storage?', 'Partly',
-    'One measured point: the database grew about 7 MB for 27.8 minutes of video, with every vector. Frame pictures were 8.8 MB per minute before dropped frames were deleted.',
-    '`docs/results/2026-10-20-ego4d-baseline.md`',
-    'One point is not a trend. At least 4 points on the Infinix are planned.', 'EYKO-96'],
-  ['C3', 'C', 'What happens if the app is killed in the middle of writing?', 'Partly',
-    'The job saves which stage it reached and resumes there. A link check fails the job if anything is missing. Tests cover this on laptop and phone.',
-    '`android/app/src/test`, `src/androidTest` (queue and link tests)',
-    'Nobody has yet killed the app mid-stage on a real phone. Planned: 9 force-stops at 3 stages.', 'EYKO-96'],
+    'Since 9 Nov an automatic test (`tests/test_schema_parity.py`) builds both table designs in empty databases and fails if any table, column, key, foreign key or index differs. It caught a renamed column, a missing index and a dropped cascade when we planted them. Intended differences are listed in the test: the phone has a `jobs` table, and its keyword index is fts4 because Android has no FTS5. The stored values are covered by the Ego4D run above, not by this test.', 'EYKO-98'],
+  ['C2', 'C', 'What does an hour of video cost in storage?', 'Answered',
+    'About 9.2 GB for an hour of this phone camera video (1080p HEVC, 20 Mbps), CALCULATED: the copy of the video is 98 % of it (9.0 GB), then the 16 kHz audio (115 MB) and the kept frames (30 to 50 MB). The formula (bitrate x 3600 s + 115 MB audio + kept frames per hour x about 60 KB + 1 MB of frame rows) was checked against two measured runs on the Infinix: 60.1 minutes of screen recording grew the app data by 757 MiB (0.79 GB per hour measured, 0.79 calculated) and 55 minutes of a 2.57 Mbps movie by 1.18 GB (1.32 GB per hour measured, 1.32 calculated). The copy equals the source size on four screen clips, four movie pieces and a camera clip on the Pixel. Earlier point: about 7 MB of database for 27.8 minutes on the Pixel, with every vector.',
+    '`docs/results/2026-11-09-storage-and-crash.md` (Part 2); `scripts/eyko116_cost_per_hour.py`; `docs/results/2026-10-20-ego4d-baseline.md`',
+    'No hour of camera video was run: the 9.2 GB is calculated, not measured. Kept-frame term about 8 % high on the movie. The search copy (*.vec) was not built in these tests. Infinix only.', 'EYKO-116'],
+  ['C3', 'C', 'What happens if the app is killed in the middle of writing?', 'Answered',
+    'The job saves which stage it reached and resumes there. A link check fails the job if anything is missing. Tests cover this on laptop and phone. On 10 Nov, on the Infinix, we force-stopped the app 9 times, 3 inside each of `scene`, `small_objects` and `embed_texts`: every run resumed in a new process at the next stage after the last saved one, reached ready, and passed the link check with all ten counts at 0. The numbers matched the uninterrupted runs (10 frames, 6 objects, 53 sightings; 16 frames, 4 objects, 134 sightings).',
+    '`docs/results/2026-11-09-storage-and-crash.md` (Part 3); `android/app/src/test`, `src/androidTest`',
+    'Limits: a clean `force-stop`, not a power-manager or memory kill; two 75 s clips; `split`, `filter` and `latest` were not killed; `embed_texts` lasts under 2 s, so the three kills there show the same case.', 'EYKO-116'],
   ['C4', 'C', 'Why no ORM (Room entities)?', 'Partly',
     'So the same SQL runs on the laptop (sqlite3) and the phone (SupportSQLiteDatabase), and the two cannot drift apart.',
     'E1 (Room entities row)',
-    'It is written down but not as a formal ADR, and there is no timing yet.', 'EYKO-98'],
+    'Since 9 Nov the parity test (C1) checks that the two table designs stay identical. There is no ADR of its own and no timing of Room against plain SQL.', 'EYKO-98'],
   ['C5', 'C', 'You say the tests pass. How many, and what do they cover?', 'Partly',
     '109 laptop-side JVM tests and 104 on-device tests at the 2 Nov gap review.',
     '`docs/plans/gap-review-2026-11/00-gap-register.md`',
-    'No coverage figure and no CI run log yet.', 'no card yet'],
+    'No coverage figure and no saved test log per side yet: EYKO-91, step 9 (Taha).', 'EYKO-91'],
   ['D1', 'D', 'MobileCLIP is research-only and YOLOE is AGPL. Can this ever ship?', 'Open',
     'They are allowed while this is an academic project. We will re-decide before any release.',
     '`docs/invariants/tooling.md` (rule)',
     'A licence list with a swap-out plan per model has not been written yet.', 'EYKO-88'],
   ['D2', 'D', 'Can someone other than you reproduce the setup?', 'Partly',
-    'The phone kit installs and runs from its README alone, with only adb, on two phones. Using it found three README fixes, which are done.',
-    '`docs/phone-kit/README.md`, kit SHA256SUMS.txt',
-    'Not yet done by another person or on another laptop.', 'EYKO-99, EYKO-92'],
+    'Yes, on the phone and on the laptop. Zara installed and ran the phone kit on her Infinix from its README alone. From a fresh clone on her own laptop: `uv sync` worked, **14 tests pass**, and the storage test ranks the methods the same way as ours. Clone to green tests: 12 min 49 s.',
+    '`docs/results/2026-11-06-clean-clone-reproduction.md` (raw output pasted); her kit confirmation on EYKO-99',
+    'One check fails on a fresh clone: `task smoke` looks for a memory that only exists in our own untracked `data/memories.db`. Six README fixes are listed for the lead. The Android build has not been reproduced on another laptop.', 'Done: EYKO-92 · README fixes: lead card'],
 ];
 
 body.push(LABEL('All questions at a glance', { before: 0 }));
@@ -382,7 +386,7 @@ function ev(id, title, shows) {
 ev('E1', 'Options we considered', 'Why BLOBs in memory won against the other four options.');
 body.push(grid([2000, 2700, 3338, 1600], ['Option', 'What it is', 'Result', 'Verdict'], [
   ['sqlite-vec', 'SQLite plugin with a vector table (vec0)', 'Laptop 31 ms at 20k. Phone: "no such module: vec0"; "no such function: load_extension"', 'Rejected'],
-  ['sqlite-vec via bundled SQLite', 'Ship our own SQLite with a native sqlite-vec per chip type', 'Not attempted: needs a Room upgrade and a native build; no official Android package found', 'Not tried'],
+  ['sqlite-vec via bundled SQLite', 'Ship our own SQLite with a native sqlite-vec per chip type', '12 Oct: not attempted. 5 Nov research (E11): Google\'s bundled SQLite loads plugins (`addExtension`, androidx.sqlite 2.6.0); sqlite-vec ships Android files but they need rebuilding (4 KB pages, no NEON). 7 Nov: rebuilt and checked (EYKO-104): 16 KB pages, NEON. Not yet run on a phone (EYKO-105–107)', 'In test'],
   ['BLOBs read every search', 'Read every vector from SQLite on each search', 'Phone 1.38 s at 20k (laptop 92 ms)', 'Rejected'],
   ['**BLOBs in memory**', 'Load each vector table once, dot product in Kotlin / numpy', 'Phone **81 ms** at 20k (laptop 1.5 ms)', '**Adopted**'],
   ['Room entities / ORM', 'Map tables to Kotlin classes', 'Would drift from the laptop\'s sqlite3 code', 'Rejected'],
@@ -408,27 +412,27 @@ body.push(grid([4038, 2800, 2800], ['Measurement', '5,000 vectors', '20,000 vect
 ]));
 body.push(SRC('docs/results/2026-10-12-eyko-31-vector-storage.md'));
 
-ev('E4', 'Re-run on two phones (3 Nov)', 'The failure and the speed repeat on a second, high-end phone with a newer Android.');
-body.push(grid([3238, 3200, 3200], ['', 'Samsung A32', 'Pixel 9 Pro XL'], [
-  ['Android / built-in SQLite', '13 / 3.32.2', '17 / 3.50.6'],
-  ['sqlite-vec (vec0)', 'no such module', 'no such module'],
-  ['load_extension', 'no such function', 'no such function'],
-  ['20k, BLOB in memory (median / worst)', '83.5 / 114.8 (12 Oct: 81.0 / 127.0)', '40.5 / 148.4'],
-  ['20k, BLOB read from SQLite (median)', '1,521', '3,068 (unexplained, see B8)'],
-  ['5k, BLOB in memory (median)', '16.4', '8.9'],
-  ['Conditions', '28 % battery, USB, 27.8 °C, fresh install', '57 %, charging, 36 °C, storage 97 % full'],
+ev('E4', 'Re-run on three phones (3 and 5 Nov)', 'The failure repeats on a high-end phone with a newer Android and on a third phone from another maker. The Infinix is faster than the A32 at vector search, so the A32 stays our slowest phone.');
+body.push(grid([2638, 2200, 2200, 2600], ['', 'Samsung A32 (3 Nov)', 'Pixel 9 Pro XL (3 Nov)', 'Infinix X670 (5 Nov, uncontrolled)'], [
+  ['Android / built-in SQLite', '13 / 3.32.2', '17 / 3.50.6', '13 / 3.32.2'],
+  ['sqlite-vec (vec0)', 'no such module', 'no such module', 'no such module'],
+  ['load_extension', 'no such function', 'no such function', 'no such function'],
+  ['20k, BLOB in memory (median / worst)', '83.5 / 114.8 (12 Oct: 81.0 / 127.0)', '40.5 / 148.4', '54.6 / 62.8 (5 runs)'],
+  ['20k, BLOB read from SQLite (median)', '1,521', '3,068 (charging, storage 97 % full, 38 °C)', '1,146'],
+  ['5k, BLOB in memory (median)', '16.4', '8.9', '12.2'],
+  ['Conditions', '28 % battery, USB, 27.8 °C, fresh install', '57 %, charging, 36 °C, storage 97 % full', 'USB, apps open, not in flight mode; random vectors'],
 ], { firstColBold: true }));
-body.push(SRC('docs/results/vectors/proof/ (logcat + device sheets, commit 79f3904)'));
+body.push(SRC('docs/results/vectors/proof/ (logcat + device sheets) · docs/results/2026-11-05-sqlite-vec-proof-pack.md · docs/results/vectors/eyko90-Infinix_X670-20261105-1417.csv'));
 
-ev('E5', 'Plugin check: is it Android or sqlite-vec? (4 Nov)', 'Android refuses every loadable plugin, even a made-up name. So it is not a sqlite-vec bug.');
-body.push(grid([3238, 3200, 3200], ['Check', 'A32 (Android 13, SQLite 3.32.2)', 'Pixel (Android 17, SQLite 3.50.6)'], [
-  ['sqlite-vec: CREATE … USING vec0', 'no such module: vec0', 'no such module: vec0'],
-  ["load_extension('vec0')", 'no such function: load_extension', 'no such function: load_extension'],
-  ['load_extension of a made-up name', '**no such function: load_extension**', '**no such function: load_extension**'],
-  ['fts4 / fts5 / rtree (built in or not)', 'fts4 works; fts5 and rtree: no such module', 'fts4 works; fts5 and rtree: no such module'],
-  ['PRAGMA compile_options', 'none listed', 'none listed'],
+ev('E5', 'Plugin check: is it Android or sqlite-vec? (4 and 5 Nov)', 'Android refuses every loadable plugin, even a made-up name, on all three phones. So it is not a sqlite-vec bug.');
+body.push(grid([2638, 2333, 2333, 2334], ['Check', 'A32 (Android 13, SQLite 3.32.2)', 'Pixel (Android 17, SQLite 3.50.6)', 'Infinix X670 (Android 13, SQLite 3.32.2)'], [
+  ['sqlite-vec: CREATE … USING vec0', 'no such module: vec0', 'no such module: vec0', 'no such module: vec0'],
+  ["load_extension('vec0')", 'no such function: load_extension', 'no such function: load_extension', 'no such function: load_extension'],
+  ['load_extension of a made-up name', '**no such function: load_extension**', '**no such function: load_extension**', '**no such function: load_extension**'],
+  ['fts4 / fts5 / rtree (built in or not)', 'fts4 works; fts5 and rtree: no such module', 'fts4 works; fts5 and rtree: no such module', 'fts4 works; fts5 and rtree: no such module'],
+  ['PRAGMA compile_options', 'none listed', 'none listed', 'none listed'],
 ]));
-body.push(SRC('docs/results/vectors/proof/*-2026-11-04-extensions-logcat.txt'));
+body.push(SRC('docs/results/vectors/proof/*-2026-11-04-extensions-logcat.txt · infinix-2026-11-05-logcat.txt'));
 
 ev('E6', 'Speed with real vectors: old loop vs faster loop (4 Nov)', 'Real vectors, 5 runs × 20 queries. The faster loop returned the same top 20 on all 400 checks at every size, on both phones.');
 body.push(grid([1638, 2000, 2000, 2000, 2000], ['Vectors', 'A32: old loop', 'A32: faster loop', 'Pixel: old loop', 'Pixel: faster loop'], [
@@ -466,6 +470,13 @@ body.push(grid([1638, 1600, 3200, 3200], ['Rows per table', 'Vectors need', 'A32
 figure('head2-vector-heap.png', '**Figure 4.** One table on its own: what its vectors need against the 268 MB Android gives the app. Real vectors ran on both phones up to 100k (205 MB). The line goes on to 300k as arithmetic (614 MB); 300k was run only with random vectors on 3 Nov, where both phones ran out of memory.');
 figure('head2-vector-all-tables.png', '**Figure 5.** All three vector tables in memory. At 50k the third table, at 100k the second table no longer fits in the 268 MB Java memory Android gives the app.');
 body.push(SRC('docs/results/vectors/*-2026-11-04-memory.csv'));
+body.push(P('**A third phone shows the same limit (Infinix X670, 5 Nov, uncontrolled run):** 20k rows each fit (app memory 86 → 167 MB); at 50k only 2 of 3 tables load and at 100k only 1, with the same "Failed to allocate" errors and the same 268 MB limit. Not drawn in Figure 5 because it was not a protocol run. Raw data: `docs/results/vectors/eyko100-memory-Infinix_X670-20261105-1414.csv`.', { run: { size: 20 } }));
+body.push(P('**Four ways to hold the vectors (EYKO-109, Infinix X670 only, 7 Nov).** Java memory after loading all three tables / tables loaded: today\'s array at 20k 116 MB, 3 of 3; at 50k 183 MB, **2 of 3**; at 100k 208 MB, **1 of 3**. Float32 in direct buffers: identical to today (on every Android from 11 to 16 a direct buffer is a Java byte array, so it counts in the same 268 MB; source lines in `docs/results/vectors/proof/android-DirectByteBuffer-source-2026-11-09.txt`). Float16: 50k fits (145 MB), 100k 2 of 3. Int8 with exact re-check: 100k fits (146 MB), 200k 2 of 3. Memory-mapped float32 file: 300k fits with 10 MB of Java memory, but 1,484 MB of total memory when full. Speed at 100k (scores for all rows): today 297 ms, direct 340, mapped 341, int8 386, float16 2,341. Answers against today (whole app search, 800 hits): mapped 800 of 800 identical, int8 779, float16 737 (799 as a set). After 5 minutes in the background with other apps open the mapped vectors were not killed, but the first search was 3.8× slower. None passes the marks (at most 10 % slower than today on the same phone, same hits, three tables at 100k): mapped is 15 % slower, int8 30 %. What happened next: EYKO-114 and 115 made the mapped file as fast as today with a NEON C function and adopted it in the app (`docs/results/2026-11-08-mapped-fast.md`). Full tables: `docs/results/2026-11-07-vectors-off-heap.md`; A32 and Pixel not run.', { run: { size: 20 }, before: 100 }));
+figure('head2-vector-variants.png', '**Figure 6.** Five ways to hold the vectors on the Infinix X670 (EYKO-109, first version of the code): Java memory after loading three tables (left; x = ran out of memory on the next table) and search time (right). Only the memory-mapped file stays far below the 268 MB limit.');
+body.push(SRC('docs/results/vectors/offheap/*.csv'));
+body.push(P('**The chosen setup on battery (EYKO-111, 9 Nov).** The same build on two phones, unplugged, started from a timer: the A32 after 10 minutes of video processing (37.4 °C when started) and the Pixel at 26 % battery. Scores were bit-identical to the old way on 20 of 20 queries at every size. On the A32 the mapped file is at most 7 % slower at 20k and 50k and 15 % faster at 100k; on the Pixel it is 2.4 to 2.9× faster.', { run: { size: 20 }, before: 100 }));
+figure('head2-vector-conditions.png', '**Figure 7.** Search time of the app setup (mapped file + NEON) against the old Java array, on a hot A32 and a low-battery Pixel (EYKO-111). Bars: median of 5 runs; whiskers: the range of the 5; labels: new divided by old. Each phone has its own scale.');
+body.push(SRC('docs/results/vectors/offheap/*-eyko111-*.csv · docs/results/2026-11-09-final-setup-conditions.md'));
 body.push(P('**Extra proof from the random-vector sweep (EYKO-90, 3 Nov):** one table of 300k vectors needs a single 614 MB block. Both phones refused: "Failed to allocate a 614400016 byte allocation … growth limit 268435456". Raw data: `docs/results/vectors/*-2026-11-03-sweep.csv`.', { run: { size: 20 } }));
 
 ev('E9', 'What the database holds', 'One table design, written once in `src/video_memory/schema.py` and copied into the phone\'s `VideoSchema.kt`. Every kept frame is tied to its video and second, so a search hit can show the exact moment.');
@@ -482,11 +493,62 @@ body.push(grid([2338, 4700, 2600], ['Table', 'What one row holds', 'Written by']
 ], { firstColBold: true }));
 body.push(SRC('src/video_memory/schema.py · android/…/video/VideoSchema.kt'));
 
+ev('E10', 'Why Android blocks plugins: the line in its source (5 Nov)', 'Android\'s own SQLite is compiled with plugin loading removed, in every release from Android 11 to today. Not a sqlite-vec bug, and not fixed by a newer Android.');
+body.push(grid([3238, 3200, 3200], ['Android source branch', 'Line in `dist/Android.bp`', 'Our phone on it'], [
+  ['android11-release', '36: `-DSQLITE_OMIT_LOAD_EXTENSION`', '—'],
+  ['android13-release', '66: same line', 'Samsung A32 (Android 13, SQLite 3.32.2)'],
+  ['android14-release / 15-release', '66: same line', '—'],
+  ['android16-release', '67: same line', '—'],
+  ['main (current)', '67: same line', 'Pixel 9 Pro XL (Android 17, SQLite 3.50.6)'],
+], { firstColBold: true }));
+body.push(P('**How the phone log follows from the same file:** fts3 / fts4 are switched on, fts5 and rtree are not, and `-DSQLITE_OMIT_COMPILEOPTION_DIAGS` is why the compile-options list is empty (E5). The Java layer, `android_database_SQLiteConnection.cpp` (1,036 lines), never mentions plugins at all.', { run: { size: 20 }, before: 100 }));
+body.push(SRC('docs/results/eyko-89-android-sqlite-extensions/01-why-android-blocks-extensions.md · evidence/aosp-android-bp-flags.txt'));
+
+ev('E11', 'Ways to ship our own SQLite, and the vector options (5 Nov)', 'Three ready-made SQLite builds load plugins on Android. Google\'s is the one to try first. The ready-made sqlite-vec file needs rebuilding before it is used.');
+body.push(grid([2200, 2600, 2600, 2238], ['Route', 'Plugin loading', 'Cost for our app', 'Verdict'], [
+  ['**Google bundled SQLite** (androidx sqlite-bundled)', '`addExtension(file, entryPoint)` since 2.6.0; SQLite 3.53.4, FTS5 on', 'Test: app androidx.sqlite 2.4.0 → 2.7.1 (build tools keep test and app on one version). App: Room 2.6.1 → 2.8 + support wrapper', 'Tried 8 Nov (EYKO-105): works, 2.5× slower, **not adopted**'],
+  ['requery sqlite-android', '`customExtensions`; FTS5 on; ~1.7 MB arm64', 'Works with Room 2.6.1 as it is (needs only androidx.sqlite 2.4.0). New databases get 1 KB pages unless set to 4 KB', 'Tried 8 Nov (EYKO-106): works, same speed as R1 with 4 KB pages, **not adopted**'],
+  ['SQLCipher', 'Turned on for every connection; FTS5 on', 'Room 2 factory, but needs a password and key storage', '**Dropped** 8 Nov (EYKO-107): same search plus decryption, no card asks for encryption'],
+  ['Our own NDK build', 'Not needed: sqlite-vec compiled in', 'Our own native build and JNI', 'Last resort'],
+], { firstColBold: true }));
+body.push(P('**Result on the phone (8 Nov, Samsung A32, EYKO-105):** median ms of 5 runs × 20 queries, top 20, same vectors and queries; recall@20 = 1.0 everywhere.', { run: { size: 20 }, before: 100 }));
+body.push(grid([2200, 2600, 2600, 2238], ['Rows', 'R1: Google\'s SQLite + our sqlite-vec', 'R4: own SQLite with sqlite-vec (Zara\'s build)', 'Our in-memory search'], [
+  ['20,000', '53.0', '50.8', '18.5'],
+  ['100,000', '**230.2**', '**231.0**', '**91.2**'],
+  ['R2 requery, its default 1 KB pages: 20,000 / 100,000', '104.5 / **485.8** (same A32)', '—', '20.4 / 93.2 (same run)'],
+  ['R2 requery, 4 KB pages: 100,000', '**233.8**', '—', '—'],
+  ['3 tables × 100k, app memory', '55 MB, no error', 'flat (Infinix, EYKO-108)', 'out of memory at 50k'],
+], { firstColBold: true }));
+body.push(SRC('docs/results/2026-11-08-route-r1-bundled.md · docs/results/vectors/routes/a32-*.csv · proof/a32-2026-11-08-route-r1-logcat.txt'));
+body.push(P('**Why requery (R2) first ran 2× slower (8 Nov, A32, 100k rows, median ms):** both engines searched the same two files, one written by each. 12 runtime settings were logged (`PRAGMA page_size, cache_size, mmap_size, journal_mode, …`); only the page size differs between the files. requery makes new databases with 1 KB pages because its `SQLiteGlobal.getDefaultPageSize()` returns a hard-coded 1024 (requery 3.49.0 source); Google uses 4 KB. Matching requery\'s other settings to Google\'s changed nothing. Likely mechanism, not separately measured: sqlite-vec keeps vectors in 2 MB chunk BLOBs, which take about 2,000 pages each at 1 KB and about 500 at 4 KB. Compile flags were checked and ruled out (requery `-O3`, Google `-Oz`). Fix if R2 were used: `PRAGMA page_size = 4096` before the first table.', { run: { size: 20 }, before: 100 }));
+body.push(grid([2400, 1400, 1900, 1900, 2038], ['File', 'Page size', 'Google searches it', 'requery searches it', 'requery, Google\'s settings'], [
+  ['written by Google', '4,096 B', '235.8', '**233.8**', '233.0'],
+  ['written by requery', '1,024 B', '**485.0**', '485.1', '482.1'],
+], { firstColBold: true }));
+body.push(SRC('docs/results/2026-11-08-route-r2-requery.md · proof/a32-2026-11-08-route-r2-diagnose-logcat.txt · RouteR2DiagnoseTest.kt'));
+body.push(P('**Each route has its own test card**, all under one shared protocol and the same pass marks: EYKO-104 (build our own sqlite-vec file), EYKO-105 (R1 Google bundled), EYKO-106 (R2 requery), EYKO-107 (R3 SQLCipher, dropped 8 Nov), EYKO-108 (R4 own NDK build). Option O1, vectors outside Java memory: EYKO-109.', { run: { size: 20 }, before: 100 }));
+body.push(grid([3238, 3200, 3200], ['Ready-made Android file (checked with `readelf`)', 'Memory-page alignment', 'Speed-up (NEON)'], [
+  ['sqlite-vec v0.1.9 `vec0.so` (arm64)', '**4 KB** (`0x1000`); 16 KB needed on 16 KB phones and by Google Play from 1 Feb 2027', '**None**: the build script turns NEON on only for Mac'],
+  ['usearch v2.26.6 `libusearch_c.so` (arm64)', '**4 KB** (`0x1000`)', 'not checked'],
+], { firstColBold: true }));
+body.push(P('**Past brute force (B7), a proposal:** (1) vectors outside Java memory, as int8 or float16, still exact; (2) bundled sqlite-vec, judged on memory and file size, since without NEON it may be slower than our loop; (3) usearch, an approximate index that reads from disk, tested on the laptop first for recall@20 ≥ 0.95 (EYKO-91).', { run: { size: 20 }, before: 100 }));
+body.push(SRC('docs/results/eyko-89-android-sqlite-extensions/ (README, 02, 03, 04, sources.md, evidence/prebuilt-so-alignment.txt)'));
+ev('E12', 'Route R4: our own build of SQLite with sqlite-vec inside (Infinix, 8 Nov)', 'SQLite 3.53.4 and sqlite-vec 0.1.9 compiled together with the Android NDK; nothing is loaded at run time. Works on the Infinix and gives exact answers, but search is slower than BLOBs in memory.');
+body.push(grid([1638, 1500, 1500, 1500, 3500], ['Rows', 'sqlite-vec search (ms)', 'Same, no NEON (ms)', 'BLOBs in memory, fast loop (ms)', 'Notes'], [
+  ['1k', '2.4', '', '0.8', 'recall 1.0000'],
+  ['5k', '7.0', '', '3.6', 'recall 1.0000'],
+  ['20k', '24.6', '31.5', '13.9', 'recall 1.0000; NEON 1.3× faster than no NEON'],
+  ['50k', '58.0', '', '34.4', 'recall 1.0000'],
+  ['100k', '110.3', '152.3', '69.1', 'recall 1.0000; NEON 1.4× faster than no NEON'],
+], { firstColBold: true }));
+body.push(P('**What it shows (one phone, Infinix X670):** it works without loading anything (A3), answers are exact (recall 1.0000 on 400 of 400 checks at every size), and three tables at 100k rows build with a flat 56–59 MB process memory (the vectors stay in the database file, not in the 268 MB Java memory). It is 1.6× to 1.9× slower than the fast in-memory loop from the 8 Nov sweep (EYKO-95, random vectors, top 20 only; a different vector source, so only roughly comparable). It adds about 0.85 MB to the app after stripping and compression (one library) and its 16 KB alignment check passes. It took about two hours of building and 489 lines of new code for the test (C, CMake, Kotlin, scripts). Also found: sqlite-vec returns at most 4,096 nearest rows (k limit 4,096), and asking for 1,000 or more rows at 100k took about 300 ms, so it cannot give the app every frame\'s score as it does today. Repeated unplugged in flight mode: 114.8 ms at 100k (recall 1.0000). After the phone was pushed into low memory (3.2 GB taken, 700 MB left) the first search per table was 3.4 to 3.9 times slower (pages re-read from storage), then normal again. Not tested: through Room, the A32 and Pixel. Details: `docs/results/2026-11-08-route-r4-static.md`.', { run: { size: 20 }, before: 100 }));
+body.push(SRC('docs/results/vectors/route-r4/*.csv'));
+
 body.push(H2('Limits: how these numbers could mislead'));
 [
-  'All runs were on phones plugged in by cable, so this is not a controlled protocol yet (EYKO-95).',
+  'The first runs (3–4 Nov) were on the cable. Later runs were unplugged under one protocol (EYKO-95, 112, 111). On battery the A32 is 1.2–1.4× slower, so its cable numbers are its best case.',
   'The Pixel was charging and warm (36–38 °C) during the 3 Nov runs.',
-  'A 4 GB phone and the Infinix have not been measured.',
+  'The Infinix sweep of 5 Nov was an uncontrolled run (plugged in, apps open); its protocol runs are EYKO-95.',
   'Real search also filters by video status, which adds a join that the storage test does not include.',
   'BLOB files are about twice the size of sqlite-vec files (E3).',
 ].forEach((t) => body.push(bullet(t)));
@@ -516,13 +578,14 @@ body.push(grid([2338, W - 2338], ['Word', 'What it means here'], [
 
 body.push(H2('Open gaps for this Head'));
 body.push(grid([800, 3938, 1600, 1100, 2200], ['Gap', 'What is missing', 'Card', 'Severity', 'Resolution'], [
-  ['G20', 'Vectors in memory hit the 268 MB limit between 20k and 50k rows per table (one table alone: about 100k). No plan for larger libraries.', 'EYKO-98, 100, 101', 'High', ''],
+  ['G20', 'Vectors in memory hit the 268 MB limit between 20k and 50k rows per table (one table alone: about 100k). No plan for larger libraries.', 'EYKO-98, 100, 101, 109, 114', 'High', 'Fixed 8 Nov and in the app (EYKO-114, 115, A32): memory-mapped file with native NEON scoring, three tables at 100k in 5 MB of Java memory, bit-identical; vector search 102.5 ms at 100k. Checked on battery 9 Nov (EYKO-111): A32 hot at most 7 % slower than the old way, Pixel low battery 2.4–2.9× faster, bit-identical everywhere. Still open: the background kill test on the A32; the vector file\'s extra storage (EYKO-98).'],
   ['G21', 'The app used the slow search loop.', 'lead', 'Medium', 'Done 4 Nov (EYKO-102): 4.3× (A32) / 4.1× (Pixel) faster at 20k, 2,400 of 2,400 hits identical.'],
   ['G9', 'Phone retrieval rule (BM25 + dense + RRF) and video search (dense only) disagree. Needs an ADR.', 'EYKO-81', 'Medium', ''],
-  ['G13', 'The A32 only ran this test, never the video pipeline.', 'EYKO-84', 'Medium', ''],
+  ['G13', 'The A32 only ran this test, never the video pipeline.', 'EYKO-84', 'Medium', 'Done 5 Nov (EYKO-84): a second phone, Zara\'s Infinix X670, ran the whole pipeline on both kit clips to "ready", no crash, peak memory 1.10 GiB (`docs/results/2026-11-05-second-phone-first-run.md`). Still open: the same two clips on the Pixel for a same-clip comparison.'],
   ['G17', 'Two broken tools: frame_report pull needs Python 3.12; task test-android / build-android call bare gradlew.bat.', 'EYKO-70', 'Low', ''],
   ['G19', 'Licences to re-decide before release: MobileCLIP research-only, YOLOE AGPL.', 'EYKO-88', 'Low', ''],
   ['G12', 'Speech tables exist but nothing writes them.', 'EYKO-86', 'Low', ''],
+  ['G24', 'Native files built for 4 KB memory pages: the ready-made sqlite-vec and usearch files (checked). The app\'s own ONNX Runtime 1.18.0 and LiteRT-LM files are not checked. Google Play blocks such updates from 1 Feb 2027.', 'no card yet', 'Medium', 'Found 5 Nov (EYKO-89).'],
 ]));
 
 body.push(H2('How to update this document'));

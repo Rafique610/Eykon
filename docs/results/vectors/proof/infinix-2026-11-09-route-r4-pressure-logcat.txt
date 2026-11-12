@@ -1,0 +1,10 @@
+--------- beginning of main
+11-09 00:58:32.964 31699 31715 I EYKO108 : pressure: pid 31699, MemAvailable 3768 MB, tables built, 100000 rows each
+11-09 00:58:33.236 31699 31715 I EYKO108 : pressure: before pressure, image_vec first 149 ms, repeat 115 ms
+11-09 00:58:33.406 31699 31715 I EYKO108 : pressure: before pressure, text_vec first 82 ms, repeat 86 ms
+11-09 00:58:33.646 31699 31715 I EYKO108 : pressure: before pressure, audio_vec first 122 ms, repeat 115 ms
+11-09 00:58:35.880 31699 31715 I EYKO108 : pressure: took 3200 MB, MemAvailable now 688 MB, holding 60 s
+11-09 00:59:35.885 31699 31715 I EYKO108 : pressure: after hold, MemAvailable 616 MB, still pid 31699
+11-09 00:59:39.280 31699 31715 I EYKO108 : pressure: after pressure, image_vec first 503 ms, repeat 132 ms
+11-09 00:59:39.692 31699 31715 I EYKO108 : pressure: after pressure, text_vec first 317 ms, repeat 92 ms
+11-09 00:59:40.259 31699 31715 I EYKO108 : pressure: after pressure, audio_vec first 442 ms, repeat 122 ms

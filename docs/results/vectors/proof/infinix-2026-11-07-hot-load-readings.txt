@@ -1,0 +1,9 @@
+13:34:08   level: 89   temperature: 320  | 11-07 13:33:54.987  9664  9683 I EykonVideo: dedup 6e7f29ec28dd443389e76a1c51d0c93e: kept 16 of 25 (hash dropp
+13:35:09   level: 88   temperature: 339  | 11-07 13:35:02.337  9664  9683 I EykonVideo: link 6e7f29ec28dd443389e76a1c51d0c93e: every row points at its vi
+13:36:10   level: 88   temperature: 348  | 11-07 13:35:02.337  9664  9683 I EykonVideo: link 6e7f29ec28dd443389e76a1c51d0c93e: every row points at its vi
+13:37:12   level: 88   temperature: 360  | 11-07 13:36:51.263  9664  9683 I EykonVideo: finish 6e7f29ec28dd443389e76a1c51d0c93e: ready; 209 dropped frame
+13:38:14   level: 88   temperature: 367  | 11-07 13:37:46.986  9664  9683 I EykonVideo: scene bc9a2bc4eb2946d1bd1581ae11ab8f8e: 10 frames described by op
+13:39:15   level: 88   temperature: 373  | 11-07 13:39:03.306  9664  9683 I EykonVideo: finish bc9a2bc4eb2946d1bd1581ae11ab8f8e: ready; 214 dropped frame
+13:40:16   level: 88   temperature: 371  | 11-07 13:39:03.306  9664  9683 I EykonVideo: finish bc9a2bc4eb2946d1bd1581ae11ab8f8e: ready; 214 dropped frame
+13:41:18   level: 88   temperature: 365  | 11-07 13:41:01.826  9664  9683 I EykonVideo: finish 3703d6715e09484d80e9a5ec5c502a15: ready; 57 dropped frame 
+13:42:19   level: 88   temperature: 372  | 11-07 13:42:17.228  9664  9683 I EykonVideo: dedup 2b7691e5ce7042e08a2dcb7dad95459d: kept 8 of 8 (hash dropped

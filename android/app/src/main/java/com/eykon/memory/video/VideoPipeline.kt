@@ -11,6 +11,13 @@ import java.io.File
  */
 typealias Stage = (SupportSQLiteDatabase, String) -> Unit
 
+/**
+ * EYKO-119: a failure that trying again cannot fix (a video no decoder can read, rows the link check finds broken).
+ * The worker marks the job failed on the first attempt instead of using up all three, with the reason kept.
+ * It extends IllegalStateException so code that already expects that type keeps working.
+ */
+class PermanentFailure(message: String) : IllegalStateException(message)
+
 object VideoPipeline {
     /** The stages in flow order. Each later card adds its ("name", function) here. */
     val STAGES: List<Pair<String, Stage>> = listOf(

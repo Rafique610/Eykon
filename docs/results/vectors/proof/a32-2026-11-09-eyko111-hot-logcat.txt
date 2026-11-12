@@ -1,0 +1,41 @@
+--------- beginning of main
+11-09 00:17:01.880 30478 30492 I EYKO109 : device sheet: samsung SM-A325F, Android 13 (API 33), sqlite 3.32.2, commit 5555e3e, date 2026-11-09
+11-09 00:17:01.883 30478 30492 I EYKO109 : device sheet: RAM 5.9 GB, java heap limit 268 MB, free storage 55.8 GB, vectors real_own_clips_90+noise
+11-09 00:17:18.593 30478 30492 I EYKO109 : n=20000 heap_f32: first search (loads the table) 2264 ms; identical scores on 20 of 20 queries; recall@20 1.0000 (400 of 400)
+11-09 00:17:19.253 30478 30492 I EYKO109 : n=20000 heap_f32 run 1: median 23.44 ms, worst 72.88 ms
+11-09 00:17:20.267 30478 30492 I EYKO109 : n=20000 heap_f32 run 2: median 32.31 ms, worst 111.91 ms
+11-09 00:17:21.440 30478 30492 I EYKO109 : n=20000 heap_f32 run 3: median 46.04 ms, worst 131.65 ms
+11-09 00:17:22.118 30478 30492 I EYKO109 : n=20000 heap_f32 run 4: median 22.93 ms, worst 77.99 ms
+11-09 00:17:23.333 30478 30492 I EYKO109 : n=20000 heap_f32 run 5: median 45.68 ms, worst 154.38 ms
+11-09 00:17:25.954 30478 30492 I EYKO109 : n=20000 offheap_mapped_native: first search (loads the table) 2042 ms; identical scores on 20 of 20 queries; recall@20 1.0000 (400 of 400)
+11-09 00:17:26.916 30478 30492 I EYKO109 : n=20000 offheap_mapped_native run 1: median 19.97 ms, worst 103.58 ms
+11-09 00:17:27.330 30478 30492 I EYKO109 : n=20000 offheap_mapped_native run 2: median 18.50 ms, worst 21.89 ms
+11-09 00:17:27.936 30478 30492 I EYKO109 : n=20000 offheap_mapped_native run 3: median 22.48 ms, worst 50.18 ms
+11-09 00:17:29.362 30478 30492 I EYKO109 : n=20000 offheap_mapped_native run 4: median 68.15 ms, worst 110.82 ms
+11-09 00:17:30.269 30478 30492 I EYKO109 : n=20000 offheap_mapped_native run 5: median 24.92 ms, worst 106.50 ms
+11-09 00:18:26.241 30478 30492 I EYKO109 : n=50000 heap_f32: first search (loads the table) 8886 ms; identical scores on 20 of 20 queries; recall@20 1.0000 (400 of 400)
+11-09 00:18:36.847 30478 30492 I EYKO109 : n=50000 heap_f32 run 1: median 66.55 ms, worst 9281.97 ms
+11-09 00:18:38.231 30478 30492 I EYKO109 : n=50000 heap_f32 run 2: median 66.28 ms, worst 66.48 ms
+11-09 00:18:39.973 30478 30492 I EYKO109 : n=50000 heap_f32 run 3: median 71.35 ms, worst 309.79 ms
+11-09 00:18:42.126 30478 30492 I EYKO109 : n=50000 heap_f32 run 4: median 67.45 ms, worst 180.58 ms
+11-09 00:18:43.525 30478 30492 I EYKO109 : n=50000 heap_f32 run 5: median 66.48 ms, worst 67.44 ms
+11-09 00:18:53.518 30478 30492 I EYKO109 : n=50000 offheap_mapped_native: first search (loads the table) 8329 ms; identical scores on 20 of 20 queries; recall@20 1.0000 (400 of 400)
+11-09 00:18:54.684 30478 30492 I EYKO109 : n=50000 offheap_mapped_native run 1: median 57.10 ms, worst 58.17 ms
+11-09 00:18:55.836 30478 30492 I EYKO109 : n=50000 offheap_mapped_native run 2: median 57.59 ms, worst 59.14 ms
+11-09 00:18:56.981 30478 30492 I EYKO109 : n=50000 offheap_mapped_native run 3: median 52.89 ms, worst 71.91 ms
+11-09 00:18:58.178 30478 30492 I EYKO109 : n=50000 offheap_mapped_native run 4: median 57.41 ms, worst 83.75 ms
+11-09 00:18:59.344 30478 30492 I EYKO109 : n=50000 offheap_mapped_native run 5: median 57.48 ms, worst 58.03 ms
+11-09 00:20:50.744 30478 30492 I EYKO109 : n=100000 heap_f32: first search (loads the table) 31002 ms; identical scores on 20 of 20 queries; recall@20 1.0000 (400 of 400)
+11-09 00:20:53.452 30478 30492 I EYKO109 : n=100000 heap_f32 run 1: median 131.67 ms, worst 132.20 ms
+11-09 00:20:56.164 30478 30492 I EYKO109 : n=100000 heap_f32 run 2: median 131.80 ms, worst 132.34 ms
+11-09 00:20:58.916 30478 30492 I EYKO109 : n=100000 heap_f32 run 3: median 131.59 ms, worst 179.64 ms
+11-09 00:21:01.618 30478 30492 I EYKO109 : n=100000 heap_f32 run 4: median 131.55 ms, worst 131.85 ms
+11-09 00:21:04.347 30478 30492 I EYKO109 : n=100000 heap_f32 run 5: median 131.66 ms, worst 144.79 ms
+11-09 00:21:36.368 30478 30492 I EYKO109 : n=100000 offheap_mapped_native: first search (loads the table) 28698 ms; identical scores on 20 of 20 queries; recall@20 1.0000 (400 of 400)
+11-09 00:21:38.620 30478 30492 I EYKO109 : n=100000 offheap_mapped_native run 1: median 113.30 ms, worst 115.22 ms
+11-09 00:21:40.909 30478 30492 I EYKO109 : n=100000 offheap_mapped_native run 2: median 113.82 ms, worst 139.22 ms
+11-09 00:21:43.155 30478 30492 I EYKO109 : n=100000 offheap_mapped_native run 3: median 113.02 ms, worst 115.58 ms
+11-09 00:21:45.422 30478 30492 I EYKO109 : n=100000 offheap_mapped_native run 4: median 113.73 ms, worst 137.29 ms
+11-09 00:21:47.667 30478 30492 I EYKO109 : n=100000 offheap_mapped_native run 5: median 113.68 ms, worst 114.61 ms
+11-09 00:21:47.850 30478 30492 I EYKO109 : csv written: /storage/emulated/0/Android/data/com.eykon.memory/files/results/eyko109-speed-SM_A325F-20261109-0017.csv
+11-09 00:21:47.850 30478 30492 I EYKO109 : pull it with: adb pull /storage/emulated/0/Android/data/com.eykon.memory/files/results/eyko109-speed-SM_A325F-20261109-0017.csv

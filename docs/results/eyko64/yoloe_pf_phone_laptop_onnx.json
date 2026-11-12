@@ -1,0 +1,158 @@
+{
+ "clip1_000004": {
+  "boxes_at_least_min": 88,
+  "crops": 10,
+  "best_score": 0.599,
+  "ms": 304
+ },
+ "clip1_000063": {
+  "boxes_at_least_min": 123,
+  "crops": 10,
+  "best_score": 0.869,
+  "ms": 447
+ },
+ "clip1_000081": {
+  "boxes_at_least_min": 116,
+  "crops": 10,
+  "best_score": 0.896,
+  "ms": 227
+ },
+ "clip1_000099": {
+  "boxes_at_least_min": 133,
+  "crops": 10,
+  "best_score": 0.908,
+  "ms": 201
+ },
+ "clip1_000130": {
+  "boxes_at_least_min": 110,
+  "crops": 10,
+  "best_score": 0.83,
+  "ms": 200
+ },
+ "clip1_000141": {
+  "boxes_at_least_min": 119,
+  "crops": 10,
+  "best_score": 0.891,
+  "ms": 214
+ },
+ "clip1_000145": {
+  "boxes_at_least_min": 139,
+  "crops": 10,
+  "best_score": 0.921,
+  "ms": 233
+ },
+ "clip1_000158": {
+  "boxes_at_least_min": 117,
+  "crops": 10,
+  "best_score": 0.916,
+  "ms": 209
+ },
+ "clip1_000164": {
+  "boxes_at_least_min": 91,
+  "crops": 10,
+  "best_score": 0.65,
+  "ms": 204
+ },
+ "clip1_000216": {
+  "boxes_at_least_min": 67,
+  "crops": 10,
+  "best_score": 0.756,
+  "ms": 202
+ },
+ "clip2_000005": {
+  "boxes_at_least_min": 73,
+  "crops": 10,
+  "best_score": 0.773,
+  "ms": 206
+ },
+ "clip2_000016": {
+  "boxes_at_least_min": 89,
+  "crops": 10,
+  "best_score": 0.9,
+  "ms": 208
+ },
+ "clip2_000019": {
+  "boxes_at_least_min": 98,
+  "crops": 10,
+  "best_score": 0.892,
+  "ms": 211
+ },
+ "clip2_000053": {
+  "boxes_at_least_min": 110,
+  "crops": 10,
+  "best_score": 0.909,
+  "ms": 208
+ },
+ "clip2_000073": {
+  "boxes_at_least_min": 125,
+  "crops": 10,
+  "best_score": 0.825,
+  "ms": 219
+ },
+ "clip2_000090": {
+  "boxes_at_least_min": 120,
+  "crops": 10,
+  "best_score": 0.775,
+  "ms": 213
+ },
+ "clip2_000104": {
+  "boxes_at_least_min": 105,
+  "crops": 10,
+  "best_score": 0.837,
+  "ms": 214
+ },
+ "clip2_000121": {
+  "boxes_at_least_min": 140,
+  "crops": 10,
+  "best_score": 0.754,
+  "ms": 215
+ },
+ "clip2_000144": {
+  "boxes_at_least_min": 110,
+  "crops": 10,
+  "best_score": 0.832,
+  "ms": 227
+ },
+ "clip2_000150": {
+  "boxes_at_least_min": 107,
+  "crops": 10,
+  "best_score": 0.802,
+  "ms": 220
+ },
+ "clip2_000166": {
+  "boxes_at_least_min": 119,
+  "crops": 10,
+  "best_score": 0.76,
+  "ms": 220
+ },
+ "clip2_000180": {
+  "boxes_at_least_min": 99,
+  "crops": 10,
+  "best_score": 0.769,
+  "ms": 214
+ },
+ "clip2_000190": {
+  "boxes_at_least_min": 93,
+  "crops": 10,
+  "best_score": 0.839,
+  "ms": 227
+ },
+ "clip2_000205": {
+  "boxes_at_least_min": 172,
+  "crops": 10,
+  "best_score": 0.924,
+  "ms": 252
+ },
+ "clip2_000208": {
+  "boxes_at_least_min": 95,
+  "crops": 10,
+  "best_score": 0.893,
+  "ms": 225
+ },
+ "clip2_000223": {
+  "boxes_at_least_min": 116,
+  "crops": 10,
+  "best_score": 0.744,
+  "ms": 214
+ }
+}

@@ -23,9 +23,11 @@ object VideoSchema {
           duration_s  REAL NOT NULL DEFAULT 0,
           lat REAL, lon REAL,
           status      TEXT NOT NULL DEFAULT 'processing' CHECK (status IN ('processing', 'ready', 'failed')),
-          created_at  TEXT NOT NULL
+          created_at  TEXT NOT NULL,
+          content_hash TEXT
         )
         """,
+        "CREATE INDEX IF NOT EXISTS videos_content_hash ON videos(content_hash)",
         """
         CREATE TABLE IF NOT EXISTS frames (
           id          INTEGER PRIMARY KEY,
@@ -139,6 +141,22 @@ object VideoSchema {
 
     /** Idempotent: safe to run on every open. */
     fun create(db: SupportSQLiteDatabase) {
+        addContentHashToOldDatabases(db)
         STATEMENTS.forEach { db.execSQL(it.trimIndent()) }
+    }
+
+    /**
+     * EYKO-71: databases made before the content_hash column existed get it added (last, like the CREATE TABLE),
+     * before the index on it is made. Videos saved earlier keep a NULL hash, so they are never reported as duplicates.
+     */
+    private fun addContentHashToOldDatabases(db: SupportSQLiteDatabase) {
+        val hasVideos = db.query("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'videos'").use { it.moveToFirst() }
+        if (!hasVideos) return
+        val hasColumn = db.query("PRAGMA table_info(videos)").use { cursor ->
+            var found = false
+            while (cursor.moveToNext()) if (cursor.getString(1) == "content_hash") found = true
+            found
+        }
+        if (!hasColumn) db.execSQL("ALTER TABLE videos ADD COLUMN content_hash TEXT")
     }
 }

@@ -1,0 +1,17 @@
+{
+  "source": "https://github.com/affaan-m/ECC",
+  "license": "MIT",
+  "license_file": ".agents/vendor/ECC-LICENSE",
+  "copyright": "Copyright (c) 2026 Affaan Mustafa",
+  "commit": null,
+  "commit_note": "Not recorded when the prompts were copied (22 Oct 2026). Fill in the commit they came from if it is known.",
+  "derived": {
+    "code-explorer": "agents/code-explorer.md",
+    "code-reviewer": "agents/code-reviewer.md",
+    "mle-reviewer": "agents/mle-reviewer.md",
+    "pr-test-analyzer": "agents/pr-test-analyzer.md",
+    "security-reviewer": "agents/security-reviewer.md",
+    "silent-failure-hunter": "agents/silent-failure-hunter.md"
+  },
+  "changes": "Each prompt starts with an added 'Eykon rules' block; the code-reviewer and security-reviewer descriptions no longer ask tools to start them automatically."
+}

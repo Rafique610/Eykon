@@ -120,6 +120,40 @@ class VideoWorkerTest {
     }
 
     @Test
+    fun aPermanentFailureEndsTheJobAtOnceWithOneAttemptAndTheReasonKept() {
+        val id = queue()
+        var calls = 0
+        val unreadable: Stage = { _, _ -> calls++; throw PermanentFailure("no frame could be read from the video") }
+        worker("one" to frameStage(1), "unreadable" to unreadable, "after" to frameStage(2)).drain()
+
+        val job = jobs.get(id)!!
+        assertEquals("failed", job.status)
+        assertEquals(1, job.attempts)
+        assertEquals(1, calls) // no second and third try
+        assertEquals("one", job.stage) // the last stage that finished
+        assertEquals("PermanentFailure: no frame could be read from the video", job.error)
+        assertEquals(1L, frames()) // "after" never ran
+        assertEquals("failed", repository.get("v1")!!.status)
+    }
+
+    @Test
+    fun retryOnAPermanentlyFailedJobStartsAtTheFailedStageAndFailsAtOnceAgain() {
+        val id = queue()
+        var calls = 0
+        val unreadable: Stage = { _, _ -> calls++; throw PermanentFailure("cannot be decoded") }
+        val worker = worker("one" to frameStage(1), "unreadable" to unreadable)
+        worker.drain()
+        jobs.retry(id)
+        worker.drain()
+
+        val job = jobs.get(id)!!
+        assertEquals("failed", job.status)
+        assertEquals(1, job.attempts) // Retry gave a fresh set of attempts and the failure used one again
+        assertEquals(2, calls)
+        assertEquals(1L, frames()) // stage "one" was not repeated by the retry
+    }
+
+    @Test
     fun anInterruptedJobResumesAfterItsSavedStageWithNoDuplicateRows() {
         val id = queue()
         // First run, by hand: the job is taken, stage "one" finishes, then the app dies.

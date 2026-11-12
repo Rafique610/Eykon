@@ -1,0 +1,7 @@
+# NDK 28.2.13676358, sqlite-vec v0.1.9 e9f598abfa0c06b328d8fe5da9c3760cce74be10, SQLite headers 3.54.1
+$ D:\eykon-cache\ndk\android-ndk-r28c\toolchains\llvm\prebuilt\windows-x86_64\bin\clang.exe --target=aarch64-linux-android31 -O3 -fPIC -shared -Wall -Wextra -Wl,-z,max-page-size=16384 -Wl,-z,common-page-size=16384 -DSQLITE_VEC_ENABLE_NEON -ID:\eykon-cache\sqlite-vec-android\src\sqlite-amalgamation-3540100 D:\eykon-cache\sqlite-vec-android\src\v0.1.9\sqlite-vec.c -lm -o D:\eykon-cache\sqlite-vec-android\out\neon\arm64-v8a\libvec0.so
+# neon: NEON function calls in the preprocessed source: 8
+264ec3266849dc7cd9e1454abacbadae4cc900f55888c7311522f66297fc3e46  neon/arm64-v8a/libvec0.so
+$ D:\eykon-cache\ndk\android-ndk-r28c\toolchains\llvm\prebuilt\windows-x86_64\bin\clang.exe --target=aarch64-linux-android31 -O3 -fPIC -shared -Wall -Wextra -Wl,-z,max-page-size=16384 -Wl,-z,common-page-size=16384 -ID:\eykon-cache\sqlite-vec-android\src\sqlite-amalgamation-3540100 D:\eykon-cache\sqlite-vec-android\src\v0.1.9\sqlite-vec.c -lm -o D:\eykon-cache\sqlite-vec-android\out\no-neon\arm64-v8a\libvec0.so
+# no-neon: NEON function calls in the preprocessed source: 0
+ccd7178d98dbe081b63688a9259ab40528201dba5b22a9524760e8bde7e38329  no-neon/arm64-v8a/libvec0.so

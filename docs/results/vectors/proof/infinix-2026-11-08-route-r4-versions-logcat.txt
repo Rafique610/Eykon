@@ -1,0 +1,6 @@
+--------- beginning of main
+11-08 02:00:14.976 17975 18125 I EYKO31  : route R4 (sqlite_vec_static): sqlite_version() = 3.53.4, open 0.9 ms
+11-08 02:00:14.976 17975 18125 I EYKO31  : route R4 (sqlite_vec_static): vec_version() = v0.1.9
+11-08 02:00:14.994 17975 18125 I EYKO31  : route R4 (sqlite_vec_static): CREATE VIRTUAL TABLE t_fts5 USING fts5(x) -> ok
+11-08 02:00:15.000 17975 18125 I EYKO31  : route R4 (sqlite_vec_static): CREATE VIRTUAL TABLE t_vec USING vec0(embedding float[4]) -> ok
+11-08 02:00:15.006 17975 18125 I EYKO31  : route R4 (sqlite_vec_static): vec0 insert and select -> 1

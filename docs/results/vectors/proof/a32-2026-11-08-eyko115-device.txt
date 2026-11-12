@@ -1,0 +1,12 @@
+# A32 (SM-A325F), EYKO-115, cable IN, libeykonvec.so sha256 95f1122d...1451
+# before: 2026-11-08 19:13:49 +0500
+  USB powered: true
+  level: 100
+  temperature: 272
+# after: 2026-11-08 19:31:49 +0500
+  level: 100
+  temperature: 296
+# rerun for raw logs, after: 2026-11-08 19:46:26 +0500
+  USB powered: true
+  level: 100
+  temperature: 281

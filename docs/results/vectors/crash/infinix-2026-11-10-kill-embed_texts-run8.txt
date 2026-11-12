@@ -1,0 +1,16 @@
+02:00:28 waiting for the end of 'embed_images' to kill inside 'embed_texts' (delay 0.25s)
+   | 11-10 02:01:26.014 I/EykonVideo(31507): split 48ca8c526ed24906ae00a154116562fc: 225 frames in 18959 ms (one pass), audio 74.9 s in 6446 ms
+   | 11-10 02:01:27.577 I/EykonVideo(31507): filter 48ca8c526ed24906ae00a154116562fc: kept 25 of 225 (less sharp 200) in 1549 ms
+   | 11-10 02:01:39.784 I/EykonVideo(31507): dedup 48ca8c526ed24906ae00a154116562fc: kept 16 of 25 (hash dropped 9, embedding dropped 0) in 12195 ms; embedded 16 frames, 742 ms each; memory java 9 MB, native 334 MB
+   | 11-10 02:02:06.582 I/EykonVideo(31507): scene 48ca8c526ed24906ae00a154116562fc: 16 frames described by option A in 26766 ms, 1672 ms each
+   | 11-10 02:03:04.607 I/EykonVideo(31507): small_objects 48ca8c526ed24906ae00a154116562fc: 16 frames looked at, 4 found, in 57843 ms
+   | 11-10 02:03:04.688 I/EykonVideo(31507): embed_images 48ca8c526ed24906ae00a154116562fc: 16 vectors stored (16 reused, 0 computed) in 6 ms
+02:03:10 force-stopped after the 'embed_images' line (video 48ca8c52), delay 0.25s: inside 'embed_texts'
+02:03:13 app process after the kill: none (killed)
+02:03:13 job in the database right after the kill: video 48ca8c52 status=running stage='embed_images' attempts=0
+02:03:14 reopened the app
+   | 11-10 02:03:11.801 I/EykonVideo(32471): embed_texts 48ca8c526ed24906ae00a154116562fc: 16 texts (16 captions, 0 transcript chunks) in 1686 ms
+   | 11-10 02:03:11.806 I/EykonVideo(32471): link 48ca8c526ed24906ae00a154116562fc: every row points at its video and moment
+   | 11-10 02:05:12.000 I/EykonVideo(32471): latest 48ca8c526ed24906ae00a154116562fc: 134 sightings (2 boxes too small) in 120192 ms
+   | 11-10 02:05:12.021 I/EykonVideo(32471): finish 48ca8c526ed24906ae00a154116562fc: ready; 209 dropped frame files deleted
+02:05:16 RESULT: the video reached ready after the reopen
