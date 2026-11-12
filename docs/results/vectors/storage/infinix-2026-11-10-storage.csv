@@ -1,0 +1,6 @@
+time,label,video_minutes_total,database_bytes,vector_files_bytes,video_copies_kb,frame_files_kb,videos_folder_kb,other_in_videos_kb,app_data_total_kb
+2026-11-10T20:48:15,before any video (baseline),0.0,135168,0,0,0,4,4,50293
+2026-11-10T21:02:14,after video 1 (300 s),5.0,706944,0,660656,248,670205,9301,721366
+2026-11-10T21:10:01,after video 2 (601 s),15.01,1096208,0,660656,952,689441,27833,741262
+2026-11-10T21:21:28,after video 3 (901 s),30.03,1703936,0,660656,816,717641,56169,769790
+2026-11-10T21:46:30,after video 4 (1804 s),60.1,2727936,0,660656,936,774478,112886,827331

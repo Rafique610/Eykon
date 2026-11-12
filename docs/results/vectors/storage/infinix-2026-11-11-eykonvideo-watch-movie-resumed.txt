@@ -1,0 +1,7 @@
+21:24:43 watching for 4 video(s); battery 62 %, 36.5 C
+21:26:45 check: [('669a2031', 'done', 'finish'), ('6166f3d9', 'running', 'scene'), ('cc39924b', 'queued', ''), ('32427708', 'queued', '')]; battery 61 %, 37.0 C
+   | 11-11 21:27:34.610 I/EykonVideo(27288): small_objects 6166f3d99f644c9785fc9f0a3c8a5fec: 148 frames looked at, 0 found, in 180301 ms
+   | 11-11 21:27:34.714 I/EykonVideo(27288): embed_images 6166f3d99f644c9785fc9f0a3c8a5fec: 148 vectors stored (148 reused, 0 computed) in 22 ms
+   | 11-11 21:27:38.147 I/EykonVideo(27288): embed_texts 6166f3d99f644c9785fc9f0a3c8a5fec: 148 texts (148 captions, 0 transcript chunks) in 3428 ms
+   | 11-11 21:27:38.153 I/EykonVideo(27288): link 6166f3d99f644c9785fc9f0a3c8a5fec: every row points at its video and moment
+21:28:46 check: [('669a2031', 'done', 'finish'), ('6166f3d9', 'running', 'link'), ('cc39924b', 'queued', ''), ('32427708', 'queued', '')]; battery 61 %, 37.3 C

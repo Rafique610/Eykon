@@ -1,0 +1,8 @@
+--------- beginning of main
+11-10 00:15:00.290 28351 28366 I EYKO109 : hold: MAPPED_F32, 100000 rows x 3 tables loaded, pid 28351, holding 300 s: open other apps now
+11-10 00:15:30.358 28351 28366 I EYKO109 : hold: 30s, pid 28351, PSS 606 MB, java heap 15 MB
+11-10 00:16:00.463 28351 28366 I EYKO109 : hold: 60s, pid 28351, PSS 606 MB, java heap 15 MB
+11-10 00:16:30.568 28351 28366 I EYKO109 : hold: 90s, pid 28351, PSS 606 MB, java heap 15 MB
+11-10 00:17:00.638 28351 28366 I EYKO109 : hold: 120s, pid 28351, PSS 606 MB, java heap 15 MB
+11-10 00:17:30.702 28351 28366 I EYKO109 : hold: 150s, pid 28351, PSS 606 MB, java heap 15 MB
+11-10 00:18:00.768 28351 28366 I EYKO109 : hold: 180s, pid 28351, PSS 606 MB, java heap 15 MB

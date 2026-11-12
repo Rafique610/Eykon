@@ -1,0 +1,4 @@
+11-09 23:32:19.981 E/Griffin/StateProvider( 1685): getAppsArrayRecommend: 
+11-09 23:32:19.999 I/Process ( 1685): Sending signal. PID: 16622 SIG: 9
+11-09 23:32:20.079 I/am_proc_died( 1685): [0,16622,com.eykon.memory,0,4]
+11-09 23:32:20.081 I/Zygote  (  942): Process 16622 exited due to signal 9 (Killed)
