@@ -13,3 +13,13 @@ All 100,000 rows checked: unique ids, max |norm − 1| = 1.8e-7. The vectors sta
 |---|---|
 | [`../../../vectors/laptop-2026-11-12-sweep-varied.csv`](../../../vectors/laptop-2026-11-12-sweep-varied.csv) | S3 varied: 305 rows (61 method × size groups × 5 runs) |
 | `run-log.txt` | the script's console output |
+| `1-time-vs-size.png` | median time per search against size, S1 · S2 · S3 side by side |
+| `2-recall-vs-size.png` | recall@20 against size for the approximate methods, 0.95 pass mark, S1 · S2 · S3 |
+| `3-memory-vs-size.png` | memory held (PSS after − before) against size, S3 |
+| `graphs.py` | draws the three charts (a quick look; the official figures are EYKO-97) |
+
+Redraw: `uv run --no-project --python 3.10 --with matplotlib python -I <this folder>/graphs.py docs/results/vectors <out dir>`
+
+**What S3 shows:** on 100,000 distinct real photos, HNSW keeps its recall far better than on S1
+(random) or S2 (near-copies): c16/ef64 0.95, c16/ef256 0.98, c32/ef1024 1.00 at 100k, at
+0.3–3 ms against 12.9 ms for numpy. int8 + re-check stays at 1.00; sqlite-vec int8 falls to 0.84.
