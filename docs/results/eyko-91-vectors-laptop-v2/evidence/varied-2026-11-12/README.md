@@ -16,6 +16,7 @@ All 100,000 rows checked: unique ids, max |norm − 1| = 1.8e-7. The vectors sta
 | `1-time-vs-size.png` | median time per search against size, S1 · S2 · S3 side by side |
 | `2-recall-vs-size.png` | recall@20 against size for the approximate methods, 0.95 pass mark, S1 · S2 · S3 |
 | `3-memory-vs-size.png` | memory held (PSS after − before) against size, S3 |
+| `hnsw-rebuilds.txt` | each HNSW setting built 5 more times at 100k (`vector_storage_v2.py --one varied 100000 <method> --runs 1`, 12–13 Nov): recall moves by ≤ 0.005 |
 | `graphs.py` | draws the three charts (a quick look; the official figures are EYKO-97) |
 
 Redraw: `uv run --no-project --python 3.10 --with matplotlib python -I <this folder>/graphs.py docs/results/vectors <out dir>`

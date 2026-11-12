@@ -1,0 +1,125 @@
+============================= test session starts ==============================
+platform linux -- Python 3.10.12, pytest-9.2.0, pluggy-1.7.0 -- <uv env>/bin/python
+cachedir: .pytest_cache
+rootdir: <repo>
+configfile: pyproject.toml
+plugins: cov-7.1.0, anyio-4.16.0
+collecting ... collected 30 items
+
+tests/test_schema_parity.py::test_phone_statements_are_found PASSED      [  3%]
+tests/test_schema_parity.py::test_same_tables PASSED                     [  6%]
+tests/test_schema_parity.py::test_same_columns_keys_and_indexes PASSED   [ 10%]
+tests/test_schema_parity.py::test_keyword_index_covers_the_same_text PASSED [ 13%]
+tests/test_smoke.py::test_settings_point_at_the_memories_database PASSED [ 16%]
+tests/test_smoke.py::test_init_db_is_idempotent PASSED                   [ 20%]
+tests/test_vector_recall.py::test_exact_search_scores_one PASSED         [ 23%]
+tests/test_vector_recall.py::test_tied_copy_counts_as_hit PASSED         [ 26%]
+tests/test_vector_recall.py::test_wrong_ids_score_below_one PASSED       [ 30%]
+tests/test_vector_recall.py::test_repeats_and_missing_ids_do_not_inflate PASSED [ 33%]
+tests/test_vector_recall.py::test_sizes_nest_and_vectors_are_unit[random] PASSED [ 36%]
+tests/test_vector_recall.py::test_sizes_nest_and_vectors_are_unit[real] PASSED [ 40%]
+tests/test_vector_recall.py::test_real_follows_the_phone_recipe PASSED   [ 43%]
+tests/test_vector_recall.py::test_text_table_has_384_numbers PASSED      [ 46%]
+tests/test_vector_recall.py::test_varied_takes_the_same_spread_rows_for_each_size PASSED [ 50%]
+tests/test_vector_recall.py::test_epic_frame_picking_and_urls PASSED     [ 53%]
+tests/test_vector_recall.py::test_remote_file_reads_and_seeks_like_a_local_file PASSED [ 56%]
+tests/test_vector_recall.py::test_get_range_retries_a_cut_off_download PASSED [ 60%]
+tests/test_video_capture.py::test_read_metadata_of_a_real_clip PASSED    [ 63%]
+tests/test_video_capture.py::test_save_upload_stores_the_file_and_one_row PASSED [ 66%]
+tests/test_video_capture.py::test_wrong_type_is_refused_and_creates_nothing PASSED [ 70%]
+tests/test_video_capture.py::test_text_renamed_to_mp4_is_refused_and_creates_nothing PASSED [ 73%]
+tests/test_video_capture.py::test_too_big_is_refused_and_creates_nothing PASSED [ 76%]
+tests/test_video_schema.py::test_init_db_twice_changes_nothing PASSED    [ 80%]
+tests/test_video_schema.py::test_frame_needs_an_existing_video PASSED    [ 83%]
+tests/test_video_schema.py::test_put_vector_and_knn PASSED               [ 86%]
+tests/test_video_schema.py::test_put_vector_rejects_the_wrong_size PASSED [ 90%]
+tests/test_video_schema.py::test_knn_on_an_empty_table PASSED            [ 93%]
+tests/test_video_schema.py::test_keyword_search_finds_a_video_text PASSED [ 96%]
+tests/test_video_schema.py::test_delete_video_leaves_nothing PASSED      [100%]
+
+================================ tests coverage ================================
+_______________ coverage: platform linux, python 3.10.12-final-0 _______________
+
+Name                                         Stmts   Miss  Cover
+----------------------------------------------------------------
+src/__init__.py                                  0      0   100%
+src/assistant/__init__.py                        4      4     0%
+src/assistant/helpers.py                        13     13     0%
+src/assistant/llm.py                            51     51     0%
+src/assistant/prompt.py                          9      9     0%
+src/benchmarks/__init__.py                       0      0   100%
+src/benchmarks/_captioners.py                   74     74     0%
+src/benchmarks/_vector_methods.py              141    141     0%
+src/benchmarks/_vector_sources.py               57      1    98%
+src/benchmarks/build_sqlite_vec_android.py      93     93     0%
+src/benchmarks/build_vector_native.py           26     26     0%
+src/benchmarks/compare_search_hits.py           28     28     0%
+src/benchmarks/crop_pairs.py                    37     37     0%
+src/benchmarks/cross_pipeline.py               188    188     0%
+src/benchmarks/data.py                          40     40     0%
+src/benchmarks/detector_bench.py               202    202     0%
+src/benchmarks/detector_hybrid.py               80     80     0%
+src/benchmarks/ego4d_actions.py                 52     52     0%
+src/benchmarks/ego4d_eval.py                   155    155     0%
+src/benchmarks/ego4d_gate.py                    45     45     0%
+src/benchmarks/ego4d_hybrid.py                  85     85     0%
+src/benchmarks/ego4d_lastseen.py               117    117     0%
+src/benchmarks/ego4d_phone_compare.py           43     43     0%
+src/benchmarks/ego4d_pipeline.py               206    206     0%
+src/benchmarks/ego4d_select.py                  38     38     0%
+src/benchmarks/embed_coco.py                    89     89     0%
+src/benchmarks/embed_epic.py                   174     75    57%
+src/benchmarks/experiment_a1.py                 65     65     0%
+src/benchmarks/experiments.py                  123    123     0%
+src/benchmarks/export_bge.py                    45     45     0%
+src/benchmarks/export_clip.py                   42     42     0%
+src/benchmarks/export_clip_text.py              54     54     0%
+src/benchmarks/export_own_vectors.py            14     14     0%
+src/benchmarks/filters_golden.py                41     41     0%
+src/benchmarks/frame_search_probe.py            46     46     0%
+src/benchmarks/hybrid_phone.py                  62     62     0%
+src/benchmarks/keyframe_eval.py                104    104     0%
+src/benchmarks/keyframe_motion.py               58     58     0%
+src/benchmarks/keyframe_public.py               38     38     0%
+src/benchmarks/keyframe_tune.py                128    128     0%
+src/benchmarks/metrics.py                       25     25     0%
+src/benchmarks/perception_golden.py             88     88     0%
+src/benchmarks/perception_score.py              46     46     0%
+src/benchmarks/phone_detector_assets.py         43     43     0%
+src/benchmarks/run.py                          174    174     0%
+src/benchmarks/small_objects_eval.py           171    171     0%
+src/benchmarks/soak_test.py                    125    125     0%
+src/benchmarks/vector_storage_spike.py          66     66     0%
+src/benchmarks/vector_storage_v2.py            136    136     0%
+src/benchmarks/vision_bench.py                 166    166     0%
+src/benchmarks/vlm_bench.py                    104    104     0%
+src/benchmarks/vlm_models.py                    55     55     0%
+src/benchmarks/yoloe_pf_phone.py                62     62     0%
+src/benchmarks/yoloe_phone.py                   60     60     0%
+src/config.py                                   40      0   100%
+src/memories/__init__.py                         7      0   100%
+src/memories/database.py                        29      5    83%
+src/memories/embedder.py                        22     13    41%
+src/memories/models.py                          36     21    42%
+src/memories/query.py                           11     11     0%
+src/memories/repository.py                      63     52    17%
+src/memories/reranker.py                        17     17     0%
+src/memories/search.py                         115     97    16%
+src/memories/service.py                         56     46    18%
+src/ui/__init__.py                               0      0   100%
+src/ui/app.py                                  234    234     0%
+src/ui/video_memory_page.py                     29     29     0%
+src/video_memory/__init__.py                     0      0   100%
+src/video_memory/capture.py                     55      6    89%
+src/video_memory/db.py                          36      0   100%
+src/video_memory/models.py                      63      0   100%
+src/video_memory/repository.py                   7      0   100%
+src/video_memory/schema.py                      24      7    71%
+src/vision/__init__.py                           4      4     0%
+src/vision/captioner.py                         58     58     0%
+src/vision/extractor.py                         70     70     0%
+src/vision/processor.py                         43     43     0%
+----------------------------------------------------------------
+TOTAL                                         5207   4746     9%
+============================= 30 passed in 17.56s ==============================
+exit 0
