@@ -1,0 +1,16 @@
+00:22:19 pid=none foreground_service_listed=False isForeground=[] types=[] battery 62 %, 32.3 C ready=0
+00:22:50 pid=none foreground_service_listed=False isForeground=[] types=[] battery 62 %, 32.0 C ready=0
+00:23:21 pid=none foreground_service_listed=False isForeground=[] types=[] battery 62 %, 31.9 C ready=0
+00:23:52 pid=29767 foreground_service_listed=False isForeground=[] types=[] battery 62 %, 31.9 C ready=0
+00:24:23 pid=29767 foreground_service_listed=True isForeground=['true'] types=[] battery 63 %, 32.1 C ready=0
+00:24:49 pid=29767 foreground_service_listed=True isForeground=['true'] types=[] battery 63 %, 32.2 C ready=0
+00:25:20 pid=29767 foreground_service_listed=True isForeground=['true'] types=[] battery 63 %, 32.2 C ready=0
+00:25:52 pid=29767 foreground_service_listed=True isForeground=['true'] types=[] battery 63 %, 32.5 C ready=0
+00:26:23 pid=29767 foreground_service_listed=True isForeground=['true'] types=[] battery 63 %, 32.5 C ready=0
+00:26:49 pid=29767 foreground_service_listed=True isForeground=['true'] types=[] battery 62 %, 33.3 C ready=0
+00:27:21 pid=29767 foreground_service_listed=True isForeground=['true'] types=[] battery 62 %, 33.2 C ready=0
+00:27:52 pid=29767 foreground_service_listed=True isForeground=['true'] types=[] battery 62 %, 34.3 C ready=0
+00:28:23 pid=29767 foreground_service_listed=True isForeground=['true'] types=[] battery 62 %, 34.7 C ready=0
+00:28:50 pid=29767 foreground_service_listed=True isForeground=['true'] types=[] battery 62 %, 35.0 C ready=0
+00:29:21 pid=29767 foreground_service_listed=True isForeground=['true'] types=[] battery 62 %, 35.9 C ready=0
+00:29:53 pid=29767 foreground_service_listed=False isForeground=[] types=[] battery 62 %, 36.3 C ready=1

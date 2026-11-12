@@ -1,0 +1,9 @@
+--------- beginning of main
+11-12 12:28:22.866 I/EykonVideo(18339): dedup 18e1819c77624bde959fd7a614eecc73: kept 51 of 78 (hash dropped 8, embedding dropped 19) in 59441 ms; embedded 70 frames, 833 ms each; memory java 14 MB, native 335 MB
+11-12 12:29:39.621 I/EykonVideo(18339): scene 18e1819c77624bde959fd7a614eecc73: 51 frames described by option A in 76719 ms, 1504 ms each
+11-12 12:30:02.582 I/EykonVideo(18339): small_objects 18e1819c77624bde959fd7a614eecc73: 51 frames looked at, 0 found, in 22800 ms
+11-12 12:30:02.661 I/EykonVideo(18339): embed_images 18e1819c77624bde959fd7a614eecc73: 51 vectors stored (51 reused, 0 computed) in 11 ms
+11-12 12:30:04.691 I/EykonVideo(18339): embed_texts 18e1819c77624bde959fd7a614eecc73: 51 texts (51 captions, 0 transcript chunks) in 2027 ms
+11-12 12:30:04.696 I/EykonVideo(18339): link 18e1819c77624bde959fd7a614eecc73: every row points at its video and moment
+11-12 12:31:13.200 I/EykonVideo(18339): latest 18e1819c77624bde959fd7a614eecc73: 84 sightings (27 boxes too small) in 68503 ms
+11-12 12:31:13.399 I/EykonVideo(18339): finish 18e1819c77624bde959fd7a614eecc73: ready; 850 dropped frame files deleted

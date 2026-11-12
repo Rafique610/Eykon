@@ -82,10 +82,16 @@ class VideoJobWorker(context: Context, params: WorkerParameters) : CoroutineWork
 
     /** Keeps the notification text on the video and stage being worked on. */
     private fun CoroutineScope.launchProgressUpdates() = launch {
+        val startedAt = java.time.Instant.now().toString()
         while (isActive) {
             delay(PROGRESS_EVERY_MS)
             val now = app.videoWorker.current
-            val text = if (now == null) "Waiting for the next video" else "Video ${now.first.take(8)}: ${now.second}"
+            val text = if (now == null) {
+                "Waiting for the next video"
+            } else {
+                val (n, m) = app.videoWorker.batchPosition(startedAt)
+                "Video $n of $m: ${now.second}"
+            }
             notificationManager().notify(NOTIFICATION_ID, notification(text))
         }
     }

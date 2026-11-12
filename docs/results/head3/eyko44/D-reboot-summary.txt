@@ -1,0 +1,1 @@
+D-reboot: ready=1 wall=unknown; notes=[]; end battery 70 %, 37.0 C

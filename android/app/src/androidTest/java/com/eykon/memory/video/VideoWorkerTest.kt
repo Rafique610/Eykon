@@ -85,6 +85,18 @@ class VideoWorkerTest {
     }
 
     @Test
+    fun theNotificationCountsVideoNOfMAcrossTheRun() {
+        val since = "2000-01-01T00:00:00Z"
+        queue("a"); queue("b"); queue("c")
+        val worker = worker()
+        assertEquals(1 to 3, worker.batchPosition(since)) // nothing finished yet
+        worker.runOnce()
+        assertEquals(2 to 3, worker.batchPosition(since)) // one done, the second is next
+        worker.drain()
+        assertEquals(4 to 4, worker.batchPosition(since)) // all done: nothing is running, so n and m stay equal (the notification is gone by then)
+    }
+
+    @Test
     fun aStageThatFailsTwiceThenWorksEndsDoneWithTwoAttempts() {
         val id = queue()
         var calls = 0

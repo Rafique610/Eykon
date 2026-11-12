@@ -1,0 +1,5 @@
+time,label,video_id,status,duration_s,kept frames without a picture hash,kept frames without a scene record,kept frames without an image vector,texts without a text vector,sound windows without a sound vector,frames timed outside the video,texts timed outside the video,sound segments timed outside the video,transcript chunks timed outside the video,sound windows timed outside the video
+2026-11-12T00:30:03,A-front,dc53e65ccce24569885dc136389030f1,ready,300.108,0,0,0,0,0,0,0,0,0,0
+2026-11-12T12:01:34,B-home-5apps,9d466128e1e54764acb5b57b2c3d2934,ready,300.108,0,0,0,0,0,0,0,0,0,0
+2026-11-12T12:14:38,C-swipe,ccf0cba4550d4165881b9983fd12e62d,ready,300.108,0,0,0,0,0,0,0,0,0,0
+2026-11-12T12:31:34,D-reboot,18e1819c77624bde959fd7a614eecc73,ready,300.108,0,0,0,0,0,0,0,0,0,0

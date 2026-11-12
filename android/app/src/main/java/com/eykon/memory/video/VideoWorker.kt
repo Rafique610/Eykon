@@ -68,6 +68,18 @@ class VideoWorker(
         while (!shouldStop() && runOnce(shouldStop)) Unit
     }
 
+    /**
+     * "Video n of m" for the notification (EYKO-44). [sinceIso] is when the current run began: n is the videos finished since then plus the
+     * one running, m adds the ones still waiting. The app keeps no file name yet, so this is what the notification can say.
+     */
+    fun batchPosition(sinceIso: String): Pair<Int, Int> {
+        val done = count("SELECT COUNT(*) FROM jobs WHERE status = 'done' AND updated_at >= ?", arrayOf(sinceIso))
+        val open = count("SELECT COUNT(*) FROM jobs WHERE status IN ('queued', 'running')", emptyArray())
+        return (done + 1) to maxOf(done + open, done + 1)
+    }
+
+    private fun count(sql: String, args: Array<String>): Int = db().query(sql, args).use { if (it.moveToFirst()) it.getInt(0) else 0 }
+
     private fun stagesAfter(doneStage: String): List<Pair<String, Stage>> {
         val index = stages.indexOfFirst { it.first == doneStage }
         return if (index >= 0) stages.drop(index + 1) else stages

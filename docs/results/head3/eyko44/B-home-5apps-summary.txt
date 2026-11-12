@@ -1,0 +1,1 @@
+B-home-5apps: ready=1 wall=404.1 s = 6.7 min; notes=[]; end battery 71 %, 36.8 C
