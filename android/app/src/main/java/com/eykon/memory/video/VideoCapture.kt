@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.media.MediaMetadataRetriever
 import android.net.Uri
+import android.provider.MediaStore
 import android.provider.OpenableColumns
 import android.util.Log
 import java.io.File
@@ -86,6 +87,7 @@ class VideoCapture(
             }
             recorded = VideoMetadata.parseRecordedAt(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DATE))
             val place = VideoMetadata.parseLocation(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_LOCATION))
+                ?: sourceUri?.let { originalLocation(Uri.parse(it)) }
             val durationMs = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)?.toLongOrNull() ?: 0L
             val now = Instant.now()
             video = Video(
@@ -121,6 +123,24 @@ class VideoCapture(
             if (retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_HAS_VIDEO) != "yes") throw UploadException(NOT_A_VIDEO)
         } catch (e: RuntimeException) {
             throw UploadException(NOT_A_VIDEO)
+        } finally {
+            retriever.release()
+        }
+    }
+
+    /**
+     * EYKO-127: Android removes the recording place from what it hands the app. With the media-location permission the original can be
+     * read: the file picker's link is mapped to its media-store link and opened as the original. Any failure means "no place", never an error.
+     */
+    private fun originalLocation(uri: Uri): Pair<Double, Double>? {
+        val retriever = MediaMetadataRetriever()
+        return try {
+            val media = MediaStore.getMediaUri(context, uri) ?: return null
+            retriever.setDataSource(context, MediaStore.setRequireOriginal(media))
+            VideoMetadata.parseLocation(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_LOCATION))
+        } catch (e: Exception) {
+            Log.i(TAG, "no original location for $uri (${e.javaClass.simpleName}: ${e.message})")
+            null
         } finally {
             retriever.release()
         }
