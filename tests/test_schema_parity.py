@@ -80,3 +80,17 @@ def test_keyword_index_covers_the_same_text(sides):
     laptop, phone = sides
     for conn in (laptop, phone):
         assert [r[1] for r in conn.execute(f"PRAGMA table_info({FTS})")] == ["text"]
+
+
+def test_an_old_database_gets_the_new_video_columns_in_the_same_order(sides):
+    """EYKO-71 and EYKO-126: a database made before content_hash, source_uri and display_name existed ends with the fresh shape."""
+    old = sqlite3.connect(":memory:")
+    old.execute(
+        "CREATE TABLE videos (video_id TEXT PRIMARY KEY, file_path TEXT NOT NULL, recorded_at TEXT NOT NULL, "
+        "duration_s REAL NOT NULL DEFAULT 0, lat REAL, lon REAL, status TEXT NOT NULL DEFAULT 'processing' "
+        "CHECK (status IN ('processing', 'ready', 'failed')), created_at TEXT NOT NULL)"
+    )
+    schema.init_db(old)
+    laptop, _ = sides
+    assert shape(old, "videos") == shape(laptop, "videos")
+    old.close()

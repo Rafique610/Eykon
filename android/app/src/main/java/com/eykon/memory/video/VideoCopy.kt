@@ -79,6 +79,27 @@ object VideoCopy {
         )
     }
 
+    /**
+     * EYKO-126: read [source] once to get its size and SHA-256 without writing a copy (the gallery file is read in place).
+     * No size limit: nothing is stored. Copy and hash time are both the read time.
+     */
+    fun hashOnly(source: InputStream): CopyResult {
+        val digest = MessageDigest.getInstance("SHA-256")
+        val buffer = ByteArray(1 shl 16)
+        var total = 0L
+        val start = System.nanoTime()
+        source.use { input ->
+            while (true) {
+                val read = input.read(buffer)
+                if (read < 0) break
+                digest.update(buffer, 0, read)
+                total += read
+            }
+        }
+        val ms = (System.nanoTime() - start) / 1_000_000
+        return CopyResult(total, digest.digest().joinToString("") { "%02x".format(it) }, copyMs = ms, hashMs = ms)
+    }
+
     fun tooLarge(limitBytes: Long) = "This file is larger than the limit of ${limitBytes / (1024 * 1024)} MB."
 
     private fun megabytes(bytes: Long) = bytes / (1024 * 1024)

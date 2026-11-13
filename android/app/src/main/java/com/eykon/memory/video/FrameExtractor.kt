@@ -30,7 +30,7 @@ object FrameExtractor {
         if (times.isEmpty()) return saved
         val extractor = MediaExtractor()
         try {
-            extractor.setDataSource(filePath)
+            VideoSource.setOn(extractor, filePath)
             val track = (0 until extractor.trackCount).firstOrNull {
                 extractor.getTrackFormat(it).getString(MediaFormat.KEY_MIME)?.startsWith("video/") == true
             } ?: throw IllegalStateException("the file has no video track")
@@ -88,7 +88,7 @@ object FrameExtractor {
     fun seekEachFrame(filePath: String, framesDir: File, times: List<Double>, maxSide: Int, quality: Int): List<Pair<Int, Double>> {
         val retriever = MediaMetadataRetriever()
         try {
-            retriever.setDataSource(filePath)
+            VideoSource.setOn(retriever, filePath)
             val saved = ArrayList<Pair<Int, Double>>(times.size)
             times.forEachIndexed { index, t ->
                 val bitmap = retriever.getScaledFrameAtTime((t * 1_000_000).toLong(), MediaMetadataRetriever.OPTION_CLOSEST, maxSide, maxSide)

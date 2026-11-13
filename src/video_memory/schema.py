@@ -17,7 +17,9 @@ CREATE TABLE IF NOT EXISTS videos (
   lat REAL, lon REAL,
   status      TEXT NOT NULL DEFAULT 'processing' CHECK (status IN ('processing', 'ready', 'failed')),
   created_at  TEXT NOT NULL,
-  content_hash TEXT                        -- SHA-256 of the file's bytes (EYKO-71); NULL for videos saved before it existed
+  content_hash TEXT,                       -- SHA-256 of the file's bytes (EYKO-71); NULL for videos saved before it existed
+  source_uri   TEXT,                       -- phone (EYKO-126): the gallery file read in place, no copy; NULL = read file_path
+  display_name TEXT                        -- phone (EYKO-126): the file's name in the gallery
 );
 CREATE INDEX IF NOT EXISTS videos_content_hash ON videos(content_hash);
 CREATE TABLE IF NOT EXISTS frames (
@@ -97,10 +99,13 @@ def init_db(conn: sqlite3.Connection | None = None) -> None:
     own = conn is None
     conn = conn or db.connect()
     try:
-        # EYKO-71: a database made before content_hash existed gets the column first, then the index on it is made
-        has_videos = conn.execute("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'videos'").fetchone()
-        if has_videos and "content_hash" not in [row[1] for row in conn.execute("PRAGMA table_info(videos)")]:
-            conn.execute("ALTER TABLE videos ADD COLUMN content_hash TEXT")
+        # A database made before a videos column existed gets it first (EYKO-71 content_hash, EYKO-126 source_uri and
+        # display_name), in the CREATE TABLE's order, then the index on content_hash is made
+        if conn.execute("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'videos'").fetchone():
+            columns = {row[1] for row in conn.execute("PRAGMA table_info(videos)")}
+            for column in ("content_hash", "source_uri", "display_name"):
+                if column not in columns:
+                    conn.execute(f"ALTER TABLE videos ADD COLUMN {column} TEXT")
         conn.executescript(DDL)
     finally:
         if own:

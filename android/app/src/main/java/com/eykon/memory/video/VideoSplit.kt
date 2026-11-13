@@ -23,11 +23,13 @@ object VideoSplit {
         List(ceil(durationS * fps - 1e-6).toInt().coerceAtLeast(0)) { it / fps }
 
     fun run(db: SupportSQLiteDatabase, videoId: String) {
-        val (filePath, durationS) = db.query("SELECT file_path, duration_s FROM videos WHERE video_id = ?", arrayOf(videoId)).use { cursor ->
+        val (filePath, sourceUri, durationS) = db.query("SELECT file_path, source_uri, duration_s FROM videos WHERE video_id = ?", arrayOf(videoId)).use { cursor ->
             if (!cursor.moveToFirst()) throw IllegalStateException("video $videoId is not in the database")
-            cursor.getString(0) to cursor.getDouble(1)
+            Triple(cursor.getString(0), if (cursor.isNull(1)) null else cursor.getString(1), cursor.getDouble(2))
         }
         val folder = File(filePath).parentFile ?: throw IllegalStateException("video file has no folder")
+        val source = VideoSource.of(filePath, sourceUri) // EYKO-126: the gallery file, or the copy for older videos
+        VideoSource.checkReadable(source)
         val framesDir = File(folder, "frames")
         val times = frameTimes(durationS)
 
@@ -38,19 +40,19 @@ object VideoSplit {
         var method = "one pass"
         val saved = try {
             resetDir(framesDir)
-            FrameExtractor.decodeInOnePass(filePath, framesDir, times, FRAME_MAX_SIDE, JPEG_QUALITY)
+            FrameExtractor.decodeInOnePass(source, framesDir, times, FRAME_MAX_SIDE, JPEG_QUALITY)
         } catch (e: Exception) {
             Log.w(TAG, "split $videoId: one-pass decoding failed (${e.javaClass.simpleName}: ${e.message}); reading frame by frame")
             method = "frame by frame"
             resetDir(framesDir)
-            FrameExtractor.seekEachFrame(filePath, framesDir, times, FRAME_MAX_SIDE, JPEG_QUALITY)
+            FrameExtractor.seekEachFrame(source, framesDir, times, FRAME_MAX_SIDE, JPEG_QUALITY)
         }
         val framesMs = (System.nanoTime() - startFrames) / 1_000_000
         // Both ways of decoding ran and gave nothing: the file cannot be read on this phone, so trying again cannot help.
         if (saved.isEmpty()) throw PermanentFailure("no frame could be read from the video")
 
         val startAudio = System.nanoTime()
-        val audioSamples = AudioExtractor.toWav(filePath, File(folder, AUDIO_FILE), durationS, AUDIO_RATE)
+        val audioSamples = AudioExtractor.toWav(source, File(folder, AUDIO_FILE), durationS, AUDIO_RATE)
         val audioMs = (System.nanoTime() - startAudio) / 1_000_000
 
         db.beginTransaction()

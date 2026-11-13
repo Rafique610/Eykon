@@ -42,7 +42,7 @@ object AudioExtractor {
     private fun decode(filePath: String, rate: Int, emit: (Short) -> Unit): Boolean {
         val extractor = MediaExtractor()
         try {
-            extractor.setDataSource(filePath)
+            VideoSource.setOn(extractor, filePath)
             val track = (0 until extractor.trackCount).firstOrNull {
                 extractor.getTrackFormat(it).getString(MediaFormat.KEY_MIME)?.startsWith("audio/") == true
             } ?: return false
