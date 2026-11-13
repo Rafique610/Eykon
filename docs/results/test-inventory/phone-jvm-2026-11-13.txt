@@ -1,0 +1,28 @@
+Phone JVM unit tests (android/app/src/test), run with `.\gradlew.bat testDebugUnitTest` on Windows, branch taha/eyko-91-vectors-laptop-v2 at c87606f, 13 Nov 2026 (run by Rafique for EYKO-91 C5).
+Summary from Gradle's JUnit XML (android/app/build/test-results/testDebugUnitTest), one line per class.
+
+PromptBuilderTest                           4 tests     4 passed    0 failed    0 skipped     0.11 s
+AudioCaptureTest                            2 tests     2 passed    0 failed    0 skipped     0.03 s
+TextCaptureServiceTest                      4 tests     4 passed    0 failed    0 skipped     0.00 s
+ConvertersTest                              4 tests     4 passed    0 failed    0 skipped     0.07 s
+WordPieceTokenizerTest                      4 tests     4 passed    0 failed    0 skipped     0.18 s
+ClipTokenizerTest                           4 tests     4 passed    0 failed    0 skipped     0.26 s
+SearchServiceTest                           4 tests     4 passed    0 failed    0 skipped     0.26 s
+AddMemoryViewModelTest                      2 tests     2 passed    0 failed    0 skipped     0.12 s
+AskQuestionViewModelTest                    5 tests     5 passed    0 failed    0 skipped     0.04 s
+FrameFiltersTest                           16 tests    16 passed    0 failed    0 skipped     0.50 s
+FrameHashTest                               6 tests     6 passed    0 failed    0 skipped     0.26 s
+OptionASmoothTest                           4 tests     4 passed    0 failed    0 skipped     0.00 s
+OptionATest                                 9 tests     9 passed    0 failed    0 skipped     0.06 s
+SearchWindowsTest                           3 tests     3 passed    0 failed    0 skipped     0.00 s
+SmallObjectsTest                           10 tests    10 passed    0 failed    0 skipped     0.06 s
+VideoCopyTest                               7 tests     7 passed    0 failed    0 skipped     0.20 s
+VideoLatestCropTest                         5 tests     5 passed    0 failed    0 skipped     0.00 s
+VideoLinkMomentTest                         3 tests     3 passed    0 failed    0 skipped     0.00 s
+VideoMetadataTest                           7 tests     7 passed    0 failed    0 skipped     0.01 s
+VideoSceneCaptionTest                       6 tests     6 passed    0 failed    0 skipped     0.01 s
+VideoSplitMathTest                          5 tests     5 passed    0 failed    0 skipped     0.04 s
+VideoVectorsBlobTest                        2 tests     2 passed    0 failed    0 skipped     0.01 s
+VideoVectorsRankTest                        3 tests     3 passed    0 failed    0 skipped     0.16 s
+
+TOTAL 23 classes, 119 tests: 119 passed, 0 failed, 0 skipped, 2.4 s
