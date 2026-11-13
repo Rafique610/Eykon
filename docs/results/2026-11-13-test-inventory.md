@@ -8,7 +8,7 @@ with `feature/video-memory` @ 930af2d merged in) · **Supervisor question C5:** 
 | Side | Tests | Ran today | Result | Coverage |
 |---|---|---|---|---|
 | Laptop, pytest (`tests/`) | **30** in 5 files | yes, this laptop | **30 passed** in 17.6 s | **9 %** of `src/` overall; **93 %** of `src/video_memory` (the code the phone copies), 26 % of `src/memories`, 4 % of `src/benchmarks` |
-| Phone, JVM unit tests (`android/app/src/test`) | **119** in 23 classes | no: no Android SDK or Gradle cache on this laptop | — | not measured |
+| Phone, JVM unit tests (`android/app/src/test`) | **119** in 23 classes | yes, on Rafique's laptop (13 Nov, this branch) | **119 passed** in 2.4 s (`docs/results/test-inventory/phone-jvm-2026-11-13.txt`) | not measured |
 | Phone, on-device tests (`android/app/src/androidTest`) | **133** in 31 classes | no: needs a phone (Rafique holds the A32 and Pixel) | — | not measured |
 | CI | none | — | there is no `.github/workflows` or other CI in the repo | — |
 
@@ -39,10 +39,11 @@ This is `task test` (`uv run pytest -q`) in a small environment: the full projec
 
 ## Phone: what exists (counted from the source, `@Test` per class)
 
-To run them: `cd android && ./gradlew testDebugUnitTest` (JVM) and `./gradlew connectedDebugAndroidTest` with a phone on
-the cable (on-device). Several on-device classes need model files or kit clips on the phone, as their own comments say,
+To run them: `cd android && ./gradlew testDebugUnitTest` (JVM). On-device: **never `connectedDebugAndroidTest`** (it uninstalls the app and
+deletes its memories and models, `docs/invariants/tooling.md`); install both APKs with `adb install -r`, then
+`adb shell am instrument -w -e class <class> com.eykon.memory.test/androidx.test.runner.AndroidJUnitRunner`. Several on-device classes need model files or kit clips on the phone, as their own comments say,
 and the benchmark and route classes are measurements, not pass/fail checks. Only single-test logs are saved so far
-(for example `docs/results/vectors/bgkill/*/instrument-output.txt`); **no full-suite log exists on either phone side.**
+(for example `docs/results/vectors/bgkill/*/instrument-output.txt`); the JVM suite has a full log (above, 13 Nov); **no full on-device log exists yet.**
 
 **JVM unit tests (119)**
 
