@@ -14,6 +14,10 @@ data class Video(
     val status: String = "processing",
     /** SHA-256 of the copied file (EYKO-71); null for videos saved before the column existed. */
     val contentHash: String? = null,
+    /** EYKO-126: the gallery file the stages read (no copy is made); null when [filePath] holds a copy. */
+    val sourceUri: String? = null,
+    /** EYKO-126: the file's name in the gallery, for the screen and the notification; null for older videos. */
+    val displayName: String? = null,
 )
 
 /** A video with its newest job and real counts of what is stored for it. */
@@ -34,11 +38,11 @@ class VideoRepository(private val db: () -> SupportSQLiteDatabase) {
 
     fun insert(video: Video) {
         db().execSQL(
-            "INSERT INTO videos (video_id, file_path, recorded_at, created_at, duration_s, lat, lon, status, content_hash) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            "INSERT INTO videos (video_id, file_path, recorded_at, created_at, duration_s, lat, lon, status, content_hash, source_uri, display_name) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
             arrayOf(
                 video.videoId, video.filePath, video.recordedAt, video.createdAt,
-                video.durationS, video.lat, video.lon, video.status, video.contentHash,
+                video.durationS, video.lat, video.lon, video.status, video.contentHash, video.sourceUri, video.displayName,
             ),
         )
     }
@@ -75,15 +79,15 @@ class VideoRepository(private val db: () -> SupportSQLiteDatabase) {
                     add(
                         VideoWithJob(
                             video = cursor.toVideo(),
-                            // the video's nine columns come first (0 to 8), then the job's
-                            jobStatus = if (cursor.isNull(9)) null else cursor.getString(9),
-                            jobStage = if (cursor.isNull(10)) "" else cursor.getString(10),
-                            jobAttempts = if (cursor.isNull(11)) 0 else cursor.getInt(11),
-                            jobError = if (cursor.isNull(12)) null else cursor.getString(12),
-                            jobId = if (cursor.isNull(13)) null else cursor.getLong(13),
-                            keptFrames = cursor.getInt(14),
-                            speechSegments = cursor.getInt(15),
-                            transcriptChunks = cursor.getInt(16),
+                            // the video's eleven columns come first (0 to 10), then the job's
+                            jobStatus = if (cursor.isNull(11)) null else cursor.getString(11),
+                            jobStage = if (cursor.isNull(12)) "" else cursor.getString(12),
+                            jobAttempts = if (cursor.isNull(13)) 0 else cursor.getInt(13),
+                            jobError = if (cursor.isNull(14)) null else cursor.getString(14),
+                            jobId = if (cursor.isNull(15)) null else cursor.getLong(15),
+                            keptFrames = cursor.getInt(16),
+                            speechSegments = cursor.getInt(17),
+                            transcriptChunks = cursor.getInt(18),
                         ),
                     )
                 }
@@ -111,9 +115,11 @@ class VideoRepository(private val db: () -> SupportSQLiteDatabase) {
         lon = if (isNull(6)) null else getDouble(6),
         status = getString(7),
         contentHash = if (isNull(8)) null else getString(8),
+        sourceUri = if (isNull(9)) null else getString(9),
+        displayName = if (isNull(10)) null else getString(10),
     )
 
     private companion object {
-        const val COLUMNS = "video_id, file_path, recorded_at, created_at, duration_s, lat, lon, status, content_hash"
+        const val COLUMNS = "video_id, file_path, recorded_at, created_at, duration_s, lat, lon, status, content_hash, source_uri, display_name"
     }
 }

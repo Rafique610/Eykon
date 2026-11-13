@@ -1,0 +1,53 @@
+EYKO-126, Pixel 9 Pro XL (Android 17), 13 Nov 2026. The app's EykonVideo log lines per run, copied from this session's
+`adb logcat -d -s EykonVideo` output (copied, not a raw file). Database results are read from pulled copies of memories.db.
+
+--- t1: kit clip PXL_20261014_094359202 + 16 trailing bytes, 74.5 s, read in place, ready
+11-13 20:54:03.523 13947 13968 I EykonVideo: read 13f7af5a012a4801beb5ca0f6cd4e22b: 186496596 bytes in place in 762 ms (no copy)
+11-13 20:54:36.025 13947 13968 I EykonVideo: split 13f7af5a012a4801beb5ca0f6cd4e22b: 224 frames in 26892 ms (one pass), audio 74.5 s in 5534 ms
+11-13 20:54:36.656 13947 13968 I EykonVideo: filter 13f7af5a012a4801beb5ca0f6cd4e22b: kept 25 of 224 (less sharp 199) in 626 ms
+11-13 20:54:39.961 13947 13968 I EykonVideo: dedup 13f7af5a012a4801beb5ca0f6cd4e22b: kept 10 of 25 (hash dropped 14, embedding dropped 1) in 3296 ms; embedded 11 frames, 288 ms each; memory java 52 MB
+11-13 20:54:45.622 13947 13968 I EykonVideo: scene 13f7af5a012a4801beb5ca0f6cd4e22b: 10 frames described by option A in 5650 ms, 565 ms each
+11-13 20:54:58.388 13947 13968 I EykonVideo: small_objects 13f7af5a012a4801beb5ca0f6cd4e22b: 10 frames looked at, 6 found, in 12682 ms
+11-13 20:54:58.458 13947 13968 I EykonVideo: embed_images 13f7af5a012a4801beb5ca0f6cd4e22b: 10 vectors stored (10 reused, 0 computed) in 3 ms
+11-13 20:54:59.010 13947 13968 I EykonVideo: embed_texts 13f7af5a012a4801beb5ca0f6cd4e22b: 10 texts (10 captions, 0 transcript chunks) in 551 ms
+11-13 20:54:59.011 13947 13968 I EykonVideo: link 13f7af5a012a4801beb5ca0f6cd4e22b: every row points at its video and moment
+11-13 20:55:15.434 13947 13968 I EykonVideo: latest 13f7af5a012a4801beb5ca0f6cd4e22b: 54 sightings (0 boxes too small) in 16422 ms
+11-13 20:55:15.457 13947 13968 I EykonVideo: finish 13f7af5a012a4801beb5ca0f6cd4e22b: ready; 214 dropped frame files deleted
+folder files/videos/13f7af5a012a4801beb5ca0f6cd4e22b: audio16k.wav 2,382,550 B, clip_vectors.bin 20,568 B, frames/ (10); du 3008 KB; no .mp4
+row: source_uri=content://media/picker/0/com.android.providers.media.photopicker/media/122350, display_name=122350.mp4, lat/lon NULL, recorded_at 2026-10-14T09:45:15Z
+
+--- t2: seconds 40-70 of the same kit clip, 30 s, then its gallery file deleted after ready
+11-13 21:03:54.081 18168 18195 I EykonVideo: read 0980eb198e994d2c80cf8d81c161da40: 74804449 bytes in place in 431 ms (no copy)
+11-13 21:04:07.493 18168 18195 I EykonVideo: split 0980eb198e994d2c80cf8d81c161da40: 90 frames in 10926 ms (one pass), audio 30.0 s in 2414 ms
+11-13 21:04:07.806 18168 18195 I EykonVideo: filter 0980eb198e994d2c80cf8d81c161da40: kept 10 of 90 (less sharp 80) in 300 ms
+11-13 21:04:12.837 18168 18195 I EykonVideo: scene 0980eb198e994d2c80cf8d81c161da40: 5 frames described by option A in 3180 ms, 636 ms each
+11-13 21:04:18.616 18168 18195 I EykonVideo: small_objects 0980eb198e994d2c80cf8d81c161da40: 5 frames looked at, 3 found, in 5733 ms
+11-13 21:04:26.493 18168 18195 I EykonVideo: latest 0980eb198e994d2c80cf8d81c161da40: 32 sightings (0 boxes too small) in 7376 ms
+11-13 21:04:26.499 18168 18195 I EykonVideo: finish 0980eb198e994d2c80cf8d81c161da40: ready; 85 dropped frame files deleted
+search "keys" after the delete and an app restart (result labels from the screen): "14 Oct 2026, 14:45 · 0.0–9.5 s (best at 8.0 s) · likeness 0.211",
+"14 Oct 2026, 14:45 · 26.2–29.2 s (best at 27.7 s) · likeness 0.221" (both only possible from t2), and the older full copy's "41.5–49.5 s (best at 48.0 s) · likeness 0.211"
+
+--- t3: kit clip PXL_20261014_094903187 + 16 trailing bytes, 75 s; gallery file deleted 4 s into split, app force-stopped 3 s later, reopened
+11-13 21:10:59.385 21666 21687 I EykonVideo: read c230fa0c64fe4a0197eeee6b7717e29c: 187772454 bytes in place in 687 ms (no copy)
+(no split line: killed inside split)
+job after reopening: video failed, job failed, attempts 1, error text exactly:
+PermanentFailure: the original video was deleted from the phone or can no longer be read
+card text: "75 s · Failed at stage 1 of 10 (split) after 1 attempts: PermanentFailure: the original video was deleted from the phone or can no longer be read"
+
+--- t4: the kit clip looped 4 times (-stream_loop 3 -c copy), 4 min 58 s, 743,552,939 B (over the old 500 MB limit)
+11-13 21:14:16.814 23675 23691 I EykonVideo: read aaf1a61c1c8b426087028e8601e078e3: 743552939 bytes in place in 3566 ms (no copy)
+11-13 21:16:25.161 23675 23691 I EykonVideo: split aaf1a61c1c8b426087028e8601e078e3: 894 frames in 106847 ms (one pass), audio 297.8 s in 21402 ms
+11-13 21:16:27.396 23675 23691 I EykonVideo: filter aaf1a61c1c8b426087028e8601e078e3: kept 92 of 894 (less sharp 794, still 8) in 2219 ms
+11-13 21:16:31.408 23675 23691 I EykonVideo: dedup aaf1a61c1c8b426087028e8601e078e3: kept 13 of 92 (hash dropped 77, embedding dropped 2) in 3988 ms
+11-13 21:16:38.342 23675 23691 I EykonVideo: scene aaf1a61c1c8b426087028e8601e078e3: 13 frames described by option A in 6922 ms, 532 ms each
+11-13 21:16:53.235 23675 23691 I EykonVideo: small_objects aaf1a61c1c8b426087028e8601e078e3: 13 frames looked at, 6 found, in 14839 ms
+11-13 21:17:09.300 23675 23691 I EykonVideo: latest aaf1a61c1c8b426087028e8601e078e3: 66 sightings (0 boxes too small) in 15485 ms
+11-13 21:17:09.482 23675 23691 I EykonVideo: finish aaf1a61c1c8b426087028e8601e078e3: ready; 881 dropped frame files deleted
+folder: audio16k.wav 9,530,070 B, clip_vectors.bin 26,736 B, frames/ (13); du 10204 KB; no .mp4
+
+--- B3 (HEVC 10-bit tagged BT.2020/PQ, 15 s) and B4 (H.264, 90 degree display rotation, 15 s)
+11-13 21:20:04.606 25557 25581 I EykonVideo: read 44b823d39ca24a47b369266385556270: 3472777 bytes in place in 22 ms (no copy)
+11-13 21:21:18.320 26622 26636 I EykonVideo: read 29e1c9a169c44fc48aae2c0b0c121f14: 6720551 bytes in place in 20 ms (no copy)
+11-13 21:21:25.332 26622 26636 I EykonVideo: split 29e1c9a169c44fc48aae2c0b0c121f14: 46 frames in 5370 ms (one pass), audio 15.0 s in 1590 ms
+11-13 21:21:33.515 26622 26636 I EykonVideo: finish 29e1c9a169c44fc48aae2c0b0c121f14: ready; 43 dropped frame files deleted
+(B3 was interrupted by an app restart while adding B4 and resumed; its log lines were cleared.) Database: both ready, job done, 0 attempts; B3 4 kept frames, B4 3.

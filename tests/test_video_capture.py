@@ -71,7 +71,7 @@ def test_wrong_type_is_refused_and_creates_nothing(conn, clip, tmp_path):
 
 
 def test_text_renamed_to_mp4_is_refused_and_creates_nothing(conn, tmp_path):
-    with pytest.raises(UploadError, match="does not contain a video"):
+    with pytest.raises(UploadError, match="damaged or in a format"):
         save_upload(conn, Upload("fake.mp4", b"this is plain text, not a video"))
     assert conn.execute("SELECT COUNT(*) FROM videos").fetchone()[0] == 0
     assert videos_on_disk(tmp_path) == []
