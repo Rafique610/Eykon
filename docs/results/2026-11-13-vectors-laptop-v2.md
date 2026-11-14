@@ -50,6 +50,25 @@ If trigger 3 fires (a table past 300k), HNSW c16 / ef256 is the setting to port 
 
 ## Every number
 
+Quick-look graphs (drawn by [`graphs.py`](eyko-91-vectors-laptop-v2/evidence/varied-2026-11-12/graphs.py); the official
+Head 2 figures are EYKO-97):
+
+![Time per search against size on S1, S2 and S3](eyko-91-vectors-laptop-v2/evidence/varied-2026-11-12/1-time-vs-size.png)
+
+*Exact search grows in step with size on every source. HNSW stays nearly flat, but on S1 and S2 that speed comes with
+wrong answers (next graph).*
+
+![Recall@20 against size for the approximate methods on S1, S2 and S3](eyko-91-vectors-laptop-v2/evidence/varied-2026-11-12/2-recall-vs-size.png)
+
+*On random (S1) and near-copy (S2) vectors every HNSW setting falls far below the 0.95 mark as the table grows. On 100k real
+photos (S3) all three stay at or above it. int8 + re-check stays at 1.00 everywhere; sqlite-vec int8 is below its own
+0.99 mark at every size and source.*
+
+![Memory held after building against size on S3](eyko-91-vectors-laptop-v2/evidence/varied-2026-11-12/3-memory-vs-size.png)
+
+*The HNSW graph holds a little more than the plain float32 vectors (255 against 210 MB at 100k); int8 + re-check holds under a
+third (66 MB).*
+
 Methods 1 and 4 stop at 20k (too slow past it). The full CSVs also hold p95, worst, temperature and memory per row.
 
 **S1 · random (7 Nov)**: median ms (recall@20; exact methods are 1.00 unless shown)
@@ -153,6 +172,11 @@ loop. Phone: `MAPPED_NATIVE`, the app's search since EYKO-115, the whole `VideoV
 
 Phone sources: [`2026-11-08-adopt-mapped.md`](2026-11-08-adopt-mapped.md) (A32 cable, and the "before" row: `HEAP_F32` with
 `COUNT(*)`), [`2026-11-09-final-setup-conditions.md`](2026-11-09-final-setup-conditions.md) (hot2 and saver-off rows).
+
+![B5: the phones against the laptop on the same vectors, 20k to 100k](eyko-91-vectors-laptop-v2/evidence/varied-2026-11-12/4-phone-vs-laptop.png)
+
+*The A32's old search (red, dashed) was 115.2 / 283.7 / 565.2 ms at 20k / 50k / 100k: 52 / 47 / 47× the laptop. The app's
+search today runs parallel to the laptop's line, about 9× above it on the A32 and just above it on the Pixel.*
 
 **Answer:** mostly our code. Our own fixes (mapped file, NEON scoring, no `COUNT(*)`) took the A32 from 47× to 8.6× the
 laptop, a 5.5× gain with identical answers. What is left is the A32's chip (Helio G80, budget memory): the Pixel 9 Pro XL
