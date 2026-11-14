@@ -1,0 +1,4 @@
+11-15 01:15:48.727 10328 10375 I EykonVideo: split 1d73a6da8650417cb1e59671ed8cc7be: 225 frames in 44508 ms (one pass), audio 74.9 s in 15082 ms
+11-15 01:15:54.404 10328 10375 I EykonVideo: filter 1d73a6da8650417cb1e59671ed8cc7be: kept 25 of 225 (less sharp 200) in 5633 ms
+11-15 01:16:37.382 10328 10375 I EykonVideo: dedup 1d73a6da8650417cb1e59671ed8cc7be: kept 16 of 25 (hash dropped 9, embedding dropped 0) in 42941 ms; 
+11-15 01:18:08.214 10328 10375 I EykonVideo: scene 1d73a6da8650417cb1e59671ed8cc7be: 16 frames described by option A in 90744 ms, 5671 ms each
