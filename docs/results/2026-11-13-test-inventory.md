@@ -111,7 +111,7 @@ and the benchmark and route classes are measurements, not pass/fail checks. Only
 
 ## Not done
 
-- **A full phone-side log** (both JVM and on-device) and a phone coverage figure. JVM tests need the Android SDK on this
-  laptop (Java 11 here; the build needs 17); on-device tests need a phone. Whoever holds a phone can run the two Gradle
-  commands above and save the output next to the laptop log.
+- **A full on-device log** and a phone coverage figure. The JVM suite is done (119 passed, Rafique, 13 Nov). The on-device
+  classes need a phone and must be run class by class with `adb shell am instrument` as above, never with
+  `connectedDebugAndroidTest`; save the output next to the laptop log.
 - **CI.** None is set up, so there is no CI log to link.
