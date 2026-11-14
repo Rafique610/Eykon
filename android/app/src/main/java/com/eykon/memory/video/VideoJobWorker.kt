@@ -51,6 +51,9 @@ class VideoJobWorker(context: Context, params: WorkerParameters) : CoroutineWork
     }
 
     private suspend fun run(): Result {
+        // Each added video appends a run (APPEND_OR_REPLACE); the first one drains the whole queue, so the later ones find nothing.
+        // Return at once instead of asking for a foreground service from the background (the "not allowed" lines after EYKO-44 check 4).
+        if (!withContext(Dispatchers.Default) { app.videoWorker.hasWork() }) return Result.success()
         try {
             setForeground(foregroundInfo("Starting"))
         } catch (e: CancellationException) {
@@ -90,7 +93,8 @@ class VideoJobWorker(context: Context, params: WorkerParameters) : CoroutineWork
                 "Waiting for the next video"
             } else {
                 val (n, m) = app.videoWorker.batchPosition(startedAt)
-                "Video $n of $m: ${now.second}"
+                val name = app.videoWorker.displayName(now.first)
+                if (name == null) "Video $n of $m: ${now.second}" else "Video $n of $m, $name: ${now.second}"
             }
             notificationManager().notify(NOTIFICATION_ID, notification(text))
         }

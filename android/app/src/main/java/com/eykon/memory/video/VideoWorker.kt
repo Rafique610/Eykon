@@ -79,6 +79,13 @@ class VideoWorker(
         return (done + 1) to maxOf(done + open, done + 1)
     }
 
+    /** Any job waiting or cut short (a killed process leaves it `running` until the loop requeues it). False: a worker has nothing to do. */
+    fun hasWork(): Boolean = count("SELECT COUNT(*) FROM jobs WHERE status IN ('queued', 'running')", emptyArray()) > 0
+
+    /** The file's name as the person picked it (EYKO-127 stores it), for the notification; null for videos added before that. */
+    fun displayName(videoId: String): String? =
+        db().query("SELECT display_name FROM videos WHERE video_id = ?", arrayOf(videoId)).use { if (it.moveToFirst() && !it.isNull(0)) it.getString(0) else null }
+
     private fun count(sql: String, args: Array<String>): Int = db().query(sql, args).use { if (it.moveToFirst()) it.getInt(0) else 0 }
 
     private fun stagesAfter(doneStage: String): List<Pair<String, Stage>> {
