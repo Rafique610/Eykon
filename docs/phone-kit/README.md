@@ -153,6 +153,7 @@ powershell -ExecutionPolicy Bypass -File docs\phone-kit\run-head3.ps1 -Serial <a
 then appends `stage_times.csv` and `run_summary.csv` in `docs\results\head3` and keeps the raw files in `docs\results\head3\raw\`.
 Chart: `uv run src\benchmarks\head3_intake.py chart --scenario S1`. Test without a phone: add `-ReplayLog <saved EykonVideo log>`.
 S2 first makes byte-different copies of the two kit clips on the phone (the app refuses identical bytes since EYKO-71: copy N is the clip plus N empty `free` atoms), rescans them so the picker lists them, and prints the 10 files to add; delete them afterwards. S4 keeps all three database files (`memories.db`, `-wal`, `-shm`) as they were before it replaces the database.
+`battery.csv` has a `plugged` column (AC / USB / Wireless / none) and the run's notes say whether the phone was charging: while it charges (an adb cable usually charges it), `battery_used_pct` is not battery use. A stage that appears twice for one video in a log (a back-fill, or a job resumed after its stage was logged) is marked `rerun=1` in `stage_times.csv`; it stays in `stage_ms_total` but is left out of the chart.
 It never runs `connectedDebugAndroidTest`, and it changes no app code. The copy time comes from the app's `copy` log line when the build has it
 (EYKO-71), otherwise from watching the file grow.
 

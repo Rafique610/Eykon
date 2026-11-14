@@ -44,7 +44,12 @@ function Battery-Reading {
     $text = (Adb-Run @("shell", "dumpsys", "battery")) -join "`n"
     $level = [int]([regex]::Match($text, "level:\s*(\d+)").Groups[1].Value)
     $temp = [double]([regex]::Match($text, "temperature:\s*(\d+)").Groups[1].Value) / 10.0
-    return [pscustomobject]@{ Level = $level; Temp = $temp }
+    # charging or not: battery_used_pct means nothing while the phone charges (EYKO-117 review, 12 Nov)
+    $plugged = "none"
+    foreach ($kind in @(@("AC", "AC powered"), @("USB", "USB powered"), @("Wireless", "Wireless powered"))) {
+        if ($text -match ($kind[1] + ":\s*true")) { $plugged = $kind[0]; break }
+    }
+    return [pscustomobject]@{ Level = $level; Temp = $temp; Plugged = $plugged }
 }
 
 # the files in the app's video folder as "path -> size"; $null when run-as does not work (not a debug build, or the app is not installed)
@@ -132,7 +137,7 @@ $sheet += (Adb-Run @("shell", "cat", "/proc/meminfo")) | Select-String "MemTotal
 $sheet | Out-File -Encoding utf8 (Join-Path $raw "device-sheet.txt")
 
 $battery = Join-Path $raw "battery.csv"
-"time,level_pct,temp_c" | Out-File -Encoding ascii $battery
+"time,level_pct,temp_c,plugged" | Out-File -Encoding ascii $battery
 
 # ---- S4: back-fill ------------------------------------------------------------------------------------------------------
 if ($Scenario -eq "S4") {
@@ -157,7 +162,7 @@ if ($Scenario -eq "S4") {
     Adb-Run @("logcat", "-G", "16M") | Out-Null
     Adb-Run @("logcat", "-c") | Out-Null
     $b0 = Battery-Reading
-    "$(Get-Date -Format s),$($b0.Level),$($b0.Temp)" | Out-File -Encoding ascii -Append $battery
+    "$(Get-Date -Format s),$($b0.Level),$($b0.Temp),$($b0.Plugged)" | Out-File -Encoding ascii -Append $battery
     Adb-Run @("shell", "monkey", "-p", $Pkg, "-c", "android.intent.category.LAUNCHER", "1") | Out-Null
     Write-Host ">>> S4: app opened; waiting for video $picked to finish again (timeout $TimeoutMin min)." -ForegroundColor Green
     $clock4 = [System.Diagnostics.Stopwatch]::StartNew()
@@ -168,7 +173,7 @@ if ($Scenario -eq "S4") {
         Start-Sleep -Seconds 3
     }
     $b1 = Battery-Reading
-    "$(Get-Date -Format s),$($b1.Level),$($b1.Temp)" | Out-File -Encoding ascii -Append $battery
+    "$(Get-Date -Format s),$($b1.Level),$($b1.Temp),$($b1.Plugged)" | Out-File -Encoding ascii -Append $battery
     $logFile = Join-Path $raw "eykonvideo-logcat.txt"
     (Adb-Run @("logcat", "-d", "-v", "time", "-s", "EykonVideo")) | Out-File -Encoding utf8 $logFile
     $stagesRun = [regex]::Matches((Get-Content $logFile -Raw), "EykonVideo\s*(?:\(\s*\d+\))?\s*:\s*(\w+) $picked") | ForEach-Object { $_.Groups[1].Value }
@@ -183,7 +188,7 @@ if ($Scenario -eq "S4") {
 Adb-Run @("logcat", "-G", "16M") | Out-Null
 Adb-Run @("logcat", "-c") | Out-Null
 $b0 = Battery-Reading
-"$(Get-Date -Format s),$($b0.Level),$($b0.Temp)" | Out-File -Encoding ascii -Append $battery
+"$(Get-Date -Format s),$($b0.Level),$($b0.Temp),$($b0.Plugged)" | Out-File -Encoding ascii -Append $battery
 $clipBytes = 0
 if ($Clip -and (Test-Path $Clip)) { $clipBytes = (Get-Item $Clip).Length }
 
@@ -205,6 +210,7 @@ if ($Scenario -eq "S2") {
 
 Write-Host ""
 Write-Host ">>> $Scenario run $Run on $model. NOW add $Videos video(s) through the app's Video tab and leave the app in front." -ForegroundColor Green
+if ($b0.Plugged -ne "none") { Write-Host ">>> The phone is charging ($($b0.Plugged)): battery_used_pct will not be battery use. Unplug the charger if you want that figure." -ForegroundColor Yellow }
 Write-Host ">>> Battery $($b0.Level) %, $($b0.Temp) C. $($existing.Count) file(s) already in the app's video folder are ignored. Timeout $TimeoutMin min." -ForegroundColor Green
 
 $clock = [System.Diagnostics.Stopwatch]::StartNew()
@@ -233,7 +239,7 @@ while ($clock.Elapsed.TotalMinutes -lt $TimeoutMin) {
     }
     if ($clock.ElapsedMilliseconds -ge $nextBattery) {
         $b = Battery-Reading
-        "$(Get-Date -Format s),$($b.Level),$($b.Temp)" | Out-File -Encoding ascii -Append $battery
+        "$(Get-Date -Format s),$($b.Level),$($b.Temp),$($b.Plugged)" | Out-File -Encoding ascii -Append $battery
         $nextBattery += 30000
         Write-Host ("  {0,5:N0} s  battery {1} %  {2} C  videos ready {3}/{4}" -f $clock.Elapsed.TotalSeconds, $b.Level, $b.Temp, $ready, $Videos)
     }
@@ -243,7 +249,7 @@ $timedOut = ($ready -lt $Videos)
 
 # ---- end: battery first, at once ----------------------------------------------------------------------------------------
 $b1 = Battery-Reading
-"$(Get-Date -Format s),$($b1.Level),$($b1.Temp)" | Out-File -Encoding ascii -Append $battery
+"$(Get-Date -Format s),$($b1.Level),$($b1.Temp),$($b1.Plugged)" | Out-File -Encoding ascii -Append $battery
 $logFile = Join-Path $raw "eykonvideo-logcat.txt"
 (Adb-Run @("logcat", "-d", "-v", "time", "-s", "EykonVideo")) | Out-File -Encoding utf8 $logFile
 (Adb-Run @("shell", "dumpsys", "battery")) | Out-File -Encoding utf8 (Join-Path $raw "battery-end.txt")

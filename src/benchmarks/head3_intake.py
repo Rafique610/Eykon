@@ -4,7 +4,7 @@
 # ///
 """EYKO-117: turn a phone's `EykonVideo` log into the Head 3 intake tables.
 
-Three commands (run with `uv run python src/benchmarks/head3_intake.py ...`):
+Three commands (run with `uv run src/benchmarks/head3_intake.py ...`; this form reads the inline dependencies above, so `chart` finds matplotlib):
 
   parse   --log <logcat.txt> --out docs/results/head3 --phone <model> --commit <hash> --scenario S1 --run 1
           [--battery <battery.csv>] [--copy-ms <ms> ...]   (--copy-ms: the harness's file-growth figures, used only if the log has no `copy` line)
@@ -15,13 +15,17 @@ Three commands (run with `uv run python src/benchmarks/head3_intake.py ...`):
   chart   --out docs/results/head3 [--scenario S1] [--png <file>]
           One bar chart of the median time per stage from stage_times.csv.
 
-stage_times.csv columns: phone, commit, scenario, run, video_id, video_seconds, stage, ms, frames_in, frames_out
+stage_times.csv columns: phone, commit, scenario, run, video_id, video_seconds, stage, ms, frames_in, frames_out, rerun
+  rerun is 1 when the same stage appears again for the same video in one log (a back-fill, or a job resumed after its stage was logged). Reruns stay
+  in stage_ms_total (the work was done) but are left out of the chart medians, and the run's notes say how many there were.
   split_frames / split_audio are the two parts of the split stage (the log gives both); `link` has no time in the log (blank).
   copy / hash come from the app's `copy` log line (EYKO-71: "copy <id>: <bytes> bytes in <ms> ms (hash <ms> ms)") when the build has it.
   frames_out for small_objects is the number of objects found; for latest it is the number of sightings.
 run_summary.csv columns: phone, commit, scenario, run, videos_ready, videos_unfinished (a split line but no `finish ... ready`), video_seconds_total, stage_ms_total,
   work_s_per_video_s (stage time added up, divided by the video's length), wall_ms_estimate, copy_ms, battery_start_pct,
   battery_end_pct, battery_used_pct, max_temp_c, notes
+  battery_used_pct only means battery use when the phone was NOT charging; battery.csv has a `plugged` column (AC / USB / Wireless / none)
+  and the notes say whether the phone was plugged in.
   wall_ms_estimate = last `finish` time minus (first split line time minus the split's own frames+audio time): an estimate from the
   log, not a stopwatch. The log's clock has no year, so a run that crosses midnight is handled by adding a day.
 
@@ -36,7 +40,7 @@ import sys
 from datetime import datetime, timedelta
 from pathlib import Path
 
-STAGE_COLUMNS = ["phone", "commit", "scenario", "run", "video_id", "video_seconds", "stage", "ms", "frames_in", "frames_out"]
+STAGE_COLUMNS = ["phone", "commit", "scenario", "run", "video_id", "video_seconds", "stage", "ms", "frames_in", "frames_out", "rerun"]
 SUMMARY_COLUMNS = ["phone", "commit", "scenario", "run", "videos_ready", "videos_unfinished", "video_seconds_total", "stage_ms_total",
                    "work_s_per_video_s", "wall_ms_estimate", "copy_ms", "battery_start_pct", "battery_end_pct", "battery_used_pct",
                    "max_temp_c", "notes"]
@@ -119,17 +123,33 @@ def parse_log(text: str) -> dict:
     return videos
 
 
-def read_battery(path: Path) -> tuple[int | None, int | None, float | None]:
-    """battery.csv: time,level_pct,temp_c  -> (first level, last level, highest temperature)."""
-    levels, temps = [], []
+def read_battery(path: Path) -> tuple[int | None, int | None, float | None, set[str] | None]:
+    """battery.csv: time,level_pct,temp_c[,plugged]  -> (first level, last level, highest temperature, the `plugged` values seen).
+    The last item is None for an older file with no `plugged` column."""
+    levels, temps, plugged = [], [], None
     with open(path, newline="", encoding="utf-8") as f:
-        for r in csv.DictReader(f):
+        reader = csv.DictReader(f)
+        if reader.fieldnames and "plugged" in reader.fieldnames:
+            plugged = set()
+        for r in reader:
             try:
                 levels.append(int(r["level_pct"]))
                 temps.append(float(r["temp_c"]))
             except (KeyError, ValueError):
                 continue
-    return (levels[0], levels[-1], max(temps)) if levels else (None, None, None)
+            if plugged is not None and r.get("plugged"):
+                plugged.add(r["plugged"].strip())
+    return (levels[0], levels[-1], max(temps), plugged) if levels else (None, None, None, plugged)
+
+
+def plugged_note(plugged: set[str] | None) -> str:
+    """One sentence for the run's notes: battery_used_pct means nothing while the phone charges (EYKO-117 review, 12 Nov)."""
+    if plugged is None:
+        return ""
+    charging = sorted(p for p in plugged if p.lower() != "none")
+    if charging:
+        return f" PLUGGED IN during the run ({'/'.join(charging)}): battery_used_pct is not battery use."
+    return " Not plugged in: battery_used_pct is battery use."
 
 
 def append_rows(path: Path, columns: list[str], rows: list[dict]) -> None:
@@ -149,12 +169,16 @@ def cmd_parse(a) -> int:
     out = Path(a.out)
     out.mkdir(parents=True, exist_ok=True)
     base = {"phone": a.phone, "commit": a.commit, "scenario": a.scenario, "run": a.run}
-    stage_rows, total_ms, total_s, ready, failed = [], 0, 0.0, 0, 0
+    stage_rows, total_ms, total_s, ready, failed, reruns = [], 0, 0.0, 0, 0, 0
     starts, finishes = [], []
     for vid, v in videos.items():
+        seen: set[str] = set()
         for stage, ms, f_in, f_out in v["rows"]:
+            rerun = stage in seen  # the same stage again for the same video in this log
+            seen.add(stage)
+            reruns += rerun
             stage_rows.append({**base, "video_id": vid, "video_seconds": v["seconds"] or "", "stage": stage, "ms": "" if ms is None else ms,
-                               "frames_in": "" if f_in is None else f_in, "frames_out": "" if f_out is None else f_out})
+                               "frames_in": "" if f_in is None else f_in, "frames_out": "" if f_out is None else f_out, "rerun": 1 if rerun else ""})
             if stage not in OUTSIDE_THE_TOTAL:  # the copy happens before the job starts, and the hash time is already inside the copy time
                 total_ms += ms or 0
         total_s += v["seconds"] or 0.0
@@ -164,9 +188,11 @@ def cmd_parse(a) -> int:
             starts.append(v["first"] - timedelta(milliseconds=v["split_ms"]))
             finishes.append(v["finish"])
     wall = int((max(finishes) - min(starts)).total_seconds() * 1000) if starts and finishes else ""
-    b0 = b1 = peak = None
+    b0 = b1 = peak = plugged = None
     if a.battery and Path(a.battery).exists():
-        b0, b1, peak = read_battery(Path(a.battery))
+        b0, b1, peak, plugged = read_battery(Path(a.battery))
+    notes = ((a.notes or "") + plugged_note(plugged)
+             + (f" {reruns} stage record(s) ran more than once (rerun=1 in stage_times.csv; counted in stage_ms_total, left out of the chart)." if reruns else ""))
     from_log = [v["copy_ms"] for v in videos.values() if v["copy_ms"] is not None and v["started"]]
     # the app's own `copy` log line (EYKO-71) wins; the harness's file-growth figures (--copy-ms) are the fallback for older builds
     copy_ms = ";".join(str(x) for x in from_log) if from_log else (";".join(str(x) for x in a.copy_ms) if a.copy_ms else "")
@@ -174,9 +200,11 @@ def cmd_parse(a) -> int:
     summary = {**base, "videos_ready": ready, "videos_unfinished": failed, "video_seconds_total": round(total_s, 1), "stage_ms_total": total_ms,
                "work_s_per_video_s": round(total_ms / 1000 / total_s, 2) if total_s else "", "wall_ms_estimate": wall, "copy_ms": copy_ms,
                "battery_start_pct": "" if b0 is None else b0, "battery_end_pct": "" if b1 is None else b1,
-               "battery_used_pct": "" if b0 is None else b0 - b1, "max_temp_c": "" if peak is None else peak, "notes": ((a.notes or "") + f" copy_ms source: {copy_source}.").strip()}
+               "battery_used_pct": "" if b0 is None else b0 - b1, "max_temp_c": "" if peak is None else peak, "notes": (notes + f" copy_ms source: {copy_source}.").strip()}
     append_rows(out / "stage_times.csv", STAGE_COLUMNS, stage_rows)
     append_rows(out / "run_summary.csv", SUMMARY_COLUMNS, [summary])
+    if plugged and any(p.lower() != "none" for p in plugged):
+        print("WARNING: the phone was charging during this run, so battery_used_pct is not battery use.")
     print(f"{a.scenario} run {a.run}: {len(videos)} video(s), {ready} ready, {failed} unfinished; stage time added up {total_ms / 1000:.1f} s "
           f"for {total_s:.1f} s of video ({summary['work_s_per_video_s']} s of work per second of video); wall estimate {wall} ms")
     return 0 if failed == 0 else 2
@@ -205,14 +233,19 @@ def cmd_backfill(a) -> int:
     return 0 if changed == 1 else 1
 
 
+def chart_rows(path: Path, scenario: str | None) -> list[dict]:
+    """The stage records the chart uses: a time was logged, it is not a rerun, and it belongs to the scenario when one is given."""
+    with open(path, newline="", encoding="utf-8") as f:
+        return [r for r in csv.DictReader(f) if r["ms"] != "" and r.get("rerun", "") != "1" and (not scenario or r["scenario"] == scenario)]
+
+
 def cmd_chart(a) -> int:
     import matplotlib
 
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
 
-    with open(Path(a.out) / "stage_times.csv", newline="", encoding="utf-8") as f:
-        rows = [r for r in csv.DictReader(f) if r["ms"] != "" and (not a.scenario or r["scenario"] == a.scenario)]
+    rows = chart_rows(Path(a.out) / "stage_times.csv", a.scenario)
     by: dict[str, list[float]] = {}
     for r in rows:
         by.setdefault(r["stage"], []).append(int(r["ms"]) / 1000)

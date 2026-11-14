@@ -101,3 +101,51 @@ def test_backfill_marks_one_finished_video(tmp_path):
     assert con.execute("SELECT video_id, stage FROM jobs ORDER BY id").fetchall() == [("a" * 32, "finish"), ("b" * 32, "latest"), ("c" * 32, "scene")]
     assert h.cmd_backfill(SimpleNamespace(db=str(db), video_id=None, stage="link")) == 0  # newest finished video (b)
     assert con.execute("SELECT stage FROM jobs WHERE video_id = ?", ("b" * 32,)).fetchone()[0] == "link"
+
+
+def _parse(tmp_path, log_text, battery_text=None, scenario="S1"):
+    import csv
+    from types import SimpleNamespace
+
+    log = tmp_path / "log.txt"
+    log.write_text(log_text, encoding="utf-8")
+    battery = None
+    if battery_text is not None:
+        battery = tmp_path / "battery.csv"
+        battery.write_text(battery_text, encoding="utf-8")
+    args = SimpleNamespace(log=str(log), out=str(tmp_path / "out"), phone="t", commit="c", scenario=scenario, run="1",
+                           battery=str(battery) if battery else None, copy_ms=None, notes="")
+    assert h.cmd_parse(args) == 0
+    summary = list(csv.DictReader((tmp_path / "out" / "run_summary.csv").open(encoding="utf-8")))[0]
+    stages = list(csv.DictReader((tmp_path / "out" / "stage_times.csv").open(encoding="utf-8")))
+    return summary, stages
+
+
+def test_the_notes_say_whether_the_phone_was_charging(tmp_path):
+    usb = "time,level_pct,temp_c,plugged\n2026-11-14T10:00:00,70,31.0,USB\n2026-11-14T10:05:00,71,33.0,USB\n"
+    summary, _ = _parse(tmp_path, TIME, usb)
+    assert "PLUGGED IN during the run (USB)" in summary["notes"]
+    assert summary["battery_used_pct"] == str(70 - 71)  # still reported, but the note says it is not battery use
+
+
+def test_unplugged_and_old_battery_files(tmp_path):
+    unplugged = "time,level_pct,temp_c,plugged\n2026-11-14T10:00:00,70,31.0,none\n2026-11-14T10:05:00,68,33.0,none\n"
+    (tmp_path / "a").mkdir()
+    summary, _ = _parse(tmp_path / "a", TIME, unplugged)
+    assert "Not plugged in" in summary["notes"]
+    old = "time,level_pct,temp_c\n2026-11-14T10:00:00,70,31.0\n2026-11-14T10:05:00,68,33.0\n"  # a file from before the plugged column
+    (tmp_path / "b").mkdir()
+    summary, _ = _parse(tmp_path / "b", TIME, old)
+    assert "plugged" not in summary["notes"].lower()
+
+
+def test_a_stage_that_ran_twice_is_marked_and_kept_out_of_the_chart(tmp_path):
+    twice = TIME + f"11-10 01:30:00.000 I/EykonVideo(17657): latest {VID}: 4 sightings (0 boxes too small) in 3000 ms\n"
+    summary, stages = _parse(tmp_path, twice)
+    latest = [r for r in stages if r["stage"] == "latest"]
+    assert [r["rerun"] for r in latest] == ["", "1"]  # the first is the real run, the second is marked
+    assert "1 stage record(s) ran more than once" in summary["notes"]
+    assert int(summary["stage_ms_total"]) == 132052 + 3000  # the work was done twice, so the total counts it
+    used = h.chart_rows(tmp_path / "out" / "stage_times.csv", None)
+    assert len([r for r in used if r["stage"] == "latest"]) == 1  # only the first latest reaches the chart
+    assert all(r["rerun"] != "1" for r in used)
