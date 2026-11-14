@@ -156,3 +156,12 @@ def test_chart_rows_can_be_limited_to_some_runs(tmp_path):
     path.write_text(chr(10).join(rows) + chr(10), encoding="utf-8")
     assert [r["ms"] for r in h.chart_rows(path, "S1", ["1", "2"])] == ["40000", "42000"]  # one clip's runs, not mixed with the other clip
     assert len(h.chart_rows(path, "S1")) == 3 and len(h.chart_rows(path, None)) == 4
+
+
+def test_a_build_that_reads_in_place_gives_the_read_time_as_the_intake_time():
+    """EYKO-126 builds log "read <id>: ... in place in <ms> ms (no copy)" instead of a copy line; it is kept out of the stage total."""
+    log = f"11-13 20:54:03.523 13947 13968 I EykonVideo: read {VID}: 186496596 bytes in place in 762 ms (no copy)\n" + TIME
+    v = h.parse_log(log)[VID]
+    assert v["copy_ms"] == 762
+    assert rows(v)["read"] == (762, None, None)
+    assert "read" in h.OUTSIDE_THE_TOTAL

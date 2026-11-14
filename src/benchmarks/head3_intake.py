@@ -44,8 +44,8 @@ STAGE_COLUMNS = ["phone", "commit", "scenario", "run", "video_id", "video_second
 SUMMARY_COLUMNS = ["phone", "commit", "scenario", "run", "videos_ready", "videos_unfinished", "video_seconds_total", "stage_ms_total",
                    "work_s_per_video_s", "wall_ms_estimate", "copy_ms", "battery_start_pct", "battery_end_pct", "battery_used_pct",
                    "max_temp_c", "notes"]
-OUTSIDE_THE_TOTAL = ("copy", "hash")  # kept as their own rows and the copy_ms column, but not added into stage_ms_total (EYKO-117 review, 11 Nov)
-STAGE_ORDER = ["copy", "hash", "split_frames", "split_audio", "filter", "dedup", "scene", "small_objects", "embed_images", "embed_texts", "link", "latest"]
+OUTSIDE_THE_TOTAL = ("copy", "hash", "read")  # kept as their own rows and the copy_ms column, but not added into stage_ms_total (EYKO-117 review, 11 Nov)
+STAGE_ORDER = ["read", "copy", "hash", "split_frames", "split_audio", "filter", "dedup", "scene", "small_objects", "embed_images", "embed_texts", "link", "latest"]
 
 LINE = re.compile(r"^(?:(?P<stamp>\d\d-\d\d \d\d:\d\d:\d\d\.\d{3})\s+)?.*?EykonVideo\s*(?:\(\s*\d+\))?\s*:\s*(?P<stage>\w+) (?P<id>[0-9a-f]{32}):?\s*(?P<rest>.*)$")
 
@@ -79,6 +79,11 @@ def parse_log(text: str) -> dict:
                 v["rows"].append(("copy", int(s.group(2)), None, None))
                 if s.group(3) is not None:
                     v["rows"].append(("hash", int(s.group(3)), None, None))
+        elif stage == "read":  # EYKO-126: no copy any more, the picked file is read once in place to hash it: "read <id>: <bytes> bytes in place in <ms> ms (no copy)"
+            s = re.search(r"(\d+) bytes in place in (\d+) ms", rest)
+            if s:
+                v["copy_ms"] = int(s.group(2))  # same column: the intake time before the job starts
+                v["rows"].append(("read", int(s.group(2)), None, None))
         elif stage == "split":
             s = re.search(r"(\d+) frames in (\d+) ms.*audio ([\d.]+) s in (\d+) ms", rest)
             if s:
