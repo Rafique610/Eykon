@@ -1,8 +1,7 @@
 package com.eykon.memory.video
 
 import androidx.sqlite.db.SupportSQLiteDatabase
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.CancellationException
 import java.util.concurrent.atomic.AtomicBoolean
 
 /**
@@ -17,39 +16,77 @@ class VideoWorker(
 ) {
     private val draining = AtomicBoolean(false)
 
-    /** Run one job. False when the queue is empty. */
-    fun runOnce(): Boolean {
+    /** The video and stage being worked on right now (EYKO-44 shows it in the notification); null between jobs. */
+    @Volatile
+    var current: Pair<String, String>? = null
+        private set
+
+    /**
+     * Run one job. False when the queue is empty. [shouldStop] is checked before every stage: the stages are blocking and cannot be
+     * interrupted, so a stop (EYKO-44) takes effect at the next stage boundary, not in the middle of one.
+     */
+    fun runOnce(shouldStop: () -> Boolean = { false }): Boolean {
         val job = jobs.claim() ?: return false
         try {
             for ((name, stage) in stagesAfter(job.stage)) {
+                if (shouldStop()) throw CancellationException("stop requested before stage $name")
+                current = job.videoId to name
                 stage(db(), job.videoId)
                 jobs.stageDone(job.id, name)
             }
             jobs.done(job.id)
+        } catch (e: CancellationException) {
+            current = null
+            throw e // being stopped is not a failed attempt: the job stays `running` and is requeued the next time the app or the worker starts
         } catch (e: Exception) {
             // Class and a short message only: never a stack trace in the database.
             // A permanent failure uses up the attempts at once: one attempt is all it gets (EYKO-119).
             jobs.attemptFailed(job, "${e.javaClass.simpleName}: ${e.message.orEmpty().take(200)}".trimEnd(':', ' '), if (e is PermanentFailure) 1 else retries)
         }
+        current = null
         return true
     }
 
-    fun drain() {
-        while (runOnce()) Unit
+    /**
+     * EYKO-44: one loop at a time in this process, whoever asks (the old in-app `kick` or the WorkManager worker). Requeues jobs cut short by an
+     * earlier stop, then works through the queue. False when another loop is already running (it must not be requeued while it works).
+     */
+    fun drainWhenIdle(shouldStop: () -> Boolean = { false }): Boolean {
+        if (!draining.compareAndSet(false, true)) return false
+        try {
+            jobs.requeueInterrupted()
+            drain(shouldStop)
+        } catch (e: CancellationException) {
+            // stopped between stages: the saved stage is kept, nothing to do
+        } finally {
+            current = null
+            draining.set(false)
+        }
+        return true
     }
 
-    /** Start working through the queue in the background, unless that is already happening. */
-    fun kick(scope: CoroutineScope) {
-        if (!draining.compareAndSet(false, true)) return
-        scope.launch {
-            try {
-                drain()
-            } finally {
-                draining.set(false)
-            }
-            if (jobs.hasQueued()) kick(scope) // a job arrived just as the loop was ending
-        }
+    fun drain(shouldStop: () -> Boolean = { false }) {
+        while (!shouldStop() && runOnce(shouldStop)) Unit
     }
+
+    /**
+     * "Video n of m" for the notification (EYKO-44). [sinceIso] is when the current run began: n is the videos finished since then plus the
+     * one running, m adds the ones still waiting. The app keeps no file name yet, so this is what the notification can say.
+     */
+    fun batchPosition(sinceIso: String): Pair<Int, Int> {
+        val done = count("SELECT COUNT(*) FROM jobs WHERE status = 'done' AND updated_at >= ?", arrayOf(sinceIso))
+        val open = count("SELECT COUNT(*) FROM jobs WHERE status IN ('queued', 'running')", emptyArray())
+        return (done + 1) to maxOf(done + open, done + 1)
+    }
+
+    /** Any job waiting or cut short (a killed process leaves it `running` until the loop requeues it). False: a worker has nothing to do. */
+    fun hasWork(): Boolean = count("SELECT COUNT(*) FROM jobs WHERE status IN ('queued', 'running')", emptyArray()) > 0
+
+    /** The file's name as the person picked it (EYKO-127 stores it), for the notification; null for videos added before that. */
+    fun displayName(videoId: String): String? =
+        db().query("SELECT display_name FROM videos WHERE video_id = ?", arrayOf(videoId)).use { if (it.moveToFirst() && !it.isNull(0)) it.getString(0) else null }
+
+    private fun count(sql: String, args: Array<String>): Int = db().query(sql, args).use { if (it.moveToFirst()) it.getInt(0) else 0 }
 
     private fun stagesAfter(doneStage: String): List<Pair<String, Stage>> {
         val index = stages.indexOfFirst { it.first == doneStage }

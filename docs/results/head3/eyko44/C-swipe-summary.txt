@@ -1,0 +1,1 @@
+C-swipe: ready=1 wall=325.5 s = 5.4 min; notes=[]; end battery 70 %, 36.2 C

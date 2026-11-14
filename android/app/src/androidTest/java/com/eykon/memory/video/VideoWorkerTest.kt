@@ -6,11 +6,6 @@ import androidx.sqlite.db.SupportSQLiteOpenHelper
 import androidx.sqlite.db.framework.FrameworkSQLiteOpenHelperFactory
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withTimeout
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -87,6 +82,18 @@ class VideoWorkerTest {
         assertTrue(worker().runOnce())
         assertEquals("done", jobs.get(id)!!.status)
         assertFalse(worker().runOnce()) // the queue is empty now
+    }
+
+    @Test
+    fun theNotificationCountsVideoNOfMAcrossTheRun() {
+        val since = "2000-01-01T00:00:00Z"
+        queue("a"); queue("b"); queue("c")
+        val worker = worker()
+        assertEquals(1 to 3, worker.batchPosition(since)) // nothing finished yet
+        worker.runOnce()
+        assertEquals(2 to 3, worker.batchPosition(since)) // one done, the second is next
+        worker.drain()
+        assertEquals(4 to 4, worker.batchPosition(since)) // all done: nothing is running, so n and m stay equal (the notification is gone by then)
     }
 
     @Test
@@ -183,16 +190,6 @@ class VideoWorkerTest {
         assertEquals("a", jobs.claim()!!.videoId)
         assertEquals("b", jobs.claim()!!.videoId)
         assertNull(jobs.claim())
-    }
-
-    @Test
-    fun kickRunsQueuedJobsInTheBackground() = runBlocking {
-        val id = queue()
-        worker("one" to frameStage(1)).kick(CoroutineScope(Dispatchers.Default))
-        withTimeout(5_000) {
-            while (jobs.get(id)!!.status != "done") delay(20)
-        }
-        assertEquals(1L, frames())
     }
 
     @Test

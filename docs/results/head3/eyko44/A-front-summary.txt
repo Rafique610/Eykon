@@ -1,0 +1,1 @@
+A-front: ready=1 wall=329.1 s = 5.5 min; notes=[]; end battery 62 %, 36.3 C

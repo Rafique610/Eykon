@@ -1,0 +1,6 @@
+11-15 01:03:20.474 10897 10932 I EykonVideo: read 437c99e227cb42cda4f698513ad54d88: 743552939 bytes in place in 3007 ms (no copy)
+11-15 01:03:20.504 10897 10932 I EykonVideo: no original location for content://com.android.providers.media.documents/document/vid
+11-15 01:03:48.585 10897 10933 I EykonVideo: read 1d73a6da8650417cb1e59671ed8cc7be: 187772455 bytes in place in 793 ms (no copy)
+11-15 01:03:48.610 10897 10933 I EykonVideo: no original location for content://com.android.providers.media.documents/document/vid
+11-15 01:06:11.714 10897 10932 I EykonVideo: split 437c99e227cb42cda4f698513ad54d88: 894 frames in 135280 ms (one pass), audio 297
+11-15 01:06:15.179 10897 10932 I EykonVideo: filter 437c99e227cb42cda4f698513ad54d88: kept 92 of 894 (less sharp 794, still 8) in 

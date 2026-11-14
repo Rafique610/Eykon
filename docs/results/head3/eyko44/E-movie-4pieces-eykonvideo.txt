@@ -1,0 +1,123 @@
+--------- beginning of main
+11-14 17:51:30.197 I/EykonVideo(16325): copy f8d2db2512ec48b086a780d99bb50a89: 78208453 bytes in 416 ms (hash 93 ms)
+11-14 17:52:47.743 I/EykonVideo(16325): copy 2cf40b93c8fd4c449003385d121325ae: 176247364 bytes in 1139 ms (hash 263 ms)
+11-14 17:53:22.384 I/EykonVideo(16325): split f8d2db2512ec48b086a780d99bb50a89: 901 frames in 70454 ms (one pass), audio 300.0 s in 41380 ms
+11-14 17:53:26.400 I/EykonVideo(16325): filter f8d2db2512ec48b086a780d99bb50a89: kept 78 of 901 (less sharp 792, still 9, blurry 14, dark 8) in 3966 ms
+11-14 17:54:03.086 I/EykonVideo(16325): copy 2e406155260f44f7858bccc2bdee0546: 342238760 bytes in 2666 ms (hash 583 ms)
+11-14 17:54:25.193 I/EykonVideo(16325): dedup f8d2db2512ec48b086a780d99bb50a89: kept 51 of 78 (hash dropped 8, embedding dropped 19) in 58768 ms; embedded 70 frames, 829 ms each; memory java 6 MB, native 332 MB
+11-14 17:55:17.687 I/EykonVideo(16325): copy 4d700396e6db4d5e8d539b1e4ee7a689: 462150353 bytes in 4206 ms (hash 808 ms)
+11-14 17:55:41.566 I/EykonVideo(16325): scene f8d2db2512ec48b086a780d99bb50a89: 51 frames described by option A in 76339 ms, 1496 ms each
+11-14 17:56:03.780 I/EykonVideo(16325): small_objects f8d2db2512ec48b086a780d99bb50a89: 51 frames looked at, 0 found, in 22054 ms
+11-14 17:56:03.866 I/EykonVideo(16325): embed_images f8d2db2512ec48b086a780d99bb50a89: 51 vectors stored (51 reused, 0 computed) in 12 ms
+11-14 17:56:06.316 I/EykonVideo(16325): embed_texts f8d2db2512ec48b086a780d99bb50a89: 51 texts (51 captions, 0 transcript chunks) in 2446 ms
+11-14 17:56:06.324 I/EykonVideo(16325): link f8d2db2512ec48b086a780d99bb50a89: every row points at its video and moment
+11-14 17:57:13.227 I/EykonVideo(16325): latest f8d2db2512ec48b086a780d99bb50a89: 84 sightings (27 boxes too small) in 66902 ms
+11-14 17:57:13.298 I/EykonVideo(16325): finish f8d2db2512ec48b086a780d99bb50a89: ready; 850 dropped frame files deleted
+11-14 18:01:03.897 I/EykonVideo(16325): split 2cf40b93c8fd4c449003385d121325ae: 1801 frames in 149404 ms (one pass), audio 600.0 s in 80798 ms
+11-14 18:01:18.744 I/EykonVideo(16325): filter 2cf40b93c8fd4c449003385d121325ae: kept 174 of 1801 (less sharp 1600, blurry 2, still 25) in 14672 ms
+11-14 18:03:33.272 I/EykonVideo(16325): dedup 2cf40b93c8fd4c449003385d121325ae: kept 148 of 174 (hash dropped 6, embedding dropped 20) in 134471 ms; embedded 168 frames, 792 ms each; memory java 9 MB, native 1061 MB
+11-14 18:07:23.222 I/EykonVideo(16325): scene 2cf40b93c8fd4c449003385d121325ae: 148 frames described by option A in 229890 ms, 1553 ms each
+11-14 18:10:47.436 I/EykonVideo(16325): small_objects 2cf40b93c8fd4c449003385d121325ae: 148 frames looked at, 0 found, in 204073 ms
+11-14 18:10:47.550 I/EykonVideo(16325): embed_images 2cf40b93c8fd4c449003385d121325ae: 148 vectors stored (148 reused, 0 computed) in 31 ms
+11-14 18:10:51.107 I/EykonVideo(16325): embed_texts 2cf40b93c8fd4c449003385d121325ae: 148 texts (148 captions, 0 transcript chunks) in 3552 ms
+11-14 18:10:51.114 I/EykonVideo(16325): link 2cf40b93c8fd4c449003385d121325ae: every row points at its video and moment
+11-14 18:14:52.038 I/EykonVideo(16325): latest 2cf40b93c8fd4c449003385d121325ae: 286 sightings (51 boxes too small) in 240923 ms
+11-14 18:14:52.456 I/EykonVideo(16325): finish 2cf40b93c8fd4c449003385d121325ae: ready; 1653 dropped frame files deleted
+11-14 18:20:53.293 I/EykonVideo(16325): split 2e406155260f44f7858bccc2bdee0546: 2701 frames in 207476 ms (one pass), audio 900.0 s in 152813 ms
+11-14 18:21:13.148 I/EykonVideo(16325): filter 2e406155260f44f7858bccc2bdee0546: kept 264 of 2701 (less sharp 2384, blurry 13, dark 16, still 24) in 19729 ms
+11-14 18:24:37.323 I/EykonVideo(16325): dedup 2e406155260f44f7858bccc2bdee0546: kept 236 of 264 (hash dropped 10, embedding dropped 18) in 204124 ms; embedded 254 frames, 795 ms each; memory java 10 MB, native 1037 MB
+11-14 18:31:16.920 I/EykonVideo(16325): scene 2e406155260f44f7858bccc2bdee0546: 236 frames described by option A in 399517 ms, 1692 ms each
+11-14 18:35:10.320 I/EykonVideo(16325): small_objects 2e406155260f44f7858bccc2bdee0546: 236 frames looked at, 0 found, in 233259 ms
+11-14 18:35:10.483 I/EykonVideo(16325): embed_images 2e406155260f44f7858bccc2bdee0546: 236 vectors stored (236 reused, 0 computed) in 66 ms
+11-14 18:35:15.895 I/EykonVideo(16325): embed_texts 2e406155260f44f7858bccc2bdee0546: 236 texts (236 captions, 0 transcript chunks) in 5401 ms
+11-14 18:35:15.911 I/EykonVideo(16325): link 2e406155260f44f7858bccc2bdee0546: every row points at its video and moment
+11-14 18:39:56.468 I/EykonVideo(16325): latest 2e406155260f44f7858bccc2bdee0546: 324 sightings (119 boxes too small) in 280555 ms
+11-14 18:39:56.677 I/EykonVideo(16325): finish 2e406155260f44f7858bccc2bdee0546: ready; 2465 dropped frame files deleted
+11-14 18:50:04.096 I/EykonVideo(16325): split 4d700396e6db4d5e8d539b1e4ee7a689: 4501 frames in 367410 ms (one pass), audio 1500.0 s in 239408 ms
+11-14 18:50:34.671 I/EykonVideo(16325): filter 4d700396e6db4d5e8d539b1e4ee7a689: kept 451 of 4501 (less sharp 3999, still 40, blurry 10, dark 1) in 30148 ms
+11-14 18:56:20.974 I/EykonVideo(16325): dedup 4d700396e6db4d5e8d539b1e4ee7a689: kept 396 of 451 (hash dropped 29, embedding dropped 26) in 346206 ms; embedded 422 frames, 811 ms each; memory java 18 MB, native 998 MB
+11-14 19:07:31.340 I/EykonVideo(16325): scene 4d700396e6db4d5e8d539b1e4ee7a689: 396 frames described by option A in 670233 ms, 1692 ms each
+11-14 19:14:15.645 I/EykonVideo(16325): small_objects 4d700396e6db4d5e8d539b1e4ee7a689: 396 frames looked at, 2 found, in 404064 ms
+11-14 19:14:15.798 I/EykonVideo(16325): embed_images 4d700396e6db4d5e8d539b1e4ee7a689: 396 vectors stored (396 reused, 0 computed) in 53 ms
+11-14 19:14:25.648 I/EykonVideo(16325): embed_texts 4d700396e6db4d5e8d539b1e4ee7a689: 396 texts (396 captions, 0 transcript chunks) in 9840 ms
+11-14 19:14:25.660 I/EykonVideo(16325): link 4d700396e6db4d5e8d539b1e4ee7a689: every row points at its video and moment
+11-14 19:27:38.547 I/EykonVideo(16325): latest 4d700396e6db4d5e8d539b1e4ee7a689: 910 sightings (200 boxes too small) in 792885 ms
+11-14 19:27:38.881 I/EykonVideo(16325): finish 4d700396e6db4d5e8d539b1e4ee7a689: ready; 4105 dropped frame files deleted
+11-14 19:27:39.040 W/EykonVideo(16325): foreground service not allowed here, running as plain work: ForegroundServiceStartNotAllowedException: startForegroundService() not allowed due to mAllowStartForeground false: service com.eykon.memory/androidx.work.impl.foreground.SystemForegroundService
+11-14 19:27:39.040 W/EykonVideo(16325): android.app.ForegroundServiceStartNotAllowedException: startForegroundService() not allowed due to mAllowStartForeground false: service com.eykon.memory/androidx.work.impl.foreground.SystemForegroundService
+11-14 19:27:39.040 W/EykonVideo(16325): 	at android.app.ForegroundServiceStartNotAllowedException$1.createFromParcel(ForegroundServiceStartNotAllowedException.java:54)
+11-14 19:27:39.040 W/EykonVideo(16325): 	at android.app.ForegroundServiceStartNotAllowedException$1.createFromParcel(ForegroundServiceStartNotAllowedException.java:50)
+11-14 19:27:39.040 W/EykonVideo(16325): 	at android.os.Parcel.readParcelableInternal(Parcel.java:4785)
+11-14 19:27:39.040 W/EykonVideo(16325): 	at android.os.Parcel.readParcelable(Parcel.java:4753)
+11-14 19:27:39.040 W/EykonVideo(16325): 	at android.os.Parcel.createExceptionOrNull(Parcel.java:3016)
+11-14 19:27:39.040 W/EykonVideo(16325): 	at android.os.Parcel.createException(Parcel.java:3005)
+11-14 19:27:39.040 W/EykonVideo(16325): 	at android.os.Parcel.readException(Parcel.java:2988)
+11-14 19:27:39.040 W/EykonVideo(16325): 	at android.os.Parcel.readException(Parcel.java:2930)
+11-14 19:27:39.040 W/EykonVideo(16325): 	at android.app.IActivityManager$Stub$Proxy.startService(IActivityManager.java:6143)
+11-14 19:27:39.040 W/EykonVideo(16325): 	at android.app.ContextImpl.startServiceCommon(ContextImpl.java:2029)
+11-14 19:27:39.040 W/EykonVideo(16325): 	at android.app.ContextImpl.startForegroundService(ContextImpl.java:1995)
+11-14 19:27:39.040 W/EykonVideo(16325): 	at android.content.ContextWrapper.startForegroundService(ContextWrapper.java:822)
+11-14 19:27:39.040 W/EykonVideo(16325): 	at androidx.core.content.ContextCompat$Api26Impl.startForegroundService(ContextCompat.java:1128)
+11-14 19:27:39.040 W/EykonVideo(16325): 	at androidx.core.content.ContextCompat.startForegroundService(ContextCompat.java:700)
+11-14 19:27:39.040 W/EykonVideo(16325): 	at androidx.work.impl.Processor.startForeground(Processor.java:205)
+11-14 19:27:39.040 W/EykonVideo(16325): 	at androidx.work.impl.utils.WorkForegroundUpdater.lambda$setForegroundAsync$0$androidx-work-impl-utils-WorkForegroundUpdater(WorkForegroundUpdater.java:94)
+11-14 19:27:39.040 W/EykonVideo(16325): 	at androidx.work.impl.utils.WorkForegroundUpdater$$ExternalSyntheticLambda0.invoke(D8$$SyntheticClass:0)
+11-14 19:27:39.040 W/EykonVideo(16325): 	at androidx.work.ListenableFutureKt.executeAsync$lambda$4$lambda$3(ListenableFuture.kt:59)
+11-14 19:27:39.040 W/EykonVideo(16325): 	at androidx.work.ListenableFutureKt.$r8$lambda$2J7WTnmfyHeSyx3GGU57K1DCNjw(ListenableFuture.kt:0)
+11-14 19:27:39.040 W/EykonVideo(16325): 	at androidx.work.ListenableFutureKt$$ExternalSyntheticLambda3.run(D8$$SyntheticClass:0)
+11-14 19:27:39.040 W/EykonVideo(16325): 	at androidx.work.impl.utils.SerialExecutorImpl$Task.run(SerialExecutorImpl.java:96)
+11-14 19:27:39.040 W/EykonVideo(16325): 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1100)
+11-14 19:27:39.040 W/EykonVideo(16325): 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+11-14 19:27:39.040 W/EykonVideo(16325): 	at java.lang.Thread.run(Thread.java:1571)
+11-14 19:27:39.127 W/EykonVideo(16325): foreground service not allowed here, running as plain work: ForegroundServiceStartNotAllowedException: startForegroundService() not allowed due to mAllowStartForeground false: service com.eykon.memory/androidx.work.impl.foreground.SystemForegroundService
+11-14 19:27:39.127 W/EykonVideo(16325): android.app.ForegroundServiceStartNotAllowedException: startForegroundService() not allowed due to mAllowStartForeground false: service com.eykon.memory/androidx.work.impl.foreground.SystemForegroundService
+11-14 19:27:39.127 W/EykonVideo(16325): 	at android.app.ForegroundServiceStartNotAllowedException$1.createFromParcel(ForegroundServiceStartNotAllowedException.java:54)
+11-14 19:27:39.127 W/EykonVideo(16325): 	at android.app.ForegroundServiceStartNotAllowedException$1.createFromParcel(ForegroundServiceStartNotAllowedException.java:50)
+11-14 19:27:39.127 W/EykonVideo(16325): 	at android.os.Parcel.readParcelableInternal(Parcel.java:4785)
+11-14 19:27:39.127 W/EykonVideo(16325): 	at android.os.Parcel.readParcelable(Parcel.java:4753)
+11-14 19:27:39.127 W/EykonVideo(16325): 	at android.os.Parcel.createExceptionOrNull(Parcel.java:3016)
+11-14 19:27:39.127 W/EykonVideo(16325): 	at android.os.Parcel.createException(Parcel.java:3005)
+11-14 19:27:39.127 W/EykonVideo(16325): 	at android.os.Parcel.readException(Parcel.java:2988)
+11-14 19:27:39.127 W/EykonVideo(16325): 	at android.os.Parcel.readException(Parcel.java:2930)
+11-14 19:27:39.127 W/EykonVideo(16325): 	at android.app.IActivityManager$Stub$Proxy.startService(IActivityManager.java:6143)
+11-14 19:27:39.127 W/EykonVideo(16325): 	at android.app.ContextImpl.startServiceCommon(ContextImpl.java:2029)
+11-14 19:27:39.127 W/EykonVideo(16325): 	at android.app.ContextImpl.startForegroundService(ContextImpl.java:1995)
+11-14 19:27:39.127 W/EykonVideo(16325): 	at android.content.ContextWrapper.startForegroundService(ContextWrapper.java:822)
+11-14 19:27:39.127 W/EykonVideo(16325): 	at androidx.core.content.ContextCompat$Api26Impl.startForegroundService(ContextCompat.java:1128)
+11-14 19:27:39.127 W/EykonVideo(16325): 	at androidx.core.content.ContextCompat.startForegroundService(ContextCompat.java:700)
+11-14 19:27:39.127 W/EykonVideo(16325): 	at androidx.work.impl.Processor.startForeground(Processor.java:205)
+11-14 19:27:39.127 W/EykonVideo(16325): 	at androidx.work.impl.utils.WorkForegroundUpdater.lambda$setForegroundAsync$0$androidx-work-impl-utils-WorkForegroundUpdater(WorkForegroundUpdater.java:94)
+11-14 19:27:39.127 W/EykonVideo(16325): 	at androidx.work.impl.utils.WorkForegroundUpdater$$ExternalSyntheticLambda0.invoke(D8$$SyntheticClass:0)
+11-14 19:27:39.127 W/EykonVideo(16325): 	at androidx.work.ListenableFutureKt.executeAsync$lambda$4$lambda$3(ListenableFuture.kt:59)
+11-14 19:27:39.127 W/EykonVideo(16325): 	at androidx.work.ListenableFutureKt.$r8$lambda$2J7WTnmfyHeSyx3GGU57K1DCNjw(ListenableFuture.kt:0)
+11-14 19:27:39.127 W/EykonVideo(16325): 	at androidx.work.ListenableFutureKt$$ExternalSyntheticLambda3.run(D8$$SyntheticClass:0)
+11-14 19:27:39.127 W/EykonVideo(16325): 	at androidx.work.impl.utils.SerialExecutorImpl$Task.run(SerialExecutorImpl.java:96)
+11-14 19:27:39.127 W/EykonVideo(16325): 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1100)
+11-14 19:27:39.127 W/EykonVideo(16325): 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+11-14 19:27:39.127 W/EykonVideo(16325): 	at java.lang.Thread.run(Thread.java:1571)
+11-14 19:27:39.227 W/EykonVideo(16325): foreground service not allowed here, running as plain work: ForegroundServiceStartNotAllowedException: startForegroundService() not allowed due to mAllowStartForeground false: service com.eykon.memory/androidx.work.impl.foreground.SystemForegroundService
+11-14 19:27:39.227 W/EykonVideo(16325): android.app.ForegroundServiceStartNotAllowedException: startForegroundService() not allowed due to mAllowStartForeground false: service com.eykon.memory/androidx.work.impl.foreground.SystemForegroundService
+11-14 19:27:39.227 W/EykonVideo(16325): 	at android.app.ForegroundServiceStartNotAllowedException$1.createFromParcel(ForegroundServiceStartNotAllowedException.java:54)
+11-14 19:27:39.227 W/EykonVideo(16325): 	at android.app.ForegroundServiceStartNotAllowedException$1.createFromParcel(ForegroundServiceStartNotAllowedException.java:50)
+11-14 19:27:39.227 W/EykonVideo(16325): 	at android.os.Parcel.readParcelableInternal(Parcel.java:4785)
+11-14 19:27:39.227 W/EykonVideo(16325): 	at android.os.Parcel.readParcelable(Parcel.java:4753)
+11-14 19:27:39.227 W/EykonVideo(16325): 	at android.os.Parcel.createExceptionOrNull(Parcel.java:3016)
+11-14 19:27:39.227 W/EykonVideo(16325): 	at android.os.Parcel.createException(Parcel.java:3005)
+11-14 19:27:39.227 W/EykonVideo(16325): 	at android.os.Parcel.readException(Parcel.java:2988)
+11-14 19:27:39.227 W/EykonVideo(16325): 	at android.os.Parcel.readException(Parcel.java:2930)
+11-14 19:27:39.227 W/EykonVideo(16325): 	at android.app.IActivityManager$Stub$Proxy.startService(IActivityManager.java:6143)
+11-14 19:27:39.227 W/EykonVideo(16325): 	at android.app.ContextImpl.startServiceCommon(ContextImpl.java:2029)
+11-14 19:27:39.227 W/EykonVideo(16325): 	at android.app.ContextImpl.startForegroundService(ContextImpl.java:1995)
+11-14 19:27:39.227 W/EykonVideo(16325): 	at android.content.ContextWrapper.startForegroundService(ContextWrapper.java:822)
+11-14 19:27:39.227 W/EykonVideo(16325): 	at androidx.core.content.ContextCompat$Api26Impl.startForegroundService(ContextCompat.java:1128)
+11-14 19:27:39.227 W/EykonVideo(16325): 	at androidx.core.content.ContextCompat.startForegroundService(ContextCompat.java:700)
+11-14 19:27:39.227 W/EykonVideo(16325): 	at androidx.work.impl.Processor.startForeground(Processor.java:205)
+11-14 19:27:39.227 W/EykonVideo(16325): 	at androidx.work.impl.utils.WorkForegroundUpdater.lambda$setForegroundAsync$0$androidx-work-impl-utils-WorkForegroundUpdater(WorkForegroundUpdater.java:94)
+11-14 19:27:39.227 W/EykonVideo(16325): 	at androidx.work.impl.utils.WorkForegroundUpdater$$ExternalSyntheticLambda0.invoke(D8$$SyntheticClass:0)
+11-14 19:27:39.227 W/EykonVideo(16325): 	at androidx.work.ListenableFutureKt.executeAsync$lambda$4$lambda$3(ListenableFuture.kt:59)
+11-14 19:27:39.227 W/EykonVideo(16325): 	at androidx.work.ListenableFutureKt.$r8$lambda$2J7WTnmfyHeSyx3GGU57K1DCNjw(ListenableFuture.kt:0)
+11-14 19:27:39.227 W/EykonVideo(16325): 	at androidx.work.ListenableFutureKt$$ExternalSyntheticLambda3.run(D8$$SyntheticClass:0)
+11-14 19:27:39.227 W/EykonVideo(16325): 	at androidx.work.impl.utils.SerialExecutorImpl$Task.run(SerialExecutorImpl.java:96)
+11-14 19:27:39.227 W/EykonVideo(16325): 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1100)
+11-14 19:27:39.227 W/EykonVideo(16325): 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+11-14 19:27:39.227 W/EykonVideo(16325): 	at java.lang.Thread.run(Thread.java:1571)
