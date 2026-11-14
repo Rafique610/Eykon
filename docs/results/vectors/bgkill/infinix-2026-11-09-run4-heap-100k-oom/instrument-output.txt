@@ -1,0 +1,21 @@
+
+com.eykon.memory.video.OffHeapVectorTest:
+Error in holdInBackground(com.eykon.memory.video.OffHeapVectorTest):
+java.lang.OutOfMemoryError: Failed to allocate a 153600016 byte allocation with 25165824 free bytes and 56MB until OOM, target footprint 234188920, growth limit 268435456
+	at com.eykon.memory.video.VideoVectors.load(VideoVectors.kt:202)
+	at com.eykon.memory.video.VideoVectors.scores(VideoVectors.kt:93)
+	at com.eykon.memory.video.OffHeapVectorTest.holdInBackground(OffHeapVectorTest.kt:328)
+
+
+Time: 89.727
+There was 1 failure:
+1) holdInBackground(com.eykon.memory.video.OffHeapVectorTest)
+java.lang.OutOfMemoryError: Failed to allocate a 153600016 byte allocation with 25165824 free bytes and 56MB until OOM, target footprint 234188920, growth limit 268435456
+	at com.eykon.memory.video.VideoVectors.load(VideoVectors.kt:202)
+	at com.eykon.memory.video.VideoVectors.scores(VideoVectors.kt:93)
+	at com.eykon.memory.video.OffHeapVectorTest.holdInBackground(OffHeapVectorTest.kt:328)
+
+FAILURES!!!
+Tests run: 1,  Failures: 1
+
+

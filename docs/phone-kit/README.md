@@ -140,6 +140,12 @@ total memory (PSS) before and after into an `eyko100-memory-...csv` (note column
 | Screen recording on the phone | `adb shell screenrecord /sdcard/rec.mp4` (Ctrl+C to stop), then `adb pull /sdcard/rec.mp4` |
 | Screenshot | `adb exec-out screencap -p > shot.png` |
 
+## Bad-input files (EYKO-118)
+
+`uv run python src/benchmarks/make_bad_inputs.py --src <kit clip>.mp4 [--ffmpeg-dir <folder with ffmpeg and ffprobe>] [--skip-big]` makes 14 awkward
+videos in `data/bad-inputs/` (git-ignored) plus `MANIFEST.csv`, and checks each file is what its name says. **It needs ffmpeg and ffprobe** (on PATH,
+or pass `--ffmpeg-dir`); the script stops with a message if they are not found. B12 is only about 1 % over the 500 MB limit.
+
 ## When something fails
 
 Copy the **exact** error text into a comment on your card, with the command you ran. A failure on

@@ -143,9 +143,10 @@ class VideoLinkTest {
         jobs.enqueue("clip")
         VideoWorker({ db }, jobs, listOf("link" to VideoLink::run)).drain()
 
-        val (status, error) = db.query("SELECT status, error FROM jobs WHERE video_id = 'clip'").use { it.moveToFirst(); it.getString(0) to it.getString(1) }
+        val (status, error, attempts) = db.query("SELECT status, error, attempts FROM jobs WHERE video_id = 'clip'").use { it.moveToFirst(); Triple(it.getString(0), it.getString(1), it.getInt(2)) }
         assertEquals("failed", status)
-        assertEquals("IllegalStateException: 1 kept frames without an image vector", error)
+        assertEquals("PermanentFailure: 1 kept frames without an image vector", error)
+        assertEquals("the check finds the same problem again, so it gets one attempt (EYKO-119)", 1, attempts)
         // the check did not repair anything
         assertEquals(1, db.query("SELECT COUNT(*) FROM image_vec").use { it.moveToFirst(); it.getInt(0) })
     }

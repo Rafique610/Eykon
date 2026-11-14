@@ -33,6 +33,19 @@ class VideoCopyTest {
     }
 
     @Test
+    fun readingInPlaceGivesTheSameHashAsACopyAndWritesNothing() {
+        // EYKO-126: a gallery file read in place must be found as a duplicate of the same bytes added as a copy before
+        val data = ByteArray(20 * oneMb.toInt()) { (it % 251).toByte() } // over the 8 MB space-check step, no limit applies
+        val copied = VideoCopy.copyAndHash(ByteArrayInputStream(data), folder.newFile("c.mp4"), 30 * oneMb, plentyOfSpace)
+        val before = folder.root.listFiles()!!.size
+        val read = VideoCopy.hashOnly(ByteArrayInputStream(data))
+        assertEquals(copied.sha256, read.sha256)
+        assertEquals(data.size.toLong(), read.bytes)
+        assertEquals(before, folder.root.listFiles()!!.size)
+        assertEquals("ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad", VideoCopy.hashOnly(ByteArrayInputStream("abc".toByteArray())).sha256)
+    }
+
+    @Test
     fun theSameBytesGiveTheSameHashAndOtherBytesGiveAnotherOne() {
         val data = ByteArray(300_000) { (it % 251).toByte() }
         val first = VideoCopy.copyAndHash(ByteArrayInputStream(data), folder.newFile("1.mp4"), 10 * oneMb, plentyOfSpace)

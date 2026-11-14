@@ -1,9 +1,11 @@
 package com.eykon.memory.ui.screens
 
 import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import android.Manifest
+import android.content.pm.PackageManager
 import android.graphics.BitmapFactory
+import androidx.core.content.ContextCompat
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -27,6 +29,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
@@ -86,8 +89,20 @@ fun VideoScreen(
     modifier: Modifier = Modifier,
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    val picker = rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+    // EYKO-127: the system file picker, not the photo picker: the photo picker removes where a video was recorded and offers no
+    // way to keep it. Its links can still be kept across restarts (EYKO-126) and give the file's real name.
+    val picker = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
         viewModel.onVideoPicked(uri)
+    }
+    // Android hides a video's recording place unless the app may read media locations; asked once, adding works without it.
+    val context = LocalContext.current
+    val askLocation = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { picker.launch(VIDEO_TYPES) }
+    val addVideo = {
+        if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_MEDIA_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            picker.launch(VIDEO_TYPES)
+        } else {
+            askLocation.launch(Manifest.permission.ACCESS_MEDIA_LOCATION)
+        }
     }
 
     LazyColumn(
@@ -103,7 +118,7 @@ fun VideoScreen(
         }
         item {
             Button(
-                onClick = { picker.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.VideoOnly)) },
+                onClick = addVideo,
                 enabled = !uiState.isSaving,
                 modifier = Modifier.fillMaxWidth(),
             ) {
@@ -214,3 +229,5 @@ private fun VideoRow(item: VideoWithJob, onRetry: (Long) -> Unit) {
         }
     }
 }
+
+private val VIDEO_TYPES = arrayOf("video/*")

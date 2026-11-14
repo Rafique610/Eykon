@@ -40,7 +40,8 @@ class VideoWorker(
             throw e // being stopped is not a failed attempt: the job stays `running` and is requeued the next time the app or the worker starts
         } catch (e: Exception) {
             // Class and a short message only: never a stack trace in the database.
-            jobs.attemptFailed(job, "${e.javaClass.simpleName}: ${e.message.orEmpty().take(200)}".trimEnd(':', ' '), retries)
+            // A permanent failure uses up the attempts at once: one attempt is all it gets (EYKO-119).
+            jobs.attemptFailed(job, "${e.javaClass.simpleName}: ${e.message.orEmpty().take(200)}".trimEnd(':', ' '), if (e is PermanentFailure) 1 else retries)
         }
         current = null
         return true

@@ -101,6 +101,18 @@ cards, runs decisions with the team), **Zara Tahir** does evaluation, and
   Nobody approves their own work. A review reads the diff, checks the
   numbers against the raw files, runs the tests the PR names, and writes the
   findings on the card.
+- **Fix it ourselves first** (set 13 November 2026 by the owner). For each
+  review finding, first check whether we can make the fix ourselves (docs,
+  paths, small script or code changes on the PR's branch, or a change that
+  belongs to one of our own cards). If we can, we do it, push it to that
+  branch (or fold it into our card) and say so in the review. Only a fix we
+  cannot make goes back to the author as a review comment, with the reason we
+  could not: it needs their phone or their data, a run only they can do, a
+  decision that is theirs, or it is too large to do without them. The review
+  post then covers only those.
+- **Only what matters for our use is a finding.** The laptop is the main
+  device and each owner runs their own tools; a script that runs only on its
+  owner's machine is not a finding when the results are what we use.
 - **Only the owner merges**, after the review approves: into
   `feature/video-memory` as the normal step, into `main` only with an
   explicit yes each time. (Zara's 5 Nov merge of the old PR #2 into `main` is

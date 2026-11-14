@@ -123,9 +123,12 @@ class VideoCaptureTest {
             VideoSchema.create(oldDb)
             VideoSchema.create(oldDb) // every open runs it again
             val columns = oldDb.query("PRAGMA table_info(videos)").use { c -> buildList { while (c.moveToNext()) add(c.getString(1)) } }
-            assertEquals("content_hash", columns.last())
+            // EYKO-71 content_hash, then EYKO-126 source_uri and display_name, in the CREATE TABLE's order
+            assertEquals(listOf("content_hash", "source_uri", "display_name"), columns.takeLast(3))
             val oldRow = VideoRepository { oldDb }.get("old1")!!
             assertNull(oldRow.contentHash)
+            assertNull(oldRow.sourceUri)
+            assertNull(oldRow.displayName)
             val indexes = oldDb.query("PRAGMA index_list(videos)").use { c -> buildList { while (c.moveToNext()) add(c.getString(1)) } }
             assertTrue(indexes.contains("videos_content_hash"))
         } finally {

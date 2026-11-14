@@ -1,0 +1,5 @@
+11-10 00:18:14.030  1685  1736 E Griffin/StateProvider: getAppsArrayRecommend: 
+11-10 00:18:14.030  1685  1736 E Griffin/StateProvider: 	at com.transsion.griffin.core.StateImpl.getAppsArrayRecommend(SourceFile:13)
+11-10 00:18:14.055  1685  1736 I Process : Sending signal. PID: 28351 SIG: 9
+11-10 00:18:14.159  1685  2302 I am_proc_died: [0,28351,com.eykon.memory,0,4]
+11-10 00:18:14.159   942   942 I Zygote  : Process 28351 exited due to signal 9 (Killed)

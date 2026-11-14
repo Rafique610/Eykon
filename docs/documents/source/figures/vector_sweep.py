@@ -43,6 +43,8 @@ def load(pattern="*-sweep.csv"):
         if not rows:
             continue
         device = rows[0]["device"]
+        if device.startswith("laptop"):  # EYKO-91's laptop sweeps share this folder; these figures are phones only
+            continue
         key = (rows[0]["date"], path.name)
         if device in newest:
             old = newest[device]
