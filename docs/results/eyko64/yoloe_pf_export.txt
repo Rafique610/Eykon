@@ -1,0 +1,2 @@
+model: yoloe-11s-seg-pf.onnx 47.7 MB; outputs: [('output0', [1, 4621, 8400]), ('output1', [1, 32, 160, 160])]
+26 frames; crops per frame (10 surest, at least 0.1): median 10, mean 10.0, total 260; laptop ONNX run: median 214 ms per frame

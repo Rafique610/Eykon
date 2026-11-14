@@ -1,0 +1,10 @@
+time,label,video_id,status,duration_s,kept frames without a picture hash,kept frames without a scene record,kept frames without an image vector,texts without a text vector,sound windows without a sound vector,frames timed outside the video,texts timed outside the video,sound segments timed outside the video,transcript chunks timed outside the video,sound windows timed outside the video
+2026-11-10T01:31:06,scene run 1,1c4c1200950b4e48b64a99fb94c5690a,ready,74.501,0,0,0,0,0,0,0,0,0,0
+2026-11-10T01:37:29,scene run 2,20430cbe3bec42c084825bcaa791a8c5,ready,74.997,0,0,0,0,0,0,0,0,0,0
+2026-11-10T01:41:18,scene run 3,4c18653efcbd4c199df63131a7fb0953,ready,74.501,0,0,0,0,0,0,0,0,0,0
+2026-11-10T01:46:50,small_objects run 4,e265f6b41a624b1386cffd2268449bf0,ready,74.997,0,0,0,0,0,0,0,0,0,0
+2026-11-10T01:51:20,small_objects run 5,db7945890af84840881d5f09f3671a33,ready,74.501,0,0,0,0,0,0,0,0,0,0
+2026-11-10T01:57:13,small_objects run 6,cbc05ce4d9654896926f21fec319306f,ready,74.997,0,0,0,0,0,0,0,0,0,0
+2026-11-10T02:00:25,embed_texts run 7,1f380629c7e842eabb0556cc47b3b6f3,ready,74.501,0,0,0,0,0,0,0,0,0,0
+2026-11-10T02:05:26,embed_texts run 8,48ca8c526ed24906ae00a154116562fc,ready,74.997,0,0,0,0,0,0,0,0,0,0
+2026-11-10T02:08:51,embed_texts run 9,03e988571f1542049db3b1528c409e6f,ready,74.501,0,0,0,0,0,0,0,0,0,0

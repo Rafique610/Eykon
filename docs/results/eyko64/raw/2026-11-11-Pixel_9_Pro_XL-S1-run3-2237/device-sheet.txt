@@ -1,0 +1,64 @@
+﻿model: Pixel 9 Pro XL
+manufacturer: Google
+soc: Tensor G4
+android: 17
+commit (repo HEAD or -Commit; the installed APK may differ, check KIT-VERSION.txt): c5b919c
+app version: versionName=1.0; lastUpdateTime=2026-11-11 21:16:29
+--- dumpsys battery
+Current Battery Service state:
+  AC powered: true
+  USB powered: false
+  Wireless powered: false
+  Dock powered: false
+  Max charging current: 1500000
+ Time when the latest updated value of the Max charging current was sent via battery changed broadcast: +24d9h26m38s614ms
+  Max charging voltage: 5000000
+  Charge counter: 2952500
+  status: 2
+  health: 2
+  present: true
+  level: 69
+  scale: 100
+  voltage: 4093
+ Time when the latest updated value of the voltage was sent via battery changed broadcast: +24d12h11m28s903ms
+ The last voltage value sent via the battery changed broadcast: 4094
+  temperature: 344
+  technology: Li-ion
+  Charging state: 1
+  Charging policy: 1
+  Capacity level: 2
+--- thermalservice (first lines; empty on phones without it)
+IsStatusOverride: false
+ThermalEventListeners:
+	callbacks: 10
+	killed: false
+	broadcasts count: -1
+ThermalStatusListeners:
+	callbacks: 14
+	killed: false
+	broadcasts count: -1
+Thermal Status: 0
+Cached temperatures:
+	Temperature{mValue=63.000004, mType=0, mName=LITTLE, mStatus=0}
+	Temperature{mValue=32.77839, mType=-1, mName=VIRTUAL-SKIN-CHARGE-PERSIST, mStatus=0}
+	Temperature{mValue=0.0, mType=-1, mName=thb_hda, mStatus=0}
+	Temperature{mValue=0.0, mType=4, mName=VIRTUAL-USB-UI, mStatus=0}
+	Temperature{mValue=31.015001, mType=-1, mName=disp_therm, mStatus=0}
+	Temperature{mValue=41.227, mType=-1, mName=soc_therm, mStatus=0}
+	Temperature{mValue=35.601, mType=-1, mName=quiet_therm, mStatus=1}
+	Temperature{mValue=-7346.0, mType=-1, mName=USB-MINUS-CHARGING, mStatus=0}
+	Temperature{mValue=2.595651, mType=-1, mName=VIRTUAL-BTS-WINDOW-PARTIAL, mStatus=0}
+	Temperature{mValue=34.7, mType=2, mName=battery, mStatus=0}
+	Temperature{mValue=33.28928, mType=-1, mName=VIRTUAL-SKIN-LEGACY, mStatus=0}
+	Temperature{mValue=65.0, mType=0, mName=BIG, mStatus=0}
+	Temperature{mValue=56.000004, mType=1, mName=G3D, mStatus=0}
+	Temperature{mValue=69.0, mType=0, mName=MID, mStatus=0}
+--- df -h /data
+Filesystem       Size Used Avail Use% Mounted on
+/dev/block/dm-78 109G 104G  5.6G  95% /data/user/0
+--- MemTotal / MemAvailable
+
+MemTotal:       15957124 kB
+MemAvailable:    2211024 kB
+
+

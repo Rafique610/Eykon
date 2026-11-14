@@ -1,0 +1,12 @@
+﻿--------- beginning of main
+11-11 22:35:50.577 I/EykonVideo(21333): copy c3992b97860f496483f834882687737a: 186496580 bytes in 1035 ms (hash 136 ms)
+11-11 22:36:23.474 I/EykonVideo(21333): split c3992b97860f496483f834882687737a: 224 frames in 26637 ms (one pass), audio 74.5 s in 6216 ms
+11-11 22:36:24.065 I/EykonVideo(21333): filter c3992b97860f496483f834882687737a: kept 25 of 224 (less sharp 199) in 578 ms
+11-11 22:36:26.590 I/EykonVideo(21333): dedup c3992b97860f496483f834882687737a: kept 10 of 25 (hash dropped 14, embedding dropped 1) in 2518 ms; embedded 11 frames, 221 ms each; memory java 76 MB, native 1077 MB
+11-11 22:36:31.512 I/EykonVideo(21333): scene c3992b97860f496483f834882687737a: 10 frames described by option A in 4917 ms, 491 ms each
+11-11 22:36:42.561 I/EykonVideo(21333): small_objects c3992b97860f496483f834882687737a: 10 frames looked at, 6 found, in 11039 ms
+11-11 22:36:42.611 I/EykonVideo(21333): embed_images c3992b97860f496483f834882687737a: 10 vectors stored (10 reused, 0 computed) in 1 ms
+11-11 22:36:42.785 I/EykonVideo(21333): embed_texts c3992b97860f496483f834882687737a: 10 texts (10 captions, 0 transcript chunks) in 173 ms
+11-11 22:36:42.785 I/EykonVideo(21333): link c3992b97860f496483f834882687737a: every row points at its video and moment
+11-11 22:36:55.217 I/EykonVideo(21333): latest c3992b97860f496483f834882687737a: 54 sightings (0 boxes too small) in 12431 ms
+11-11 22:36:55.229 I/EykonVideo(21333): finish c3992b97860f496483f834882687737a: ready; 214 dropped frame files deleted

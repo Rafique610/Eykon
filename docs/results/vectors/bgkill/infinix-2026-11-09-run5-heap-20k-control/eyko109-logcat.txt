@@ -1,0 +1,15 @@
+--------- beginning of main
+11-09 22:46:33.486  6113  6131 I EYKO109 : hold: HEAP_F32, 20000 rows x 3 tables loaded, pid 6113, holding 300 s: open other apps now
+11-09 22:47:03.516  6113  6131 I EYKO109 : hold: 30s, pid 6113, PSS 183 MB, java heap 134 MB
+11-09 22:47:33.551  6113  6131 I EYKO109 : hold: 60s, pid 6113, PSS 183 MB, java heap 134 MB
+11-09 22:48:03.588  6113  6131 I EYKO109 : hold: 90s, pid 6113, PSS 183 MB, java heap 134 MB
+11-09 22:48:33.622  6113  6131 I EYKO109 : hold: 120s, pid 6113, PSS 183 MB, java heap 134 MB
+11-09 22:49:03.665  6113  6131 I EYKO109 : hold: 150s, pid 6113, PSS 183 MB, java heap 134 MB
+11-09 22:49:33.709  6113  6131 I EYKO109 : hold: 180s, pid 6113, PSS 183 MB, java heap 134 MB
+11-09 22:50:03.753  6113  6131 I EYKO109 : hold: 210s, pid 6113, PSS 183 MB, java heap 134 MB
+11-09 22:50:33.804  6113  6131 I EYKO109 : hold: 240s, pid 6113, PSS 183 MB, java heap 134 MB
+11-09 22:51:03.856  6113  6131 I EYKO109 : hold: 270s, pid 6113, PSS 183 MB, java heap 134 MB
+11-09 22:51:33.908  6113  6131 I EYKO109 : hold: 300s, pid 6113, PSS 183 MB, java heap 134 MB
+11-09 22:51:33.965  6113  6131 I EYKO109 : hold: after 300 s, image_vec search 42 ms, repeat 15 ms, still the same process (pid 6113)
+11-09 22:51:33.988  6113  6131 I EYKO109 : hold: after 300 s, text_vec search 11 ms, repeat 11 ms, still the same process (pid 6113)
+11-09 22:51:34.016  6113  6131 I EYKO109 : hold: after 300 s, audio_vec search 14 ms, repeat 14 ms, still the same process (pid 6113)

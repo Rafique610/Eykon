@@ -68,7 +68,7 @@ def save_upload(conn: sqlite3.Connection, uploaded_file) -> tuple[Video, dict]:
         path.write_bytes(uploaded_file.getvalue())
         meta = read_metadata(path)
         if not meta["has_video"]:
-            raise UploadError("This file does not contain a video that can be read.")
+            raise UploadError("This video is damaged or in a format this phone cannot read.")
         video = Video(
             video_id=video_id,
             file_path=path.as_posix(),

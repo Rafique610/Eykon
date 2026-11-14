@@ -1,0 +1,48 @@
+11-09 22:24:41.146 E/Griffin/StateProvider( 1685): getAppsArrayRecommend: 
+11-09 22:24:41.151 I/Process ( 1685): Sending signal. PID: 22330 SIG: 9
+11-09 22:24:41.201 I/ActivityManager( 1685): Process com.eykon.memory (pid 22330) has died: fg  FGS 
+11-09 22:24:41.201 I/am_proc_died( 1685): [0,22330,com.eykon.memory,0,4]
+11-09 22:24:41.201 I/libprocessgroup( 1685): Successfully killed process cgroup uid 10199 pid 22330 in 0ms
+11-09 22:24:41.203 I/mtkpower_client( 1685): [Legacy][PowerHal_Wrap_notifyAppState] com.eykon.memory/com.eykon.memory pid=22330 state:3
+11-09 22:24:41.203 I/game_scn( 1685): collectForegroundAppList packName=com.eykon.memory, actName=com.eykon.memory, pid=22330, uid=10199, state:DEAD
+11-09 22:24:41.203 E/TranActivityManager( 1685): TranProcessObserver # onProcessDied
+11-09 22:24:41.203 E/TranActivityManager( 1685): 	at com.transsion.hubsdk.app.ITranProcessObserver$Stub$Proxy.onProcessDied(ITranProcessObserver.java:158)
+11-09 22:24:41.203 E/TranActivityManager( 1685): 	at com.transsion.hubcore.server.am.TranActivityManagerService$TranProcessObserver.onProcessDied(TranActivityManagerService.java:575)
+11-09 22:24:41.203 E/TranActivityManager( 1685): 	at com.android.server.am.ProcessList.dispatchProcessDied(ProcessList.java:4730)
+11-09 22:24:41.203 E/TranActivityManager( 1685): TranProcessObserver # onProcessDied
+11-09 22:24:41.203 E/TranActivityManager( 1685): 	at com.transsion.hubsdk.app.ITranProcessObserver$Stub$Proxy.onProcessDied(ITranProcessObserver.java:158)
+11-09 22:24:41.203 E/TranActivityManager( 1685): 	at com.transsion.hubcore.server.am.TranActivityManagerService$TranProcessObserver.onProcessDied(TranActivityManagerService.java:575)
+11-09 22:24:41.203 E/TranActivityManager( 1685): 	at com.android.server.am.ProcessList.dispatchProcessDied(ProcessList.java:4730)
+11-09 22:24:41.203 I/libPowerHal(  978): [perfNotifyAppState] pack:com.eykon.memory, act:com.eykon.memory, state:3, pid:22330, uid:10199, fps:-1
+11-09 22:24:41.203 I/libPowerHal(  978): [perfNotifyAppState] pack:com.eykon.memory, pid:22330, STATE_DEAD
+11-09 22:24:41.204 E/TranActivityManager( 1685): TranProcessObserver # onProcessDied
+11-09 22:24:41.204 E/TranActivityManager( 1685): 	at com.transsion.hubsdk.app.ITranProcessObserver$Stub$Proxy.onProcessDied(ITranProcessObserver.java:158)
+11-09 22:24:41.204 E/TranActivityManager( 1685): 	at com.transsion.hubcore.server.am.TranActivityManagerService$TranProcessObserver.onProcessDied(TranActivityManagerService.java:575)
+11-09 22:24:41.204 E/TranActivityManager( 1685): 	at com.android.server.am.ProcessList.dispatchProcessDied(ProcessList.java:4730)
+11-09 22:24:41.204 E/TranActivityManager( 1685): TranProcessObserver # onProcessDied
+11-09 22:24:41.204 E/TranActivityManager( 1685): 	at com.transsion.hubsdk.app.ITranProcessObserver$Stub$Proxy.onProcessDied(ITranProcessObserver.java:158)
+11-09 22:24:41.204 E/TranActivityManager( 1685): 	at com.transsion.hubcore.server.am.TranActivityManagerService$TranProcessObserver.onProcessDied(TranActivityManagerService.java:575)
+11-09 22:24:41.204 E/TranActivityManager( 1685): 	at com.android.server.am.ProcessList.dispatchProcessDied(ProcessList.java:4730)
+11-09 22:24:41.205 I/Zygote  (  942): Process 22330 exited due to signal 9 (Killed)
+11-09 22:24:41.205 E/TranActivityManager( 1685): TranProcessObserver # onProcessDied
+11-09 22:24:41.205 E/TranActivityManager( 1685): 	at com.transsion.hubsdk.app.ITranProcessObserver$Stub$Proxy.onProcessDied(ITranProcessObserver.java:158)
+11-09 22:24:41.205 E/TranActivityManager( 1685): 	at com.transsion.hubcore.server.am.TranActivityManagerService$TranProcessObserver.onProcessDied(TranActivityManagerService.java:575)
+11-09 22:24:41.205 E/TranActivityManager( 1685): 	at com.android.server.am.ProcessList.dispatchProcessDied(ProcessList.java:4730)
+11-09 22:24:41.205 E/TranActivityManager( 1685): TranProcessObserver # onProcessDied
+11-09 22:24:41.205 E/TranActivityManager( 1685): 	at com.transsion.hubsdk.app.ITranProcessObserver$Stub$Proxy.onProcessDied(ITranProcessObserver.java:158)
+11-09 22:24:41.205 E/TranActivityManager( 1685): 	at com.transsion.hubcore.server.am.TranActivityManagerService$TranProcessObserver.onProcessDied(TranActivityManagerService.java:575)
+11-09 22:24:41.205 E/TranActivityManager( 1685): 	at com.android.server.am.ProcessList.dispatchProcessDied(ProcessList.java:4730)
+11-09 22:24:41.206 E/TranActivityManager( 1685): TranProcessObserver # onProcessDied
+11-09 22:24:41.206 E/TranActivityManager( 1685): 	at com.transsion.hubsdk.app.ITranProcessObserver$Stub$Proxy.onProcessDied(ITranProcessObserver.java:158)
+11-09 22:24:41.206 E/TranActivityManager( 1685): 	at com.transsion.hubcore.server.am.TranActivityManagerService$TranProcessObserver.onProcessDied(TranActivityManagerService.java:575)
+11-09 22:24:41.206 E/TranActivityManager( 1685): 	at com.android.server.am.ProcessList.dispatchProcessDied(ProcessList.java:4730)
+11-09 22:24:41.206 E/TranActivityManager( 1685): TranProcessObserver # onProcessDied
+11-09 22:24:41.206 E/TranActivityManager( 1685): 	at com.transsion.hubsdk.app.ITranProcessObserver$Stub$Proxy.onProcessDied(ITranProcessObserver.java:158)
+11-09 22:24:41.206 E/TranActivityManager( 1685): 	at com.transsion.hubcore.server.am.TranActivityManagerService$TranProcessObserver.onProcessDied(TranActivityManagerService.java:575)
+11-09 22:24:41.206 E/TranActivityManager( 1685): 	at com.android.server.am.ProcessList.dispatchProcessDied(ProcessList.java:4730)
+11-09 21:29:05.171 I/screen_toggled( 1685): 1
+11-09 21:29:12.511 I/screen_toggled( 1685): 0
+11-09 21:43:59.920 I/screen_toggled( 2097): 2
+11-09 21:43:59.923 I/screen_toggled( 1685): 1
+11-09 22:14:40.527 I/am_kill ( 1685): [0,20078,com.eykon.memory,0,stop com.eykon.memory due to finished inst]
+11-09 22:24:41.201 I/am_proc_died( 1685): [0,22330,com.eykon.memory,0,4]

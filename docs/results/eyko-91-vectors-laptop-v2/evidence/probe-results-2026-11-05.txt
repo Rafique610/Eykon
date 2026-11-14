@@ -1,0 +1,44 @@
+# Library probes for the EYKO-91 plan, run 5 November 2026 on Taha's laptop
+# Intel Core i5-10310U (4 cores / 8 threads, AVX2, FMA), 15 GB RAM, Linux, Python 3.10.12
+# Each probe: uv run --no-project --python 3.10 --with <libs> python -I <script>  (scripts in this folder)
+
+## probe_sqlite_vec_int8.py   (sqlite-vec 0.1.9, SQLite 3.37.2, numpy 2.2.6)
+own real vectors: (90, 512) norms [1. 1. 1.]
+own real: |component| max per vector median 0.284; int8 values used -59..53 (95 distinct of 256)
+  example: float [0.0352, -0.0131, -0.0177, 0.0124, 0.0013] -> int8 [3, -2, -2, 1, 0]
+random: |component| max per vector median 0.142; int8 values used -23..26 (47 distinct of 256)
+  example: float [-0.0174, 0.0116, 0.0267, -0.0428, 0.0338] -> int8 [-2, 0, 2, -5, 3]
+int8 cosine knn works; recall@20 on 90 own vectors, 1 query: 0.95
+float32 cosine knn recall@20 (should be 1.0): 0.95
+# earlier probe (newer uv-managed Python, SQLite 3.53.1): vec0 accepts float[N], int8[N], bit[N] and
+# distance_metric=cosine; vec_quantize_int8(v,'unit') works; vec_quantize_i8 (the name in the
+# API reference) -> "no such function: vec_quantize_i8"
+
+## probe_sqlite_vec_ties.py   (why float32 gave 0.95: 200 queries, cosine table f and default L2 table g)
+table f trial 69: recall 0.95, score gap rank20-rank21 = 0.00e+00, missing [60] got-extra [65]
+table g trial 69: recall 0.95, score gap rank20-rank21 = 0.00e+00, missing [60] got-extra [65]
+worst recall: cosine table 0.95 | L2 table 0.95 | smallest rank-20/21 gap 0.00e+00
+# duplicates in the committed assets (numpy unique):
+own_image_512.f32 90 vectors, 85 distinct; groups of identical: [2, 2, 2, 2, 2]
+own_text_384.f32 90 vectors, 81 distinct; groups of identical: [2, 2, 2, 2, 2, 2, 2, 2, 2]
+60 == 65: True
+# -> the miss is a tie between two identical vectors, not an error: sqlite-vec is exact
+
+## probe_usearch_defaults.py   (usearch 2.26.5, 20k random 512-d unit vectors, 20 queries)
+f32 exact=False: build 10.0s, 0.37 ms/query, recall@20 0.235, idx bytes 67372480
+f32 exact=True: build 10.0s, 2.07 ms/query, recall@20 1.000, idx bytes 67372480
+f16 exact=False: build 6.1s, 0.17 ms/query, recall@20 0.227, idx bytes 33818048
+f16 exact=True: build 6.1s, 1.01 ms/query, recall@20 1.000, idx bytes 33818048
+i8 exact=False: build 3.0s, 0.11 ms/query, recall@20 0.245, idx bytes 33818048
+i8 exact=True: build 3.0s, 0.47 ms/query, recall@20 0.830, idx bytes 33818048
+Index params: {'connectivity': 16, 'expansion_add': 128, 'expansion_search': 64}
+hnswlib: no wheel for Python 3.10 / Linux (uv --no-build: "requirements are unsatisfiable"); building from source hung, stopped
+
+## probe_usearch_tuning.py   (same data; search with threads=1)
+random 20k: true top-20 cosine median 0.144, mean of all 0.000, std 0.044
+f32 connectivity 16 expansion_search   64: build   9.6s,   0.65 ms/query (1 thread), recall@20 0.200
+f32 connectivity 16 expansion_search  256: build   9.8s,   2.14 ms/query (1 thread), recall@20 0.600
+f32 connectivity 16 expansion_search 1024: build  25.5s,   6.05 ms/query (1 thread), recall@20 0.945
+f32 connectivity 32 expansion_search 1024: build  34.7s,   8.33 ms/query (1 thread), recall@20 0.997
+f32 connectivity 32 expansion_search 4096: build  45.8s,  13.47 ms/query (1 thread), recall@20 1.000
+numpy exact (default threads) 4.55 ms/query

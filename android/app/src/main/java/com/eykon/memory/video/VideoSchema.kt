@@ -23,9 +23,13 @@ object VideoSchema {
           duration_s  REAL NOT NULL DEFAULT 0,
           lat REAL, lon REAL,
           status      TEXT NOT NULL DEFAULT 'processing' CHECK (status IN ('processing', 'ready', 'failed')),
-          created_at  TEXT NOT NULL
+          created_at  TEXT NOT NULL,
+          content_hash TEXT,
+          source_uri   TEXT,
+          display_name TEXT
         )
         """,
+        "CREATE INDEX IF NOT EXISTS videos_content_hash ON videos(content_hash)",
         """
         CREATE TABLE IF NOT EXISTS frames (
           id          INTEGER PRIMARY KEY,
@@ -139,6 +143,21 @@ object VideoSchema {
 
     /** Idempotent: safe to run on every open. */
     fun create(db: SupportSQLiteDatabase) {
+        addNewColumnsToOldDatabases(db)
         STATEMENTS.forEach { db.execSQL(it.trimIndent()) }
+    }
+
+    /**
+     * Databases made before a `videos` column existed get it added (last, in the CREATE TABLE's order), before any index on it is made.
+     * EYKO-71 content_hash: videos saved earlier keep a NULL hash, so they are never reported as duplicates.
+     * EYKO-126 source_uri, display_name: NULL for videos saved earlier, which keep reading their copy at file_path.
+     */
+    private fun addNewColumnsToOldDatabases(db: SupportSQLiteDatabase) {
+        val hasVideos = db.query("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'videos'").use { it.moveToFirst() }
+        if (!hasVideos) return
+        val columns = db.query("PRAGMA table_info(videos)").use { cursor -> buildSet { while (cursor.moveToNext()) add(cursor.getString(1)) } }
+        for (column in listOf("content_hash", "source_uri", "display_name")) {
+            if (column !in columns) db.execSQL("ALTER TABLE videos ADD COLUMN $column TEXT")
+        }
     }
 }

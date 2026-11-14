@@ -55,7 +55,8 @@ object VideoLink {
 
     fun run(db: SupportSQLiteDatabase, videoId: String) {
         val found = problems(db, videoId)
-        if (found.isNotEmpty()) throw IllegalStateException(found.joinToString("; "))
+        // The check never repairs anything, so running it again on the same rows finds the same problems.
+        if (found.isNotEmpty()) throw PermanentFailure(found.joinToString("; "))
         Log.i(TAG, "link $videoId: every row points at its video and moment")
     }
 

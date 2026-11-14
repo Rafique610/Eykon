@@ -1,0 +1,12 @@
+--------- beginning of main
+11-11 20:29:43.109 31542 31635 I EykonVideo: copy 6fd11548f3a8483f850dcbb3198ca97d: 186496596 bytes in 835 ms (hash 121 ms)
+11-11 20:30:15.889 31542 31635 I EykonVideo: split 6fd11548f3a8483f850dcbb3198ca97d: 224 frames in 26664 ms (one pass), audio 74.5 s in 6074 ms
+11-11 20:30:16.543 31542 31635 I EykonVideo: filter 6fd11548f3a8483f850dcbb3198ca97d: kept 25 of 224 (less sharp 199) in 647 ms
+11-11 20:30:18.997 31542 31635 I EykonVideo: dedup 6fd11548f3a8483f850dcbb3198ca97d: kept 10 of 25 (hash dropped 14, embedding dropped 1) in 2450 ms; embedded 11 frames, 211 ms each; memory java 78 MB, native 1079 MB
+11-11 20:30:23.832 31542 31635 I EykonVideo: scene 6fd11548f3a8483f850dcbb3198ca97d: 10 frames described by option A in 4830 ms, 483 ms each
+11-11 20:30:34.826 31542 31635 I EykonVideo: small_objects 6fd11548f3a8483f850dcbb3198ca97d: 10 frames looked at, 6 found, in 10986 ms
+11-11 20:30:34.872 31542 31635 I EykonVideo: embed_images 6fd11548f3a8483f850dcbb3198ca97d: 10 vectors stored (10 reused, 0 computed) in 0 ms
+11-11 20:30:34.954 31542 31635 I EykonVideo: embed_texts 6fd11548f3a8483f850dcbb3198ca97d: 10 texts (10 captions, 0 transcript chunks) in 81 ms
+11-11 20:30:34.954 31542 31635 I EykonVideo: link 6fd11548f3a8483f850dcbb3198ca97d: every row points at its video and moment
+11-11 20:30:56.044   612   665 I EykonVideo: latest 6fd11548f3a8483f850dcbb3198ca97d: 54 sightings (0 boxes too small) in 14484 ms
+11-11 20:30:56.065   612   665 I EykonVideo: finish 6fd11548f3a8483f850dcbb3198ca97d: ready; 214 dropped frame files deleted

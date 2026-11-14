@@ -28,7 +28,8 @@ class VideoWorker(
             jobs.done(job.id)
         } catch (e: Exception) {
             // Class and a short message only: never a stack trace in the database.
-            jobs.attemptFailed(job, "${e.javaClass.simpleName}: ${e.message.orEmpty().take(200)}".trimEnd(':', ' '), retries)
+            // A permanent failure uses up the attempts at once: one attempt is all it gets (EYKO-119).
+            jobs.attemptFailed(job, "${e.javaClass.simpleName}: ${e.message.orEmpty().take(200)}".trimEnd(':', ' '), if (e is PermanentFailure) 1 else retries)
         }
         return true
     }

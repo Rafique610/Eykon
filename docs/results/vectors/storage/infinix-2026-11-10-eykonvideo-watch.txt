@@ -1,0 +1,82 @@
+20:48:23 watching for 4 video(s); battery 83 %, 31.2 C
+20:50:24 check: []; battery 83 %, 30.7 C
+20:52:26 check: []; battery 84 %, 29.4 C
+20:54:27 check: []; battery 84 %, 29.1 C
+20:56:29 check: []; battery 84 %, 29.4 C
+20:58:31 check: [('3faaa67a', 'running', '')]; battery 85 %, 30.7 C
+21:00:33 check: [('3faaa67a', 'running', ''), ('afbe5eb5', 'queued', ''), ('cb1673c8', 'queued', ''), ('d2f3520b', 'queued', '')]; battery 85 %, 31.2 C
+   | 11-10 21:01:54.716 I/EykonVideo(31981): split 3faaa67a7e3e40119fb882334512bc55: 901 frames in 160553 ms (one pass), audio 300.0 s in 45072 ms
+21:01:55 video 3faaa67a: split done, 300.0 s long
+   | 11-10 21:01:59.675 I/EykonVideo(31981): filter 3faaa67a7e3e40119fb882334512bc55: kept 13 of 901 (less sharp 784, still 87, dark 17) in 4905 ms
+   | 11-10 21:02:02.485 I/EykonVideo(31981): dedup 3faaa67a7e3e40119fb882334512bc55: kept 2 of 13 (hash dropped 11, embedding dropped 0) in 2801 ms; embedded 2 frames, 1311 ms each; memory java 8 MB, native 330 MB
+   | 11-10 21:02:06.478 I/EykonVideo(31981): scene 3faaa67a7e3e40119fb882334512bc55: 2 frames described by option A in 3984 ms, 1992 ms each
+   | 11-10 21:02:06.583 I/EykonVideo(31981): small_objects 3faaa67a7e3e40119fb882334512bc55: 2 frames looked at, 0 found, in 0 ms
+   | 11-10 21:02:06.590 I/EykonVideo(31981): embed_images 3faaa67a7e3e40119fb882334512bc55: 2 vectors stored (2 reused, 0 computed) in 4 ms
+   | 11-10 21:02:07.452 I/EykonVideo(31981): embed_texts 3faaa67a7e3e40119fb882334512bc55: 2 texts (2 captions, 0 transcript chunks) in 860 ms
+   | 11-10 21:02:07.456 I/EykonVideo(31981): link 3faaa67a7e3e40119fb882334512bc55: every row points at its video and moment
+   | 11-10 21:02:11.596 I/EykonVideo(31981): latest 3faaa67a7e3e40119fb882334512bc55: 5 sightings (0 boxes too small) in 4139 ms
+   | 11-10 21:02:11.671 I/EykonVideo(31981): finish 3faaa67a7e3e40119fb882334512bc55: ready; 899 dropped frame files deleted
+21:02:12 video 3faaa67a ready (1 of 4); total finished 5.0 min: taking the storage reading
+21:02:14 reading: {'time': '2026-11-10T21:02:14', 'label': 'after video 1 (300 s)', 'video_minutes_total': 5.0, 'database_bytes': 706944, 'vector_files_bytes': 0, 'video_copies_kb': 660656, 'frame_files_kb': 248, 'videos_folder_kb': 670205, 'other_in_videos_kb': 9301, 'app_data_total_kb': 721366}
+21:02:34 check: [('3faaa67a', 'done', 'finish'), ('afbe5eb5', 'running', ''), ('cb1673c8', 'queued', ''), ('d2f3520b', 'queued', '')]; battery 85 %, 31.2 C
+21:04:36 check: [('3faaa67a', 'done', 'finish'), ('afbe5eb5', 'running', ''), ('cb1673c8', 'queued', ''), ('d2f3520b', 'queued', '')]; battery 85 %, 31.3 C
+21:06:38 check: [('3faaa67a', 'done', 'finish'), ('afbe5eb5', 'running', ''), ('cb1673c8', 'queued', ''), ('d2f3520b', 'queued', '')]; battery 85 %, 31.4 C
+21:08:40 check: [('3faaa67a', 'done', 'finish'), ('afbe5eb5', 'running', ''), ('cb1673c8', 'queued', ''), ('d2f3520b', 'queued', '')]; battery 85 %, 31.4 C
+   | 11-10 21:09:28.306 I/EykonVideo(31981): split afbe5eb54f254d30847564d7684ed338: 1803 frames in 335476 ms (one pass), audio 600.9 s in 100956 ms
+21:09:29 video afbe5eb5: split done, 600.9 s long
+   | 11-10 21:09:37.651 I/EykonVideo(31981): filter afbe5eb54f254d30847564d7684ed338: kept 16 of 1803 (less sharp 1602, still 185) in 9268 ms
+   | 11-10 21:09:41.050 I/EykonVideo(31981): dedup afbe5eb54f254d30847564d7684ed338: kept 4 of 16 (hash dropped 12, embedding dropped 0) in 3393 ms; embedded 4 frames, 817 ms each; memory java 12 MB, native 954 MB
+   | 11-10 21:09:46.891 I/EykonVideo(31981): scene afbe5eb54f254d30847564d7684ed338: 4 frames described by option A in 5834 ms, 1458 ms each
+   | 11-10 21:09:46.899 I/EykonVideo(31981): small_objects afbe5eb54f254d30847564d7684ed338: 4 frames looked at, 0 found, in 1 ms
+   | 11-10 21:09:46.903 I/EykonVideo(31981): embed_images afbe5eb54f254d30847564d7684ed338: 4 vectors stored (4 reused, 0 computed) in 2 ms
+   | 11-10 21:09:46.974 I/EykonVideo(31981): embed_texts afbe5eb54f254d30847564d7684ed338: 4 texts (4 captions, 0 transcript chunks) in 69 ms
+   | 11-10 21:09:46.979 I/EykonVideo(31981): link afbe5eb54f254d30847564d7684ed338: every row points at its video and moment
+   | 11-10 21:09:58.309 I/EykonVideo(31981): latest afbe5eb54f254d30847564d7684ed338: 14 sightings (0 boxes too small) in 11328 ms
+   | 11-10 21:09:58.452 I/EykonVideo(31981): finish afbe5eb54f254d30847564d7684ed338: ready; 1799 dropped frame files deleted
+21:09:59 video afbe5eb5 ready (2 of 4); total finished 15.0 min: taking the storage reading
+21:10:01 reading: {'time': '2026-11-10T21:10:01', 'label': 'after video 2 (601 s)', 'video_minutes_total': 15.01, 'database_bytes': 1096208, 'vector_files_bytes': 0, 'video_copies_kb': 660656, 'frame_files_kb': 952, 'videos_folder_kb': 689441, 'other_in_videos_kb': 27833, 'app_data_total_kb': 741262}
+21:10:42 check: [('3faaa67a', 'done', 'finish'), ('afbe5eb5', 'done', 'finish'), ('cb1673c8', 'running', ''), ('d2f3520b', 'queued', '')]; battery 85 %, 31.8 C
+21:12:43 check: [('3faaa67a', 'done', 'finish'), ('afbe5eb5', 'done', 'finish'), ('cb1673c8', 'running', ''), ('d2f3520b', 'queued', '')]; battery 86 %, 31.6 C
+21:14:45 check: [('3faaa67a', 'done', 'finish'), ('afbe5eb5', 'done', 'finish'), ('cb1673c8', 'running', ''), ('d2f3520b', 'queued', '')]; battery 86 %, 31.7 C
+21:16:47 check: [('3faaa67a', 'done', 'finish'), ('afbe5eb5', 'done', 'finish'), ('cb1673c8', 'running', ''), ('d2f3520b', 'queued', '')]; battery 86 %, 31.7 C
+21:18:49 check: [('3faaa67a', 'done', 'finish'), ('afbe5eb5', 'done', 'finish'), ('cb1673c8', 'running', ''), ('d2f3520b', 'queued', '')]; battery 86 %, 31.8 C
+   | 11-10 21:20:49.397 I/EykonVideo(31981): split cb1673c8c5c642d0ac4a207ea75db895: 2703 frames in 500012 ms (one pass), audio 900.9 s in 150643 ms
+21:20:50 video cb1673c8: split done, 900.9 s long
+21:20:51 check: [('3faaa67a', 'done', 'finish'), ('afbe5eb5', 'done', 'finish'), ('cb1673c8', 'running', 'split'), ('d2f3520b', 'queued', '')]; battery 86 %, 31.4 C
+   | 11-10 21:21:03.709 I/EykonVideo(31981): filter cb1673c8c5c642d0ac4a207ea75db895: kept 14 of 2703 (less sharp 2402, still 287) in 14206 ms
+   | 11-10 21:21:08.659 I/EykonVideo(31981): dedup cb1673c8c5c642d0ac4a207ea75db895: kept 6 of 14 (hash dropped 8, embedding dropped 0) in 4941 ms; embedded 6 frames, 805 ms each; memory java 10 MB, native 933 MB
+   | 11-10 21:21:17.508 I/EykonVideo(31981): scene cb1673c8c5c642d0ac4a207ea75db895: 6 frames described by option A in 8840 ms, 1473 ms each
+   | 11-10 21:21:17.518 I/EykonVideo(31981): small_objects cb1673c8c5c642d0ac4a207ea75db895: 6 frames looked at, 0 found, in 2 ms
+   | 11-10 21:21:17.525 I/EykonVideo(31981): embed_images cb1673c8c5c642d0ac4a207ea75db895: 6 vectors stored (6 reused, 0 computed) in 3 ms
+   | 11-10 21:21:17.633 I/EykonVideo(31981): embed_texts cb1673c8c5c642d0ac4a207ea75db895: 6 texts (6 captions, 0 transcript chunks) in 106 ms
+   | 11-10 21:21:17.638 I/EykonVideo(31981): link cb1673c8c5c642d0ac4a207ea75db895: every row points at its video and moment
+   | 11-10 21:21:25.782 I/EykonVideo(31981): latest cb1673c8c5c642d0ac4a207ea75db895: 10 sightings (0 boxes too small) in 8143 ms
+   | 11-10 21:21:25.999 I/EykonVideo(31981): finish cb1673c8c5c642d0ac4a207ea75db895: ready; 2697 dropped frame files deleted
+21:21:26 video cb1673c8 ready (3 of 4); total finished 30.0 min: taking the storage reading
+21:21:28 reading: {'time': '2026-11-10T21:21:28', 'label': 'after video 3 (901 s)', 'video_minutes_total': 30.03, 'database_bytes': 1703936, 'vector_files_bytes': 0, 'video_copies_kb': 660656, 'frame_files_kb': 816, 'videos_folder_kb': 717641, 'other_in_videos_kb': 56169, 'app_data_total_kb': 769790}
+21:22:53 check: [('3faaa67a', 'done', 'finish'), ('afbe5eb5', 'done', 'finish'), ('cb1673c8', 'done', 'finish'), ('d2f3520b', 'running', '')]; battery 86 %, 31.9 C
+21:24:54 check: [('3faaa67a', 'done', 'finish'), ('afbe5eb5', 'done', 'finish'), ('cb1673c8', 'done', 'finish'), ('d2f3520b', 'running', '')]; battery 87 %, 32.0 C
+21:26:56 check: [('3faaa67a', 'done', 'finish'), ('afbe5eb5', 'done', 'finish'), ('cb1673c8', 'done', 'finish'), ('d2f3520b', 'running', '')]; battery 87 %, 31.9 C
+21:28:58 check: [('3faaa67a', 'done', 'finish'), ('afbe5eb5', 'done', 'finish'), ('cb1673c8', 'done', 'finish'), ('d2f3520b', 'running', '')]; battery 87 %, 31.7 C
+21:31:00 check: [('3faaa67a', 'done', 'finish'), ('afbe5eb5', 'done', 'finish'), ('cb1673c8', 'done', 'finish'), ('d2f3520b', 'running', '')]; battery 87 %, 31.8 C
+21:33:02 check: [('3faaa67a', 'done', 'finish'), ('afbe5eb5', 'done', 'finish'), ('cb1673c8', 'done', 'finish'), ('d2f3520b', 'running', '')]; battery 87 %, 31.8 C
+21:35:04 check: [('3faaa67a', 'done', 'finish'), ('afbe5eb5', 'done', 'finish'), ('cb1673c8', 'done', 'finish'), ('d2f3520b', 'running', '')]; battery 88 %, 31.7 C
+21:37:06 check: [('3faaa67a', 'done', 'finish'), ('afbe5eb5', 'done', 'finish'), ('cb1673c8', 'done', 'finish'), ('d2f3520b', 'running', '')]; battery 88 %, 31.6 C
+21:39:07 check: [('3faaa67a', 'done', 'finish'), ('afbe5eb5', 'done', 'finish'), ('cb1673c8', 'done', 'finish'), ('d2f3520b', 'running', '')]; battery 88 %, 31.6 C
+21:41:09 check: [('3faaa67a', 'done', 'finish'), ('afbe5eb5', 'done', 'finish'), ('cb1673c8', 'done', 'finish'), ('d2f3520b', 'running', '')]; battery 88 %, 31.4 C
+21:43:11 check: [('3faaa67a', 'done', 'finish'), ('afbe5eb5', 'done', 'finish'), ('cb1673c8', 'done', 'finish'), ('d2f3520b', 'running', '')]; battery 89 %, 31.0 C
+   | 11-10 21:43:23.921 I/EykonVideo(31981): split d2f3520b07d649269a52081c1688a964: 5413 frames in 1036181 ms (one pass), audio 1804.1 s in 280771 ms
+21:43:24 video d2f3520b: split done, 1804.1 s long
+   | 11-10 21:44:56.434 I/EykonVideo(31981): filter d2f3520b07d649269a52081c1688a964: kept 16 of 5413 (less sharp 4811, still 586) in 92065 ms
+21:45:13 check: [('3faaa67a', 'done', 'finish'), ('afbe5eb5', 'done', 'finish'), ('cb1673c8', 'done', 'finish'), ('d2f3520b', 'running', 'filter')]; battery 89 %, 31.0 C
+   | 11-10 21:45:14.445 I/EykonVideo(31981): dedup d2f3520b07d649269a52081c1688a964: kept 9 of 16 (hash dropped 7, embedding dropped 0) in 17984 ms; embedded 9 frames, 1958 ms each; memory java 10 MB, native 890 MB
+   | 11-10 21:45:48.233 I/EykonVideo(31981): scene d2f3520b07d649269a52081c1688a964: 9 frames described by option A in 33750 ms, 3750 ms each
+   | 11-10 21:45:48.282 I/EykonVideo(31981): small_objects d2f3520b07d649269a52081c1688a964: 9 frames looked at, 0 found, in 12 ms
+   | 11-10 21:45:48.310 I/EykonVideo(31981): embed_images d2f3520b07d649269a52081c1688a964: 9 vectors stored (9 reused, 0 computed) in 14 ms
+   | 11-10 21:45:48.753 I/EykonVideo(31981): embed_texts d2f3520b07d649269a52081c1688a964: 9 texts (9 captions, 0 transcript chunks) in 434 ms
+   | 11-10 21:45:48.783 I/EykonVideo(31981): link d2f3520b07d649269a52081c1688a964: every row points at its video and moment
+   | 11-10 21:46:26.665 I/EykonVideo(31981): latest d2f3520b07d649269a52081c1688a964: 19 sightings (2 boxes too small) in 37880 ms
+   | 11-10 21:46:27.907 I/EykonVideo(31981): finish d2f3520b07d649269a52081c1688a964: ready; 5404 dropped frame files deleted
+21:46:28 video d2f3520b ready (4 of 4); total finished 60.1 min: taking the storage reading
+21:46:30 reading: {'time': '2026-11-10T21:46:30', 'label': 'after video 4 (1804 s)', 'video_minutes_total': 60.1, 'database_bytes': 2727936, 'vector_files_bytes': 0, 'video_copies_kb': 660656, 'frame_files_kb': 936, 'videos_folder_kb': 774478, 'other_in_videos_kb': 112886, 'app_data_total_kb': 827331}
+21:46:30 ALL DONE
