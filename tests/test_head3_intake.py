@@ -149,3 +149,10 @@ def test_a_stage_that_ran_twice_is_marked_and_kept_out_of_the_chart(tmp_path):
     used = h.chart_rows(tmp_path / "out" / "stage_times.csv", None)
     assert len([r for r in used if r["stage"] == "latest"]) == 1  # only the first latest reaches the chart
     assert all(r["rerun"] != "1" for r in used)
+
+def test_chart_rows_can_be_limited_to_some_runs(tmp_path):
+    rows = ["scenario,run,stage,ms,rerun", "S1,1,latest,40000,", "S1,2,latest,42000,", "S1,4,latest,110000,", "S2,1,latest,81000,"]
+    path = tmp_path / "stage_times.csv"
+    path.write_text(chr(10).join(rows) + chr(10), encoding="utf-8")
+    assert [r["ms"] for r in h.chart_rows(path, "S1", ["1", "2"])] == ["40000", "42000"]  # one clip's runs, not mixed with the other clip
+    assert len(h.chart_rows(path, "S1")) == 3 and len(h.chart_rows(path, None)) == 4

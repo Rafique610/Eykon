@@ -1,0 +1,57 @@
+﻿model: Infinix X670
+manufacturer: INFINIX
+soc: MT6781V/CDZAMB-H
+android: 13
+commit (repo HEAD or -Commit; the installed APK may differ, check KIT-VERSION.txt): 5a192c7
+app version: versionName=1.0; lastUpdateTime=2026-11-12 12:44:25
+--- dumpsys battery
+Current Battery Service state:
+  AC powered: false
+  USB powered: true
+  Wireless powered: false
+  Max charging current: 500000
+  Max charging voltage: 5000000
+  Charge counter: 1531920
+  status: 2
+  health: 2
+  present: true
+  level: 52
+  scale: 100
+  voltage: 3852
+  temperature: 379
+  technology: Li-ion
+--- thermalservice (first lines; empty on phones without it)
+IsStatusOverride: false
+ThermalEventListeners:
+	callbacks: 2
+	killed: false
+	broadcasts count: -1
+ThermalStatusListeners:
+	callbacks: 7
+	killed: false
+	broadcasts count: -1
+Thermal Status: 0
+Cached temperatures:
+	Temperature{mValue=52.071, mType=0, mName=CPU, mStatus=0}
+	Temperature{mValue=52.071, mType=1, mName=GPU, mStatus=0}
+	Temperature{mValue=52.071, mType=9, mName=NPU, mStatus=0}
+	Temperature{mValue=30.147, mType=3, mName=SKIN, mStatus=0}
+	Temperature{mValue=27.4, mType=2, mName=BATTERY, mStatus=0}
+	Temperature{mValue=29.726, mType=5, mName=POWER_AMPLIFIER, mStatus=0}
+HAL Ready: true
+HAL connection:
+	ThermalHAL 2.0 connected: yes
+Current temperatures from HAL:
+	Temperature{mValue=44.264, mType=0, mName=CPU, mStatus=0}
+	Temperature{mValue=44.264, mType=1, mName=GPU, mStatus=0}
+	Temperature{mValue=37.75, mType=2, mName=BATTERY, mStatus=0}
+	Temperature{mValue=42.072, mType=3, mName=SKIN, mStatus=0}
+--- df -h /data
+Filesystem       Size Used Avail Use% Mounted on
+/dev/block/dm-42 110G  61G   48G  56% /storage/emulated/0/Android/obb
+--- MemTotal / MemAvailable
+
+MemTotal:        7931676 kB
+MemAvailable:    2960396 kB
+
+

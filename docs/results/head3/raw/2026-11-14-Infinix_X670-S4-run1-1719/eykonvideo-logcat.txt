@@ -1,0 +1,2 @@
+﻿--------- beginning of main
+11-14 17:19:54.956 I/EykonVideo(32720): finish 1a02b0c9eb74448da8bf08cdcd5f7e54: ready; 0 dropped frame files deleted
