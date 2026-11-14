@@ -207,12 +207,22 @@ def main():
                 vecs.append(torch.nn.functional.normalize(model.encode_image(torch.stack(batch)), dim=-1).numpy())
             batch.clear()
 
-        remote = RemoteFile(url, size, workers=a.connections, ahead=2 * a.connections)
+        remote, skipped = RemoteFile(url, size, workers=a.connections, ahead=2 * a.connections), []
+
+        def decoded(box, stream):
+            """Frames in time order, skipping a damaged packet as ffmpeg does (P30_05 has one) instead of stopping."""
+            for packet in box.demux(stream):
+                try:
+                    frames = packet.decode()
+                except av.error.InvalidDataError:
+                    skipped.append(packet.pts)
+                    continue
+                yield from ((float(f.pts * stream.time_base), f) for f in frames if f.pts is not None)
+
         with av.open(remote) as box:
             stream = box.streams.video[0]
             stream.thread_type = "AUTO"
-            decoded = ((float(f.pts * stream.time_base), f) for f in box.decode(stream) if f.pts is not None)
-            for t, frame in pick(decoded):
+            for t, frame in pick(decoded(box, stream)):
                 batch.append(preprocess(frame.to_image()))
                 times.append(t)
                 if len(batch) == a.batch:
@@ -230,7 +240,7 @@ def main():
         total += len(times)
         took = time.perf_counter() - began
         print(f"  {len(times)} frames in {took / 60:.0f} min ({size / took / 1e6:.2f} MB/s), {total} rows in all, "
-              f"{(time.perf_counter() - start) / 3600:.1f} h so far", flush=True)
+              f"{(time.perf_counter() - start) / 3600:.1f} h so far, {len(skipped)} damaged packets skipped", flush=True)
     print(f"written: {vec_path} ({total} x {DIM}), {queries_path} ({QUERIES} x {DIM})")
 
 
