@@ -212,14 +212,20 @@ def graph_time(rows):
 # ---------------------------------------------------------------- graph 2
 def graph_memory(rows):
     """PSS against size: one table (the speed sweeps), three tables (the old Java array, which runs out), and the app now."""
-    devs = [d for d in DEVICES if any(r["dev"] == d and r["dev"] != "laptop" for r in rows)]
-    fig, panels = plt.subplots(1, len(devs), figsize=(5.0 * len(devs), 4.4), sharey=True)
+    devs = [d for d in DEVICES if any(r["dev"] == d for r in rows)]
+    fig, panels = plt.subplots(1, len(devs), figsize=(4.6 * len(devs), 4.4), sharey=True)
     for ax, dev in zip(panels, devs):
         label, colour, marker = style(dev)
-        one, _ = series(rows, dev, "blob_memory_fast", "pss_mb")
+        laptop = dev == "laptop"
+        one, _ = series(rows, dev, SAME_TEST["laptop" if laptop else "phone"][0], "pss_mb")
         if one:
             ax.plot(list(one), [v[0] for v in one.values()], color=colour, marker=marker, linewidth=1.8, markersize=5,
-                    linestyle=(0, (1, 2)), label="1 table in a Java array (speed sweep)")
+                    linestyle=(0, (1, 2)), label="1 table in a numpy array (speed sweep)" if laptop
+                    else "1 table in a Java array (speed sweep)")
+            if laptop:
+                n, v = list(one.items())[-1]
+                ax.annotate(f"{v[0]:.0f} MB at {n // 1000}k\n(no 3-table test, no Java heap)", (n, v[0]), xytext=(-6, -4),
+                            textcoords="offset points", ha="right", va="top", fontsize=6.5, color=INK)
         three = sorted((int(r["n"]), num(r["pss_mb"]), note(r).get("tables_loaded", "")) for r in rows
                        if r["dev"] == dev and r["method"] == "memory_all_tables" and num(r["pss_mb"]) is not None)
         if three:
@@ -237,14 +243,15 @@ def graph_memory(rows):
             for n, p, heap in mapped:
                 ax.annotate(f"Java heap {heap:.0f} MB", (n, p), xytext=(-4, 6), textcoords="offset points", ha="right",
                             fontsize=6.5, color=INK)
-        ax.axhline(HEAP_LIMIT_MB, color=MUTED, linewidth=0.8, linestyle=(0, (4, 3)))
-        ax.annotate(f"Java heap limit {HEAP_LIMIT_MB} MB (not a PSS limit)", (1_000, HEAP_LIMIT_MB), xytext=(2, 3),
-                    textcoords="offset points", fontsize=6.5, color=MUTED)
+        if not laptop:
+            ax.axhline(HEAP_LIMIT_MB, color=MUTED, linewidth=0.8, linestyle=(0, (4, 3)))
+            ax.annotate(f"Java heap limit {HEAP_LIMIT_MB} MB (not a PSS limit)", (1_000, HEAP_LIMIT_MB), xytext=(2, 3),
+                        textcoords="offset points", fontsize=6.5, color=MUTED)
         frame(ax, ylabel="Process memory, PSS (MB)" if ax is panels[0] else "")
-        ax.set_xlim(700, 150_000)
+        ax.set_xlim(700, 400_000 if laptop else 150_000)
         ax.set_title(label, color=colour, fontsize=10, loc="left", fontweight="bold")
         ax.legend(frameon=False, fontsize=6.5, loc="upper left")
-    save(fig, "2-memory-vs-size", "2 · Memory (PSS) against table size: 1 table, 3 tables, and the app's mapped setup",
+    save(fig, "2-memory-vs-size", "2 · Memory (PSS) against table size: 1 table, 3 tables, and the app's mapped setup, laptop and phones",
          "No run held exactly 2 tables: the 3-table test records how many fit before the Java array ran out of memory. "
          "The mapped setup's pages count in PSS but not in the Java heap.")
 
@@ -402,10 +409,16 @@ def graph_capacity(rows):
         for r in sel:
             by[int(r["n"])].append(num(r["median_ms"]))
         if by:
-            runs.append((dev, {n: (statistics.median(v), 0) for n, v in sorted(by.items())}, sel[0]["file"]))
+            runs.append((dev, {n: (statistics.median(v), 0) for n, v in sorted(by.items())}, sel[0]["file"], False))
+    for dev in [d for d in DEVICES if d != "laptop" and d not in CAPACITY_RUNS]:
+        pts, name = series(rows, dev, "blob_memory_fast")  # stand-in: never timed the app's current search
+        pts = {n: v for n, v in pts.items() if 20_000 <= n <= 100_000}
+        if len(pts) >= 2:
+            runs.append((dev, pts, name, True))
+    runs.sort(key=lambda r: list(DEVICES).index(r[0]) if r[0] in DEVICES else 9)
     fig, panels = plt.subplots(1, len(runs), figsize=(5.4 * len(runs), 4.4), sharey=True)
     panels = panels if len(runs) > 1 else [panels]
-    for ax, (dev, pts, file) in zip(panels, runs):
+    for ax, (dev, pts, file, standin) in zip(panels, runs):
         label, colour, marker = style(dev)
         a, b = fit(pts)
         for budget in BUDGETS_MS:
@@ -413,7 +426,7 @@ def graph_capacity(rows):
             where = "measured range" if n_at <= max(pts) else "extrapolated" if n_at <= 300_000 else "past the tests and the 300k trigger"
             ax.plot(hours, [n_at / (h * KEPT_PER_HOUR) for h in hours], color=colour, linestyle=styles[budget], linewidth=2,
                     marker=marker, markersize=4, label=f"{budget} ms (assumed): {n_at / 1000:,.0f}k rows, {where}")
-            print(f"graph 7: {dev} {budget} ms -> {n_at:,.0f} rows; days at 1 h a day {n_at / KEPT_PER_HOUR:,.0f}")
+            print(f"graph 7: {dev}{' (stand-in)' if standin else ''} {budget} ms -> {n_at:,.0f} rows; days at 1 h a day {n_at / KEPT_PER_HOUR:,.0f}")
         ax.axhline(365, color=GRID, linewidth=1.2)
         ax.annotate("1 year", (hours[0], 365), xytext=(2, -9), textcoords="offset points", fontsize=7, color=MUTED)
         ax.set_xscale("log")
@@ -422,11 +435,13 @@ def graph_capacity(rows):
               logx=False)
         ax.set_xticks(hours, ["15 min", "30 min", "1 h", "2 h", "4 h"])
         ax.minorticks_off()
-        ax.set_title(f"{label}, {condition_of(file)}: {b * 1000:.2f} ms more per 1,000 rows", color=colour, fontsize=8.5, loc="left")
+        how = "STAND-IN: the exact fast loop, not the app's search" if standin else condition_of(file)
+        ax.set_title(f"{label}, {how}\n{b * 1000:.2f} ms more per 1,000 rows", color=colour, fontsize=8.5, loc="left")
         ax.legend(frameon=False, fontsize=6.5, loc="lower left")
     save(fig, "7-capacity", "7 · Days of recording before one vector search passes 100, 200 or 500 ms",
-         "The app's search (MAPPED_NATIVE) measured at 20k-100k; a straight line through it; 13.4 kept frames a minute "
-         "(Head 8). Budgets and hours a day are assumptions (EYKO-101).")
+         "The app's search (MAPPED_NATIVE) measured at 20k-100k, a straight line through it, 13.4 kept frames a minute "
+         "(Head 8). The Infinix never timed the app's search: its exact fast loop stands in (on the A32 the two are within 7 %). "
+         "Budgets and hours a day are assumptions (EYKO-101).")
 
 
 def main():

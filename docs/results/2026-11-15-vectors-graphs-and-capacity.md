@@ -45,8 +45,9 @@ float16. **Does not show:** one chart per method across devices; that is graph 4
 
 **2 · Memory (PSS).** With Java arrays, three tables fit at 20k rows on all three phones; at 50k only 2 of 3 and at 100k only 1 of 3
 loaded before the 268 MB Java heap ran out. The app's mapped setup (A32) loads all three at 100k with 3–5 MB of Java heap; its PSS is
-higher (594 MB at 100k) because the mapped pages count there, and Android can drop them. **Does not show:** exactly two tables (never
-measured on its own) or the mapped setup on the Pixel or the Infinix (no memory run).
+higher (594 MB at 100k) because the mapped pages count there, and Android can drop them. The laptop (one table in numpy, no Java heap
+limit) holds 227 MB at 100k and 634 MB at 300k. **Does not show:** exactly two tables (never measured on its own; the 1- and 3-table runs
+already show where memory runs out), a 3-table test on the laptop, or the mapped setup on the Pixel or the Infinix (no memory run).
 
 ![Graph 3: database file size](vectors/plots/3-file-size-vs-size.png)
 
@@ -74,7 +75,8 @@ search: 14–15 ms at low battery, power saver on or off. **Does not show:** a c
 
 ![Graph 7: days until one search passes a budget](vectors/plots/7-capacity.png)
 
-**7 · Capacity.** See "The capacity model" below.
+**7 · Capacity.** A32, Pixel and Infinix. The Infinix never timed the app's current search, so its exact fast loop stands in, labelled
+so on the graph (on the A32 the two are within 7 %: 19.9 against 21.2 ms at 20k). See "The capacity model" below.
 
 ## Head 2 figures (in `docs/documents/source/figures/`, `task head2-figures`)
 
@@ -117,8 +119,8 @@ on the A32 (hot, on battery: the worst measured case) and the Pixel (26 % batter
 |---|---|---|
 | Kept frames per hour of video | **804** (13.4 a minute) | Ego4D Pixel run: 372 kept in 27.8 min (Head 8). Newer kit-clip runs kept fewer, 483–768 an hour (EYKO-116 Part 3), so 804 is the cautious end |
 | Vectors searched per kept frame | **1** (the image table) | The app's search scores only `image_vec` (`VideoSearch.kt`, `VideoVectors.scores(db, "image_vec", …)`) |
-| Search time against rows | a straight line through the medians at 20k, 50k and 100k | `MAPPED_NATIVE`, the app's search: A32 hot2 21.2 / 51.9 / 112.1 ms; Pixel saver-off 3.2 / 8.1 / 13.8 ms (EYKO-111) |
-| Fitted line | A32: −3.1 ms + **1.14 ms per 1,000 rows**; Pixel: 1.0 ms + **0.13 ms per 1,000 rows** | least squares, in the script |
+| Search time against rows | a straight line through the medians at 20k, 50k and 100k | `MAPPED_NATIVE`, the app's search: A32 hot2 21.2 / 51.9 / 112.1 ms; Pixel saver-off 3.2 / 8.1 / 13.8 ms (EYKO-111). **Infinix, stand-in:** its exact fast loop, cool run, 13.9 / 34.4 / 69.1 ms (EYKO-95), because it never timed `MAPPED_NATIVE` |
+| Fitted line | A32: −3.1 ms + **1.14 ms per 1,000 rows**; Pixel: 1.0 ms + **0.13 ms per 1,000 rows**; Infinix (stand-in): **0.69 ms per 1,000 rows** | least squares, in the script |
 | Budgets | 100, 200, 500 ms | **assumptions** (EYKO-101 is to source one) |
 
 **Formula:** rows at a budget = (budget − a) ÷ b; days = rows ÷ (hours a day × 804).
@@ -133,11 +135,15 @@ on the A32 (hot, on battery: the worst measured case) and the Pixel (26 % batter
 | Pixel (26 % battery) | 100 ms | 763k | 1,898 | 949 | 475 | far past the tests and the 300k trigger |
 | Pixel | 200 ms | 1,534k | 3,816 | 1,908 | 954 | same |
 | Pixel | 500 ms | 3,846k | 9,568 | 4,784 | 2,392 | same |
+| Infinix (stand-in: fast loop, cool run) | 100 ms | 145k | 360 | 180 | 90 | extrapolated past 100k |
+| Infinix (stand-in) | 200 ms | 290k | 721 | 361 | 180 | extrapolated, just under the 300k trigger |
+| Infinix (stand-in) | 500 ms | 725k | 1,803 | 901 | 451 | far past the tests and the 300k trigger |
 
 **Reading:** on the cheap phone, a user recording an hour a day reaches 100 ms after about **4 months** and 200 ms after about
 **7 months**. On the Pixel the search stays under 100 ms for years, so the limit there is not search time: ADR 0001 reopens at 300k
 rows (trigger 3), which one hour a day reaches after about **a year** (300,000 ÷ 804 = 373 days), and the background-kill limit on the
-Infinix (between 30k and 40k rows × 3 tables, EYKO-116) comes far earlier.
+Infinix (between 30k and 40k rows × 3 tables, EYKO-116) comes far earlier. The Infinix sits between the two: 100 ms after about
+**6 months** and 200 ms after about **a year** at an hour a day, estimated from its fast loop, not from the app's search.
 
 ## How these numbers could lie
 
