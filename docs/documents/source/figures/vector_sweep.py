@@ -13,7 +13,7 @@ newest file wins and the older ones are printed as superseded.
 EYKO-97 adds four more (file size, the laptop against three phones, storage per hour, and the capacity model);
 see docs/results/2026-11-15-vectors-graphs-and-capacity.md.
 
-Run from the repo root:  uv run docs/documents/source/figures/vector_sweep.py   (or: task vectors-plots)
+Run from the repo root:  uv run docs/documents/source/figures/vector_sweep.py   (or: task head2-figures)
 """
 import csv
 import statistics

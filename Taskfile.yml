@@ -203,7 +203,11 @@ tasks:
     cmd: uv run --with sqlite-vec python src/benchmarks/vector_storage_spike.py
 
   vectors-plots:
-    desc: "EYKO-97 — redraw every Head 2 vector graph (Rafique's seven + file size, laptop vs three phones, storage per hour, capacity) from the CSVs in docs/results/vectors/ into docs/documents/source/figures/"
+    desc: "EYKO-97 — the seven vector graphs from every CSV in docs/results/vectors/ (PNG + SVG into docs/results/vectors/plots/; own small env, never the full project)"
+    cmd: uv run --no-project --python 3.10 --with matplotlib==3.10.9 python -I src/benchmarks/plot_vector_storage.py
+
+  head2-figures:
+    desc: "Redraw the Head 2 document's figures (Rafique's seven + EYKO-97's four) into docs/documents/source/figures/"
     cmd: uv run docs/documents/source/figures/vector_sweep.py
 
   vectors-laptop-v2:

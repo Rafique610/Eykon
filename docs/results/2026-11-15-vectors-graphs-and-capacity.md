@@ -4,27 +4,79 @@
 EYKO-116 / 126 (storage) · **Supervisor questions:** B2 ("when does a real user hit the limit?"), B4, B7, C2, and "show me graphs,
 especially for mobile"
 
-## Scope (lead's decision, 15 Nov)
+## Scope
 
-The card (written 3 Nov) asked for seven graphs and a capacity model with a 200 ms line. Since then Head 2 got seven figures from
-Rafique (`docs/documents/source/figures/vector_sweep.py`), and the 200 ms target was dropped on 8 Nov because it has no source
-(EYKO-101). So this card:
+The card (written 3 Nov) asks for a script, `src/benchmarks/plot_vector_storage.py` (`task vectors-plots`), that reads every
+CSV in `docs/results/vectors/` and writes the seven graphs as PNG + SVG to `docs/results/vectors/plots/`, redrawing everything
+after new data. Two changes, decided by the lead on 15 Nov:
 
-1. **keeps Rafique's seven figures** and adds only the graphs Head 2 did not have, **in the same script**, so one command redraws
-   everything: `task vectors-plots` (`uv run docs/documents/source/figures/vector_sweep.py`);
-2. draws the capacity model against **three budgets, 100, 200 and 500 ms, each marked as an assumption**. EYKO-101 picks the sourced one.
+1. **No 200 ms pass line.** The target was dropped on 8 Nov (no source, EYKO-101). Graphs 1 and 7 mark **100, 200 and 500 ms as
+   labelled assumptions** instead.
+2. **Rafique's Head 2 figures stay as they are** (`docs/documents/source/figures/vector_sweep.py`, now `task head2-figures`). This card
+   added four figures to it for the Head 2 document (file size, devices, storage per hour, capacity; section "Head 2 figures" below).
 
-| Card graph | Where it is now |
-|---|---|
-| 1 Search time vs vector count | Rafique's Figures 2–3 (`head2-vector-memory-speed`, `-fast-loop`) and 7 (`-conditions`) |
-| 2 Memory vs vector count | Rafique's Figures 4–6 (`-heap`, `-all-tables`, `-variants`) |
-| 3 Database file size | **new: `head2-vector-file-size.png`** |
-| 4 Laptop vs the phones, same test | **new: `head2-vector-devices.png`** |
-| 5 Storage per hour of video | **new: `head2-storage-per-hour.png`** |
-| 6 Heat and battery | Rafique's Figure 7 (`-conditions`) |
-| 7 Days until too slow | **new: `head2-capacity.png`** |
+A first version of this card (PR #20, e08611f) only added those four to Rafique's script. Checked against the card, that missed the
+script, the SVGs, the p95 bars, the main graph and the heat graph; this version does all seven.
 
-## The four new graphs
+## The seven graphs (`task vectors-plots`)
+
+**How the script reads the data.** Every `*.csv` under `docs/results/vectors/` (63 files today). Files in the shared format feed graphs
+1–4 and 6–7, the storage logs feed graph 5, and anything else is printed as skipped (today: `crash/infinix-2026-11-10-link-check.csv`).
+The device comes from the `device` column, so a new phone shows up as its own panel or bar. Per device and method, the script uses
+one **run**: the one with real vectors, then the most sizes, then the newest date. Files that differ only in a trailing timestamp count
+as one run, because some phone tests write one file per size. Points are the median over runs of each run's median; bars go up to the
+median p95. Colour follows the device (A32 blue, Pixel orange, Infinix green, laptop violet), as in the Head 2 figures. Where one
+graph needs many methods, each device gets its own panel and colours name the methods within it.
+
+**What still needs names.** The CSV columns do not say whether a run was cool, hot or on low battery, nor which version of the code it
+timed. Graph 6 takes the condition from the file name (`CONDITIONS` in the script), and graph 7 uses the named clean runs of the app's
+current search (`CAPACITY_RUNS`). EYKO-114's mapped run is excluded on purpose: it still had the `COUNT(*)` check (565 ms at 100k).
+A new run is picked up when its file follows the same naming.
+
+![Graph 1: search time against table size, every method on every device](vectors/plots/1-search-time-vs-size.png)
+
+**1 · Search time.** Every exact method grows in step with the rows on every device. The laptop's HNSW lines stay flat (0.1–1 ms),
+but on these near-copy vectors they return wrong answers (EYKO-91). On the phones the fast loop is the quickest exact method (A32 91 ms,
+Infinix 69 ms, Pixel 39 ms at 100k). The app's search today (mapped file + NEON) is drawn where it was measured (Pixel 14 ms; the A32
+run picked here is the hot one, about 112 ms). The Infinix's float16 is the slowest method (about 2.3 s at 100k): Java has no fast
+float16. **Does not show:** one chart per method across devices; that is graph 4 for the exact search.
+
+![Graph 2: memory against table size](vectors/plots/2-memory-vs-size.png)
+
+**2 · Memory (PSS).** With Java arrays, three tables fit at 20k rows on all three phones; at 50k only 2 of 3 and at 100k only 1 of 3
+loaded before the 268 MB Java heap ran out. The app's mapped setup (A32) loads all three at 100k with 3–5 MB of Java heap; its PSS is
+higher (594 MB at 100k) because the mapped pages count there, and Android can drop them. **Does not show:** exactly two tables (never
+measured on its own) or the mapped setup on the Pixel or the Infinix (no memory run).
+
+![Graph 3: database file size](vectors/plots/3-file-size-vs-size.png)
+
+**3 · File size.** On every device the BLOB table is about **twice the vectors** (411 MB at 100k), and sqlite-vec float32 sits on the
+vectors line (208 MB). Cause: SQLite's 4 KB page holds one 512-number row (card EYKO-167). **Does not show:** the mapped `.vec` search
+copy (205 MB at 100k), which no CSV records.
+
+![Graph 4: the same exact search on every device](vectors/plots/4-same-test-devices.png)
+
+**4 · Same test.** At 100k: laptop 12 ms, Pixel 39, Infinix 69, A32 93. Same order at every size. **Does not show:** the app's search
+today on all phones (the Infinix never timed it). Runs differ in day and charger; the legend names each run.
+
+![Graph 5: storage as video is processed](vectors/plots/5-storage-per-hour.png)
+
+**5 · Storage.** Database, frame files and total app data against minutes of video, from the two Infinix storage logs (EYKO-116).
+Total growth: about 794 MB an hour of screen recording and 1,319 MB an hour of the movie, almost all of it the copied video files.
+**Does not show:** the app since 13 Nov, which reads videos in place (about 126 MB an hour of camera video, Pixel, no CSV:
+`2026-11-13-read-from-gallery.md`; the Head 2 figure below draws it).
+
+![Graph 6: cool, hot and low battery](vectors/plots/6-heat-and-battery.png)
+
+**6 · Heat and battery.** Infinix: cool, hot and low battery all 69 ms at 100k. A32, fast loop: 91 ms on the cable, **126 ms cool on
+battery** (1.4× slower unplugged, EYKO-112). A32, mapped search: 102 ms on the cable, 112–114 ms warm or hot on battery. Pixel, mapped
+search: 14–15 ms at low battery, power saver on or off. **Does not show:** a cool run of the mapped search on any phone, or a hot Pixel.
+
+![Graph 7: days until one search passes a budget](vectors/plots/7-capacity.png)
+
+**7 · Capacity.** See "The capacity model" below.
+
+## Head 2 figures (in `docs/documents/source/figures/`, `task head2-figures`)
 
 ![File size of one image table by way of storing it](../documents/source/figures/head2-vector-file-size.png)
 
@@ -111,8 +163,8 @@ Infinix (between 30k and 40k rows × 3 tables, EYKO-116) comes far earlier.
 ## Reproduce
 
 ```
-task vectors-plots
+task vectors-plots    # the seven graphs: PNG + SVG in docs/results/vectors/plots/ (Python 3.10 + matplotlib 3.10.9)
+task head2-figures    # the Head 2 document's figures, Rafique's seven + the four above (Python 3.11+, matplotlib 3.9.2)
 ```
 
-Python 3.11+ with matplotlib 3.9.2 (the script's inline metadata). Rafique's seven PNGs are redrawn too; on another machine they can
-differ in font only.
+The first prints every file it read or skipped and which run each graph used.
