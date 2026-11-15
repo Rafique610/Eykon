@@ -3,7 +3,10 @@ package com.eykon.memory.ui.screens
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
+import android.provider.Settings
 import android.graphics.BitmapFactory
 import androidx.core.content.ContextCompat
 import androidx.compose.foundation.Image
@@ -24,6 +27,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -134,6 +138,23 @@ fun VideoScreen(
         uiState.saved?.let { saved ->
             item {
                 MessageCard(confirmation(saved), MaterialTheme.colorScheme.primaryContainer)
+            }
+            // Android stops asking after the permission is refused twice, and the media-location switch only appears once
+            // "Photos and videos" allows some access (checked on the Pixel, Android 17), so the note gives that path
+            if (saved.placeBlocked) item {
+                Column {
+                    MessageCard(
+                        "Where this video was recorded was not kept: Eykon is not allowed to read media locations. " +
+                            "To keep it: Settings, Permissions, Photos and videos, \"Allow limited access\" (you can pick nothing), " +
+                            "then turn on media location.",
+                        MaterialTheme.colorScheme.secondaryContainer,
+                    )
+                    TextButton(onClick = {
+                        context.startActivity(
+                            Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.fromParts("package", context.packageName, null)),
+                        )
+                    }) { Text("Allow it in Settings") }
+                }
             }
         }
         uiState.errorMessage?.let { message ->

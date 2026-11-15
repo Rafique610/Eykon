@@ -1,12 +1,15 @@
 package com.eykon.memory.video
 
+import android.Manifest
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.provider.MediaStore
 import android.provider.OpenableColumns
 import android.util.Log
+import androidx.core.content.ContextCompat
 import java.io.File
 import java.io.InputStream
 import java.time.Instant
@@ -15,7 +18,8 @@ import java.util.UUID
 /** The picked file was refused; the message is safe to show to the person. */
 class UploadException(message: String) : Exception(message)
 
-data class SavedVideo(val video: Video, val timeFromFile: Boolean)
+/** [placeBlocked]: no place was read because the app may not read media locations (the user said no), so the screen can say so. */
+data class SavedVideo(val video: Video, val timeFromFile: Boolean, val placeBlocked: Boolean = false)
 
 /**
  * Phone twin of the laptop's capture.py: check, read metadata, add the videos row and its job.
@@ -121,8 +125,12 @@ class VideoCapture(
             repository.insert(video)
             jobs.enqueue(video.videoId)
         }
-        return SavedVideo(video, timeFromFile = recorded != null)
+        val placeBlocked = video.lat == null && sourceUri != null && !mayReadPlaces()
+        return SavedVideo(video, timeFromFile = recorded != null, placeBlocked = placeBlocked)
     }
+
+    private fun mayReadPlaces() =
+        ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_MEDIA_LOCATION) == PackageManager.PERMISSION_GRANTED
 
     /** Throws [NOT_A_VIDEO] when the phone cannot read a video track from [source] (cheap: reads the header only). */
     private fun refuseUnreadable(source: String) {
@@ -142,6 +150,11 @@ class VideoCapture(
      * read: the file picker's link is mapped to its media-store link and opened as the original. Any failure means "no place", never an error.
      */
     private fun originalLocation(uri: Uri): Pair<Double, Double>? {
+        // Without the permission the original cannot be opened; MediaMetadataRetriever then only says "setDataSource failed"
+        if (!mayReadPlaces()) {
+            Log.i(TAG, "no original location for $uri: the app may not read media locations (permission denied)")
+            return null
+        }
         val retriever = MediaMetadataRetriever()
         return try {
             val media = MediaStore.getMediaUri(context, uri) ?: return null
