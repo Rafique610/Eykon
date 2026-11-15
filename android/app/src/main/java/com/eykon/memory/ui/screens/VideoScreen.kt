@@ -41,6 +41,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.eykon.memory.ui.viewmodels.VideoViewModel
 import com.eykon.memory.video.FrameHit
+import com.eykon.memory.video.PLACE_PERMISSIONS
 import com.eykon.memory.video.SavedVideo
 import com.eykon.memory.video.VideoPipeline
 import com.eykon.memory.video.VideoWithJob
@@ -98,14 +99,15 @@ fun VideoScreen(
     val picker = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
         viewModel.onVideoPicked(uri)
     }
-    // Android hides a video's recording place unless the app may read media locations; asked once, adding works without it.
+    // Android hides a video's recording place unless the app may read media locations AND open the original file (full video
+    // access); both are asked for together, and adding works without them (the place is then not kept and the screen says so).
     val context = LocalContext.current
-    val askLocation = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { picker.launch(VIDEO_TYPES) }
+    val askPlace = rememberLauncherForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { picker.launch(VIDEO_TYPES) }
     val addVideo = {
-        if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_MEDIA_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+        if (PLACE_PERMISSIONS.all { ContextCompat.checkSelfPermission(context, it) == PackageManager.PERMISSION_GRANTED }) {
             picker.launch(VIDEO_TYPES)
         } else {
-            askLocation.launch(Manifest.permission.ACCESS_MEDIA_LOCATION)
+            askPlace.launch(PLACE_PERMISSIONS)
         }
     }
 
@@ -144,8 +146,8 @@ fun VideoScreen(
             if (saved.placeBlocked) item {
                 Column {
                     MessageCard(
-                        "Where this video was recorded was not kept: Eykon is not allowed to read media locations. " +
-                            "To keep it: Settings, Permissions, Photos and videos, \"Allow limited access\" (you can pick nothing), " +
+                        "Where this video was recorded was not kept: Eykon may not read media locations. " +
+                            "To keep it: Settings, Permissions, Photos and videos, \"Always allow all\", " +
                             "then turn on media location.",
                         MaterialTheme.colorScheme.secondaryContainer,
                     )

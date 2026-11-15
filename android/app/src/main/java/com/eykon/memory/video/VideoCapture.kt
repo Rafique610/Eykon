@@ -15,6 +15,15 @@ import java.io.InputStream
 import java.time.Instant
 import java.util.UUID
 
+/**
+ * What reading a video's recording place needs: the media-location permission and full video access. With only the picker's grant
+ * the original file is refused (SecurityException "has no access to ...?requireOriginal=1"), checked on the Pixel, Android 17.
+ */
+val PLACE_PERMISSIONS: Array<String> = arrayOf(
+    Manifest.permission.ACCESS_MEDIA_LOCATION,
+    if (android.os.Build.VERSION.SDK_INT >= 33) Manifest.permission.READ_MEDIA_VIDEO else Manifest.permission.READ_EXTERNAL_STORAGE,
+)
+
 /** The picked file was refused; the message is safe to show to the person. */
 class UploadException(message: String) : Exception(message)
 
@@ -129,8 +138,9 @@ class VideoCapture(
         return SavedVideo(video, timeFromFile = recorded != null, placeBlocked = placeBlocked)
     }
 
-    private fun mayReadPlaces() =
-        ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_MEDIA_LOCATION) == PackageManager.PERMISSION_GRANTED
+    private fun mayReadPlaces() = PLACE_PERMISSIONS.all {
+        ContextCompat.checkSelfPermission(context, it) == PackageManager.PERMISSION_GRANTED
+    }
 
     /** Throws [NOT_A_VIDEO] when the phone cannot read a video track from [source] (cheap: reads the header only). */
     private fun refuseUnreadable(source: String) {
@@ -157,9 +167,13 @@ class VideoCapture(
         }
         val retriever = MediaMetadataRetriever()
         return try {
-            val media = MediaStore.getMediaUri(context, uri) ?: return null
-            retriever.setDataSource(context, MediaStore.setRequireOriginal(media))
-            VideoMetadata.parseLocation(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_LOCATION))
+            val media = MediaStore.getMediaUri(context, uri)
+                ?: return null.also { Log.i(TAG, "no original location for $uri: no media-store entry for it") }
+            // opened here, not by setDataSource(context, uri): that one swallows the real error and only says "setDataSource failed"
+            val original = context.contentResolver.openFileDescriptor(MediaStore.setRequireOriginal(media), "r") ?: return null
+            original.use { retriever.setDataSource(it.fileDescriptor) }
+            val raw = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_LOCATION)
+            VideoMetadata.parseLocation(raw).also { Log.i(TAG, "original location for $uri: '${raw.orEmpty()}' -> ${it ?: "none"}") }
         } catch (e: Exception) {
             Log.i(TAG, "no original location for $uri (${e.javaClass.simpleName}: ${e.message})")
             null
