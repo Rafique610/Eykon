@@ -38,9 +38,10 @@ object VideoSplit {
 
         val startFrames = System.nanoTime()
         var method = "one pass"
+        val timing = FrameExtractor.Timing()
         val saved = try {
             resetDir(framesDir)
-            FrameExtractor.decodeInOnePass(source, framesDir, times, FRAME_MAX_SIDE, JPEG_QUALITY)
+            FrameExtractor.decodeInOnePass(source, framesDir, times, FRAME_MAX_SIDE, JPEG_QUALITY, timing)
         } catch (e: Exception) {
             Log.w(TAG, "split $videoId: one-pass decoding failed (${e.javaClass.simpleName}: ${e.message}); reading frame by frame")
             method = "frame by frame"
@@ -67,7 +68,8 @@ object VideoSplit {
         } finally {
             db.endTransaction()
         }
-        Log.i(TAG, "split $videoId: ${saved.size} frames in $framesMs ms ($method), audio ${"%.1f".format(audioSamples / AUDIO_RATE.toDouble())} s in $audioMs ms")
+        val parts = if (method == "one pass") "; ${timing.convertNs / 1_000_000} ms to JPEG, ${timing.writeNs / 1_000_000} ms to write, the rest decoding" else ""
+        Log.i(TAG, "split $videoId: ${saved.size} frames in $framesMs ms ($method$parts), audio ${"%.1f".format(audioSamples / AUDIO_RATE.toDouble())} s in $audioMs ms")
     }
 
     private fun resetDir(dir: File) {

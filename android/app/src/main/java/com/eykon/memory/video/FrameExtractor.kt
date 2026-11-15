@@ -25,7 +25,12 @@ object FrameExtractor {
      * each wanted time. Returns (frame number from 1, wanted time) for every frame saved.
      * Frames are shrunk by a whole-number factor so the longer side is at most [maxSide].
      */
-    fun decodeInOnePass(filePath: String, framesDir: File, times: List<Double>, maxSide: Int, quality: Int): List<Pair<Int, Double>> {
+    /** Where one pass spends its time; everything not in these two is the decoder itself. */
+    class Timing { var convertNs = 0L; var writeNs = 0L }
+
+    fun decodeInOnePass(
+        filePath: String, framesDir: File, times: List<Double>, maxSide: Int, quality: Int, timing: Timing? = null,
+    ): List<Pair<Int, Double>> {
         val saved = ArrayList<Pair<Int, Double>>(times.size)
         if (times.isEmpty()) return saved
         val extractor = MediaExtractor()
@@ -41,7 +46,14 @@ object FrameExtractor {
 
             val codec = MediaCodec.createDecoderByType(format.getString(MediaFormat.KEY_MIME)!!)
             try {
-                codec.configure(format, null, null, 0)
+                // Not playback: ask the decoder for its full speed, not real time. The frames are the same; a decoder that refuses
+                // the hint is configured again without it.
+                try {
+                    codec.configure(MediaFormat(format).apply { setInteger(MediaFormat.KEY_OPERATING_RATE, Short.MAX_VALUE.toInt()) }, null, null, 0)
+                } catch (e: Exception) {
+                    codec.reset()
+                    codec.configure(format, null, null, 0)
+                }
                 codec.start()
                 val info = MediaCodec.BufferInfo()
                 var next = 0
@@ -65,9 +77,12 @@ object FrameExtractor {
                     if (info.size > 0 && info.presentationTimeUs / 1e6 >= times[next] - 1e-3) {
                         val image = codec.getOutputImage(outIndex)
                             ?: throw IllegalStateException("the decoder gives no readable image")
-                        val jpeg = image.use { toJpeg(it, maxSide, quality) }
+                        val t0 = System.nanoTime()
+                        val jpeg = image.use { toJpeg(it, maxSide, quality) }.let { if (rotation == 0) it else rotate(it, rotation, quality) }
+                        val t1 = System.nanoTime()
                         val frameNo = next + 1
-                        File(framesDir, "%06d.jpg".format(frameNo)).writeBytes(if (rotation == 0) jpeg else rotate(jpeg, rotation, quality))
+                        File(framesDir, "%06d.jpg".format(frameNo)).writeBytes(jpeg)
+                        timing?.apply { convertNs += t1 - t0; writeNs += System.nanoTime() - t1 }
                         saved.add(frameNo to times[next])
                         next++
                     }
@@ -113,22 +128,33 @@ object FrameExtractor {
         val (yPlane, uPlane, vPlane) = image.planes
         val nv21 = ByteArray(width * height * 3 / 2)
 
-        val y = yPlane.buffer
+        // Each needed row is copied out in one bulk read, then every k-th byte is picked from it: the same pixels as reading the
+        // buffer one byte at a time (about 350,000 calls a frame), so the same JPEG bytes, in a fraction of the time.
+        val y = yPlane.buffer.duplicate()
+        val yStep = k * yPlane.pixelStride
+        val yRow = ByteArray((width - 1) * yStep + 1)
         for (row in 0 until height) {
-            val source = (crop.top + row * k) * yPlane.rowStride + crop.left * yPlane.pixelStride
-            val step = k * yPlane.pixelStride
+            y.position((crop.top + row * k) * yPlane.rowStride + crop.left * yPlane.pixelStride)
+            y.get(yRow)
             val target = row * width
-            for (col in 0 until width) nv21[target + col] = y.get(source + col * step)
+            for (col in 0 until width) nv21[target + col] = yRow[col * yStep]
         }
-        val u = uPlane.buffer
-        val v = vPlane.buffer
+        val u = uPlane.buffer.duplicate()
+        val v = vPlane.buffer.duplicate()
+        val uStep = k * uPlane.pixelStride
+        val vStep = k * vPlane.pixelStride
+        val uRow = ByteArray((width / 2 - 1) * uStep + 1)
+        val vRow = ByteArray((width / 2 - 1) * vStep + 1)
         for (row in 0 until height / 2) {
             val chromaRow = crop.top / 2 + row * k
+            u.position(chromaRow * uPlane.rowStride + crop.left / 2 * uPlane.pixelStride)
+            u.get(uRow)
+            v.position(chromaRow * vPlane.rowStride + crop.left / 2 * vPlane.pixelStride)
+            v.get(vRow)
             val target = width * height + row * width
             for (col in 0 until width / 2) {
-                val chromaCol = crop.left / 2 + col * k
-                nv21[target + 2 * col] = v.get(chromaRow * vPlane.rowStride + chromaCol * vPlane.pixelStride)
-                nv21[target + 2 * col + 1] = u.get(chromaRow * uPlane.rowStride + chromaCol * uPlane.pixelStride)
+                nv21[target + 2 * col] = vRow[col * vStep]
+                nv21[target + 2 * col + 1] = uRow[col * uStep]
             }
         }
         return ByteArrayOutputStream().also {
