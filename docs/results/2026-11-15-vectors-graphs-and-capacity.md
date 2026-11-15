@@ -103,9 +103,9 @@ Infinix (between 30k and 40k rows × 3 tables, EYKO-116) comes far earlier.
 
 - **The image table wastes half its space** (graph 3): 4,107 bytes a row for 2,048 bytes of vector, so 100k image vectors take about
   411 MB in the database plus 205 MB in the mapped `.vec` file. A 16 KB page size would bring the table to about 235 MB. Changing it needs
-  a rebuild of existing databases (`PRAGMA page_size` + `VACUUM`) and a phone test, so it is a separate card for the lead to decide.
-- **Head 2 C2** quotes 9.2 GB an hour; since EYKO-126 it is about 126 MB. B2 ("when does a user reach the limit?") can now cite this
-  model. Both are Head 2 source edits for after this card's review.
+  a rebuild of existing databases (`PRAGMA page_size` + `VACUUM`) and a phone test: card **EYKO-167** (created 15 Nov).
+- **Head 2 C2 and B2 updated** in `head2-defense.js` (15 Nov, lead's request): C2 now leads with about 126 MB an hour since EYKO-126
+  (9.2 GB before) and names the page-size waste; B2 cites this capacity model.
 - **The Infinix has no timing of the app's current search** (`MAPPED_NATIVE`); EYKO-129's on-device run does not add one either.
 
 ## Reproduce
