@@ -1,0 +1,3 @@
+﻿--------- beginning of main
+11-15 14:34:03.948 I/EykonVideo(15771): latest d1edb88834d0402281060014f1c277d1: 134 sightings (2 boxes too small) in 30650 ms
+11-15 14:34:03.961 I/EykonVideo(15771): finish d1edb88834d0402281060014f1c277d1: ready; 0 dropped frame files deleted

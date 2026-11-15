@@ -238,11 +238,12 @@ def cmd_backfill(a) -> int:
     return 0 if changed == 1 else 1
 
 
-def chart_rows(path: Path, scenario: str | None, runs: list[str] | None = None) -> list[dict]:
-    """The stage records the chart uses: a time was logged, it is not a rerun, and it belongs to the scenario (and the runs) when given."""
+def chart_rows(path: Path, scenario: str | None, runs: list[str] | None = None, phone: str | None = None) -> list[dict]:
+    """The stage records the chart uses: a time was logged, it is not a rerun, and it belongs to the scenario (and the runs, and the phone) when given."""
     with open(path, newline="", encoding="utf-8") as f:
         return [r for r in csv.DictReader(f) if r["ms"] != "" and r.get("rerun", "") != "1"
-                and (not scenario or r["scenario"] == scenario) and (not runs or r["run"] in runs)]
+                and (not scenario or r["scenario"] == scenario) and (not runs or r["run"] in runs)
+                and (not phone or r["phone"] == phone)]
 
 
 def cmd_chart(a) -> int:
@@ -252,7 +253,7 @@ def cmd_chart(a) -> int:
     import matplotlib.pyplot as plt
 
     runs = a.runs.split(",") if a.runs else None  # e.g. --runs 1,2,3 for the runs of one clip, so two clips are not mixed in one median
-    rows = chart_rows(Path(a.out) / "stage_times.csv", a.scenario, runs)
+    rows = chart_rows(Path(a.out) / "stage_times.csv", a.scenario, runs, a.phone)
     by: dict[str, list[float]] = {}
     for r in rows:
         by.setdefault(r["stage"], []).append(int(r["ms"]) / 1000)
@@ -262,7 +263,7 @@ def cmd_chart(a) -> int:
     bars = ax.bar(stages, medians, color="#4c78a8")
     ax.bar_label(bars, labels=[f"{m:.1f}" for m in medians], padding=2)
     ax.set_ylabel("median time per video (s)")
-    ax.set_title(f"Time per stage{' (' + a.scenario + ')' if a.scenario else ''}{', runs ' + a.runs if a.runs else ''}, {len(rows)} stage records")
+    ax.set_title(f"Time per stage{' (' + a.scenario + ')' if a.scenario else ''}{', ' + a.phone if a.phone else ''}{', runs ' + a.runs if a.runs else ''}, {len(rows)} stage records")
     plt.setp(ax.get_xticklabels(), rotation=30, ha="right")
     fig.tight_layout()
     png = Path(a.png) if a.png else Path(a.out) / f"stage_medians{'_' + a.scenario if a.scenario else ''}.png"
@@ -293,6 +294,7 @@ def main() -> int:
     c.add_argument("--scenario")
     c.add_argument("--runs", help="comma-separated run numbers, e.g. 1,2,3")
     c.add_argument("--png")
+    c.add_argument("--phone", help="only this phone's rows (the CSV holds every phone), e.g. \"Pixel 9 Pro XL\"")
     a = ap.parse_args()
     return {"parse": cmd_parse, "backfill": cmd_backfill, "chart": cmd_chart}[a.cmd](a)
 

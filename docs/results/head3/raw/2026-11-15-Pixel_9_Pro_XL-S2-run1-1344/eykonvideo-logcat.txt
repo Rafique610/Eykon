@@ -1,0 +1,110 @@
+--------- beginning of main
+11-15 13:45:38.181 I/EykonVideo(17173): read 192c0f59f9484d448899e2345cf2421d: 186496588 bytes in place in 615 ms (no copy)
+11-15 13:45:59.409 I/EykonVideo(17173): read 6ba3bc86a1e34b6d89bd5e5a5d9d1f1b: 186496596 bytes in place in 620 ms (no copy)
+11-15 13:45:59.438 I/EykonVideo(17173): no original location for content://com.android.providers.media.documents/document/video%3A122733 (RuntimeException: setDataSource failed: status = 0xFFFFFFEA)
+11-15 13:46:21.528 I/EykonVideo(17173): read 977073b31e2344dea5203b1345882192: 186496604 bytes in place in 660 ms (no copy)
+11-15 13:46:21.550 I/EykonVideo(17173): no original location for content://com.android.providers.media.documents/document/video%3A122734 (RuntimeException: setDataSource failed: status = 0xFFFFFFEA)
+11-15 13:46:38.165 I/EykonVideo(17173): split 6ba3bc86a1e34b6d89bd5e5a5d9d1f1b: 224 frames in 28783 ms (one pass), audio 74.5 s in 9820 ms
+11-15 13:46:39.168 I/EykonVideo(17173): filter 6ba3bc86a1e34b6d89bd5e5a5d9d1f1b: kept 25 of 224 (less sharp 199) in 995 ms
+11-15 13:46:42.939 I/EykonVideo(17173): read 9059302b2f4241c0bb67ac9921c714b2: 186496612 bytes in place in 921 ms (no copy)
+11-15 13:46:42.997 I/EykonVideo(17173): no original location for content://com.android.providers.media.documents/document/video%3A122735 (RuntimeException: setDataSource failed: status = 0xFFFFFFEA)
+11-15 13:46:43.633 I/EykonVideo(17173): dedup 6ba3bc86a1e34b6d89bd5e5a5d9d1f1b: kept 10 of 25 (hash dropped 14, embedding dropped 1) in 4461 ms; embedded 11 frames, 396 ms each; memory java 48 MB, native 1083 MB
+11-15 13:46:48.486 I/EykonVideo(17173): scene 6ba3bc86a1e34b6d89bd5e5a5d9d1f1b: 10 frames described by option A in 4848 ms, 484 ms each
+11-15 13:47:10.079 I/EykonVideo(17173): small_objects 6ba3bc86a1e34b6d89bd5e5a5d9d1f1b: 10 frames looked at, 6 found, in 21584 ms
+11-15 13:47:10.132 I/EykonVideo(17173): embed_images 6ba3bc86a1e34b6d89bd5e5a5d9d1f1b: 10 vectors stored (10 reused, 0 computed) in 2 ms
+11-15 13:47:10.413 I/EykonVideo(17173): embed_texts 6ba3bc86a1e34b6d89bd5e5a5d9d1f1b: 10 texts (10 captions, 0 transcript chunks) in 280 ms
+11-15 13:47:10.415 I/EykonVideo(17173): link 6ba3bc86a1e34b6d89bd5e5a5d9d1f1b: every row points at its video and moment
+11-15 13:47:24.344 I/EykonVideo(17173): read 635c8c48da9b434aad702b2da86562db: 187772446 bytes in place in 1036 ms (no copy)
+11-15 13:47:24.395 I/EykonVideo(17173): no original location for content://com.android.providers.media.documents/document/video%3A122736 (RuntimeException: setDataSource failed: status = 0xFFFFFFEA)
+11-15 13:47:31.323 I/EykonVideo(17173): latest 6ba3bc86a1e34b6d89bd5e5a5d9d1f1b: 54 sightings (0 boxes too small) in 20906 ms
+11-15 13:47:31.337 I/EykonVideo(17173): finish 6ba3bc86a1e34b6d89bd5e5a5d9d1f1b: ready; 214 dropped frame files deleted
+11-15 13:47:45.255 I/EykonVideo(17173): read a5f3905e832a48b7ada127160eb29088: 187772454 bytes in place in 642 ms (no copy)
+11-15 13:47:45.287 I/EykonVideo(17173): no original location for content://com.android.providers.media.documents/document/video%3A122737 (RuntimeException: setDataSource failed: status = 0xFFFFFFEA)
+11-15 13:48:06.595 I/EykonVideo(17173): read 667e02ff709244be944ae89da79970f2: 187772462 bytes in place in 706 ms (no copy)
+11-15 13:48:06.621 I/EykonVideo(17173): no original location for content://com.android.providers.media.documents/document/video%3A122738 (RuntimeException: setDataSource failed: status = 0xFFFFFFEA)
+11-15 13:48:08.735 I/EykonVideo(17173): split 977073b31e2344dea5203b1345882192: 224 frames in 29734 ms (one pass), audio 74.5 s in 7639 ms
+11-15 13:48:09.351 I/EykonVideo(17173): filter 977073b31e2344dea5203b1345882192: kept 25 of 224 (less sharp 199) in 607 ms
+11-15 13:48:11.826 I/EykonVideo(17173): dedup 977073b31e2344dea5203b1345882192: kept 10 of 25 (hash dropped 14, embedding dropped 1) in 2472 ms; embedded 11 frames, 217 ms each; memory java 81 MB, native 1083 MB
+11-15 13:48:20.747 I/EykonVideo(17173): scene 977073b31e2344dea5203b1345882192: 10 frames described by option A in 8914 ms, 891 ms each
+11-15 13:48:28.046 I/EykonVideo(17173): read 6f04be11ddcf4c26a6f4970d12978238: 187772470 bytes in place in 915 ms (no copy)
+11-15 13:48:28.097 I/EykonVideo(17173): no original location for content://com.android.providers.media.documents/document/video%3A122739 (RuntimeException: setDataSource failed: status = 0xFFFFFFEA)
+11-15 13:48:35.132 I/EykonVideo(17173): small_objects 977073b31e2344dea5203b1345882192: 10 frames looked at, 6 found, in 14375 ms
+11-15 13:48:35.190 I/EykonVideo(17173): embed_images 977073b31e2344dea5203b1345882192: 10 vectors stored (10 reused, 0 computed) in 3 ms
+11-15 13:48:35.336 I/EykonVideo(17173): embed_texts 977073b31e2344dea5203b1345882192: 10 texts (10 captions, 0 transcript chunks) in 145 ms
+11-15 13:48:35.337 I/EykonVideo(17173): link 977073b31e2344dea5203b1345882192: every row points at its video and moment
+11-15 13:48:57.126 I/EykonVideo(17173): latest 977073b31e2344dea5203b1345882192: 54 sightings (0 boxes too small) in 21788 ms
+11-15 13:48:57.141 I/EykonVideo(17173): finish 977073b31e2344dea5203b1345882192: ready; 214 dropped frame files deleted
+11-15 13:49:38.923 I/EykonVideo(17173): split 9059302b2f4241c0bb67ac9921c714b2: 224 frames in 32258 ms (one pass), audio 74.5 s in 9466 ms
+11-15 13:49:39.839 I/EykonVideo(17173): filter 9059302b2f4241c0bb67ac9921c714b2: kept 25 of 224 (less sharp 199) in 905 ms
+11-15 13:49:45.861 I/EykonVideo(17173): dedup 9059302b2f4241c0bb67ac9921c714b2: kept 10 of 25 (hash dropped 14, embedding dropped 1) in 6017 ms; embedded 11 frames, 536 ms each; memory java 11 MB, native 1081 MB
+11-15 13:49:48.958 I/EykonVideo(17173): read 8a1534aa747c48169302d72f0272a364: 186496580 bytes in place in 851 ms (no copy)
+11-15 13:49:49.018 I/EykonVideo(17173): no original location for content://com.android.providers.media.documents/document/video%3A122717 (RuntimeException: setDataSource failed: status = 0xFFFFFFEA)
+11-15 13:49:52.170 I/EykonVideo(17173): scene 9059302b2f4241c0bb67ac9921c714b2: 10 frames described by option A in 6304 ms, 630 ms each
+11-15 13:50:11.125 I/EykonVideo(17173): small_objects 9059302b2f4241c0bb67ac9921c714b2: 10 frames looked at, 6 found, in 18946 ms
+11-15 13:50:11.182 I/EykonVideo(17173): embed_images 9059302b2f4241c0bb67ac9921c714b2: 10 vectors stored (10 reused, 0 computed) in 0 ms
+11-15 13:50:11.421 I/EykonVideo(17173): embed_texts 9059302b2f4241c0bb67ac9921c714b2: 10 texts (10 captions, 0 transcript chunks) in 238 ms
+11-15 13:50:11.423 I/EykonVideo(17173): link 9059302b2f4241c0bb67ac9921c714b2: every row points at its video and moment
+11-15 13:50:13.034 I/EykonVideo(17173): read 34a51ccf025549508ab93df01c31a243: 187772438 bytes in place in 981 ms (no copy)
+11-15 13:50:13.110 I/EykonVideo(17173): no original location for content://com.android.providers.media.documents/document/video%3A122718 (RuntimeException: setDataSource failed: status = 0xFFFFFFEA)
+11-15 13:50:24.526 I/EykonVideo(17173): latest 9059302b2f4241c0bb67ac9921c714b2: 54 sightings (0 boxes too small) in 13102 ms
+11-15 13:50:24.539 I/EykonVideo(17173): finish 9059302b2f4241c0bb67ac9921c714b2: ready; 214 dropped frame files deleted
+11-15 13:50:56.807 I/EykonVideo(17173): split 635c8c48da9b434aad702b2da86562db: 225 frames in 26820 ms (one pass), audio 74.9 s in 5422 ms
+11-15 13:50:57.375 I/EykonVideo(17173): filter 635c8c48da9b434aad702b2da86562db: kept 25 of 225 (less sharp 200) in 563 ms
+11-15 13:51:00.945 I/EykonVideo(17173): dedup 635c8c48da9b434aad702b2da86562db: kept 16 of 25 (hash dropped 9, embedding dropped 0) in 3566 ms; embedded 16 frames, 217 ms each; memory java 37 MB, native 1083 MB
+11-15 13:51:08.961 I/EykonVideo(17173): scene 635c8c48da9b434aad702b2da86562db: 16 frames described by option A in 8009 ms, 500 ms each
+11-15 13:51:27.365 I/EykonVideo(17173): small_objects 635c8c48da9b434aad702b2da86562db: 16 frames looked at, 4 found, in 18393 ms
+11-15 13:51:27.424 I/EykonVideo(17173): embed_images 635c8c48da9b434aad702b2da86562db: 16 vectors stored (16 reused, 0 computed) in 0 ms
+11-15 13:51:27.638 I/EykonVideo(17173): embed_texts 635c8c48da9b434aad702b2da86562db: 16 texts (16 captions, 0 transcript chunks) in 213 ms
+11-15 13:51:27.639 I/EykonVideo(17173): link 635c8c48da9b434aad702b2da86562db: every row points at its video and moment
+11-15 13:52:12.816 I/EykonVideo(17173): latest 635c8c48da9b434aad702b2da86562db: 134 sightings (2 boxes too small) in 45176 ms
+11-15 13:52:12.831 I/EykonVideo(17173): finish 635c8c48da9b434aad702b2da86562db: ready; 209 dropped frame files deleted
+11-15 13:52:45.595 I/EykonVideo(17173): split a5f3905e832a48b7ada127160eb29088: 225 frames in 26737 ms (one pass), audio 74.9 s in 5996 ms
+11-15 13:52:46.494 I/EykonVideo(17173): filter a5f3905e832a48b7ada127160eb29088: kept 25 of 225 (less sharp 200) in 893 ms
+11-15 13:52:50.952 I/EykonVideo(17173): dedup a5f3905e832a48b7ada127160eb29088: kept 16 of 25 (hash dropped 9, embedding dropped 0) in 4454 ms; embedded 16 frames, 270 ms each; memory java 32 MB, native 1083 MB
+11-15 13:53:01.113 I/EykonVideo(17173): scene a5f3905e832a48b7ada127160eb29088: 16 frames described by option A in 10154 ms, 634 ms each
+11-15 13:53:25.040 I/EykonVideo(17173): small_objects a5f3905e832a48b7ada127160eb29088: 16 frames looked at, 4 found, in 23906 ms
+11-15 13:53:25.122 I/EykonVideo(17173): embed_images a5f3905e832a48b7ada127160eb29088: 16 vectors stored (16 reused, 0 computed) in 1 ms
+11-15 13:53:25.378 I/EykonVideo(17173): embed_texts a5f3905e832a48b7ada127160eb29088: 16 texts (16 captions, 0 transcript chunks) in 255 ms
+11-15 13:53:25.380 I/EykonVideo(17173): link a5f3905e832a48b7ada127160eb29088: every row points at its video and moment
+11-15 13:54:16.967 I/EykonVideo(17173): latest a5f3905e832a48b7ada127160eb29088: 134 sightings (2 boxes too small) in 51587 ms
+11-15 13:54:17.002 I/EykonVideo(17173): finish a5f3905e832a48b7ada127160eb29088: ready; 209 dropped frame files deleted
+11-15 13:54:49.434 I/EykonVideo(17173): split 667e02ff709244be944ae89da79970f2: 225 frames in 26768 ms (one pass), audio 74.9 s in 5638 ms
+11-15 13:54:50.307 I/EykonVideo(17173): filter 667e02ff709244be944ae89da79970f2: kept 25 of 225 (less sharp 200) in 868 ms
+11-15 13:54:54.410 I/EykonVideo(17173): dedup 667e02ff709244be944ae89da79970f2: kept 16 of 25 (hash dropped 9, embedding dropped 0) in 4099 ms; embedded 16 frames, 249 ms each; memory java 71 MB, native 1083 MB
+11-15 13:55:03.748 I/EykonVideo(17173): scene 667e02ff709244be944ae89da79970f2: 16 frames described by option A in 9332 ms, 583 ms each
+11-15 13:55:27.180 I/EykonVideo(17173): small_objects 667e02ff709244be944ae89da79970f2: 16 frames looked at, 4 found, in 23419 ms
+11-15 13:55:27.251 I/EykonVideo(17173): embed_images 667e02ff709244be944ae89da79970f2: 16 vectors stored (16 reused, 0 computed) in 0 ms
+11-15 13:55:27.477 I/EykonVideo(17173): embed_texts 667e02ff709244be944ae89da79970f2: 16 texts (16 captions, 0 transcript chunks) in 225 ms
+11-15 13:55:27.478 I/EykonVideo(17173): link 667e02ff709244be944ae89da79970f2: every row points at its video and moment
+11-15 13:56:12.448 I/EykonVideo(17173): latest 667e02ff709244be944ae89da79970f2: 134 sightings (2 boxes too small) in 44969 ms
+11-15 13:56:12.464 I/EykonVideo(17173): finish 667e02ff709244be944ae89da79970f2: ready; 209 dropped frame files deleted
+11-15 13:56:44.820 I/EykonVideo(17173): split 6f04be11ddcf4c26a6f4970d12978238: 225 frames in 26731 ms (one pass), audio 74.9 s in 5596 ms
+11-15 13:56:45.534 I/EykonVideo(17173): filter 6f04be11ddcf4c26a6f4970d12978238: kept 25 of 225 (less sharp 200) in 709 ms
+11-15 13:56:49.637 I/EykonVideo(17173): dedup 6f04be11ddcf4c26a6f4970d12978238: kept 16 of 25 (hash dropped 9, embedding dropped 0) in 4099 ms; embedded 16 frames, 249 ms each; memory java 18 MB, native 1083 MB
+11-15 13:56:58.426 I/EykonVideo(17173): scene 6f04be11ddcf4c26a6f4970d12978238: 16 frames described by option A in 8782 ms, 548 ms each
+11-15 13:57:21.067 I/EykonVideo(17173): small_objects 6f04be11ddcf4c26a6f4970d12978238: 16 frames looked at, 4 found, in 22627 ms
+11-15 13:57:21.142 I/EykonVideo(17173): embed_images 6f04be11ddcf4c26a6f4970d12978238: 16 vectors stored (16 reused, 0 computed) in 0 ms
+11-15 13:57:21.372 I/EykonVideo(17173): embed_texts 6f04be11ddcf4c26a6f4970d12978238: 16 texts (16 captions, 0 transcript chunks) in 229 ms
+11-15 13:57:21.375 I/EykonVideo(17173): link 6f04be11ddcf4c26a6f4970d12978238: every row points at its video and moment
+11-15 13:58:06.020 I/EykonVideo(17173): latest 6f04be11ddcf4c26a6f4970d12978238: 134 sightings (2 boxes too small) in 44644 ms
+11-15 13:58:06.038 I/EykonVideo(17173): finish 6f04be11ddcf4c26a6f4970d12978238: ready; 209 dropped frame files deleted
+11-15 13:58:38.003 I/EykonVideo(17173): split 8a1534aa747c48169302d72f0272a364: 224 frames in 26722 ms (one pass), audio 74.5 s in 5218 ms
+11-15 13:58:38.766 I/EykonVideo(17173): filter 8a1534aa747c48169302d72f0272a364: kept 25 of 224 (less sharp 199) in 758 ms
+11-15 13:58:41.600 I/EykonVideo(17173): dedup 8a1534aa747c48169302d72f0272a364: kept 10 of 25 (hash dropped 14, embedding dropped 1) in 2831 ms; embedded 11 frames, 248 ms each; memory java 19 MB, native 1083 MB
+11-15 13:58:46.907 I/EykonVideo(17173): scene 8a1534aa747c48169302d72f0272a364: 10 frames described by option A in 5303 ms, 530 ms each
+11-15 13:58:59.691 I/EykonVideo(17173): small_objects 8a1534aa747c48169302d72f0272a364: 10 frames looked at, 6 found, in 12778 ms
+11-15 13:58:59.745 I/EykonVideo(17173): embed_images 8a1534aa747c48169302d72f0272a364: 10 vectors stored (10 reused, 0 computed) in 0 ms
+11-15 13:58:59.864 I/EykonVideo(17173): embed_texts 8a1534aa747c48169302d72f0272a364: 10 texts (10 captions, 0 transcript chunks) in 118 ms
+11-15 13:58:59.865 I/EykonVideo(17173): link 8a1534aa747c48169302d72f0272a364: every row points at its video and moment
+11-15 13:59:17.594 I/EykonVideo(17173): latest 8a1534aa747c48169302d72f0272a364: 54 sightings (0 boxes too small) in 17729 ms
+11-15 13:59:17.604 I/EykonVideo(17173): finish 8a1534aa747c48169302d72f0272a364: ready; 214 dropped frame files deleted
+11-15 13:59:49.510 I/EykonVideo(17173): split 34a51ccf025549508ab93df01c31a243: 225 frames in 26702 ms (one pass), audio 74.9 s in 5168 ms
+11-15 13:59:50.279 I/EykonVideo(17173): filter 34a51ccf025549508ab93df01c31a243: kept 25 of 225 (less sharp 200) in 763 ms
+11-15 13:59:54.348 I/EykonVideo(17173): dedup 34a51ccf025549508ab93df01c31a243: kept 16 of 25 (hash dropped 9, embedding dropped 0) in 4065 ms; embedded 16 frames, 247 ms each; memory java 46 MB, native 1083 MB
+11-15 14:00:03.333 I/EykonVideo(17173): scene 34a51ccf025549508ab93df01c31a243: 16 frames described by option A in 8979 ms, 561 ms each
+11-15 14:00:26.111 I/EykonVideo(17173): small_objects 34a51ccf025549508ab93df01c31a243: 16 frames looked at, 4 found, in 22766 ms
+11-15 14:00:26.171 I/EykonVideo(17173): embed_images 34a51ccf025549508ab93df01c31a243: 16 vectors stored (16 reused, 0 computed) in 0 ms
+11-15 14:00:26.418 I/EykonVideo(17173): embed_texts 34a51ccf025549508ab93df01c31a243: 16 texts (16 captions, 0 transcript chunks) in 246 ms
+11-15 14:00:26.419 I/EykonVideo(17173): link 34a51ccf025549508ab93df01c31a243: every row points at its video and moment
+11-15 14:01:09.632 I/EykonVideo(17173): latest 34a51ccf025549508ab93df01c31a243: 134 sightings (2 boxes too small) in 43212 ms
+11-15 14:01:09.642 I/EykonVideo(17173): finish 34a51ccf025549508ab93df01c31a243: ready; 209 dropped frame files deleted

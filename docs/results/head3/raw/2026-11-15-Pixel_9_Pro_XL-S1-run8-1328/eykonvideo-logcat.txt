@@ -1,0 +1,13 @@
+﻿--------- beginning of main
+11-15 13:29:14.963 I/EykonVideo(17173): read ac5047fd48bc486c82abc61d7643d300: 186496724 bytes in place in 577 ms (no copy)
+11-15 13:29:14.993 I/EykonVideo(17173): no original location for content://com.android.providers.media.documents/document/video%3A122730 (RuntimeException: setDataSource failed: status = 0xFFFFFFEA)
+11-15 13:29:46.611 I/EykonVideo(17173): split ac5047fd48bc486c82abc61d7643d300: 224 frames in 26683 ms (one pass), audio 74.5 s in 4822 ms
+11-15 13:29:47.180 I/EykonVideo(17173): filter ac5047fd48bc486c82abc61d7643d300: kept 25 of 224 (less sharp 199) in 563 ms
+11-15 13:29:49.643 I/EykonVideo(17173): dedup ac5047fd48bc486c82abc61d7643d300: kept 10 of 25 (hash dropped 14, embedding dropped 1) in 2460 ms; embedded 11 frames, 216 ms each; memory java 60 MB, native 1084 MB
+11-15 13:29:54.337 I/EykonVideo(17173): scene ac5047fd48bc486c82abc61d7643d300: 10 frames described by option A in 4691 ms, 469 ms each
+11-15 13:30:05.523 I/EykonVideo(17173): small_objects ac5047fd48bc486c82abc61d7643d300: 10 frames looked at, 6 found, in 11179 ms
+11-15 13:30:05.567 I/EykonVideo(17173): embed_images ac5047fd48bc486c82abc61d7643d300: 10 vectors stored (10 reused, 0 computed) in 0 ms
+11-15 13:30:05.660 I/EykonVideo(17173): embed_texts ac5047fd48bc486c82abc61d7643d300: 10 texts (10 captions, 0 transcript chunks) in 92 ms
+11-15 13:30:05.661 I/EykonVideo(17173): link ac5047fd48bc486c82abc61d7643d300: every row points at its video and moment
+11-15 13:30:18.858 I/EykonVideo(17173): latest ac5047fd48bc486c82abc61d7643d300: 54 sightings (0 boxes too small) in 13196 ms
+11-15 13:30:18.864 I/EykonVideo(17173): finish ac5047fd48bc486c82abc61d7643d300: ready; 214 dropped frame files deleted
