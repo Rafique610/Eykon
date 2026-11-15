@@ -103,7 +103,7 @@ dependencies {
     implementation("com.google.ai.edge.litertlm:litertlm-android:0.16.1")
 
     // ONNX Runtime for embeddings and cross-encoder
-    implementation("com.microsoft.onnxruntime:onnxruntime-android:1.18.0")
+    implementation("com.microsoft.onnxruntime:onnxruntime-android:1.31.1") // 1.18.0 was 4 KB page-aligned; Android 15+ wants 16 KB
 
     // Unit Testing
     testImplementation("junit:junit:4.13.2")

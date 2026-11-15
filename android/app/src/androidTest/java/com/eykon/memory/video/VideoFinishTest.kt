@@ -149,6 +149,7 @@ class VideoFinishTest {
         assertEquals(listOf(0, 0, 0), row("other").let { listOf(it.keptFrames, it.speechSegments, it.transcriptChunks) })
         assertEquals(listOf("other", "clip"), repository.listWithJobs().map { it.video.videoId }) // newest first
         assertEquals(listOf("other"), repository.listWithJobs(limit = 1).map { it.video.videoId })
+        assertEquals(2, repository.count()) // the heading counts every video, not only the ones the list shows
     }
 
     @Test

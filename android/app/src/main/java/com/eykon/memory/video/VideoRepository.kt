@@ -63,6 +63,9 @@ class VideoRepository(private val db: () -> SupportSQLiteDatabase) {
             buildList { while (cursor.moveToNext()) add(cursor.toVideo()) }
         }
 
+    /** Every saved video, for the list's heading (the list itself shows only the newest [listWithJobs] limit). */
+    fun count(): Int = db().query("SELECT COUNT(*) FROM videos").use { if (it.moveToFirst()) it.getInt(0) else 0 }
+
     /** The newest [limit] videos, each with its job (the newest one) and counts, for the list on screen. */
     fun listWithJobs(limit: Int = 20): List<VideoWithJob> =
         db().query(

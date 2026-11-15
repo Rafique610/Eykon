@@ -175,7 +175,11 @@ fun VideoScreen(
         }
         item {
             Text(
-                if (uiState.videos.isEmpty()) "No videos yet." else "Saved videos (${uiState.videos.size})",
+                when {
+                    uiState.videos.isEmpty() -> "No videos yet."
+                    uiState.totalVideos > uiState.videos.size -> "Saved videos (${uiState.totalVideos}), newest ${uiState.videos.size} shown"
+                    else -> "Saved videos (${uiState.totalVideos})"
+                },
                 style = MaterialTheme.typography.titleMedium,
             )
         }

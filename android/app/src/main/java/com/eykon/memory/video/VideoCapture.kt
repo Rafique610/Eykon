@@ -28,7 +28,16 @@ class VideoCapture(
     private val jobs: VideoJobs,
 ) {
 
-    fun save(uri: Uri): SavedVideo {
+    /** A refusal is logged under the stage tag too, so a run's log counts refusals and not only the screen shows them. */
+    fun save(uri: Uri): SavedVideo =
+        try {
+            saveChecked(uri)
+        } catch (e: UploadException) {
+            Log.i(TAG, "refused ${runCatching { nameOf(uri) }.getOrNull() ?: uri}: ${e.message}")
+            throw e
+        }
+
+    private fun saveChecked(uri: Uri): SavedVideo {
         val ext = VideoMetadata.TYPES[context.contentResolver.getType(uri)]
             ?: throw UploadException("This file type is not supported. Use one of: mp4, mov, m4v, avi.")
         val open = { context.contentResolver.openInputStream(uri) ?: throw UploadException("This file could not be opened.") }

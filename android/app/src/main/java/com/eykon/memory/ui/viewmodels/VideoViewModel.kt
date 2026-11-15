@@ -29,6 +29,8 @@ data class VideoUiState(
     val saved: SavedVideo? = null,
     val errorMessage: String? = null,
     val videos: List<VideoWithJob> = emptyList(),
+    /** All saved videos; [videos] holds only the newest of them. */
+    val totalVideos: Int = 0,
     val query: String = "",
     val isSearching: Boolean = false,
     /** Null until a search has run; the phrase it ran for is [searchedFor]. */
@@ -109,12 +111,12 @@ class VideoViewModel(
         if (watching?.isActive == true) return
         watching = viewModelScope.launch {
             do {
-                val videos = withContext(Dispatchers.IO) { repository.listWithJobs() }
+                val (videos, total) = withContext(Dispatchers.IO) { repository.listWithJobs() to repository.count() }
                 val ready = videos.filter { it.video.status == "ready" }
                 val fresh = knownReady?.let { known -> ready.firstOrNull { it.video.videoId !in known } }
                 knownReady = ready.map { it.video.videoId }.toSet()
                 val notice = fresh?.let { "Your video from ${NOTICE_DATE.format(Instant.parse(it.video.recordedAt).atZone(ZoneId.systemDefault()))} is ready to search." }
-                _uiState.update { it.copy(videos = videos, readyNotice = notice ?: it.readyNotice) }
+                _uiState.update { it.copy(videos = videos, totalVideos = total, readyNotice = notice ?: it.readyNotice) }
                 val busy = videos.any { it.jobStatus == "queued" || it.jobStatus == "running" }
                 if (busy) delay(1000)
             } while (busy)
