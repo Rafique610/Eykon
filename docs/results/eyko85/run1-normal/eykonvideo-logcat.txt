@@ -1,0 +1,13 @@
+--------- beginning of main
+11-15 18:34:45.486 I/EykonVideo(19685): read 3a28833840da48208ca77a16ffe69452: 1197672204 bytes in place in 1509 ms (no copy)
+11-15 18:34:45.589 I/EykonVideo(19685): original location for content://com.android.externalstorage.documents/document/primary%3AMovies%2Feyko85_8min.mp4: '' -> none
+11-15 18:37:05.886 I/EykonVideo(19685): split 3a28833840da48208ca77a16ffe69452: 1440 frames in 79339 ms (one pass; 18157 ms to JPEG, 2328 ms to write, the rest decoding), audio 479.7 s in 60680 ms
+11-15 18:37:13.131 I/EykonVideo(19685): filter 3a28833840da48208ca77a16ffe69452: kept 149 of 1440 (less sharp 1280, still 11) in 7152 ms
+11-15 18:37:23.916 I/EykonVideo(19685): dedup 3a28833840da48208ca77a16ffe69452: kept 14 of 149 (hash dropped 131, embedding dropped 4) in 10765 ms; embedded 18 frames, 558 ms each; memory java 186 MB, native 208 MB
+11-15 18:37:40.170 I/EykonVideo(19685): scene 3a28833840da48208ca77a16ffe69452: 14 frames described by option A in 16238 ms, 1159 ms each
+11-15 18:38:12.902 I/EykonVideo(19685): small_objects 3a28833840da48208ca77a16ffe69452: 14 frames looked at, 7 found, in 32642 ms
+11-15 18:38:12.976 I/EykonVideo(19685): embed_images 3a28833840da48208ca77a16ffe69452: 14 vectors stored (14 reused, 0 computed) in 7 ms
+11-15 18:38:14.045 I/EykonVideo(19685): embed_texts 3a28833840da48208ca77a16ffe69452: 14 texts (14 captions, 0 transcript chunks) in 1068 ms
+11-15 18:38:14.048 I/EykonVideo(19685): link 3a28833840da48208ca77a16ffe69452: every row points at its video and moment
+11-15 18:38:54.844 I/EykonVideo(19685): latest 3a28833840da48208ca77a16ffe69452: 79 sightings (0 boxes too small) in 40795 ms
+11-15 18:38:55.019 I/EykonVideo(19685): finish 3a28833840da48208ca77a16ffe69452: ready; 1426 dropped frame files deleted

@@ -1,0 +1,8 @@
+  AC powered: false
+  USB powered: false
+  Wireless powered: false
+  Dock powered: false
+  level: 49
+  temperature: 289
+  Capacity level: 2
+  mState=IDLE mLightState=OVERRIDE

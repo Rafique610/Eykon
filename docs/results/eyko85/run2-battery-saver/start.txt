@@ -1,0 +1,11 @@
+label: run2-battery-saver
+  AC powered: false
+  USB powered: false
+  Wireless powered: false
+  Dock powered: false
+  level: 49
+  temperature: 289
+  Capacity level: 3
+low_power: 1
+  mLightEnabled=true  mDeepEnabled=true
+  mState=ACTIVE mLightState=ACTIVE

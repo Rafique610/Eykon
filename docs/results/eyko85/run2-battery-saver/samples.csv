@@ -1,0 +1,17 @@
+t_s,stage_lines,ready,deep,light,battery,temp,notification
+4,1,0,ACTIVE,INACTIVE,49,286,
+39,1,0,QUICK_DOZE_DELAY,INACTIVE,49,286,android.text=String (Video 1 of 1; eyko85_8min.mp4: split)
+74,1,0,QUICK_DOZE_DELAY,INACTIVE,48,286,android.text=String (Video 1 of 1; eyko85_8min.mp4: split)
+107,1,0,QUICK_DOZE_DELAY,INACTIVE,48,285,android.text=String (Video 1 of 1; eyko85_8min.mp4: split)
+144,3,0,IDLE,OVERRIDE,48,285,android.text=String (Video 1 of 1; eyko85_8min.mp4: dedup)
+180,5,0,QUICK_DOZE_DELAY,INACTIVE,48,289,android.text=String (Video 1 of 1; eyko85_8min.mp4: small_objects)
+213,9,0,QUICK_DOZE_DELAY,INACTIVE,48,289,android.text=String (Video 1 of 1; eyko85_8min.mp4: latest)
+247,11,1,QUICK_DOZE_DELAY,INACTIVE,47,306,
+311,11,1,IDLE,OVERRIDE,47,306,
+353,11,1,IDLE,OVERRIDE,47,306,
+386,11,1,IDLE,OVERRIDE,47,300,
+424,11,1,IDLE,OVERRIDE,47,300,
+457,11,1,IDLE,OVERRIDE,47,300,
+491,11,1,IDLE,OVERRIDE,47,300,
+526,11,1,IDLE,OVERRIDE,47,300,
+570,11,1,IDLE,OVERRIDE,47,300,

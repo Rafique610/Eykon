@@ -1,0 +1,452 @@
+11-15 18:34:07.550 I/adbd    (19420): adbd service requested 'shell,v2,TERM=xterm-256color,raw:am start -n com.eykon.memory/.MainActivity'
+11-15 18:34:07.650 V/ActivityTaskManager( 1674): TaskLaunchParamsModifier: phase=2 task=Task{c3c1204 #9571 type=standard A=10358:com.eykon.memory} activity=ActivityRecord{26766871 u0 com.eykon.memory/.MainActivity t-1} display-from-task=0 display-id=0 task-display-area-windowing-mode=1 suggested-display-area=DefaultTaskDisplayArea@116739414 inherit-from-task=fullscreen non-freeform-task-display-area display-area=DefaultTaskDisplayArea@116739414 skip-bounds-fullscreen
+11-15 18:34:07.650 I/ActivityTaskManager( 1674): START u0 {flg=0x10000000 xflg=0x5 cmp=com.eykon.memory/.MainActivity} with LAUNCH_MULTIPLE from uid 2000 (com.android.shell) (BAL_ALLOW_ALLOWLISTED_UID) result code=0
+11-15 18:34:07.650 V/WindowManagerShell( 2438): Transition requested (#895): android.os.BinderProxy@13ce2c1 TransitionRequestInfo { type = OPEN, triggerTask = TaskInfo{userId=0 taskId=9571 effectiveUid=10358 seqId=0 displayId=0 isRunning=true baseIntent=Intent { flg=0x10000000 cmp=com.eykon.memory/.MainActivity } baseActivity=ComponentInfo{com.eykon.memory/com.eykon.memory.MainActivity} topActivity=ComponentInfo{com.eykon.memory/com.eykon.memory.MainActivity} origActivity=null realActivity=ComponentInfo{com.eykon.memory/com.eykon.memory.MainActivity} realActivityIsAppLockEnabled=false numActivities=1 lastActiveTime=62851961 supportsMultiWindow=true supportsMultiWindowWithoutConstraints=true resizeMode=1 isResizeable=true minWidth=-1 minHeight=-1 defaultMinSize=220 token=WCT{android.os.BinderProxy@6498a66} topActivityType=1 pictureInPictureParams=null shouldDockBigOverlays=false launchIntoPipHostTaskId=-1 lastParentTaskIdBeforePip=-1 displayCutoutSafeInsets=Rect(0, 199 - 0, 0) topActivityInfo=ActivityInfo{65f31a7 com.eykon.memory.MainActivity} launchCookies=[] positionInParent=Point(0, 0) parentTaskId=-1 isFocused=false isInteractive=false isVisible=false isVisibleRequested=false isTopActivityNoDisplay=false isSleeping=false locusId=null displayAreaFeatureId=1 isTopActivityTransparent=false isActivityStackTransparent=false lastNonFullscreenBounds=null leafTaskBoundsFromOptions= false capturedLink=null capturedLinkTimestamp=0 requestedVisibleTypes=503 topActivityRequestOpenInBrowserEducationTimestamp=0 appCompatTaskInfo=AppCompatTaskInfo { topActivityInSizeCompat=false isLeafTask= true eligibleForLetterboxEducation= false isLetterboxEducationEnabled= false isLetterboxDoubleTapEnabled= false eligibleForUserAspectRatioButton= false topActivityBoundsLetterboxed= false isFromLetterboxDoubleTap= false topActivityLetterboxVerticalPosition= -1 topActivityLetterboxHorizontalPosition= -1 topActivityLetterboxWidth=-1 topActivityLetterboxHeight=-1 topActivityAppBounds=Rect(0, 0 - 1344, 2992) isUserFullscreenOverrideEnabled=false isSystemFullscreenOverrideEnabled=false hasMinAspectRatioOverride=false topActivityLetterboxBounds=null topNonResizableActivityAspectRatio=-1.0} topActivityMainWindowFrame=null isAppBubble=false}, pipChange = null, remoteTransitionInfo = null, displayChanges = null, requestedLocation = null, userChange = null, windowingLayerChange = null, fullscreenRequestChange = null, flags = 0, debugId = 895 }
+11-15 18:34:07.654 I/AppsFilter( 1674): interaction: PackageSetting{d325d4b com.google.android.microdroid.empty_payload/10276} -> PackageSetting{d9001e9 com.eykon.memory/10358} BLOCKED
+11-15 18:34:07.661 D/WindowManager( 1674): setClientSurface Surface(name=VRI-Splash Screen com.eykon.memory#11860)/@0x8a717d2 for d937a Splash Screen com.eykon.memory
+11-15 18:34:07.662 D/CoreBackPreview( 1674): Window{d937a u0 Splash Screen com.eykon.memory}: Setting back callback OnBackInvokedCallbackInfo{mCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@6d350a3, mPriority=0, mIsAnimationCallback=false, mOverrideBehavior=0}
+11-15 18:34:07.669 I/ActivityManager( 1674): Start proc 19685:com.eykon.memory/u0a358 for next-top-activity {com.eykon.memory/com.eykon.memory.MainActivity}
+11-15 18:34:07.681 I/Zygote  (19685): Process 19685 created for com.eykon.memory
+11-15 18:34:07.682 I/om.eykon.memory(19685): Late-enabling -Xcheck:jni
+11-15 18:34:07.690 V/WindowManager( 1674): Sent Transition (#895) createdAt=11-15 18:34:07.640 via request=TransitionRequestInfo { type = OPEN, triggerTask = TaskInfo{userId=0 taskId=9571 effectiveUid=10358 seqId=0 displayId=0 isRunning=true baseIntent=Intent { flg=0x10000000 cmp=com.eykon.memory/.MainActivity } baseActivity=ComponentInfo{com.eykon.memory/com.eykon.memory.MainActivity} topActivity=ComponentInfo{com.eykon.memory/com.eykon.memory.MainActivity} origActivity=null realActivity=ComponentInfo{com.eykon.memory/com.eykon.memory.MainActivity} realActivityIsAppLockEnabled=false numActivities=1 lastActiveTime=62851961 supportsMultiWindow=true supportsMultiWindowWithoutConstraints=true resizeMode=1 isResizeable=true minWidth=-1 minHeight=-1 defaultMinSize=220 token=WCT{RemoteToken{f802a8a Task{c3c1204 #9571 type=standard A=10358:com.eykon.memory}}} topActivityType=1 pictureInPictureParams=null shouldDockBigOverlays=false launchIntoPipHostTaskId=-1 lastParentTaskIdBeforePip=-1 displayCutoutSafeInsets=Rect(0, 199 - 0, 0) topActivityInfo=ActivityInfo{74458fb com.eykon.memory.MainActivity} launchCookies=[] positionInParent=Point(0, 0) parentTaskId=-1 isFocused=false isInteractive=false isVisible=false isVisibleRequested=false isTopActivityNoDisplay=false isSleeping=false locusId=null displayAreaFeatureId=1 isTopActivityTransparent=false isActivityStackTransparent=false lastNonFullscreenBounds=null leafTaskBoundsFromOptions= false capturedLink=null capturedLinkTimestamp=0 requestedVisibleTypes=503 topActivityRequestOpenInBrowserEducationTimestamp=0 appCompatTaskInfo=AppCompatTaskInfo { topActivityInSizeCompat=false isLeafTask= true eligibleForLetterboxEducation= false isLetterboxEducationEnabled= false isLetterboxDoubleTapEnabled= false eligibleForUserAspectRatioButton= false topActivityBoundsLetterboxed= false isFromLetterboxDoubleTap= false topActivityLetterboxVerticalPosition= -1 topActivityLetterboxHorizontalPosition= -1 topActivityLetterboxWidth=-1 topActivityLetterboxHeight=-1 topActivityAppBounds=Rect(0, 0 - 1344, 2992) isUserFullscreenOverrideEnabled=false isSystemFullscreenOverrideEnabled=false hasMinAspectRatioOverride=false topActivityLetterboxBounds=null topNonResizableActivityAspectRatio=-1.0} topActivityMainWindowFrame=null isAppBubble=false}, pipChange = null, remoteTransitionInfo = null, displayChanges = null, requestedLocation = null, userChange = null, windowingLayerChange = null, fullscreenRequestChange = null, flags = 0, debugId = 895 }
+11-15 18:34:07.690 V/WindowManager( 1674):         {WCT{RemoteToken{f802a8a Task{c3c1204 #9571 type=standard A=10358:com.eykon.memory}}} m=OPEN f=MOVE_TO_TOP|FLAG_CHANGED_INTERACTIVE leash=Surface(name=Task=9571#11857)/@0xa3dc33d sb=Rect(0, 0 - 1344, 2992) eb=Rect(0, 0 - 1344, 2992) epz=Point(1344, 2992) d=0 taskParent=-1 winMode=1 userId=0},
+11-15 18:34:07.694 I/om.eykon.memory(19685): Using generational CollectorTypeCMC GC.
+11-15 18:34:07.786 D/nativeloader(19685): Configuring clns-9 for other apk /data/app/~~S-Qo454_rDcL1W17zbB2tw==/com.eykon.memory--dDVJvrCGhkgNkLwn5oqHg==/base.apk. target_sdk_version=35, uses_libraries=, library_path=/data/app/~~S-Qo454_rDcL1W17zbB2tw==/com.eykon.memory--dDVJvrCGhkgNkLwn5oqHg==/lib/arm64:/data/app/~~S-Qo454_rDcL1W17zbB2tw==/com.eykon.memory--dDVJvrCGhkgNkLwn5oqHg==/base.apk!/lib/arm64-v8a, permitted_path=/data:/mnt/expand:/data/user/0/com.eykon.memory
+11-15 18:34:07.790 D/ActivityThread(19685): Set OS env TMPDIR to /data/user/0/com.eykon.memory/cache
+11-15 18:34:07.792 V/GraphicsEnvironment(19685): com.eykon.memory is not listed in per-application setting
+11-15 18:34:07.812 D/nativeloader(19685): Load /data/app/~~S-Qo454_rDcL1W17zbB2tw==/com.eykon.memory--dDVJvrCGhkgNkLwn5oqHg==/base.apk!/lib/arm64-v8a/libonnxruntime.so using class loader ns clns-9 (caller=/data/app/~~S-Qo454_rDcL1W17zbB2tw==/com.eykon.memory--dDVJvrCGhkgNkLwn5oqHg==/base.apk): ok
+11-15 18:34:07.812 E/om.eykon.memory(19685): No implementation found for boolean ai.onnxruntime.telemetry.HttpClient.isDeviceIdCollectionEnabled() (tried Java_ai_onnxruntime_telemetry_HttpClient_isDeviceIdCollectionEnabled and Java_ai_onnxruntime_telemetry_HttpClient_isDeviceIdCollectionEnabled__) - is the library loaded, e.g. System.loadLibrary?
+11-15 18:34:07.818 D/WM-WrkMgrInitializer(19685): Initializing WorkManager with default configuration.
+11-15 18:34:07.825 D/WM-PackageManagerHelper(19685): Skipping component enablement for androidx.work.impl.background.systemjob.SystemJobService
+11-15 18:34:07.825 D/WM-Schedulers(19685): Created SystemJobScheduler and enabled SystemJobService
+11-15 18:34:07.831 D/WM-ForceStopRunnable(19685): The default process name was not specified.
+11-15 18:34:07.833 D/WM-ForceStopRunnable(19685): Performing cleanup operations.
+11-15 18:34:07.841 D/vulkan  (19685): searching for layers in '/data/app/~~S-Qo454_rDcL1W17zbB2tw==/com.eykon.memory--dDVJvrCGhkgNkLwn5oqHg==/lib/arm64'
+11-15 18:34:07.842 D/vulkan  (19685): searching for layers in '/data/app/~~S-Qo454_rDcL1W17zbB2tw==/com.eykon.memory--dDVJvrCGhkgNkLwn5oqHg==/base.apk!/lib/arm64-v8a'
+11-15 18:34:07.856 D/WM-SystemJobScheduler(19685): Reconciling jobs
+11-15 18:34:07.865 D/WM-ForceStopRunnable(19685): Application was force-stopped, rescheduling.
+11-15 18:34:07.898 D/WM-PackageManagerHelper(19685): Skipping component enablement for androidx.work.impl.background.systemalarm.RescheduleReceiver
+11-15 18:34:07.922 D/WM-SystemJobScheduler(19685): Scheduling work ID 67bbd784-decd-46e0-89b8-1a0997a583d6Job ID 64
+11-15 18:34:07.928 D/WM-GreedyScheduler(19685): Starting work for 67bbd784-decd-46e0-89b8-1a0997a583d6
+11-15 18:34:07.937 D/WM-Processor(19685): Processor: processing WorkGenerationalId(workSpecId=67bbd784-decd-46e0-89b8-1a0997a583d6, generation=0)
+11-15 18:34:07.950 D/WM-PackageManagerHelper(19685): androidx.work.impl.background.systemalarm.RescheduleReceiver enabled
+11-15 18:34:07.973 D/CoreBackPreview( 1674): Window{930c689 u0 com.eykon.memory/com.eykon.memory.MainActivity}: Setting back callback OnBackInvokedCallbackInfo{mCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@60015f2, mPriority=0, mIsAnimationCallback=false, mOverrideBehavior=0}
+11-15 18:34:08.018 W/om.eykon.memory(19685): Method boolean androidx.compose.runtime.snapshots.SnapshotStateList.conditionalUpdate(boolean, kotlin.jvm.functions.Function1) failed lock verification and will run slower.
+11-15 18:34:08.018 W/om.eykon.memory(19685): Common causes for lock verification issues are non-optimized dex code
+11-15 18:34:08.018 W/om.eykon.memory(19685): and incorrect proguard optimizations.
+11-15 18:34:08.018 W/om.eykon.memory(19685): Method boolean androidx.compose.runtime.snapshots.SnapshotStateList.conditionalUpdate$default(androidx.compose.runtime.snapshots.SnapshotStateList, boolean, kotlin.jvm.functions.Function1, int, java.lang.Object) failed lock verification and will run slower.
+11-15 18:34:08.018 W/om.eykon.memory(19685): Method java.lang.Object androidx.compose.runtime.snapshots.SnapshotStateList.mutate(kotlin.jvm.functions.Function1) failed lock verification and will run slower.
+11-15 18:34:08.018 W/om.eykon.memory(19685): Method void androidx.compose.runtime.snapshots.SnapshotStateList.update(boolean, kotlin.jvm.functions.Function1) failed lock verification and will run slower.
+11-15 18:34:08.018 W/om.eykon.memory(19685): Method void androidx.compose.runtime.snapshots.SnapshotStateList.update$default(androidx.compose.runtime.snapshots.SnapshotStateList, boolean, kotlin.jvm.functions.Function1, int, java.lang.Object) failed lock verification and will run slower.
+11-15 18:34:08.080 D/WindowManager( 1674): setClientSurface Surface(name=VRI-com.eykon.memory/com.eykon.memory.MainActivity#11867)/@0xfe54443 for 930c689 com.eykon.memory/com.eykon.memory.MainActivity
+11-15 18:34:08.127 I/ActivityTaskManager( 1674): Displayed com.eykon.memory/.MainActivity for user 0: +497ms
+11-15 18:34:08.135 D/WM-WorkerWrapper(19685): Starting work for com.eykon.memory.video.VideoJobWorker
+11-15 18:34:08.164 D/WM-SystemJobService(19685): onStartJob for WorkGenerationalId(workSpecId=67bbd784-decd-46e0-89b8-1a0997a583d6, generation=0)
+11-15 18:34:08.165 D/WM-Processor(19685): Work WorkGenerationalId(workSpecId=67bbd784-decd-46e0-89b8-1a0997a583d6, generation=0) is already enqueued for processing
+11-15 18:34:08.166 I/WM-WorkerWrapper(19685): Worker result SUCCESS for Work [ id=67bbd784-decd-46e0-89b8-1a0997a583d6, tags={ com.eykon.memory.video.VideoJobWorker } ]
+11-15 18:34:08.166 I/ImeTracker( 1674): com.eykon.memory:e0a55d0f: onRequestHide at ORIGIN_SERVER reason HIDE_UNSPECIFIED_WINDOW fromUser false userId 0 displayId 0
+11-15 18:34:08.172 D/WM-PackageManagerHelper(19685): androidx.work.impl.background.systemalarm.RescheduleReceiver disabled
+11-15 18:34:08.173 I/GoogleInputMethodService( 4003): GoogleInputMethodService.onStartInput():1552 onStartInput(EditorInfo{EditorInfo{packageName=com.eykon.memory, inputType=0, inputTypeString=NULL, enableLearning=false, autoCorrection=false, autoComplete=false, imeOptions=0, privateImeOptions=null, actionName=UNSPECIFIED, actionLabel=null, initialSelStart=-1, initialSelEnd=-1, initialCapsMode=0, label=null, fieldId=0, fieldName=null, extras=null, hintText=null, hintLocales=[]}}, false)
+11-15 18:34:08.174 W/PackageConfigPersister( 1674): App-specific configuration not found for packageName: com.eykon.memory and userId: 0
+11-15 18:34:08.184 I/ImeTracker(19685): com.eykon.memory:e0a55d0f: onCancelled at PHASE_CLIENT_ALREADY_HIDDEN
+11-15 18:34:08.184 D/WM-Processor(19685): Processor 67bbd784-decd-46e0-89b8-1a0997a583d6 executed; reschedule = false
+11-15 18:34:08.184 D/WM-SystemJobService(19685): 67bbd784-decd-46e0-89b8-1a0997a583d6 executed on JobScheduler
+11-15 18:34:08.188 D/WM-GreedyScheduler(19685): Cancelling work ID 67bbd784-decd-46e0-89b8-1a0997a583d6
+11-15 18:34:08.326 I/om.eykon.memory(19685): Compiler allocated 5599KB to compile void android.view.ViewRootImpl.performTraversals(long)
+11-15 18:34:08.953 I/AppsFilter( 1674): interaction: PackageSetting{d325d4b com.google.android.microdroid.empty_payload/10276} -> PackageSetting{54360b0 com.eykon.memory/10358} BLOCKED
+11-15 18:34:08.975 D/ShortcutService( 1674): changing package: com.eykon.memory userId=0
+11-15 18:34:08.988 W/LauncherActivityCachingLogic( 2773): loadIcon: Default app icon returned from PackageManager. component=ComponentInfo{com.eykon.memory/com.eykon.memory.MainActivity}, user=UserHandle{0}
+11-15 18:34:08.991 W/LauncherActivityCachingLogic( 2773): loadIcon: Default app icon returned from PackageManager. component=ComponentInfo{com.eykon.memory/com.eykon.memory.MainActivity}, user=UserHandle{0}
+11-15 18:34:08.992 D/AlphabeticIndexCompat( 2773): computeSectionName: cs: Eykon Memory sectionName: E
+11-15 18:34:08.994 D/AlphabeticalAppsList( 2773): addAppsWithSections: adding sectionName: E with appInfoTitle: Eykon Memory
+11-15 18:34:13.618 D/ProfileInstaller(19685): Installing profile for com.eykon.memory
+11-15 18:34:14.973 D/WM-SystemJobScheduler( 4608): Scheduling work ID 252afe9f-0a78-4a68-9bb2-76bdca24880f (com.google.android.apps.messaging.shared.datamodel.workqueue.WorkQueueWorkerShim), Job ID 2802
+11-15 18:34:14.978 D/WM-GreedyScheduler( 4608): Ignoring {WorkSpec: b6605503-d157-44c5-9d9a-28066eadefed}. Requires ContentUri triggers.
+11-15 18:34:14.978 D/WM-GreedyScheduler( 4608): Ignoring {WorkSpec: f2b169f9-a119-4d53-a2b5-2361548aec3b}. Requires device idle.
+11-15 18:34:14.978 D/WM-GreedyScheduler( 4608): Ignoring {WorkSpec: 4f616493-7fb0-4825-90db-6ac694f12804}. Requires ContentUri triggers.
+11-15 18:34:14.978 D/WM-GreedyScheduler( 4608): Starting work for 252afe9f-0a78-4a68-9bb2-76bdca24880f
+11-15 18:34:14.981 D/WM-SystemJobService( 4608): onStartJob for WorkGenerationalId(workSpecId=252afe9f-0a78-4a68-9bb2-76bdca24880f, generation=0)
+11-15 18:34:14.982 D/WM-Processor( 4608): vxi: processing WorkGenerationalId(workSpecId=252afe9f-0a78-4a68-9bb2-76bdca24880f, generation=0)
+11-15 18:34:14.983 D/WM-Processor( 4608): Work WorkGenerationalId(workSpecId=252afe9f-0a78-4a68-9bb2-76bdca24880f, generation=0) is already enqueued for processing
+11-15 18:34:14.996 D/WM-WorkerWrapper( 4608): Starting work for com.google.android.apps.messaging.shared.datamodel.workqueue.WorkQueueWorkerShim
+11-15 18:34:15.112 I/WM-WorkerWrapper( 4608): Worker result SUCCESS for Work [ id=252afe9f-0a78-4a68-9bb2-76bdca24880f, class=com.google.android.apps.messaging.shared.datamodel.workqueue.WorkQueueWorkerShim, tags={ com.google.android.apps.messaging.shared.datamodel.workqueue.WorkQueueWorkerShim,sim_state_update_queue-WORK_TYPE_UPDATE_PHONE_SIMS_STATE } ]
+11-15 18:34:15.115 D/WM-Processor( 4608): vxi 252afe9f-0a78-4a68-9bb2-76bdca24880f executed; reschedule = false
+11-15 18:34:15.115 D/WM-SystemJobService( 4608): 252afe9f-0a78-4a68-9bb2-76bdca24880f executed on JobScheduler
+11-15 18:34:15.124 D/WM-GreedyScheduler( 4608): Cancelling work ID 252afe9f-0a78-4a68-9bb2-76bdca24880f
+11-15 18:34:15.127 D/WM-GreedyScheduler( 4608): Ignoring {WorkSpec: b6605503-d157-44c5-9d9a-28066eadefed}. Requires ContentUri triggers.
+11-15 18:34:15.128 D/WM-GreedyScheduler( 4608): Ignoring {WorkSpec: f2b169f9-a119-4d53-a2b5-2361548aec3b}. Requires device idle.
+11-15 18:34:15.128 D/WM-GreedyScheduler( 4608): Ignoring {WorkSpec: 4f616493-7fb0-4825-90db-6ac694f12804}. Requires ContentUri triggers.
+11-15 18:34:24.988 V/ActivityTaskManager( 1674): TaskLaunchParamsModifier: phase=2 task=Task{c3c1204 #9571 type=standard A=10358:com.eykon.memory} activity=ActivityRecord{15044199 u0 com.google.android.documentsui/com.android.documentsui.picker.PickActivity t-1} display-from-task=0 display-id=0 task-display-area-windowing-mode=1 suggested-display-area=DefaultTaskDisplayArea@116739414 inherit-from-source=fullscreen non-freeform-task-display-area display-area=DefaultTaskDisplayArea@116739414 skip-bounds-fullscreen
+11-15 18:34:24.988 I/ActivityTaskManager( 1674): START u0 {act=android.intent.action.OPEN_DOCUMENT typ=*/* xflg=0x4 cmp=com.google.android.documentsui/com.android.documentsui.picker.PickActivity (has extras)} with LAUNCH_MULTIPLE from uid 10358 (com.eykon.memory) (rr=26766871) (BAL_ALLOW_VISIBLE_WINDOW) result code=0
+11-15 18:34:24.988 V/WindowManagerShell( 2438): Transition requested (#896): android.os.BinderProxy@926d848 TransitionRequestInfo { type = OPEN, triggerTask = TaskInfo{userId=0 taskId=9571 effectiveUid=10358 seqId=0 displayId=0 isRunning=true baseIntent=Intent { flg=0x10000000 cmp=com.eykon.memory/.MainActivity } baseActivity=ComponentInfo{com.eykon.memory/com.eykon.memory.MainActivity} topActivity=ComponentInfo{com.google.android.documentsui/com.android.documentsui.picker.PickActivity} origActivity=null realActivity=ComponentInfo{com.eykon.memory/com.eykon.memory.MainActivity} realActivityIsAppLockEnabled=false numActivities=2 lastActiveTime=62869299 supportsMultiWindow=true supportsMultiWindowWithoutConstraints=true resizeMode=1 isResizeable=true minWidth=-1 minHeight=-1 defaultMinSize=220 token=WCT{android.os.BinderProxy@6498a66} topActivityType=1 pictureInPictureParams=null shouldDockBigOverlays=false launchIntoPipHostTaskId=-1 lastParentTaskIdBeforePip=-1 displayCutoutSafeInsets=Rect(0, 0 - 0, 0) topActivityInfo=ActivityInfo{b2036e1 com.android.documentsui.picker.PickActivity} launchCookies=[] positionInParent=Point(0, 0) parentTaskId=-1 isFocused=true isInteractive=true isVisible=true isVisibleRequested=true isTopActivityNoDisplay=false isSleeping=false locusId=null displayAreaFeatureId=1 isTopActivityTransparent=false isActivityStackTransparent=false lastNonFullscreenBounds=null leafTaskBoundsFromOptions= false capturedLink=null capturedLinkTimestamp=0 requestedVisibleTypes=503 topActivityRequestOpenInBrowserEducationTimestamp=0 appCompatTaskInfo=AppCompatTaskInfo { topActivityInSizeCompat=false isLeafTask= true eligibleForLetterboxEducation= false isLetterboxEducationEnabled= false isLetterboxDoubleTapEnabled= false eligibleForUserAspectRatioButton= false topActivityBoundsLetterboxed= false isFromLetterboxDoubleTap= false topActivityLetterboxVerticalPosition= -1 topActivityLetterboxHorizontalPosition= -1 topActivityLetterboxWidth=-1 topActivityLetterboxHeight=-1 topActivityAppBounds=Rect(0, 0 - 1344, 2992) isUserFullscreenOverrideEnabled=false isSystemFullscreenOverrideEnabled=false hasMinAspectRatioOverride=false topActivityLetterboxBounds=null topNonResizableActivityAspectRatio=-1.0} topActivityMainWindowFrame=null isAppBubble=false}, pipChange = null, remoteTransitionInfo = null, displayChanges = null, requestedLocation = null, userChange = null, windowingLayerChange = null, fullscreenRequestChange = null, flags = 0, debugId = 896 }
+11-15 18:34:25.119 V/WindowManagerShell( 2438):         {m=TO_BACK f=FILLS_TASK leash=Surface(name=ActivityRecord{26766871 u0 com.eykon.memory/.MainActivity t9571}#11858)/@0x177f2c7 sb=Rect(0, 0 - 1344, 2992) eb=Rect(0, 0 - 1344, 2992) epz=Point(1344, 2992) d=0 bc=ff1e1910 activity=ActivityTransitionInfo { component = ComponentInfo{com.eykon.memory/com.eykon.memory.MainActivity}, taskId = 9571, appCompatTransitionInfo = null } opt={t=FROM_STYLE mUserId=0}}
+11-15 18:34:25.119 V/WindowManager( 1674): Sent Transition (#896) createdAt=11-15 18:34:24.983 via request=TransitionRequestInfo { type = OPEN, triggerTask = TaskInfo{userId=0 taskId=9571 effectiveUid=10358 seqId=0 displayId=0 isRunning=true baseIntent=Intent { flg=0x10000000 cmp=com.eykon.memory/.MainActivity } baseActivity=ComponentInfo{com.eykon.memory/com.eykon.memory.MainActivity} topActivity=ComponentInfo{com.google.android.documentsui/com.android.documentsui.picker.PickActivity} origActivity=null realActivity=ComponentInfo{com.eykon.memory/com.eykon.memory.MainActivity} realActivityIsAppLockEnabled=false numActivities=2 lastActiveTime=62869299 supportsMultiWindow=true supportsMultiWindowWithoutConstraints=true resizeMode=1 isResizeable=true minWidth=-1 minHeight=-1 defaultMinSize=220 token=WCT{RemoteToken{f802a8a Task{c3c1204 #9571 type=standard A=10358:com.eykon.memory}}} topActivityType=1 pictureInPictureParams=null shouldDockBigOverlays=false launchIntoPipHostTaskId=-1 lastParentTaskIdBeforePip=-1 displayCutoutSafeInsets=Rect(0, 0 - 0, 0) topActivityInfo=ActivityInfo{93ae929 com.android.documentsui.picker.PickActivity} launchCookies=[] positionInParent=Point(0, 0) parentTaskId=-1 isFocused=true isInteractive=true isVisible=true isVisibleRequested=true isTopActivityNoDisplay=false isSleeping=false locusId=null displayAreaFeatureId=1 isTopActivityTransparent=false isActivityStackTransparent=false lastNonFullscreenBounds=null leafTaskBoundsFromOptions= false capturedLink=null capturedLinkTimestamp=0 requestedVisibleTypes=503 topActivityRequestOpenInBrowserEducationTimestamp=0 appCompatTaskInfo=AppCompatTaskInfo { topActivityInSizeCompat=false isLeafTask= true eligibleForLetterboxEducation= false isLetterboxEducationEnabled= false isLetterboxDoubleTapEnabled= false eligibleForUserAspectRatioButton= false topActivityBoundsLetterboxed= false isFromLetterboxDoubleTap= false topActivityLetterboxVerticalPosition= -1 topActivityLetterboxHorizontalPosition= -1 topActivityLetterboxWidth=-1 topActivityLetterboxHeight=-1 topActivityAppBounds=Rect(0, 0 - 1344, 2992) isUserFullscreenOverrideEnabled=false isSystemFullscreenOverrideEnabled=false hasMinAspectRatioOverride=false topActivityLetterboxBounds=null topNonResizableActivityAspectRatio=-1.0} topActivityMainWindowFrame=null isAppBubble=false}, pipChange = null, remoteTransitionInfo = null, displayChanges = null, requestedLocation = null, userChange = null, windowingLayerChange = null, fullscreenRequestChange = null, flags = 0, debugId = 896 }
+11-15 18:34:25.119 V/WindowManager( 1674):         {m=TO_BACK f=FILLS_TASK leash=Surface(name=ActivityRecord{26766871 u0 com.eykon.memory/.MainActivity t9571}#11858)/@0xc58f462 sb=Rect(0, 0 - 1344, 2992) eb=Rect(0, 0 - 1344, 2992) epz=Point(1344, 2992) d=0 bc=ff1e1910 activity=ActivityTransitionInfo { component = ComponentInfo{com.eykon.memory/com.eykon.memory.MainActivity}, taskId = 9571, appCompatTransitionInfo = null } opt={t=FROM_STYLE mUserId=0}}
+11-15 18:34:25.120 V/WindowManagerShell( 2438): Transition doesn't have explicit remote, search filters for match for {id=896 t=OPEN f=0x0 trk=0 r=[0@Point(0, 0)] c=[{m=OPEN f=FILLS_TASK leash=Surface(name=ActivityRecord{15044199 u0 com.google.android.documentsui/com.android.documentsui.picker.PickActivity t9571}#11875)/@0x761c06 sb=Rect(0, 0 - 0, 0) eb=Rect(0, 0 - 1344, 2992) epz=Point(1344, 2992) d=-1->0 r=-1->0:-1 bc=ff1e1910 activity=ActivityTransitionInfo { component = ComponentInfo{com.google.android.documentsui/com.android.documentsui.picker.PickActivity}, taskId = 9571, appCompatTransitionInfo = null } opt={t=FROM_STYLE mUserId=0}},{m=TO_BACK f=FILLS_TASK leash=Surface(name=ActivityRecord{26766871 u0 com.eykon.memory/.MainActivity t9571}#11858)/@0x177f2c7 sb=Rect(0, 0 - 1344, 2992) eb=Rect(0, 0 - 1344, 2992) epz=Point(1344, 2992) d=0 bc=ff1e1910 activity=ActivityTransitionInfo { component = ComponentInfo{com.eykon.memory/com.eykon.memory.MainActivity}, taskId = 9571, appCompatTransitionInfo = null } opt={t=FROM_STYLE mUserId=0}}]}
+11-15 18:34:25.120 V/WindowManagerShell( 2438): start default transition animation, info = {id=896 t=OPEN f=0x0 trk=0 r=[0@Point(0, 0)] c=[{m=OPEN f=FILLS_TASK leash=Surface(name=ActivityRecord{15044199 u0 com.google.android.documentsui/com.android.documentsui.picker.PickActivity t9571}#11875)/@0x761c06 sb=Rect(0, 0 - 0, 0) eb=Rect(0, 0 - 1344, 2992) epz=Point(1344, 2992) d=-1->0 r=-1->0:-1 bc=ff1e1910 activity=ActivityTransitionInfo { component = ComponentInfo{com.google.android.documentsui/com.android.documentsui.picker.PickActivity}, taskId = 9571, appCompatTransitionInfo = null } opt={t=FROM_STYLE mUserId=0}},{m=TO_BACK f=FILLS_TASK leash=Surface(name=ActivityRecord{26766871 u0 com.eykon.memory/.MainActivity t9571}#11858)/@0x177f2c7 sb=Rect(0, 0 - 1344, 2992) eb=Rect(0, 0 - 1344, 2992) epz=Point(1344, 2992) d=0 bc=ff1e1910 activity=ActivityTransitionInfo { component = ComponentInfo{com.eykon.memory/com.eykon.memory.MainActivity}, taskId = 9571, appCompatTransitionInfo = null } opt={t=FROM_STYLE mUserId=0}}]}
+11-15 18:34:43.901 D/WindowManager( 1674): setClientSurface Surface(name=VRI-com.eykon.memory/com.eykon.memory.MainActivity#11885)/@0xb0891f5 for 930c689 com.eykon.memory/com.eykon.memory.MainActivity
+11-15 18:34:43.929 V/WindowManager( 1674):         {m=TO_FRONT f=FILLS_TASK leash=Surface(name=ActivityRecord{26766871 u0 com.eykon.memory/.MainActivity t9571}#11858)/@0xc58f462 sb=Rect(0, 0 - 1344, 2992) eb=Rect(0, 0 - 1344, 2992) epz=Point(1344, 2992) d=0 bc=ff1e1910 activity=ActivityTransitionInfo { component = ComponentInfo{com.eykon.memory/com.eykon.memory.MainActivity}, taskId = 9571, appCompatTransitionInfo = null } opt={t=FROM_STYLE mUserId=0}}
+11-15 18:34:43.931 V/WindowManagerShell( 2438):         {m=TO_FRONT f=FILLS_TASK leash=Surface(name=ActivityRecord{26766871 u0 com.eykon.memory/.MainActivity t9571}#11858)/@0x1b37520 sb=Rect(0, 0 - 1344, 2992) eb=Rect(0, 0 - 1344, 2992) epz=Point(1344, 2992) d=0 bc=ff1e1910 activity=ActivityTransitionInfo { component = ComponentInfo{com.eykon.memory/com.eykon.memory.MainActivity}, taskId = 9571, appCompatTransitionInfo = null } opt={t=FROM_STYLE mUserId=0}}
+11-15 18:34:43.932 V/WindowManagerShell( 2438): Transition doesn't have explicit remote, search filters for match for {id=897 t=CLOSE f=0x0 trk=0 r=[0@Point(0, 0)] c=[{m=CLOSE f=FILLS_TASK leash=Surface(name=ActivityRecord{15044199 u0 com.google.android.documentsui/com.android.documentsui.picker.PickActivity t9571}#11875)/@0x8e93c23 sb=Rect(0, 0 - 1344, 2992) eb=Rect(0, 0 - 1344, 2992) epz=Point(1344, 2992) d=0 bc=ff1e1910 activity=ActivityTransitionInfo { component = ComponentInfo{com.google.android.documentsui/com.android.documentsui.picker.PickActivity}, taskId = 9571, appCompatTransitionInfo = null } opt={t=FROM_STYLE mUserId=0}},{m=TO_FRONT f=FILLS_TASK leash=Surface(name=ActivityRecord{26766871 u0 com.eykon.memory/.MainActivity t9571}#11858)/@0x1b37520 sb=Rect(0, 0 - 1344, 2992) eb=Rect(0, 0 - 1344, 2992) epz=Point(1344, 2992) d=0 bc=ff1e1910 activity=ActivityTransitionInfo { component = ComponentInfo{com.eykon.memory/com.eykon.memory.MainActivity}, taskId = 9571, appCompatTransitionInfo = null } opt={t=FROM_STYLE mUserId=0}}]}
+11-15 18:34:43.933 V/WindowManagerShell( 2438): start default transition animation, info = {id=897 t=CLOSE f=0x0 trk=0 r=[0@Point(0, 0)] c=[{m=CLOSE f=FILLS_TASK leash=Surface(name=ActivityRecord{15044199 u0 com.google.android.documentsui/com.android.documentsui.picker.PickActivity t9571}#11875)/@0x8e93c23 sb=Rect(0, 0 - 1344, 2992) eb=Rect(0, 0 - 1344, 2992) epz=Point(1344, 2992) d=0 bc=ff1e1910 activity=ActivityTransitionInfo { component = ComponentInfo{com.google.android.documentsui/com.android.documentsui.picker.PickActivity}, taskId = 9571, appCompatTransitionInfo = null } opt={t=FROM_STYLE mUserId=0}},{m=TO_FRONT f=FILLS_TASK leash=Surface(name=ActivityRecord{26766871 u0 com.eykon.memory/.MainActivity t9571}#11858)/@0x1b37520 sb=Rect(0, 0 - 1344, 2992) eb=Rect(0, 0 - 1344, 2992) epz=Point(1344, 2992) d=0 bc=ff1e1910 activity=ActivityTransitionInfo { component = ComponentInfo{com.eykon.memory/com.eykon.memory.MainActivity}, taskId = 9571, appCompatTransitionInfo = null } opt={t=FROM_STYLE mUserId=0}}]}
+11-15 18:34:43.958 I/ImeTracker( 1674): com.eykon.memory:dbf966a5: onRequestHide at ORIGIN_SERVER reason HIDE_UNSPECIFIED_WINDOW fromUser false userId 0 displayId 0
+11-15 18:34:43.959 I/ImeTracker(19685): com.eykon.memory:dbf966a5: onCancelled at PHASE_CLIENT_ALREADY_HIDDEN
+11-15 18:34:43.962 I/GoogleInputMethodService( 4003): GoogleInputMethodService.onStartInput():1552 onStartInput(EditorInfo{EditorInfo{packageName=com.eykon.memory, inputType=0, inputTypeString=NULL, enableLearning=false, autoCorrection=false, autoComplete=false, imeOptions=0, privateImeOptions=null, actionName=UNSPECIFIED, actionLabel=null, initialSelStart=-1, initialSelEnd=-1, initialCapsMode=0, label=null, fieldId=0, fieldName=null, extras=null, hintText=null, hintLocales=[]}}, false)
+11-15 18:34:43.966 W/PackageConfigPersister( 1674): App-specific configuration not found for packageName: com.eykon.memory and userId: 0
+11-15 18:34:44.235 I/adbd    (19420): adbd service requested 'shell,v2,TERM=xterm-256color:export ANDROID_LOG_TAGS=''; exec logcat '-d' '-s' 'EykonVideo''
+11-15 18:34:45.486 I/EykonVideo(19685): read 3a28833840da48208ca77a16ffe69452: 1197672204 bytes in place in 1509 ms (no copy)
+11-15 18:34:45.589 I/EykonVideo(19685): original location for content://com.android.externalstorage.documents/document/primary%3AMovies%2Feyko85_8min.mp4: '' -> none
+11-15 18:34:45.610 D/WM-SystemJobScheduler(19685): Scheduling work ID fb0e8d9f-81f5-4460-8483-8c48160f97c2Job ID 65
+11-15 18:34:45.619 D/WM-GreedyScheduler(19685): Starting work for fb0e8d9f-81f5-4460-8483-8c48160f97c2
+11-15 18:34:45.620 D/WM-Processor(19685): Processor: processing WorkGenerationalId(workSpecId=fb0e8d9f-81f5-4460-8483-8c48160f97c2, generation=0)
+11-15 18:34:45.626 D/WM-PackageManagerHelper(19685): androidx.work.impl.background.systemalarm.RescheduleReceiver enabled
+11-15 18:34:45.653 D/WM-WorkerWrapper(19685): Starting work for com.eykon.memory.video.VideoJobWorker
+11-15 18:34:45.655 D/WM-SystemJobService(19685): onStartJob for WorkGenerationalId(workSpecId=fb0e8d9f-81f5-4460-8483-8c48160f97c2, generation=0)
+11-15 18:34:45.658 D/WM-Processor(19685): Work WorkGenerationalId(workSpecId=fb0e8d9f-81f5-4460-8483-8c48160f97c2, generation=0) is already enqueued for processing
+11-15 18:34:45.660 I/WM-Processor(19685): Moving WorkSpec (fb0e8d9f-81f5-4460-8483-8c48160f97c2) to the foreground
+11-15 18:34:45.668 I/ActivityManager( 1674): Background started FGS: Allowed [callingPackage: com.eykon.memory; callingUid: 10358; uidState: TOP ; uidBFSL: [BFSL]; BFGS denied: false; intent: Intent { act=ACTION_START_FOREGROUND xflg=0x4 cmp=com.eykon.memory/androidx.work.impl.foreground.SystemForegroundService (has extras) }; code:PROC_STATE_TOP; tempAllowListReason:<null>; allowWiu:12; targetSdkVersion:35; callerTargetSdkVersion:35; startForegroundCount:0; bindFromPackage:null; isBindService:false]
+11-15 18:34:45.672 I/WM-SystemFgDispatcher(19685): Started foreground service Intent { act=ACTION_START_FOREGROUND xflg=0x4 cmp=com.eykon.memory/androidx.work.impl.foreground.SystemForegroundService (has extras) }
+11-15 18:34:45.672 D/WM-SystemFgDispatcher(19685): Notifying with (id:4401, workSpecId: fb0e8d9f-81f5-4460-8483-8c48160f97c2, notificationType :1)
+11-15 18:34:45.673 I/ActivityManager( 1674): Background started FGS: Allowed [callingPackage: com.eykon.memory; callingUid: 10358; uidState: TOP ; uidBFSL: [BFSL]; BFGS denied: false; intent: Intent { act=ACTION_START_FOREGROUND cmp=com.eykon.memory/androidx.work.impl.foreground.SystemForegroundService }; code:PROC_STATE_TOP; tempAllowListReason:<null>; allowWiu:12; targetSdkVersion:35; callerTargetSdkVersion:35; startForegroundCount:0; bindFromPackage:null; isBindService:false]
+11-15 18:34:45.674 W/ForegroundServiceTypeLoggerModule( 1674): Foreground service start for UID: 10358 does not have any types
+11-15 18:34:45.675 D/WM-SystemFgDispatcher(19685): Notifying with (id:4401, workSpecId: fb0e8d9f-81f5-4460-8483-8c48160f97c2, notificationType :1)
+11-15 18:34:45.677 I/ActivityManager( 1674): Background started FGS: Allowed [callingPackage: com.eykon.memory; callingUid: 10358; uidState: TOP ; uidBFSL: [BFSL]; BFGS denied: false; intent: Intent { act=ACTION_START_FOREGROUND cmp=com.eykon.memory/androidx.work.impl.foreground.SystemForegroundService }; code:PROC_STATE_TOP; tempAllowListReason:<null>; allowWiu:12; targetSdkVersion:35; callerTargetSdkVersion:35; startForegroundCount:1; bindFromPackage:null; isBindService:false]
+11-15 18:34:45.677 I/adbd    (19420): adbd service requested 'shell,v2,TERM=xterm-256color:export ANDROID_LOG_TAGS=''; exec logcat '-d' '-s' 'EykonVideo''
+11-15 18:34:45.779 W/om.eykon.memory(19685): AIBinder_linkToDeath is being called with a non-null cookie and no onUnlink callback set. Use AIBinder_DeathRecipient_setOnUnlinked to manage the lifetime of the cookie. This will become an abort.
+11-15 18:34:45.799 W/om.eykon.memory(19685): AIBinder_linkToDeath is being called with a non-null cookie and no onUnlink callback set. Use AIBinder_DeathRecipient_setOnUnlinked to manage the lifetime of the cookie. This will become an abort.
+11-15 18:34:46.151 I/adbd    (19420): adbd service requested 'shell,v2,TERM=xterm-256color:export ANDROID_LOG_TAGS=''; exec logcat '-d' '-s' 'EykonVideo''
+11-15 18:34:46.627 I/AppsFilter( 1674): interaction: PackageSetting{d325d4b com.google.android.microdroid.empty_payload/10276} -> PackageSetting{509a3c7 com.eykon.memory/10358} BLOCKED
+11-15 18:34:46.638 D/ShortcutService( 1674): changing package: com.eykon.memory userId=0
+11-15 18:34:46.856 W/LauncherActivityCachingLogic( 2773): loadIcon: Default app icon returned from PackageManager. component=ComponentInfo{com.eykon.memory/com.eykon.memory.MainActivity}, user=UserHandle{0}
+11-15 18:34:46.860 W/LauncherActivityCachingLogic( 2773): loadIcon: Default app icon returned from PackageManager. component=ComponentInfo{com.eykon.memory/com.eykon.memory.MainActivity}, user=UserHandle{0}
+11-15 18:34:46.860 D/AlphabeticIndexCompat( 2773): computeSectionName: cs: Eykon Memory sectionName: E
+11-15 18:34:46.865 D/AlphabeticalAppsList( 2773): addAppsWithSections: adding sectionName: E with appInfoTitle: Eykon Memory
+11-15 18:34:49.126 V/SharedSurfaceAnimation( 1674): Checking SharedSurface matching for: ComponentInfo{com.eykon.memory/com.eykon.memory.MainActivity}, user= 0
+11-15 18:34:49.140 V/WindowManager( 1674):         {WCT{RemoteToken{f802a8a Task{c3c1204 #9571 type=standard A=10358:com.eykon.memory}}} m=TO_BACK f=FLAG_CHANGED_INTERACTIVE leash=Surface(name=Task=9571#11857)/@0xa3dc33d sb=Rect(0, 0 - 1344, 2992) eb=Rect(0, 0 - 1344, 2992) epz=Point(1344, 2992) d=0 taskParent=-1 winMode=1 userId=0},
+11-15 18:34:50.487 I/adbd    (19420): adbd service requested 'shell,v2,TERM=xterm-256color:export ANDROID_LOG_TAGS=''; exec logcat '-d' '-s' 'EykonVideo''
+11-15 18:34:51.028 W/AlarmManager( 1674): Unrecognized alarm listener com.android.server.DeviceIdleController$$ExternalSyntheticLambda1@37d3815
+11-15 18:34:51.069 I/adbd    (19420): adbd service requested 'shell,v2,TERM=xterm-256color,raw:dumpsys deviceidle'
+11-15 18:34:51.473 I/adbd    (19420): adbd service requested 'shell,v2,TERM=xterm-256color,raw:dumpsys deviceidle'
+11-15 18:34:55.139 W/AlarmManager( 1674): Unrecognized alarm listener com.android.server.DeviceIdleController$$ExternalSyntheticLambda1@37d3815
+11-15 18:34:55.184 D/LauncherAppsService( 1674): getActivityLaunchIntent callingPackage=com.android.systemui component=ComponentInfo{com.eykon.memory/com.eykon.memory.MainActivity} user=UserHandle{0}
+11-15 18:35:03.171 W/AlarmManager( 1674): Unrecognized alarm listener com.android.server.DeviceIdleController$$ExternalSyntheticLambda1@37d3815
+11-15 18:35:25.828 I/adbd    (19420): adbd service requested 'shell,v2,TERM=xterm-256color:export ANDROID_LOG_TAGS=''; exec logcat '-d' '-s' 'EykonVideo''
+11-15 18:35:26.646 I/adbd    (19420): adbd service requested 'shell,v2,TERM=xterm-256color,raw:dumpsys deviceidle'
+11-15 18:35:28.051 I/adbd    (19420): adbd service requested 'shell,v2,TERM=xterm-256color,raw:dumpsys deviceidle'
+11-15 18:36:01.920 I/adbd    (19420): adbd service requested 'shell,v2,TERM=xterm-256color:export ANDROID_LOG_TAGS=''; exec logcat '-d' '-s' 'EykonVideo''
+11-15 18:36:02.549 I/adbd    (19420): adbd service requested 'shell,v2,TERM=xterm-256color,raw:dumpsys deviceidle'
+11-15 18:36:03.474 I/adbd    (19420): adbd service requested 'shell,v2,TERM=xterm-256color,raw:dumpsys deviceidle'
+11-15 18:36:05.206 W/om.eykon.memory(19685): AIBinder_linkToDeath is being called with a non-null cookie and no onUnlink callback set. Use AIBinder_DeathRecipient_setOnUnlinked to manage the lifetime of the cookie. This will become an abort.
+11-15 18:36:05.248 W/om.eykon.memory(19685): AIBinder_linkToDeath is being called with a non-null cookie and no onUnlink callback set. Use AIBinder_DeathRecipient_setOnUnlinked to manage the lifetime of the cookie. This will become an abort.
+11-15 18:36:05.310 W/om.eykon.memory(19685): AIBinder_linkToDeath is being called with a non-null cookie and no onUnlink callback set. Use AIBinder_DeathRecipient_setOnUnlinked to manage the lifetime of the cookie. This will become an abort.
+11-15 18:36:35.668 I/adbd    (19420): adbd service requested 'shell,v2,TERM=xterm-256color:export ANDROID_LOG_TAGS=''; exec logcat '-d' '-s' 'EykonVideo''
+11-15 18:36:36.311 I/adbd    (19420): adbd service requested 'shell,v2,TERM=xterm-256color,raw:dumpsys deviceidle'
+11-15 18:36:36.623 I/adbd    (19420): adbd service requested 'shell,v2,TERM=xterm-256color,raw:dumpsys deviceidle'
+11-15 18:36:45.329 D/WM-DelayedWorkTracker( 4608): Scheduling work dd766736-bdf4-42eb-b76d-03c38757b5b6
+11-15 18:36:45.333 D/WM-GreedyScheduler( 4608): Starting work for dd766736-bdf4-42eb-b76d-03c38757b5b6
+11-15 18:36:45.350 D/WM-SystemJobService( 4608): onStartJob for WorkGenerationalId(workSpecId=dd766736-bdf4-42eb-b76d-03c38757b5b6, generation=16366)
+11-15 18:36:45.385 D/WM-SystemJobService(19685): onStopJob for WorkGenerationalId(workSpecId=fb0e8d9f-81f5-4460-8483-8c48160f97c2, generation=0)
+11-15 18:36:45.386 D/WM-Processor(19685): Ignored stopWork. WorkerWrapper fb0e8d9f-81f5-4460-8483-8c48160f97c2 is in foreground
+11-15 18:36:45.386 D/WM-StopWorkRunnable(19685): StopWorkRunnable for fb0e8d9f-81f5-4460-8483-8c48160f97c2; Processor.stopWork = false
+11-15 18:36:45.399 D/WM-SystemJobService( 4608): onStopJob for WorkGenerationalId(workSpecId=dd766736-bdf4-42eb-b76d-03c38757b5b6, generation=16366)
+11-15 18:36:45.413 D/WM-Processor( 4608): vxi: processing WorkGenerationalId(workSpecId=dd766736-bdf4-42eb-b76d-03c38757b5b6, generation=16366)
+11-15 18:36:45.418 D/WM-Processor( 4608): Work WorkGenerationalId(workSpecId=dd766736-bdf4-42eb-b76d-03c38757b5b6, generation=16366) is already enqueued for processing
+11-15 18:36:45.428 D/WM-Processor( 4608): WorkerWrapper interrupted for dd766736-bdf4-42eb-b76d-03c38757b5b6 (com.google.apps.tiktok.contrib.work.TikTokListenableWorker), reason: 4
+11-15 18:36:45.428 D/WM-StopWorkRunnable( 4608): StopWorkRunnable for dd766736-bdf4-42eb-b76d-03c38757b5b6; Processor.stopWork = true, reason: 4
+11-15 18:36:45.433 D/WM-WorkerWrapper( 4608): Status for dd766736-bdf4-42eb-b76d-03c38757b5b6 is ENQUEUED; not doing any work and rescheduling for later execution
+11-15 18:36:45.471 D/WM-Processor( 4608): vxi dd766736-bdf4-42eb-b76d-03c38757b5b6 executed; reschedule = true
+11-15 18:36:45.494 D/WM-SystemJobScheduler( 4608): Cancelling work ID dd766736-bdf4-42eb-b76d-03c38757b5b6, Job ID 2797
+11-15 18:36:45.505 D/WM-GreedyScheduler( 4608): Cancelling work ID dd766736-bdf4-42eb-b76d-03c38757b5b6
+11-15 18:36:45.528 D/WM-SystemJobScheduler( 4608): Scheduling work ID dd766736-bdf4-42eb-b76d-03c38757b5b6 (com.google.apps.tiktok.contrib.work.TikTokListenableWorker), Job ID 2803
+11-15 18:36:45.537 D/WM-GreedyScheduler( 4608): Ignoring {WorkSpec: b6605503-d157-44c5-9d9a-28066eadefed}. Requires ContentUri triggers.
+11-15 18:36:45.540 D/WM-GreedyScheduler( 4608): Ignoring {WorkSpec: f2b169f9-a119-4d53-a2b5-2361548aec3b}. Requires device idle.
+11-15 18:36:45.540 D/WM-GreedyScheduler( 4608): Ignoring {WorkSpec: 4f616493-7fb0-4825-90db-6ac694f12804}. Requires ContentUri triggers.
+11-15 18:36:45.541 D/WM-GreedyScheduler( 4608): Starting work for dd766736-bdf4-42eb-b76d-03c38757b5b6
+11-15 18:36:45.553 D/WM-Processor( 4608): vxi: processing WorkGenerationalId(workSpecId=dd766736-bdf4-42eb-b76d-03c38757b5b6, generation=16366)
+11-15 18:36:45.599 D/WM-WorkerWrapper( 4608): Starting work for com.google.apps.tiktok.contrib.work.TikTokListenableWorker
+11-15 18:36:45.731 I/WM-WorkerWrapper( 4608): Worker result SUCCESS for Work [ id=dd766736-bdf4-42eb-b76d-03c38757b5b6, class=com.google.apps.tiktok.contrib.work.TikTokListenableWorker, tags={ com.google.apps.tiktok.contrib.work.TikTokListenableWorker,com.google.apps.tiktok.sync.impl.workmanager.SyncPeriodicWorker,sync_constraint:none,TikTokWorker#com.google.apps.tiktok.sync.impl.workmanager.SyncPeriodicWorker } ]
+11-15 18:36:45.735 D/WM-Processor( 4608): vxi dd766736-bdf4-42eb-b76d-03c38757b5b6 executed; reschedule = false
+11-15 18:36:45.748 D/WM-SystemJobScheduler( 4608): Cancelling work ID dd766736-bdf4-42eb-b76d-03c38757b5b6, Job ID 2803
+11-15 18:36:45.761 D/WM-GreedyScheduler( 4608): Cancelling work ID dd766736-bdf4-42eb-b76d-03c38757b5b6
+11-15 18:36:45.774 D/WM-SystemJobScheduler( 4608): Scheduling work ID dd766736-bdf4-42eb-b76d-03c38757b5b6 (com.google.apps.tiktok.contrib.work.TikTokListenableWorker), Job ID 2804
+11-15 18:36:45.787 D/WM-GreedyScheduler( 4608): Ignoring {WorkSpec: b6605503-d157-44c5-9d9a-28066eadefed}. Requires ContentUri triggers.
+11-15 18:36:45.788 D/WM-GreedyScheduler( 4608): Ignoring {WorkSpec: f2b169f9-a119-4d53-a2b5-2361548aec3b}. Requires device idle.
+11-15 18:36:45.788 D/WM-GreedyScheduler( 4608): Ignoring {WorkSpec: 4f616493-7fb0-4825-90db-6ac694f12804}. Requires ContentUri triggers.
+11-15 18:36:45.797 D/WM-SystemJobScheduler( 4608): Cancelling work ID dd766736-bdf4-42eb-b76d-03c38757b5b6, Job ID 2804
+11-15 18:36:45.813 D/WM-GreedyScheduler( 4608): Cancelling work ID dd766736-bdf4-42eb-b76d-03c38757b5b6
+11-15 18:36:45.849 D/WM-SystemJobScheduler( 4608): Scheduling work ID dd766736-bdf4-42eb-b76d-03c38757b5b6 (com.google.apps.tiktok.contrib.work.TikTokListenableWorker), Job ID 2805
+11-15 18:36:45.860 D/WM-GreedyScheduler( 4608): Ignoring {WorkSpec: b6605503-d157-44c5-9d9a-28066eadefed}. Requires ContentUri triggers.
+11-15 18:36:45.861 D/WM-GreedyScheduler( 4608): Ignoring {WorkSpec: f2b169f9-a119-4d53-a2b5-2361548aec3b}. Requires device idle.
+11-15 18:36:45.861 D/WM-GreedyScheduler( 4608): Ignoring {WorkSpec: 4f616493-7fb0-4825-90db-6ac694f12804}. Requires ContentUri triggers.
+11-15 18:36:45.877 D/WM-SystemJobScheduler( 4608): Cancelling work ID d9d3b51c-e380-4b46-90fc-a7cfdc9ad1d0, Job ID 2798
+11-15 18:36:45.920 D/WM-GreedyScheduler( 4608): Cancelling work ID d9d3b51c-e380-4b46-90fc-a7cfdc9ad1d0
+11-15 18:36:45.942 D/WM-SystemJobScheduler( 4608): Scheduling work ID d9d3b51c-e380-4b46-90fc-a7cfdc9ad1d0 (com.google.apps.tiktok.contrib.work.TikTokListenableWorker), Job ID 2806
+11-15 18:36:45.950 D/WM-GreedyScheduler( 4608): Ignoring {WorkSpec: b6605503-d157-44c5-9d9a-28066eadefed}. Requires ContentUri triggers.
+11-15 18:36:45.950 D/WM-GreedyScheduler( 4608): Ignoring {WorkSpec: f2b169f9-a119-4d53-a2b5-2361548aec3b}. Requires device idle.
+11-15 18:36:45.950 D/WM-GreedyScheduler( 4608): Ignoring {WorkSpec: 4f616493-7fb0-4825-90db-6ac694f12804}. Requires ContentUri triggers.
+11-15 18:36:45.958 D/WM-SystemJobScheduler( 4608): Cancelling work ID 341da65a-ab28-46a2-b425-0ac64f14127a, Job ID 2799
+11-15 18:36:45.974 D/WM-GreedyScheduler( 4608): Cancelling work ID 341da65a-ab28-46a2-b425-0ac64f14127a
+11-15 18:36:45.995 D/WM-SystemJobScheduler( 4608): Scheduling work ID 341da65a-ab28-46a2-b425-0ac64f14127a (com.google.apps.tiktok.contrib.work.TikTokListenableWorker), Job ID 2807
+11-15 18:36:46.004 D/WM-GreedyScheduler( 4608): Ignoring {WorkSpec: b6605503-d157-44c5-9d9a-28066eadefed}. Requires ContentUri triggers.
+11-15 18:36:46.005 D/WM-GreedyScheduler( 4608): Ignoring {WorkSpec: f2b169f9-a119-4d53-a2b5-2361548aec3b}. Requires device idle.
+11-15 18:36:46.005 D/WM-GreedyScheduler( 4608): Ignoring {WorkSpec: 4f616493-7fb0-4825-90db-6ac694f12804}. Requires ContentUri triggers.
+11-15 18:36:46.017 D/WM-SystemJobScheduler( 4608): Cancelling work ID 96f68723-a0e6-46d7-bac7-bdfc7fefa072, Job ID 2800
+11-15 18:36:46.048 D/WM-GreedyScheduler( 4608): Cancelling work ID 96f68723-a0e6-46d7-bac7-bdfc7fefa072
+11-15 18:36:46.063 D/WM-SystemJobScheduler( 4608): Scheduling work ID 96f68723-a0e6-46d7-bac7-bdfc7fefa072 (com.google.apps.tiktok.contrib.work.TikTokListenableWorker), Job ID 2808
+11-15 18:36:46.067 D/WM-GreedyScheduler( 4608): Ignoring {WorkSpec: b6605503-d157-44c5-9d9a-28066eadefed}. Requires ContentUri triggers.
+11-15 18:36:46.067 D/WM-GreedyScheduler( 4608): Ignoring {WorkSpec: f2b169f9-a119-4d53-a2b5-2361548aec3b}. Requires device idle.
+11-15 18:36:46.067 D/WM-GreedyScheduler( 4608): Ignoring {WorkSpec: 4f616493-7fb0-4825-90db-6ac694f12804}. Requires ContentUri triggers.
+11-15 18:37:05.886 I/EykonVideo(19685): split 3a28833840da48208ca77a16ffe69452: 1440 frames in 79339 ms (one pass; 18157 ms to JPEG, 2328 ms to write, the rest decoding), audio 479.7 s in 60680 ms
+11-15 18:37:09.109 I/om.eykon.memory(19685): Waiting for a blocking GC Alloc
+11-15 18:37:09.174 I/om.eykon.memory(19685): WaitForGcToComplete blocked Alloc on Background for 64.440ms
+11-15 18:37:09.581 I/adbd    (19420): adbd service requested 'shell,v2,TERM=xterm-256color:export ANDROID_LOG_TAGS=''; exec logcat '-d' '-s' 'EykonVideo''
+11-15 18:37:10.880 I/om.eykon.memory(19685): Waiting for a blocking GC Alloc
+11-15 18:37:10.940 I/om.eykon.memory(19685): WaitForGcToComplete blocked Alloc on Background for 59.756ms
+11-15 18:37:11.400 I/adbd    (19420): adbd service requested 'shell,v2,TERM=xterm-256color,raw:dumpsys deviceidle'
+11-15 18:37:11.953 I/om.eykon.memory(19685): Waiting for a blocking GC Alloc
+11-15 18:37:11.981 I/om.eykon.memory(19685): WaitForGcToComplete blocked Alloc on Background for 27.759ms
+11-15 18:37:12.424 I/adbd    (19420): adbd service requested 'shell,v2,TERM=xterm-256color,raw:dumpsys deviceidle'
+11-15 18:37:13.131 I/EykonVideo(19685): filter 3a28833840da48208ca77a16ffe69452: kept 149 of 1440 (less sharp 1280, still 11) in 7152 ms
+11-15 18:37:13.197 D/nativeloader(19685): Load /data/app/~~S-Qo454_rDcL1W17zbB2tw==/com.eykon.memory--dDVJvrCGhkgNkLwn5oqHg==/base.apk!/lib/arm64-v8a/libonnxruntime4j_jni.so using class loader ns clns-9 (caller=/data/app/~~S-Qo454_rDcL1W17zbB2tw==/com.eykon.memory--dDVJvrCGhkgNkLwn5oqHg==/base.apk): ok
+11-15 18:37:23.916 I/EykonVideo(19685): dedup 3a28833840da48208ca77a16ffe69452: kept 14 of 149 (hash dropped 131, embedding dropped 4) in 10765 ms; embedded 18 frames, 558 ms each; memory java 186 MB, native 208 MB
+11-15 18:37:40.170 I/EykonVideo(19685): scene 3a28833840da48208ca77a16ffe69452: 14 frames described by option A in 16238 ms, 1159 ms each
+11-15 18:37:48.266 I/adbd    (19420): adbd service requested 'shell,v2,TERM=xterm-256color:export ANDROID_LOG_TAGS=''; exec logcat '-d' '-s' 'EykonVideo''
+11-15 18:37:51.137 I/adbd    (19420): adbd service requested 'shell,v2,TERM=xterm-256color,raw:dumpsys deviceidle'
+11-15 18:37:51.251 I/adbd    (19420): adbd service requested 'shell,v2,TERM=xterm-256color,raw:dumpsys deviceidle'
+11-15 18:38:12.902 I/EykonVideo(19685): small_objects 3a28833840da48208ca77a16ffe69452: 14 frames looked at, 7 found, in 32642 ms
+11-15 18:38:12.974 D/nativeloader(19685): Load /data/app/~~S-Qo454_rDcL1W17zbB2tw==/com.eykon.memory--dDVJvrCGhkgNkLwn5oqHg==/base.apk!/lib/arm64-v8a/libeykonvec.so using class loader ns clns-9 (caller=/data/app/~~S-Qo454_rDcL1W17zbB2tw==/com.eykon.memory--dDVJvrCGhkgNkLwn5oqHg==/base.apk!classes5.dex): ok
+11-15 18:38:12.976 I/EykonVideo(19685): embed_images 3a28833840da48208ca77a16ffe69452: 14 vectors stored (14 reused, 0 computed) in 7 ms
+11-15 18:38:14.045 I/EykonVideo(19685): embed_texts 3a28833840da48208ca77a16ffe69452: 14 texts (14 captions, 0 transcript chunks) in 1068 ms
+11-15 18:38:14.048 I/EykonVideo(19685): link 3a28833840da48208ca77a16ffe69452: every row points at its video and moment
+11-15 18:38:23.923 I/adbd    (19420): adbd service requested 'shell,v2,TERM=xterm-256color:export ANDROID_LOG_TAGS=''; exec logcat '-d' '-s' 'EykonVideo''
+11-15 18:38:24.439 I/adbd    (19420): adbd service requested 'shell,v2,TERM=xterm-256color,raw:dumpsys deviceidle'
+11-15 18:38:24.602 I/adbd    (19420): adbd service requested 'shell,v2,TERM=xterm-256color,raw:dumpsys deviceidle'
+11-15 18:38:54.844 I/EykonVideo(19685): latest 3a28833840da48208ca77a16ffe69452: 79 sightings (0 boxes too small) in 40795 ms
+11-15 18:38:55.019 I/EykonVideo(19685): finish 3a28833840da48208ca77a16ffe69452: ready; 1426 dropped frame files deleted
+11-15 18:38:55.059 I/WM-WorkerWrapper(19685): Worker result SUCCESS for Work [ id=fb0e8d9f-81f5-4460-8483-8c48160f97c2, tags={ com.eykon.memory.video.VideoJobWorker } ]
+11-15 18:38:55.066 D/WM-Processor(19685): Processor fb0e8d9f-81f5-4460-8483-8c48160f97c2 executed; reschedule = false
+11-15 18:38:55.066 D/WM-SystemFgDispatcher(19685): Removing Notification (id: 4401, workSpecId: WorkGenerationalId(workSpecId=fb0e8d9f-81f5-4460-8483-8c48160f97c2, generation=0), notificationType: 1
+11-15 18:38:55.073 I/WM-SystemFgDispatcher(19685): Stopping foreground service
+11-15 18:38:55.073 D/WM-SystemFgService(19685): Shutting down.
+11-15 18:38:55.073 D/ActivityManager( 1674): Stop FGS timeout: ServiceRecord{151c030 u0 com.eykon.memory/androidx.work.impl.foreground.SystemForegroundService c:com.eykon.memory}
+11-15 18:38:55.073 D/WM-GreedyScheduler(19685): Cancelling work ID fb0e8d9f-81f5-4460-8483-8c48160f97c2
+11-15 18:38:55.074 W/ForegroundServiceTypeLoggerModule( 1674): FGS stop call for: 10358 has no types!
+11-15 18:38:55.094 D/WM-PackageManagerHelper(19685): androidx.work.impl.background.systemalarm.RescheduleReceiver disabled
+11-15 18:38:56.093 I/AppsFilter( 1674): interaction: PackageSetting{d325d4b com.google.android.microdroid.empty_payload/10276} -> PackageSetting{6278c38 com.eykon.memory/10358} BLOCKED
+11-15 18:38:56.148 D/ShortcutService( 1674): changing package: com.eykon.memory userId=0
+11-15 18:38:56.313 W/LauncherActivityCachingLogic( 2773): loadIcon: Default app icon returned from PackageManager. component=ComponentInfo{com.eykon.memory/com.eykon.memory.MainActivity}, user=UserHandle{0}
+11-15 18:38:56.319 W/LauncherActivityCachingLogic( 2773): loadIcon: Default app icon returned from PackageManager. component=ComponentInfo{com.eykon.memory/com.eykon.memory.MainActivity}, user=UserHandle{0}
+11-15 18:38:56.320 D/AlphabeticIndexCompat( 2773): computeSectionName: cs: Eykon Memory sectionName: E
+11-15 18:38:56.324 D/AlphabeticalAppsList( 2773): addAppsWithSections: adding sectionName: E with appInfoTitle: Eykon Memory
+11-15 18:38:58.063 I/adbd    (19420): adbd service requested 'shell,v2,TERM=xterm-256color:export ANDROID_LOG_TAGS=''; exec logcat '-d' '-s' 'EykonVideo''
+11-15 18:38:58.899 I/adbd    (19420): adbd service requested 'shell,v2,TERM=xterm-256color,raw:dumpsys deviceidle'
+11-15 18:38:59.230 I/adbd    (19420): adbd service requested 'shell,v2,TERM=xterm-256color,raw:dumpsys deviceidle'
+11-15 18:39:32.431 I/adbd    (19420): adbd service requested 'shell,v2,TERM=xterm-256color:export ANDROID_LOG_TAGS=''; exec logcat '-d' '-s' 'EykonVideo''
+11-15 18:39:36.200 I/adbd    (19420): adbd service requested 'shell,v2,TERM=xterm-256color,raw:dumpsys deviceidle'
+11-15 18:39:36.714 I/adbd    (19420): adbd service requested 'shell,v2,TERM=xterm-256color,raw:dumpsys deviceidle'
+11-15 18:39:48.248 W/AlarmManager( 1674): Unrecognized alarm listener com.android.server.DeviceIdleController$$ExternalSyntheticLambda1@37d3815
+11-15 18:39:48.313 D/LauncherAppsService( 1674): getActivityLaunchIntent callingPackage=com.android.systemui component=ComponentInfo{com.eykon.memory/com.eykon.memory.MainActivity} user=UserHandle{0}
+11-15 18:39:48.358 D/WM-DelayedWorkTracker(30952): Scheduling work 5348d8e6-2ad6-4f20-a6a1-76e5d5e15374
+11-15 18:39:48.359 D/WM-GreedyScheduler(30952): Starting tracking for 5348d8e6-2ad6-4f20-a6a1-76e5d5e15374
+11-15 18:39:48.360 D/WM-DelayedWorkTracker(30952): Scheduling work f020b06b-4060-40dd-b0b1-ef11a6e266af
+11-15 18:39:48.360 D/WM-GreedyScheduler(30952): Starting tracking for f020b06b-4060-40dd-b0b1-ef11a6e266af
+11-15 18:39:48.362 D/WM-DelayedWorkTracker(30952): Scheduling work 62dce995-de36-417e-913a-a4cf76b0f006
+11-15 18:39:48.362 D/WM-GreedyScheduler(30952): Starting tracking for 62dce995-de36-417e-913a-a4cf76b0f006
+11-15 18:39:48.362 D/WM-DelayedWorkTracker(30952): Scheduling work ad17c63c-55b4-416b-b76b-a7a91f6a6d9f
+11-15 18:39:48.362 D/WM-GreedyScheduler(30952): Starting tracking for ad17c63c-55b4-416b-b76b-a7a91f6a6d9f
+11-15 18:39:48.362 D/WM-DelayedWorkTracker(30952): Scheduling work 08e0df9e-db49-4e5f-a34f-efe4e126ac1f
+11-15 18:39:48.363 D/WM-GreedyScheduler(30952): Starting tracking for 08e0df9e-db49-4e5f-a34f-efe4e126ac1f
+11-15 18:39:48.380 D/WM-SystemJobService(30952): onStartJob for WorkGenerationalId(workSpecId=08e0df9e-db49-4e5f-a34f-efe4e126ac1f, generation=6385)
+11-15 18:39:48.555 D/WM-Processor(30952): shi: processing WorkGenerationalId(workSpecId=08e0df9e-db49-4e5f-a34f-efe4e126ac1f, generation=6385)
+11-15 18:39:48.570 D/WM-WorkerWrapper(30952): Starting work for androidx.work.multiprocess.RemoteListenableDelegatingWorker
+11-15 18:39:48.571 D/WM-ListenableWorkerImpl(30952): Binding to com.google.android.googlequicksearchbox, com.google.android.libraries.search.integrations.tiktok.RemoteWorkerService_googleapp
+11-15 18:39:48.572 D/WM-ConstraintTracker(30952): skv: initial state = false
+11-15 18:39:48.573 D/WM-BrdcstRcvrCnstrntTrc(30952): skv: registering receiver
+11-15 18:39:48.589 D/WM-WorkConstraintsTrack(30952): NetworkRequestConstraintController register shared callback
+11-15 18:39:48.592 D/WM-WorkConstraintsTrack(30952): NetworkRequestConstraintController onCapabilitiesChanged callback
+11-15 18:39:48.593 D/WM-WorkConstraintsTrack(30952): Not dispatching constraint state yet: isBlocked=null, capabilitiesInitialized=true
+11-15 18:39:48.593 D/WM-WorkConstraintsTrack(30952): NetworkRequestConstraintController onBlockedStatusChanged callback false
+11-15 18:39:48.602 D/WM-WorkConstraintsTrack(30952): NetworkRequestConstraintController send initial capabilities
+11-15 18:39:48.607 D/WM-WorkConstraintsTrack(30952): NetworkRequestConstraintController send initial capabilities
+11-15 18:39:48.617 I/WM-RemoteWorkerService(30883): Binding to RemoteWorkerService
+11-15 18:39:48.619 D/WM-ListenableWorkerImpl(30952): Service connected
+11-15 18:39:48.621 D/WM-GreedyScheduler(30952): Constraints not met: Cancelling work ID WorkGenerationalId(workSpecId=5348d8e6-2ad6-4f20-a6a1-76e5d5e15374, generation=9293)
+11-15 18:39:48.621 D/WM-GreedyScheduler(30952): Constraints not met: Cancelling work ID WorkGenerationalId(workSpecId=f020b06b-4060-40dd-b0b1-ef11a6e266af, generation=18013)
+11-15 18:39:48.622 D/WM-GreedyScheduler(30952): Constraints not met: Cancelling work ID WorkGenerationalId(workSpecId=62dce995-de36-417e-913a-a4cf76b0f006, generation=9396)
+11-15 18:39:48.622 D/WM-GreedyScheduler(30952): Constraints not met: Cancelling work ID WorkGenerationalId(workSpecId=ad17c63c-55b4-416b-b76b-a7a91f6a6d9f, generation=6106)
+11-15 18:39:48.623 D/WM-GreedyScheduler(30952): Constraints met: Scheduling work ID WorkGenerationalId(workSpecId=08e0df9e-db49-4e5f-a34f-efe4e126ac1f, generation=6385)
+11-15 18:39:48.626 D/WM-ListenableWorkerImpl(30883): Executing work request (08e0df9e-db49-4e5f-a34f-efe4e126ac1f, com.google.apps.tiktok.contrib.work.TikTokListenableWorker)
+11-15 18:39:48.791 D/WM-Processor(30952): Work WorkGenerationalId(workSpecId=08e0df9e-db49-4e5f-a34f-efe4e126ac1f, generation=6385) is already enqueued for processing
+11-15 18:39:49.403 D/WM-SystemJobScheduler(30883): Cancelling work ID 4562222e-c1d1-4db4-8986-79cc89c2a121, Job ID 193920
+11-15 18:39:49.468 I/WM-GreedyScheduler(30883): Ignoring schedule request in non-main process
+11-15 18:39:49.654 D/WM-SystemJobScheduler(30883): Scheduling work ID 4562222e-c1d1-4db4-8986-79cc89c2a121 (androidx.work.multiprocess.RemoteListenableDelegatingWorker), Job ID 193933
+11-15 18:39:49.667 I/WM-GreedyScheduler(30883): Ignoring schedule request in a secondary process
+11-15 18:39:49.679 D/WM-SystemJobScheduler(30883): Cancelling work ID ad17c63c-55b4-416b-b76b-a7a91f6a6d9f, Job ID 193931
+11-15 18:39:49.684 I/WM-GreedyScheduler(30883): Ignoring schedule request in non-main process
+11-15 18:39:49.718 D/WM-SystemJobScheduler(30883): Scheduling work ID ad17c63c-55b4-416b-b76b-a7a91f6a6d9f (androidx.work.multiprocess.RemoteListenableDelegatingWorker), Job ID 193934
+11-15 18:39:49.726 I/WM-GreedyScheduler(30883): Ignoring schedule request in a secondary process
+11-15 18:39:49.734 D/WM-SystemJobScheduler(30883): Cancelling work ID 9a3eaf4b-c156-4e71-944b-78237caf6ac7, Job ID 193927
+11-15 18:39:49.752 I/WM-GreedyScheduler(30883): Ignoring schedule request in non-main process
+11-15 18:39:49.800 D/WM-SystemJobScheduler(30883): Scheduling work ID 9a3eaf4b-c156-4e71-944b-78237caf6ac7 (androidx.work.multiprocess.RemoteListenableDelegatingWorker), Job ID 193935
+11-15 18:39:49.824 I/WM-GreedyScheduler(30883): Ignoring schedule request in a secondary process
+11-15 18:39:49.837 D/WM-SystemJobScheduler(30883): Cancelling work ID f6b0bd6a-1b79-4ad9-a5bd-664e42814ef8, Job ID 193923
+11-15 18:39:49.860 I/WM-GreedyScheduler(30883): Ignoring schedule request in non-main process
+11-15 18:39:49.936 D/WM-SystemJobScheduler(30883): Scheduling work ID f6b0bd6a-1b79-4ad9-a5bd-664e42814ef8 (androidx.work.multiprocess.RemoteListenableDelegatingWorker), Job ID 193936
+11-15 18:39:49.960 I/WM-GreedyScheduler(30883): Ignoring schedule request in a secondary process
+11-15 18:39:49.974 D/WM-SystemJobScheduler(30883): Cancelling work ID 08e0df9e-db49-4e5f-a34f-efe4e126ac1f, Job ID 193924
+11-15 18:39:49.982 D/WM-SystemJobService(30952): onStopJob for WorkGenerationalId(workSpecId=08e0df9e-db49-4e5f-a34f-efe4e126ac1f, generation=6385)
+11-15 18:39:49.988 I/WM-GreedyScheduler(30883): Ignoring schedule request in non-main process
+11-15 18:39:49.991 D/WM-ListenableWorkerImpl(30883): Interrupting work with id (08e0df9e-db49-4e5f-a34f-efe4e126ac1f)
+11-15 18:39:49.993 D/WM-Processor(30952): WorkerWrapper interrupted for 08e0df9e-db49-4e5f-a34f-efe4e126ac1f (androidx.work.multiprocess.RemoteListenableDelegatingWorker), reason: 1
+11-15 18:39:49.993 D/WM-StopWorkRunnable(30952): StopWorkRunnable for 08e0df9e-db49-4e5f-a34f-efe4e126ac1f; Processor.stopWork = true, reason: 1
+11-15 18:39:50.010 I/WM-WorkerWrapper(30952): Work [ id=08e0df9e-db49-4e5f-a34f-efe4e126ac1f, class=androidx.work.multiprocess.RemoteListenableDelegatingWorker, tags={ com.google.apps.tiktok.contrib.work.TikTokListenableWorker,com.google.apps.tiktok.sync.impl.workmanager.SyncPeriodicWorker_proc<googleapp>,sync_constraint:connected,TikTokWorker#com.google.apps.tiktok.sync.impl.workmanager.SyncPeriodicWorker } ] was cancelled
+11-15 18:39:50.010 I/WM-WorkerWrapper(30952): sis
+11-15 18:39:50.010 I/WM-WorkerWrapper(30952): 	at shi.e(PG:5)
+11-15 18:39:50.010 I/WM-WorkerWrapper(30952): 	at sod.run(PG:92)
+11-15 18:39:50.010 I/WM-WorkerWrapper(30952): 	at snx.run(PG:3)
+11-15 18:39:50.010 I/WM-WorkerWrapper(30952): 	at ebll.run(PG:5)
+11-15 18:39:50.010 I/WM-WorkerWrapper(30952): 	at gycp.run(PG:46)
+11-15 18:39:50.010 I/WM-WorkerWrapper(30952): 	at ebkx.run(PG:81)
+11-15 18:39:50.010 I/WM-WorkerWrapper(30952): 	at java.lang.Thread.run(Thread.java:1571)
+11-15 18:39:50.010 I/WM-WorkerWrapper(30952): 	at ebmn.run(PG:62)
+11-15 18:39:50.038 I/WM-GreedyScheduler(30883): Ignoring schedule request in a secondary process
+11-15 18:39:50.048 D/WM-WorkerWrapper(30952): Status for 08e0df9e-db49-4e5f-a34f-efe4e126ac1f is RUNNING; not doing any work and rescheduling for later execution
+11-15 18:39:50.048 D/WM-SystemJobScheduler(30883): Cancelling work ID 274dfea6-9fc8-4241-bf38-e0d94f448ea2, Job ID 193926
+11-15 18:39:50.054 D/WM-Processor(30952): shi 08e0df9e-db49-4e5f-a34f-efe4e126ac1f executed; reschedule = true
+11-15 18:39:50.054 D/WM-GreedyScheduler(30952): Stopping tracking for WorkGenerationalId(workSpecId=08e0df9e-db49-4e5f-a34f-efe4e126ac1f, generation=6385)
+11-15 18:39:50.063 I/WM-GreedyScheduler(30883): Ignoring schedule request in non-main process
+11-15 18:39:50.068 D/WM-GreedyScheduler(30952): Cancelling work ID 08e0df9e-db49-4e5f-a34f-efe4e126ac1f
+11-15 18:39:50.093 D/WM-SystemJobScheduler(30883): Scheduling work ID 08e0df9e-db49-4e5f-a34f-efe4e126ac1f (androidx.work.multiprocess.RemoteListenableDelegatingWorker), Job ID 193937
+11-15 18:39:50.098 D/WM-SystemJobScheduler(30883): Scheduling work ID 274dfea6-9fc8-4241-bf38-e0d94f448ea2 (androidx.work.multiprocess.RemoteListenableDelegatingWorker), Job ID 193938
+11-15 18:39:50.100 I/WM-GreedyScheduler(30883): Ignoring schedule request in a secondary process
+11-15 18:39:50.105 D/WM-SystemJobScheduler(30883): Cancelling work ID 9a3eaf4b-c156-4e71-944b-78237caf6ac7, Job ID 193935
+11-15 18:39:50.129 D/WM-GreedyScheduler(30952): Ignoring {WorkSpec: 519b6672-9e31-46db-9ab0-7d5f7dc744bb}. Requires ContentUri triggers.
+11-15 18:39:50.130 D/WM-GreedyScheduler(30952): Starting tracking for 5348d8e6-2ad6-4f20-a6a1-76e5d5e15374,f020b06b-4060-40dd-b0b1-ef11a6e266af,62dce995-de36-417e-913a-a4cf76b0f006
+11-15 18:39:50.152 I/WM-GreedyScheduler(30883): Ignoring schedule request in non-main process
+11-15 18:39:50.169 D/WM-SystemJobScheduler(30883): Scheduling work ID 9a3eaf4b-c156-4e71-944b-78237caf6ac7 (androidx.work.multiprocess.RemoteListenableDelegatingWorker), Job ID 193939
+11-15 18:39:50.171 I/WM-GreedyScheduler(30883): Ignoring schedule request in a secondary process
+11-15 18:39:50.679 D/WM-WorkConstraintsTrack(30952): NetworkRequestConstraintController onCapabilitiesChanged callback
+11-15 18:39:53.660 D/WM-SystemJobScheduler(12982): Scheduling work ID 4a6d9100-4eb9-4638-8dcd-d1690d3050e0Job ID 147103
+11-15 18:39:53.663 D/WM-GreedyScheduler(12982): Starting tracking for 4a6d9100-4eb9-4638-8dcd-d1690d3050e0
+11-15 18:39:53.663 D/WM-SystemJobService(12982): onStartJob for WorkGenerationalId(workSpecId=4a6d9100-4eb9-4638-8dcd-d1690d3050e0, generation=0)
+11-15 18:39:53.665 D/WM-Processor(12982): DKC: processing WorkGenerationalId(workSpecId=4a6d9100-4eb9-4638-8dcd-d1690d3050e0, generation=0)
+11-15 18:39:53.668 D/WM-WorkerWrapper(12982): Starting work for com.whatsapp.infra.networking.xmpp.lifecycle.XmppLifecycleWorker
+11-15 18:39:53.670 D/WM-ConstraintTracker(12982): DK9: initial state = NetworkState(isConnected=true, isValidated=true, isMetered=false, isNotRoaming=true)
+11-15 18:39:53.670 D/WM-NetworkStateTracker(12982): Registering network callback
+11-15 18:39:53.671 D/WM-GreedyScheduler(12982): Constraints met: Scheduling work ID WorkGenerationalId(workSpecId=4a6d9100-4eb9-4638-8dcd-d1690d3050e0, generation=0)
+11-15 18:39:53.672 D/WM-Processor(12982): Work WorkGenerationalId(workSpecId=4a6d9100-4eb9-4638-8dcd-d1690d3050e0, generation=0) is already enqueued for processing
+11-15 18:39:53.672 D/WM-NetworkStateTracker(12982): Network capabilities changed: [ Transports: WIFI Capabilities: NOT_METERED&INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VPN&VALIDATED&NOT_ROAMING&FOREGROUND&NOT_CONGESTED&NOT_SUSPENDED&NOT_VCN_MANAGED&NOT_BANDWIDTH_CONSTRAINED LinkUpBandwidth>=20545Kbps LinkDnBandwidth>=22483Kbps TransportInfo: <SSID: <unknown ssid>, BSSID: 02:00:00:00:00:00, MAC: 02:00:00:00:00:00, IP: /192.168.0.120, Security type: 2, Supplicant state: COMPLETED, Wi-Fi standard: 11n, RSSI: -57, Link speed: 78Mbps, Tx Link speed: 78Mbps, Max Supported Tx Link speed: 300Mbps, Calculated Tx : 71Mbps, Rx Link speed: 130Mbps, Max Supported Rx Link speed: 300Mbps, Calculated Rx : 75Mbps, Frequency: 2447MHz, Net ID: -1, Metered hint: false, score: 51, isUsable: true, CarrierMerged: false, SubscriptionId: -1, IsPrimary: -1, Trusted: true, Restricted: false, Ephemeral: false, OEM paid: false, OEM private: false, OSU AP: false, FQDN: <none>, Provider friendly name: <none>, Requesting package name: <none><none>MLO Information: , Is TID-To-Link negotiation supported by the AP: false, AP MLD Address: <none>, AP MLO Link Id: <none>, AP MLO Affiliated links: <none>, Vendor Data: <none>> SignalStrength: -57 UnderlyingNetworks: Null]
+11-15 18:39:57.533 W/ProcessStats( 1674): Tracking association SourceState{857c1fa com.google.android.providers.media.module/10283 BFgs #97954} whose proc state 4 is better than process ProcessState{d513c58 com.android.externalstorage/10101 pkg=com.android.externalstorage} proc state 14 (48 skipped)
+11-15 18:40:05.082 D/ActivityManager( 1674): freezing 19685 com.eykon.memory
+11-15 18:40:06.169 D/WM-NetworkStateTracker(12982): Network capabilities changed: [ Transports: WIFI Capabilities: NOT_METERED&INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VPN&VALIDATED&NOT_ROAMING&FOREGROUND&NOT_CONGESTED&NOT_SUSPENDED&NOT_VCN_MANAGED&NOT_BANDWIDTH_CONSTRAINED LinkUpBandwidth>=20545Kbps LinkDnBandwidth>=22483Kbps TransportInfo: <SSID: <unknown ssid>, BSSID: 02:00:00:00:00:00, MAC: 02:00:00:00:00:00, IP: /192.168.0.120, Security type: 2, Supplicant state: COMPLETED, Wi-Fi standard: 11n, RSSI: -58, Link speed: 130Mbps, Tx Link speed: 130Mbps, Max Supported Tx Link speed: 300Mbps, Calculated Tx : 36Mbps, Rx Link speed: 130Mbps, Max Supported Rx Link speed: 300Mbps, Calculated Rx : 80Mbps, Frequency: 2447MHz, Net ID: -1, Metered hint: false, score: 51, isUsable: true, CarrierMerged: false, SubscriptionId: -1, IsPrimary: -1, Trusted: true, Restricted: false, Ephemeral: false, OEM paid: false, OEM private: false, OSU AP: false, FQDN: <none>, Provider friendly name: <none>, Requesting package name: <none><none>MLO Information: , Is TID-To-Link negotiation supported by the AP: false, AP MLD Address: <none>, AP MLO Link Id: <none>, AP MLO Affiliated links: <none>, Vendor Data: <none>> SignalStrength: -58 UnderlyingNetworks: Null]
+11-15 18:40:08.798 W/AlarmManager( 1674): Unrecognized alarm listener com.android.server.DeviceIdleController$$ExternalSyntheticLambda1@37d3815
+11-15 18:40:08.981 I/adbd    (19420): adbd service requested 'shell,v2,TERM=xterm-256color:export ANDROID_LOG_TAGS=''; exec logcat '-d' '-s' 'EykonVideo''
+11-15 18:40:09.613 D/WM-NetworkStateTracker(12982): Network capabilities changed: [ Transports: WIFI Capabilities: NOT_METERED&INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VPN&VALIDATED&NOT_ROAMING&FOREGROUND&NOT_CONGESTED&NOT_SUSPENDED&NOT_VCN_MANAGED&NOT_BANDWIDTH_CONSTRAINED LinkUpBandwidth>=20545Kbps LinkDnBandwidth>=22483Kbps TransportInfo: <SSID: <unknown ssid>, BSSID: 02:00:00:00:00:00, MAC: 02:00:00:00:00:00, IP: /192.168.0.120, Security type: 2, Supplicant state: COMPLETED, Wi-Fi standard: 11n, RSSI: -60, Link speed: 130Mbps, Tx Link speed: 130Mbps, Max Supported Tx Link speed: 300Mbps, Calculated Tx : 63Mbps, Rx Link speed: 130Mbps, Max Supported Rx Link speed: 300Mbps, Calculated Rx : 80Mbps, Frequency: 2447MHz, Net ID: -1, Metered hint: false, score: 51, isUsable: true, CarrierMerged: false, SubscriptionId: -1, IsPrimary: -1, Trusted: true, Restricted: false, Ephemeral: false, OEM paid: false, OEM private: false, OSU AP: false, FQDN: <none>, Provider friendly name: <none>, Requesting package name: <none><none>MLO Information: , Is TID-To-Link negotiation supported by the AP: false, AP MLD Address: <none>, AP MLO Link Id: <none>, AP MLO Affiliated links: <none>, Vendor Data: <none>> SignalStrength: -60 UnderlyingNetworks: Null]
+11-15 18:40:10.917 W/AlarmManager( 1674): Unrecognized alarm listener com.android.server.DeviceIdleController$$ExternalSyntheticLambda1@37d3815
+11-15 18:40:11.102 D/LauncherAppsService( 1674): getActivityLaunchIntent callingPackage=com.android.systemui component=ComponentInfo{com.eykon.memory/com.eykon.memory.MainActivity} user=UserHandle{0}
+11-15 18:40:11.862 I/adbd    (19420): adbd service requested 'shell,v2,TERM=xterm-256color,raw:dumpsys deviceidle'
+11-15 18:40:12.100 I/adbd    (19420): adbd service requested 'shell,v2,TERM=xterm-256color,raw:dumpsys deviceidle'
+11-15 18:40:12.646 D/WM-NetworkStateTracker(12982): Network capabilities changed: [ Transports: WIFI Capabilities: NOT_METERED&INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VPN&VALIDATED&NOT_ROAMING&FOREGROUND&NOT_CONGESTED&NOT_SUSPENDED&NOT_VCN_MANAGED&NOT_BANDWIDTH_CONSTRAINED LinkUpBandwidth>=20545Kbps LinkDnBandwidth>=22483Kbps TransportInfo: <SSID: <unknown ssid>, BSSID: 02:00:00:00:00:00, MAC: 02:00:00:00:00:00, IP: /192.168.0.120, Security type: 2, Supplicant state: COMPLETED, Wi-Fi standard: 11n, RSSI: -62, Link speed: 78Mbps, Tx Link speed: 78Mbps, Max Supported Tx Link speed: 300Mbps, Calculated Tx : 63Mbps, Rx Link speed: 130Mbps, Max Supported Rx Link speed: 300Mbps, Calculated Rx : 80Mbps, Frequency: 2447MHz, Net ID: -1, Metered hint: false, score: 51, isUsable: true, CarrierMerged: false, SubscriptionId: -1, IsPrimary: -1, Trusted: true, Restricted: false, Ephemeral: false, OEM paid: false, OEM private: false, OSU AP: false, FQDN: <none>, Provider friendly name: <none>, Requesting package name: <none><none>MLO Information: , Is TID-To-Link negotiation supported by the AP: false, AP MLD Address: <none>, AP MLO Link Id: <none>, AP MLO Affiliated links: <none>, Vendor Data: <none>> SignalStrength: -62 UnderlyingNetworks: Null]
+11-15 18:40:21.923 D/WM-NetworkStateTracker(12982): Network capabilities changed: [ Transports: WIFI Capabilities: NOT_METERED&INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VPN&VALIDATED&NOT_ROAMING&FOREGROUND&NOT_CONGESTED&NOT_SUSPENDED&NOT_VCN_MANAGED&NOT_BANDWIDTH_CONSTRAINED LinkUpBandwidth>=20545Kbps LinkDnBandwidth>=22483Kbps TransportInfo: <SSID: <unknown ssid>, BSSID: 02:00:00:00:00:00, MAC: 02:00:00:00:00:00, IP: /192.168.0.120, Security type: 2, Supplicant state: COMPLETED, Wi-Fi standard: 11n, RSSI: -59, Link speed: 130Mbps, Tx Link speed: 130Mbps, Max Supported Tx Link speed: 300Mbps, Calculated Tx : 41Mbps, Rx Link speed: 130Mbps, Max Supported Rx Link speed: 300Mbps, Calculated Rx : 75Mbps, Frequency: 2447MHz, Net ID: -1, Metered hint: false, score: 51, isUsable: true, CarrierMerged: false, SubscriptionId: -1, IsPrimary: -1, Trusted: true, Restricted: false, Ephemeral: false, OEM paid: false, OEM private: false, OSU AP: false, FQDN: <none>, Provider friendly name: <none>, Requesting package name: <none><none>MLO Information: , Is TID-To-Link negotiation supported by the AP: false, AP MLD Address: <none>, AP MLO Link Id: <none>, AP MLO Affiliated links: <none>, Vendor Data: <none>> SignalStrength: -59 UnderlyingNetworks: Null]
+11-15 18:40:24.270 I/WM-WorkerWrapper(12982): Worker result SUCCESS for Work [ id=4a6d9100-4eb9-4638-8dcd-d1690d3050e0, tags={ com.whatsapp.infra.networking.xmpp.lifecycle.XmppLifecycleWorker } ]
+11-15 18:40:24.289 D/WM-Processor(12982): DKC 4a6d9100-4eb9-4638-8dcd-d1690d3050e0 executed; reschedule = false
+11-15 18:40:24.289 D/WM-GreedyScheduler(12982): Stopping tracking for WorkGenerationalId(workSpecId=4a6d9100-4eb9-4638-8dcd-d1690d3050e0, generation=0)
+11-15 18:40:24.290 D/WM-SystemJobService(12982): 4a6d9100-4eb9-4638-8dcd-d1690d3050e0 executed on JobScheduler
+11-15 18:40:24.295 D/WM-GreedyScheduler(12982): Cancelling work ID 4a6d9100-4eb9-4638-8dcd-d1690d3050e0
+11-15 18:40:24.300 D/WM-NetworkStateTracker(12982): Unregistering network callback
+11-15 18:40:26.937 W/AlarmManager( 1674): Unrecognized alarm listener com.android.server.DeviceIdleController$$ExternalSyntheticLambda1@37d3815
+11-15 18:40:32.794 D/WM-SystemJobScheduler(12982): Scheduling work ID d771a867-8402-4dcc-8ff0-1cad66688e9aJob ID 147104
+11-15 18:40:32.844 D/WM-GreedyScheduler(12982): Starting tracking for d771a867-8402-4dcc-8ff0-1cad66688e9a
+11-15 18:40:32.854 D/WM-SystemJobService(12982): onStartJob for WorkGenerationalId(workSpecId=d771a867-8402-4dcc-8ff0-1cad66688e9a, generation=0)
+11-15 18:40:32.865 D/WM-Processor(12982): DKC: processing WorkGenerationalId(workSpecId=d771a867-8402-4dcc-8ff0-1cad66688e9a, generation=0)
+11-15 18:40:32.873 D/WM-ConstraintTracker(12982): DK9: initial state = NetworkState(isConnected=true, isValidated=true, isMetered=false, isNotRoaming=true)
+11-15 18:40:32.874 D/WM-NetworkStateTracker(12982): Registering network callback
+11-15 18:40:32.881 D/WM-NetworkStateTracker(12982): Network capabilities changed: [ Transports: WIFI Capabilities: NOT_METERED&INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VPN&VALIDATED&NOT_ROAMING&FOREGROUND&NOT_CONGESTED&NOT_SUSPENDED&NOT_VCN_MANAGED&NOT_BANDWIDTH_CONSTRAINED LinkUpBandwidth>=20545Kbps LinkDnBandwidth>=22483Kbps TransportInfo: <SSID: <unknown ssid>, BSSID: 02:00:00:00:00:00, MAC: 02:00:00:00:00:00, IP: /192.168.0.120, Security type: 2, Supplicant state: COMPLETED, Wi-Fi standard: 11n, RSSI: -59, Link speed: 130Mbps, Tx Link speed: 130Mbps, Max Supported Tx Link speed: 300Mbps, Calculated Tx : 41Mbps, Rx Link speed: 130Mbps, Max Supported Rx Link speed: 300Mbps, Calculated Rx : 75Mbps, Frequency: 2447MHz, Net ID: -1, Metered hint: false, score: 51, isUsable: true, CarrierMerged: false, SubscriptionId: -1, IsPrimary: -1, Trusted: true, Restricted: false, Ephemeral: false, OEM paid: false, OEM private: false, OSU AP: false, FQDN: <none>, Provider friendly name: <none>, Requesting package name: <none><none>MLO Information: , Is TID-To-Link negotiation supported by the AP: false, AP MLD Address: <none>, AP MLO Link Id: <none>, AP MLO Affiliated links: <none>, Vendor Data: <none>> SignalStrength: -59 UnderlyingNetworks: Null]
+11-15 18:40:32.889 D/WM-WorkerWrapper(12982): Starting work for com.whatsapp.infra.networking.xmpp.lifecycle.XmppLifecycleWorker
+11-15 18:40:32.903 D/WM-GreedyScheduler(12982): Constraints met: Scheduling work ID WorkGenerationalId(workSpecId=d771a867-8402-4dcc-8ff0-1cad66688e9a, generation=0)
+11-15 18:40:32.909 D/WM-Processor(12982): Work WorkGenerationalId(workSpecId=d771a867-8402-4dcc-8ff0-1cad66688e9a, generation=0) is already enqueued for processing
+11-15 18:40:47.788 I/adbd    (19420): adbd service requested 'shell,v2,TERM=xterm-256color:export ANDROID_LOG_TAGS=''; exec logcat '-d' '-s' 'EykonVideo''
+11-15 18:40:49.488 I/adbd    (19420): adbd service requested 'shell,v2,TERM=xterm-256color,raw:dumpsys deviceidle'
+11-15 18:40:50.250 I/adbd    (19420): adbd service requested 'shell,v2,TERM=xterm-256color,raw:dumpsys deviceidle'
+11-15 18:41:03.323 I/WM-WorkerWrapper(12982): Worker result SUCCESS for Work [ id=d771a867-8402-4dcc-8ff0-1cad66688e9a, tags={ com.whatsapp.infra.networking.xmpp.lifecycle.XmppLifecycleWorker } ]
+11-15 18:41:03.328 D/WM-Processor(12982): DKC d771a867-8402-4dcc-8ff0-1cad66688e9a executed; reschedule = false
+11-15 18:41:03.329 D/WM-GreedyScheduler(12982): Stopping tracking for WorkGenerationalId(workSpecId=d771a867-8402-4dcc-8ff0-1cad66688e9a, generation=0)
+11-15 18:41:03.330 D/WM-SystemJobService(12982): d771a867-8402-4dcc-8ff0-1cad66688e9a executed on JobScheduler
+11-15 18:41:03.348 D/WM-GreedyScheduler(12982): Cancelling work ID d771a867-8402-4dcc-8ff0-1cad66688e9a
+11-15 18:41:03.355 D/WM-NetworkStateTracker(12982): Unregistering network callback
+11-15 18:41:22.666 I/adbd    (19420): adbd service requested 'shell,v2,TERM=xterm-256color:export ANDROID_LOG_TAGS=''; exec logcat '-d' '-s' 'EykonVideo''
+11-15 18:41:23.781 I/adbd    (19420): adbd service requested 'shell,v2,TERM=xterm-256color,raw:dumpsys deviceidle'
+11-15 18:41:24.233 I/adbd    (19420): adbd service requested 'shell,v2,TERM=xterm-256color,raw:dumpsys deviceidle'
+11-15 18:41:58.240 I/adbd    (19420): adbd service requested 'shell,v2,TERM=xterm-256color:export ANDROID_LOG_TAGS=''; exec logcat '-d' '-s' 'EykonVideo''
+11-15 18:41:59.757 I/adbd    (19420): adbd service requested 'shell,v2,TERM=xterm-256color,raw:dumpsys deviceidle'
+11-15 18:42:00.142 I/adbd    (19420): adbd service requested 'shell,v2,TERM=xterm-256color,raw:dumpsys deviceidle'
+11-15 18:42:18.284 W/ProcessStats( 1674): Tracking association SourceState{7eaa720 com.google.android.as/30183 BFgs #98555} whose proc state 4 is better than process ProcessState{fabff68 android.process.acore/10088 pkg=com.android.providers.contacts (sub)} proc state 14 (35 skipped)
+11-15 18:42:23.238 D/WM-SystemJobService( 4608): onStartJob for WorkGenerationalId(workSpecId=4f616493-7fb0-4825-90db-6ac694f12804, generation=0)
+11-15 18:42:23.273 D/WM-Processor( 4608): vxi: processing WorkGenerationalId(workSpecId=4f616493-7fb0-4825-90db-6ac694f12804, generation=0)
+11-15 18:42:23.319 D/WM-WorkerWrapper( 4608): Starting work for com.google.apps.tiktok.contrib.work.TikTokListenableWorker
+11-15 18:42:23.469 D/WM-RemoteWorkManagerCli(30883): Creating a new session
+11-15 18:42:23.516 D/WM-WorkConstraintsTrack(30952): NetworkRequestConstraintController onCapabilitiesChanged callback
+11-15 18:42:23.518 I/WM-RemoteWorkManagerSer(30952): Binding to RemoteWorkManager
+11-15 18:42:23.525 D/WM-WorkConstraintsTrack(30952): NetworkRequestConstraintController onCapabilitiesChanged callback
+11-15 18:42:23.525 D/WM-WorkConstraintsTrack(30952): NetworkRequestConstraintController onCapabilitiesChanged callback
+11-15 18:42:23.525 D/WM-WorkConstraintsTrack(30952): NetworkRequestConstraintController onCapabilitiesChanged callback
+11-15 18:42:23.531 D/WM-RemoteWMgr.Connectio(30883): Service connected
+11-15 18:42:23.703 D/WM-SystemJobScheduler(30952): Scheduling work ID cc1f4a8a-f955-4ef0-b529-7d5f135d7ede (androidx.work.multiprocess.RemoteListenableDelegatingWorker), Job ID 193940
+11-15 18:42:23.730 D/WM-SystemJobService(30952): onStartJob for WorkGenerationalId(workSpecId=cc1f4a8a-f955-4ef0-b529-7d5f135d7ede, generation=0)
+11-15 18:42:23.731 D/WM-GreedyScheduler(30952): Ignoring {WorkSpec: 519b6672-9e31-46db-9ab0-7d5f7dc744bb}. Requires ContentUri triggers.
+11-15 18:42:23.732 D/WM-GreedyScheduler(30952): Starting work for cc1f4a8a-f955-4ef0-b529-7d5f135d7ede
+11-15 18:42:23.732 D/WM-GreedyScheduler(30952): Starting tracking for 5348d8e6-2ad6-4f20-a6a1-76e5d5e15374,f020b06b-4060-40dd-b0b1-ef11a6e266af,62dce995-de36-417e-913a-a4cf76b0f006
+11-15 18:42:23.739 D/WM-Processor(30952): shi: processing WorkGenerationalId(workSpecId=cc1f4a8a-f955-4ef0-b529-7d5f135d7ede, generation=0)
+11-15 18:42:23.741 D/WM-Processor(30952): Work WorkGenerationalId(workSpecId=cc1f4a8a-f955-4ef0-b529-7d5f135d7ede, generation=0) is already enqueued for processing
+11-15 18:42:23.768 D/WM-WorkerWrapper(30952): Starting work for androidx.work.multiprocess.RemoteListenableDelegatingWorker
+11-15 18:42:23.768 D/WM-ListenableWorkerImpl(30952): Binding to com.google.android.googlequicksearchbox, com.google.android.libraries.search.integrations.tiktok.RemoteWorkerService_googleapp
+11-15 18:42:23.771 D/WM-EnqueueRunnable(30952): WorkSpec efdd4a45-e255-4b28-9697-a17f28173eaf with unique name "sessionWorkerKeepEnabled" is already in state ENQUEUED. Ignoring enqueue with ExistingWorkPolicy.KEEP for: [ce591ba7-c46c-44cc-be37-e33c22c088c2]
+11-15 18:42:23.776 I/WM-RemoteWorkerService(30883): Binding to RemoteWorkerService
+11-15 18:42:23.783 D/WM-ListenableWorkerImpl(30952): Service connected
+11-15 18:42:23.796 D/WM-ListenableWorkerImpl(30883): Executing work request (cc1f4a8a-f955-4ef0-b529-7d5f135d7ede, androidx.glance.appwidget.multiprocess.RemoteSessionWorker)
+11-15 18:42:23.842 D/WM-SystemJobScheduler( 4608): Scheduling work ID ddc1d167-a481-4529-aee9-b26493870227 (com.google.apps.tiktok.contrib.work.TikTokListenableWorker), Job ID 2809
+11-15 18:42:23.847 D/WM-GreedyScheduler( 4608): Ignoring {WorkSpec: b6605503-d157-44c5-9d9a-28066eadefed}. Requires ContentUri triggers.
+11-15 18:42:23.848 D/WM-GreedyScheduler( 4608): Ignoring {WorkSpec: f2b169f9-a119-4d53-a2b5-2361548aec3b}. Requires device idle.
+11-15 18:42:23.848 D/WM-GreedyScheduler( 4608): Ignoring {WorkSpec: ddc1d167-a481-4529-aee9-b26493870227}. Requires ContentUri triggers.
+11-15 18:42:23.852 I/WM-WorkerWrapper( 4608): Worker result SUCCESS for Work [ id=4f616493-7fb0-4825-90db-6ac694f12804, class=com.google.apps.tiktok.contrib.work.TikTokListenableWorker, tags={ com.google.apps.tiktok.contrib.work.TikTokListenableWorker,CONTACTS_CHANGE_OBSERVER,TikTokWorker#com.google.android.apps.messaging.shared.contacts.sync.incremental.ContactsChangeWorker } ]
+11-15 18:42:23.866 D/WM-Processor( 4608): vxi 4f616493-7fb0-4825-90db-6ac694f12804 executed; reschedule = false
+11-15 18:42:23.867 D/WM-SystemJobService( 4608): 4f616493-7fb0-4825-90db-6ac694f12804 executed on JobScheduler
+11-15 18:42:23.905 D/WM-GreedyScheduler( 4608): Cancelling work ID 4f616493-7fb0-4825-90db-6ac694f12804
+11-15 18:42:23.913 D/WM-GreedyScheduler( 4608): Ignoring {WorkSpec: b6605503-d157-44c5-9d9a-28066eadefed}. Requires ContentUri triggers.
+11-15 18:42:23.913 D/WM-GreedyScheduler( 4608): Ignoring {WorkSpec: f2b169f9-a119-4d53-a2b5-2361548aec3b}. Requires device idle.
+11-15 18:42:23.913 D/WM-GreedyScheduler( 4608): Ignoring {WorkSpec: ddc1d167-a481-4529-aee9-b26493870227}. Requires ContentUri triggers.
+11-15 18:42:27.080 D/WM-SystemJobService(30952): onStopJob for WorkGenerationalId(workSpecId=cc1f4a8a-f955-4ef0-b529-7d5f135d7ede, generation=0)
+11-15 18:42:27.088 D/WM-ListenableWorkerImpl(30883): Interrupting work with id (cc1f4a8a-f955-4ef0-b529-7d5f135d7ede)
+11-15 18:42:27.089 D/WM-Processor(30952): WorkerWrapper interrupted for cc1f4a8a-f955-4ef0-b529-7d5f135d7ede (androidx.work.multiprocess.RemoteListenableDelegatingWorker), reason: 4
+11-15 18:42:27.089 D/WM-StopWorkRunnable(30952): StopWorkRunnable for cc1f4a8a-f955-4ef0-b529-7d5f135d7ede; Processor.stopWork = true, reason: 4
+11-15 18:42:27.115 I/WM-WorkerWrapper(30952): Work [ id=cc1f4a8a-f955-4ef0-b529-7d5f135d7ede, class=androidx.work.multiprocess.RemoteListenableDelegatingWorker, tags={ androidx.glance.appwidget.multiprocess.RemoteSessionWorker } ] was cancelled
+11-15 18:42:27.115 I/WM-WorkerWrapper(30952): sis
+11-15 18:42:27.115 I/WM-WorkerWrapper(30952): 	at shi.e(PG:5)
+11-15 18:42:27.115 I/WM-WorkerWrapper(30952): 	at sod.run(PG:92)
+11-15 18:42:27.115 I/WM-WorkerWrapper(30952): 	at snx.run(PG:3)
+11-15 18:42:27.115 I/WM-WorkerWrapper(30952): 	at ebll.run(PG:5)
+11-15 18:42:27.115 I/WM-WorkerWrapper(30952): 	at gycp.run(PG:46)
+11-15 18:42:27.115 I/WM-WorkerWrapper(30952): 	at ebkx.run(PG:81)
+11-15 18:42:27.115 I/WM-WorkerWrapper(30952): 	at java.lang.Thread.run(Thread.java:1571)
+11-15 18:42:27.115 I/WM-WorkerWrapper(30952): 	at ebmn.run(PG:62)
+11-15 18:42:27.118 D/WM-WorkerWrapper(30952): Status for cc1f4a8a-f955-4ef0-b529-7d5f135d7ede is RUNNING; not doing any work and rescheduling for later execution
+11-15 18:42:27.121 D/WM-Processor(30952): shi cc1f4a8a-f955-4ef0-b529-7d5f135d7ede executed; reschedule = true
+11-15 18:42:27.129 D/WM-SystemJobScheduler(30952): Cancelling work ID cc1f4a8a-f955-4ef0-b529-7d5f135d7ede, Job ID 193940
+11-15 18:42:27.132 D/WM-GreedyScheduler(30952): Cancelling work ID cc1f4a8a-f955-4ef0-b529-7d5f135d7ede
+11-15 18:42:27.143 D/WM-SystemJobScheduler(30952): Scheduling work ID cc1f4a8a-f955-4ef0-b529-7d5f135d7ede (androidx.work.multiprocess.RemoteListenableDelegatingWorker), Job ID 193941
+11-15 18:42:27.146 D/WM-GreedyScheduler(30952): Ignoring {WorkSpec: 519b6672-9e31-46db-9ab0-7d5f7dc744bb}. Requires ContentUri triggers.
+11-15 18:42:27.147 D/WM-GreedyScheduler(30952): Starting tracking for 5348d8e6-2ad6-4f20-a6a1-76e5d5e15374,f020b06b-4060-40dd-b0b1-ef11a6e266af,62dce995-de36-417e-913a-a4cf76b0f006
+11-15 18:42:27.408 W/NotifHistoryProto( 1674): notification package name (com.eykon.memory) not found in string cache
+11-15 18:42:32.131 I/adbd    (19420): adbd service requested 'shell,v2,TERM=xterm-256color:export ANDROID_LOG_TAGS=''; exec logcat '-d' '-s' 'EykonVideo''
+11-15 18:42:33.983 I/adbd    (19420): adbd service requested 'shell,v2,TERM=xterm-256color,raw:dumpsys deviceidle'
+11-15 18:42:34.895 I/adbd    (19420): adbd service requested 'shell,v2,TERM=xterm-256color,raw:dumpsys deviceidle'
+11-15 18:43:07.976 I/adbd    (19420): adbd service requested 'shell,v2,TERM=xterm-256color:export ANDROID_LOG_TAGS=''; exec logcat '-d' '-s' 'EykonVideo''
+11-15 18:43:09.916 I/adbd    (19420): adbd service requested 'shell,v2,TERM=xterm-256color,raw:dumpsys deviceidle'
+11-15 18:43:10.840 I/adbd    (19420): adbd service requested 'shell,v2,TERM=xterm-256color,raw:dumpsys deviceidle'
+11-15 18:43:45.145 I/adbd    (19420): adbd service requested 'shell,v2,TERM=xterm-256color:export ANDROID_LOG_TAGS=''; exec logcat '-d' '-s' 'EykonVideo''
+11-15 18:43:46.985 I/adbd    (19420): adbd service requested 'shell,v2,TERM=xterm-256color,raw:dumpsys deviceidle'
+11-15 18:43:47.200 I/adbd    (19420): adbd service requested 'shell,v2,TERM=xterm-256color,raw:dumpsys deviceidle'
+11-15 18:44:22.419 I/adbd    (19420): adbd service requested 'shell,v2,TERM=xterm-256color:export ANDROID_LOG_TAGS=''; exec logcat '-d' '-s' 'EykonVideo''
+11-15 18:44:23.634 I/adbd    (19420): adbd service requested 'shell,v2,TERM=xterm-256color,raw:dumpsys deviceidle'
+11-15 18:44:24.217 I/adbd    (19420): adbd service requested 'shell,v2,TERM=xterm-256color,raw:dumpsys deviceidle'
+11-15 18:44:59.305 I/adbd    (19420): adbd service requested 'shell,v2,TERM=xterm-256color:export ANDROID_LOG_TAGS=''; exec logcat '-d' '-v' 'time' '-s' 'EykonVideo''

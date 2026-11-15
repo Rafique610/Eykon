@@ -1,0 +1,11 @@
+label: run1-normal
+  AC powered: false
+  USB powered: false
+  Wireless powered: false
+  Dock powered: false
+  level: 51
+  temperature: 303
+  Capacity level: 2
+low_power: 0
+  mLightEnabled=true  mDeepEnabled=true
+  mState=ACTIVE mLightState=ACTIVE
