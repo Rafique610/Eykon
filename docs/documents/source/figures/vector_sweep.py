@@ -10,7 +10,10 @@ to this file, so a new phone or a rerun replaces the old images. The random-vect
 No speed limit line is drawn: the 200 ms target has no source yet (EYKO-101). When one phone has several sweep files, the
 newest file wins and the older ones are printed as superseded.
 
-Run from the repo root:  uv run docs/documents/source/figures/vector_sweep.py
+EYKO-97 adds four more (file size, the laptop against three phones, storage per hour, and the capacity model);
+see docs/results/2026-11-15-vectors-graphs-and-capacity.md.
+
+Run from the repo root:  uv run docs/documents/source/figures/vector_sweep.py   (or: task head2-figures)
 """
 import csv
 import statistics
@@ -348,6 +351,205 @@ def fig_conditions():
     save(fig, "head2-vector-conditions.png")
 
 
+# ---- EYKO-97: the graphs Head 2 did not have yet ----
+DEVICES = {  # colour follows the device in every EYKO-97 graph (A32 and Pixel as in Rafique's figures above)
+    "A32": ("Samsung A32", "#2a78d6", "o"),
+    "Pixel": ("Pixel 9 Pro XL", "#eb6834", "s"),
+    "Infinix": ("Infinix X670", "#1baf7a", "^"),
+    "laptop": ("Laptop i5-10310U", "#6250d6", "D"),
+}
+KEPT_PER_HOUR = 13.4 * 60  # kept frames per hour of video: Ego4D Pixel run, 372 kept in 27.8 min (Head 8); one image vector each
+BUDGETS_MS = [100, 200, 500]  # assumptions, not sourced limits (the 200 ms target was dropped on 8 Nov; EYKO-101)
+
+
+def medians(path, method, column="median_ms"):
+    """{n: median over runs of column} for one method in one CSV."""
+    runs = defaultdict(list)
+    for r in csv.DictReader(path.open(encoding="utf-8")):
+        if r["method"] == method and r[column]:
+            runs[int(r["n"])].append(float(r[column]))
+    return {n: statistics.median(v) for n, v in sorted(runs.items())}
+
+
+def one(pattern):
+    (path,) = sorted(RESULTS.glob(pattern))
+    return path
+
+
+def plain(ax, ylabel, xlabel="Vectors in the table (512 numbers each)"):
+    axes(ax, ylabel)
+    ax.set_xlabel(xlabel, color=MUTED)
+
+
+def bytes_per_row(page_size, dims=512, rows=5_000):
+    """Measured here, now: bytes one vector row takes in a plain BLOB table (the app's layout) at a page size."""
+    import os
+    import sqlite3
+    import tempfile
+    with tempfile.TemporaryDirectory() as tmp:
+        path = os.path.join(tmp, "v.db")
+        con = sqlite3.connect(path)
+        con.execute(f"PRAGMA page_size={page_size}")
+        con.execute("CREATE TABLE image_vec (frame_id INTEGER PRIMARY KEY, embedding BLOB NOT NULL)")
+        con.executemany("INSERT INTO image_vec VALUES (?, ?)", ((i, bytes(4 * dims)) for i in range(rows)))
+        con.commit()
+        con.close()
+        return os.path.getsize(path) / rows
+
+
+def fig_file_size():
+    """Card graph 3: how big one image table is on the phone's storage, by way of storing it."""
+    fig, ax = plt.subplots(figsize=(7.6, 4.2), dpi=200)
+    blob = medians(one("a32-2026-11-04-sweep-real.csv"), "blob_memory_fast", "file_mb")
+    vec0 = medians(one("routes/a32-eyko105-route-r1-SM_A325F-20261108-1349.csv"), "sqlite_vec_bundled", "file_mb")
+    int8 = medians(one("laptop-2026-11-07-sweep-real.csv"), "sqlite_vec_int8", "file_mb")
+    sizes = [1_000, 5_000, 20_000, 50_000, 100_000, 300_000]
+    per16k = bytes_per_row(16_384)
+    series = [
+        ("BLOB table, 4 KB pages (the app today; A32, measured)", "#0b0b0b", "o", "-", blob),
+        ("sqlite-vec float32 (A32 route R1, measured)", "#eda100", "s", "-", vec0),
+        ("mapped .vec file, the app's search copy (n × 2,048 B)", "#1baf7a", None, (0, (4, 3)),
+         {n: n * 2048 / 1e6 for n in sizes}),
+        (f"BLOB table, 16 KB pages ({per16k:,.0f} B a row, measured on the laptop)", "#2a78d6", None, (0, (1, 2)),
+         {n: n * per16k / 1e6 for n in sizes}),
+        ("sqlite-vec int8 (laptop, measured; not exact)", "#e87ba4", "^", "-", int8),
+    ]
+    for label, colour, marker, ls, pts in series:
+        ax.plot(list(pts), list(pts.values()), color=colour, marker=marker, linestyle=ls, linewidth=2, markersize=5,
+                markeredgecolor="white", markeredgewidth=1, label=label)
+    ax.set_yscale("log")
+    plain(ax, "MB on storage, one image table (log scale)")
+    ax.set_xlim(700, 400_000)
+    ax.annotate(f"{blob[100_000]:.0f} MB", (100_000, blob[100_000]), xytext=(6, 4), textcoords="offset points", fontsize=8, color=INK)
+    ax.annotate(f"{vec0[100_000]:.0f} MB", (100_000, vec0[100_000]), xytext=(6, -10), textcoords="offset points", fontsize=8, color=INK)
+    ax.legend(frameon=False, loc="upper left", fontsize=7)
+    ax.set_title("File size: a 512-number vector takes a whole 4 KB page in the app's BLOB table", color=INK, fontsize=10, loc="left")
+    save(fig, "head2-vector-file-size.png")
+    return per16k
+
+
+def fig_devices():
+    """Card graph 4: the same exact search on the laptop and on all three phones (bars, log scale)."""
+    runs = [
+        ("laptop", one("laptop-2026-11-07-sweep-real.csv"), "blob_memory_numpy_1t", "numpy, 1 thread, 7 Nov"),
+        ("Pixel", one("pixel9proxl-2026-11-04-sweep-real.csv"), "blob_memory_fast", "fast loop, cable, 4 Nov"),
+        ("Infinix", one("infinix-2026-11-07-cool.csv"), "blob_memory_fast", "fast loop, cool run, 7 Nov; random vectors, same time as real, B3"),
+        ("A32", one("a32-2026-11-04-sweep-real.csv"), "blob_memory_fast", "fast loop, cable, 4 Nov"),
+    ]
+    sizes = [5_000, 20_000, 50_000, 100_000]
+    fig, ax = plt.subplots(figsize=(7.6, 4.0), dpi=200)
+    width = 0.2
+    for i, (key, path, method, how) in enumerate(runs):
+        label, colour, _ = DEVICES[key]
+        vals = medians(path, method)
+        xs = [k + (i - 1.5) * width for k in range(len(sizes))]
+        ys = [vals[n] for n in sizes]
+        ax.bar(xs, ys, width * 0.92, color=colour, label=f"{label} ({how})", zorder=2)
+        for x, y in zip(xs, ys):
+            ax.annotate(f"{y:.0f}" if y >= 10 else f"{y:.1f}", (x, y), xytext=(0, 2), textcoords="offset points",
+                        ha="center", fontsize=6.5, color=INK)
+    ax.set_yscale("log")
+    ax.set_xticks(range(len(sizes)), [f"{n // 1000}k" for n in sizes])
+    ax.set_xlabel("Vectors in the table (512 numbers each)", color=MUTED)
+    ax.set_ylabel("ms per search, median (log scale)", color=MUTED)
+    ax.grid(True, axis="y", color=GRID, linewidth=0.8)
+    ax.set_axisbelow(True)
+    for side in ("top", "right"):
+        ax.spines[side].set_visible(False)
+    for side in ("left", "bottom"):
+        ax.spines[side].set_color(MUTED)
+    ax.tick_params(colors=MUTED)
+    ax.legend(frameon=False, loc="upper left", fontsize=7)
+    ax.set_title("The same exact search on the laptop and three phones", color=INK, fontsize=10, loc="left")
+    save(fig, "head2-vector-devices.png")
+
+
+def fig_storage():
+    """Card graph 5: what one hour of camera video costs on the phone, before and after EYKO-126 (no copy).
+    Numbers from the two result files named in the figure; the copy and audio are measured or exact, the rest calculated."""
+    bars = [  # (label, [(part, MB)])
+        ("Before EYKO-126\n(the app copied the video)", [("copy of the video", 9010), ("16 kHz audio", 115), ("frames, rows, vectors", 30)]),
+        ("Now, since 13 Nov\n(read in place, no copy)", [("copy of the video", 0), ("16 kHz audio", 115), ("frames, rows, vectors", 11)]),
+    ]
+    colours = {"copy of the video": "#9a9893", "16 kHz audio": "#2a78d6", "frames, rows, vectors": "#eb6834"}
+    fig, ax = plt.subplots(figsize=(7.6, 3.0), dpi=200)
+    for y, (label, parts) in enumerate(bars):
+        left = 0
+        for part, mb in parts:
+            ax.barh(y, mb, left=left, color=colours[part], height=0.55, label=part if y == 0 else None, zorder=2)
+            left += mb
+        ax.annotate(f"{left / 1000:.1f} GB" if left >= 1000 else f"{left:.0f} MB", (left, y), xytext=(6, 0),
+                    textcoords="offset points", va="center", fontsize=9, color=INK)
+    ax.set_yticks([0, 1], [b[0] for b in bars])
+    ax.invert_yaxis()
+    ax.set_xlabel("MB of app storage per hour of 1080p camera video (20 Mbps)", color=MUTED)
+    ax.set_xlim(0, 10_400)
+    ax.grid(True, axis="x", color=GRID, linewidth=0.8)
+    ax.set_axisbelow(True)
+    for side in ("top", "right"):
+        ax.spines[side].set_visible(False)
+    for side in ("left", "bottom"):
+        ax.spines[side].set_color(MUTED)
+    ax.tick_params(colors=MUTED)
+    ax.legend(frameon=False, loc="lower right", fontsize=7.5)
+    ax.set_title("Storage per hour of camera video, before and after EYKO-126", color=INK, fontsize=10, loc="left")
+    save(fig, "head2-storage-per-hour.png")
+
+
+def fit(points):
+    """Least-squares line ms = a + b * n through {n: ms}."""
+    ns, ms = list(points), list(points.values())
+    mean_n, mean_m = statistics.mean(ns), statistics.mean(ms)
+    b = sum((n - mean_n) * (m - mean_m) for n, m in zip(ns, ms)) / sum((n - mean_n) ** 2 for n in ns)
+    return mean_m - b * mean_n, b
+
+
+def fig_capacity():
+    """Card graph 7: days until one search takes longer than a budget, by hours of video a day.
+    Search time is the app's (MAPPED_NATIVE) measured at 20k, 50k and 100k rows; a straight line through them gives the
+    rows at each budget. Rows per day = hours x 13.4 kept frames a minute x 60."""
+    phones = [
+        ("A32", "Samsung A32, hot, on battery (EYKO-111)", one("offheap/a32-*-eyko111-hot2-*.csv")),
+        ("Pixel", "Pixel 9 Pro XL, 26 % battery (EYKO-111)", one("offheap/pixel9proxl-*-eyko111-lowbat-nosaver-*.csv")),
+    ]
+    hours = [0.25, 0.5, 1, 2, 4]
+    styles = {100: (0, (1, 2)), 200: "-", 500: (0, (5, 3))}
+    fig, panels = plt.subplots(1, 2, figsize=(10.2, 4.0), dpi=200, sharey=True)
+    table = []
+    for ax, (key, title, path) in zip(panels, phones):
+        _, colour, marker = DEVICES[key]
+        a, b = fit(medians(path, "offheap_mapped_native"))
+        for budget in BUDGETS_MS:
+            rows = (budget - a) / b
+            days = [rows / (h * KEPT_PER_HOUR) for h in hours]
+            where = "measured range" if rows <= 100_000 else "extrapolated" if rows <= 300_000 else "far past the tests and ADR 0001's 300k"
+            ax.plot(hours, days, color=colour, linestyle=styles[budget], linewidth=2, marker=marker, markersize=4,
+                    markeredgecolor="white", markeredgewidth=0.8, label=f"{budget} ms: {rows / 1000:,.0f}k rows ({where})")
+            table.append((key, budget, rows, [rows / (h * KEPT_PER_HOUR) for h in (0.5, 1, 2)]))
+        ax.axhline(365, color=GRID, linewidth=1.2, zorder=1)
+        ax.annotate("1 year", (hours[0], 365), xytext=(2, -9), textcoords="offset points", fontsize=7, color=MUTED)
+        ax.set_xscale("log")
+        ax.set_yscale("log")
+        ax.set_xticks(hours, ["15 min", "30 min", "1 h", "2 h", "4 h"])
+        ax.minorticks_off()
+        ax.set_xlabel("Hours of video recorded a day", color=MUTED)
+        ax.grid(True, which="major", color=GRID, linewidth=0.8)
+        ax.set_axisbelow(True)
+        for side in ("top", "right"):
+            ax.spines[side].set_visible(False)
+        for side in ("left", "bottom"):
+            ax.spines[side].set_color(MUTED)
+        ax.tick_params(colors=MUTED)
+        ax.set_title(f"{title}\n{b * 1000:.2f} ms more per 1,000 rows", color=INK, fontsize=9, loc="left")
+        ax.legend(frameon=False, loc="lower left", fontsize=7)
+    panels[0].set_ylabel("Days until a search passes the budget", color=MUTED)
+    fig.suptitle("Capacity: days of recording before one vector search passes 100, 200 or 500 ms (assumed budgets, EYKO-101)",
+                 color=INK, fontsize=10, x=0.01, y=1.0, ha="left")
+    save(fig, "head2-capacity.png")
+    for key, budget, rows, days in table:
+        print(f"capacity {key} {budget} ms: {rows:,.0f} rows; days at 0.5/1/2 h a day: " + " / ".join(f"{d:,.0f}" for d in days))
+
+
 def save(fig, name):
     fig.tight_layout()
     fig.savefig(HERE / name, facecolor="#fcfcfb")
@@ -365,3 +567,7 @@ if __name__ == "__main__":
     fig_all_tables(load("*-memory.csv"))
     fig_variants()
     fig_conditions()
+    print(f"BLOB row at 16 KB pages: {fig_file_size():,.0f} B; at 4 KB: {bytes_per_row(4096):,.0f} B; at 8 KB: {bytes_per_row(8192):,.0f} B")
+    fig_devices()
+    fig_storage()
+    fig_capacity()

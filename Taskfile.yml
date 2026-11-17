@@ -202,6 +202,14 @@ tasks:
     desc: "EYKO-31 spike — on the laptop, time sqlite-vec against BLOB brute-force vector search (sqlite-vec is fetched for this run only)"
     cmd: uv run --with sqlite-vec python src/benchmarks/vector_storage_spike.py
 
+  vectors-plots:
+    desc: "EYKO-97 — the seven vector graphs from every CSV in docs/results/vectors/ (PNG + SVG into docs/results/vectors/plots/; own small env, never the full project)"
+    cmd: uv run --no-project --python 3.10 --with matplotlib==3.10.9 python -I src/benchmarks/plot_vector_storage.py
+
+  head2-figures:
+    desc: "Redraw the Head 2 document's figures (Rafique's seven + EYKO-97's four) into docs/documents/source/figures/"
+    cmd: uv run docs/documents/source/figures/vector_sweep.py
+
   vectors-laptop-v2:
     desc: "EYKO-91 — laptop vector benchmark v2: 13 methods, 1k–300k, 5 runs × 20 queries, recall@20, PSS, shared CSV (own small env: numpy, psutil, sqlite-vec, usearch, threadpoolctl; never the full project)"
     cmd: uv run --no-project --python 3.10 --with numpy==2.2.6 --with psutil==7.2.2 --with sqlite-vec==0.1.9 --with usearch==2.26.5 --with threadpoolctl python src/benchmarks/vector_storage_v2.py {{.CLI_ARGS}}
