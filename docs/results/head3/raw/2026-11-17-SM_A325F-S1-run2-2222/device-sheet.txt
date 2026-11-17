@@ -1,0 +1,87 @@
+﻿model: SM-A325F
+manufacturer: samsung
+soc: MT6769V/CT
+android: 13
+commit (repo HEAD or -Commit; the installed APK may differ, check KIT-VERSION.txt): e4f2bd7
+app version: versionName=1.0; lastUpdateTime=2026-11-17 22:09:54
+--- dumpsys battery
+Current Battery Service state:
+  AC powered: false
+  USB powered: true
+  Wireless powered: false
+  Max charging current: 0
+  Max charging voltage: 0
+  Charge counter: 5000000
+  status: 5
+  health: 2
+  present: true
+  level: 100
+  scale: 100
+  voltage: 4239
+  temperature: 291
+  technology: Li-ion
+  batteryMiscEvent: 196608
+  batteryCurrentEvent: 32768
+  mSecPlugTypeSummary: 2
+  LED Charging: true
+  LED Low Battery: true
+  current now: 477
+  charge counter: 5000000
+  Adaptive Fast Charging Settings: true
+  Super Fast Charging Settings: false
+FEATURE_WIRELESS_FAST_CHARGER_CONTROL: true
+  mWasUsedWirelessFastChargerPreviously: false
+  mWirelessFastChargingSettingsEnable: true
+LLB CAL: 20220216
+LLB MAN: 
+LLB CURRENT: YEAR2026M11D9
+LLB DIFF: 247
+  mSavedBatteryBeginningDate: 0
+SEC_FEATURE_BATTERY_FULL_CAPACITY: true
+  mFullCapacityEnable: false
+FEATURE_HICCUP_CONTROL: false
+FEATURE_SUPPORTED_DAILY_BOARD: false
+SEC_FEATURE_BATTERY_LIFE_EXTENDER: false
+SEC_FEATURE_USE_WIRELESS_POWER_SHARING: false
+BatteryInfoBackUp
+  mSavedBatteryAsoc: 82
+  mSavedBatteryMaxTemp: 635
+  mSavedBatteryMaxCurrent: 2323
+  mSavedBatteryUsage: 121782
+  FEATURE_SAVE_BATTERY_CYCLE: true
+  SEC_FEATURE_PREVENT_SWELLING: false
+--- thermalservice (first lines; empty on phones without it)
+IsStatusOverride: false
+ThermalEventListeners:
+	callbacks: 1
+	killed: false
+	broadcasts count: -1
+ThermalStatusListeners:
+	callbacks: 9
+	killed: false
+	broadcasts count: -1
+Thermal Status: 0
+Cached temperatures:
+	Temperature{mValue=0.0, mType=2, mName=SUBBAT, mStatus=0}
+	Temperature{mValue=46.5, mType=0, mName=AP, mStatus=0}
+	Temperature{mValue=36.8, mType=5, mName=PA, mStatus=0}
+	Temperature{mValue=29.1, mType=2, mName=BAT, mStatus=0}
+	Temperature{mValue=0.0, mType=4, mName=USB, mStatus=0}
+	Temperature{mValue=35.7, mType=3, mName=SKIN, mStatus=0}
+HAL Ready: true
+HAL connection:
+	ThermalHAL 2.0 connected: yes
+Current temperatures from HAL:
+	Temperature{mValue=46.5, mType=0, mName=AP, mStatus=0}
+	Temperature{mValue=29.1, mType=2, mName=BAT, mStatus=0}
+	Temperature{mValue=36.8, mType=5, mName=PA, mStatus=0}
+	Temperature{mValue=35.7, mType=3, mName=SKIN, mStatus=0}
+--- df -h /data
+Filesystem       Size Used Avail Use% Mounted on
+/dev/block/dm-47 107G  59G   48G  56% /data/user/0
+--- MemTotal / MemAvailable
+
+MemTotal:        5791276 kB
+MemAvailable:    2245108 kB
+
+

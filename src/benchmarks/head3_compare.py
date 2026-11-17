@@ -13,7 +13,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent))
 from head3_intake import STAGE_ORDER, chart_rows  # noqa: E402
 
-COLOURS = ["#2a78d6", "#eb6834"]  # categorical slots 1-2 of the dataviz default palette, validated (light surface)
+COLOURS = ["#2a78d6", "#eb6834", "#1baf7a"]  # categorical slots 1-3 of the dataviz default palette (validated all-pairs, light surface)
 
 
 def medians(csv_path: Path, phone: str, runs: list[str]) -> dict[str, float]:
@@ -54,11 +54,11 @@ def main() -> int:
         for s in stages:
             print(f"| {s} | " + " | ".join(f"{m.get(s, 0):.1f}" for _, m in meds) + " |")
         print("| **added up** | " + " | ".join(f"**{sum(m.get(s, 0) for s in stages):.1f}**" for _, m in meds) + " |")
-        h = 0.38
+        h = 0.76 / len(meds)
         y = range(len(stages))
         for k, (phone, m) in enumerate(meds):
             vals = [m.get(s, 0) for s in stages]
-            bars = ax.barh([i + (k - 0.5) * h for i in y], vals, height=h - 0.04, color=COLOURS[k], label=phone)
+            bars = ax.barh([i + (k - (len(meds) - 1) / 2) * h for i in y], vals, height=h - 0.04, color=COLOURS[k], label=phone)
             ax.bar_label(bars, labels=[f"{v:.0f}" if v >= 5 else "" for v in vals], padding=3, fontsize=8, color="#52514e")
         ax.set_yticks(list(y), stages)
         ax.set_title(f"S1, {label}: median seconds per stage", color="#0b0b0b", fontsize=11, loc="left")

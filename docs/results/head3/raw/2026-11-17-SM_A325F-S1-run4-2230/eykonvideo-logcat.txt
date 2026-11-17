@@ -1,0 +1,13 @@
+﻿--------- beginning of main
+11-17 22:30:41.830 I/EykonVideo(29740): read f4b0e086d6cd4e46a2e3476fa8f9005a: 187772478 bytes in place in 1194 ms (no copy)
+11-17 22:30:41.899 I/EykonVideo(29740): no original location for content://com.android.providers.media.documents/document/video%3A1000102265: the app may not read media locations (permission denied)
+11-17 22:31:18.362 I/EykonVideo(29740): split f4b0e086d6cd4e46a2e3476fa8f9005a: 225 frames in 23397 ms (one pass; 2220 ms to JPEG, 375 ms to write, the rest decoding), audio 74.9 s in 12698 ms
+11-17 22:31:21.997 I/EykonVideo(29740): filter f4b0e086d6cd4e46a2e3476fa8f9005a: kept 25 of 225 (less sharp 200) in 3610 ms
+11-17 22:31:37.837 I/EykonVideo(29740): dedup f4b0e086d6cd4e46a2e3476fa8f9005a: kept 16 of 25 (hash dropped 9, embedding dropped 0) in 15813 ms; embedded 16 frames, 944 ms each; memory java 21 MB, native 853 MB
+11-17 22:32:17.902 I/EykonVideo(29740): scene f4b0e086d6cd4e46a2e3476fa8f9005a: 16 frames described by option A in 40003 ms, 2500 ms each
+11-17 22:33:53.145 I/EykonVideo(29740): small_objects f4b0e086d6cd4e46a2e3476fa8f9005a: 16 frames looked at, 4 found, in 95147 ms
+11-17 22:33:53.180 I/EykonVideo(29740): embed_images f4b0e086d6cd4e46a2e3476fa8f9005a: 16 vectors stored (16 reused, 0 computed) in 7 ms
+11-17 22:33:53.918 I/EykonVideo(29740): embed_texts f4b0e086d6cd4e46a2e3476fa8f9005a: 16 texts (16 captions, 0 transcript chunks) in 732 ms
+11-17 22:33:53.981 I/EykonVideo(29740): link f4b0e086d6cd4e46a2e3476fa8f9005a: every row points at its video and moment
+11-17 22:36:21.288 I/EykonVideo(29740): latest f4b0e086d6cd4e46a2e3476fa8f9005a: 134 sightings (2 boxes too small) in 147302 ms
+11-17 22:36:21.371 I/EykonVideo(29740): finish f4b0e086d6cd4e46a2e3476fa8f9005a: ready; 209 dropped frame files deleted

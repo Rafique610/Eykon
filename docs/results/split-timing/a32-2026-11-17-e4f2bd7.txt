@@ -1,0 +1,3 @@
+11-17 22:10:34.424 26819 26841 I EykonVideo: split timing run 1: 224 frames of 74.5 s in 26433 ms: decoding 22441 ms, to JPEG 3531 ms, write 461 ms, jpeg hash 5866f9ce1066ef4f
+11-17 22:10:59.034 26819 26841 I EykonVideo: split timing run 2: 224 frames of 74.5 s in 24292 ms: decoding 21709 ms, to JPEG 2132 ms, write 451 ms, jpeg hash 5866f9ce1066ef4f
+11-17 22:11:23.204 26819 26841 I EykonVideo: split timing run 3: 224 frames of 74.5 s in 23973 ms: decoding 21401 ms, to JPEG 2169 ms, write 403 ms, jpeg hash 5866f9ce1066ef4f

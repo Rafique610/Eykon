@@ -66,7 +66,18 @@
         ["Queue, resume, retry, catch-up", "JVM and on-device tests pass (the phone pipeline suite was 65 of 65 on 15 October; 109 JVM and 104 on-device tests at the 2 November gap review)", "android/app/src/test, src/androidTest"],
         ["Real use: Ego4D clips through the app's own picker", "4 clips (27.8 min) processed on the Pixel 9 Pro XL, 20 October", "docs/results/2026-10-20-ego4d-baseline.md"],
         ["Cost of a long clip", "About 1.4 min of processing per minute of video; an 8-minute clip that kept 156 frames took 13.4 min", "same"],
-        ["App in the background", "One 8-minute clip stalled while another app was in front: 21.2 min instead of about 11", "same"]
+        ["App in the background", "One 8-minute clip stalled while another app was in front: 21.2 min instead of about 11", "same"],
+        ["Stage times on two phones, same clips (EYKO-117, 123)", "Added up, median of 3: Pixel 63.9 and 110.2 s, Infinix 138.1 and 233.5 s; 0.85-1.57 and 1.80-3.22 min of work per minute of video", "docs/results/2026-11-15-head3-intake-two-phones.md, 2026-11-14-head3-intake-infinix.md"],
+        ["Queue of ten (EYKO-117, 123)", "Infinix 10 videos ready after 32 min, Pixel 9 videos after 15.5 min; no failures, no idle gap", "docs/results/head3/run_summary.csv (S2)"],
+        ["Battery and heat (EYKO-123)", "Pixel unplugged: 18-24 mAh per minute of video, screen on; 30.6-36.3 C. Infinix up to 38.6 C (on the charger)", "docs/results/2026-11-15-head3-intake-two-phones.md (B3)"],
+        ["Kill mid-stage (EYKO-116, 119)", "12 of 12 force-stops (9 Infinix, 3 Pixel) resumed at the next stage with identical numbers, link counts 0", "docs/results/2026-11-09-storage-and-crash.md (Part 3), 2026-11-11-stages-safe-to-rerun.md"],
+        ["Each stage run twice (EYKO-119)", "10 of 10 identical to a clean run; 5 of 5 after a half-way crash; planted bug caught", "VideoRerunSafetyTest, 2026-11-11-stages-safe-to-rerun.md"],
+        ["Background work (EYKO-44, 85)", "8-min clip ready in 4 min 10 s with the screen off and deep Doze (Pixel); 55 min of video in 96 min, never killed (Infinix)", "docs/results/2026-11-15-eyko85-background-long-clip.md, 2026-11-12-eyko44-workmanager-phone-checks.md"],
+        ["Duplicates and space (EYKO-71)", "Same file refused, no row or folder left; hash 17-22 ms; free space checked before copying", "docs/results/2026-11-10-eyko-71-duplicates-and-space.md"],
+        ["Awkward files (EYKO-118, 123)", "14 files, no crash; damaged and .mkv refused; .avi fails on both phones; 528 MB accepted since reading in place", "docs/results/2026-11-12-head3-bad-inputs.md, 2026-11-15-head3-intake-two-phones.md"],
+        ["Read in place (EYKO-126)", "No copy: about 126 MB per hour of camera video instead of 9.2 GB; source deleted mid-job fails at once", "docs/results/2026-11-13-read-from-gallery.md"],
+        ["latest stage (EYKO-120)", "Decode once per frame; relink from the new video's time: 4,000 sightings 7.5 million -> 73 thousand comparisons, same links", "docs/results/2026-11-17-latest-stage-profile.md"],
+        ["Full defense doc", "Questions A1-E2 with status and source", "Head-3-Video-intake.docx (head3-defense.js)"]
       ]}}
     ]},
     {"title": "Results", "blocks": [
@@ -86,9 +97,9 @@
     {"title": "Gaps and open items", "blocks": [
       "Fill the Resolution column as each card closes.",
       {"table": {"cols": ["Gap", "What is missing", "Card", "Sev.", "Resolution (to fill)"], "widths": [0.6, 4, 0.9, 0.7, 2.2], "rows": [
-        ["G10", "Videos only process while the app is in front; an 8-minute clip stalled when another app was opened.", "EYKO-44 build, EYKO-85 check", "Medium", ""],
-        ["G11", "The same file can be added twice (videos 142de7f3 and b2ea85c0 on the Pixel are one file).", "EYKO-71", "Low", ""],
-        ["G18", "Phone storage: 620 MB free of 109 GB on 22 October; the app could not be reinstalled.", "EYKO-83", "Medium", ""],
+        ["G10", "Videos only process while the app is in front; an 8-minute clip stalled when another app was opened.", "EYKO-44 build, EYKO-85 check", "Medium", "Fixed: WorkManager + foreground service. 8-min clip in 4 min 10 s in the background, screen off (Pixel, 15 Nov); 55 min of video in 96 min (Infinix, 14 Nov)."],
+        ["G11", "The same file can be added twice (videos 142de7f3 and b2ea85c0 on the Pixel are one file).", "EYKO-71", "Low", "Fixed 10 Nov: SHA-256 while reading; a match is refused with a message."],
+        ["G18", "Phone storage: 620 MB free of 109 GB on 22 October; the app could not be reinstalled.", "EYKO-83", "Medium", "Closed 8 Nov by the owner; reinstalls have worked since. Reading in place (EYKO-126) stops videos taking double space."],
         ["—", "No way to delete a saved video (rows, files, keyword index, last-sighting links).", "EYKO-66", "—", ""],
         ["—", "Saved-video view showing every frame's time, kept or dropped and why, with captions.", "EYKO-49", "—", ""],
         ["—", "Show the pipeline live, step by step, in a redesigned app.", "EYKO-65", "—", ""]
