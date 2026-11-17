@@ -11,14 +11,23 @@ object VideoMetadata {
 
     const val MAX_MB = 500
 
-    /** Mime type -> file extension. The same four types the laptop accepts. */
+    /**
+     * Mime type -> file extension; the laptop accepts the same six (`src/config.py`). Android's supported-formats page lists
+     * mp4, 3gp, mkv and webm; mov and m4v are mp4 by layout and work on our phones. avi was dropped: Android does not list it
+     * and it failed on the Infinix and the Pixel (EYKO-118 B10c, EYKO-122).
+     */
     val TYPES = mapOf(
         "video/mp4" to "mp4",
         "video/quicktime" to "mov",
         "video/x-m4v" to "m4v",
-        "video/x-msvideo" to "avi",
-        "video/avi" to "avi",
+        "video/3gpp" to "3gp",
+        "video/3gpp2" to "3gp",
+        "video/x-matroska" to "mkv",
+        "video/webm" to "webm",
     )
+
+    /** The accepted extensions, for messages. */
+    val TYPE_NAMES = TYPES.values.distinct().joinToString(", ")
 
     private val ISO6709 = Regex("""^([+-]\d+\.\d+)([+-]\d+\.\d+)""")
     private val RETRIEVER_DATE = DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmss[.SSS]'Z'")

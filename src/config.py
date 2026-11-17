@@ -53,7 +53,7 @@ class Settings(BaseSettings):
     video_text_dim: int = 384
     video_audio_dim: int = 512
     video_max_mb: int = 500
-    video_types: list[str] = ["mp4", "mov", "m4v", "avi"]
+    video_types: list[str] = ["mp4", "mov", "m4v", "3gp", "mkv", "webm"]  # same six as the phone (VideoMetadata.TYPES)
 
     # Perception, Option A: detector + place / action prompts (the phone holds the same values in OptionA.kt)
     detector_model: Path = Path("models/yolox_tiny.onnx")

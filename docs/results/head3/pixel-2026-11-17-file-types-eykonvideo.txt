@@ -1,0 +1,10 @@
+11-17 23:22:13.390  4042  4072 I EykonVideo: read d3bf16823c484c5a88f348bc0763fbf3: 2124766 bytes in place in 6 ms (no copy)
+11-17 23:22:15.299  4042  4072 I EykonVideo: split d3bf16823c484c5a88f348bc0763fbf3: 45 frames in 1143 ms (one pass; 140 ms to JPEG, 41 ms to write, the rest decoding), audio 15.0 s in 573 ms
+11-17 23:22:21.758  4042  4072 I EykonVideo: finish d3bf16823c484c5a88f348bc0763fbf3: ready; 43 dropped frame files deleted
+11-17 23:22:53.276  4042  4073 I EykonVideo: read 5ca8d85fb89c4222aba3834414fdb3f0: 5044303 bytes in place in 8 ms (no copy)
+11-17 23:22:57.289  4042  4073 I EykonVideo: split 5ca8d85fb89c4222aba3834414fdb3f0: 45 frames in 2025 ms (one pass; 267 ms to JPEG, 32 ms to write, the rest decoding), audio 15.0 s in 1822 ms
+11-17 23:23:05.335  4042  4073 I EykonVideo: finish 5ca8d85fb89c4222aba3834414fdb3f0: ready; 42 dropped frame files deleted
+11-17 23:26:30.158  4042  4072 I EykonVideo: read 44414ba87f5742508f98a47d873625f3: 6630286 bytes in place in 14 ms (no copy)
+11-17 23:26:33.617  4042  4072 I EykonVideo: split 44414ba87f5742508f98a47d873625f3: 45 frames in 1532 ms (one pass; 151 ms to JPEG, 130 ms to write, the rest decoding), audio 15.0 s in 1793 ms
+11-17 23:26:41.207  4042  4072 I EykonVideo: finish 44414ba87f5742508f98a47d873625f3: ready; 42 dropped frame files deleted
+11-17 23:27:23.754  4042  4964 I EykonVideo: refused T4_mpeg4_mp3.avi: This file type is not supported. Use one of: mp4, mov, m4v, 3gp, mkv, webm.

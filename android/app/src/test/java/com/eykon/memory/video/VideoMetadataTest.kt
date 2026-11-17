@@ -46,8 +46,10 @@ class VideoMetadataTest {
     }
 
     @Test
-    fun onlyTheFourLaptopTypesAreAccepted() {
-        assertEquals(setOf("mp4", "mov", "m4v", "avi"), VideoMetadata.TYPES.values.toSet())
+    fun onlyTheSixLaptopTypesAreAccepted() {
+        assertEquals(setOf("mp4", "mov", "m4v", "3gp", "mkv", "webm"), VideoMetadata.TYPES.values.toSet())
+        assertEquals("mp4, mov, m4v, 3gp, mkv, webm", VideoMetadata.TYPE_NAMES)
         assertNull(VideoMetadata.TYPES["image/jpeg"])
+        assertNull(VideoMetadata.TYPES["video/x-msvideo"]) // avi: Android does not list it and it failed on two phones
     }
 }

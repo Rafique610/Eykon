@@ -52,7 +52,7 @@ class VideoCapture(
 
     private fun saveChecked(uri: Uri): SavedVideo {
         val ext = VideoMetadata.TYPES[context.contentResolver.getType(uri)]
-            ?: throw UploadException("This file type is not supported. Use one of: mp4, mov, m4v, avi.")
+            ?: throw UploadException("This file type is not supported. Use one of: ${VideoMetadata.TYPE_NAMES}.")
         val open = { context.contentResolver.openInputStream(uri) ?: throw UploadException("This file could not be opened.") }
         if (!keepReadPermission(uri)) return saveStream(ext, sizeOf(uri), open)
 

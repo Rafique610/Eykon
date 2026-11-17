@@ -199,7 +199,6 @@ const weak = [
   ['Partly', 'On the Infinix, a job saved before a reboot only starts when the app is opened. The Pixel starts it by itself. Likely the maker\'s auto-start control, not proven.'],
   ['Open', 'Faster models with the same captions (E2) are not measured: EYKO-121 has not started.'],
   ['Partly', 'Battery per minute of video is measured on the Pixel only, with the screen on (18–24 mAh). The Infinix runs were on the charger.'],
-  ['Partly', 'The accepted file types changed on 17 Nov (`.avi` out; 3gp, mkv and webm in, as EYKO-122 recommends). JVM tests pass; the check on a phone (Pixel) is still owed.'],
 ];
 body.push(new Table({
   width: { size: W, type: WidthType.DXA }, columnWidths: [1300, W - 1300], layout: TableLayoutType.FIXED,
@@ -279,11 +278,11 @@ const Q = [
   ['A4', 'A', 'What about awkward files: HEVC, HDR, portrait, variable frame rate, no GPS, damaged, very large?', 'Answered',
     'No crash on 14 test files, on two phones. HEVC, HDR, portrait, variable frame rate, no audio and no metadata all reach "ready". HDR frames have normal colour and portrait frames are stored upright. A damaged file and `.mkv` are refused with a clear message before any job is made. Since reading in place, a 528 MB file is accepted (212 s of video processed in 129 s on the Pixel).',
     'E6 · `docs/results/2026-11-12-head3-bad-inputs.md` · `2026-11-15-head3-intake-two-phones.md` · `2026-11-13-read-from-gallery.md`',
-    '`.avi` failed on both phones (bug 2), so it was dropped on 17 Nov; 3gp, mkv and webm were added (not yet checked on a phone). An audio-only file cannot be offered by the picker, so it was not tried. A file with no recorded time shows the time it was added. No real 4K or very long camera clip was tried.', 'Done: EYKO-118, 123, 126, 127'],
+    '`.avi` failed on both phones (bug 2), so it was dropped on 17 Nov and is now refused at once with a clear message; 3gp, mkv and webm were added and reach "ready" on the Pixel (E9). An audio-only file cannot be offered by the picker, so it was not tried. A file with no recorded time shows the time it was added. No real 4K or very long camera clip was tried.', 'Done: EYKO-118, 123, 126, 127'],
   ['A5', 'A', 'Where do the 500 MB limit and the four file types come from?', 'Answered',
     '500 MB was a copy limit, and it is gone on the normal path: the app now reads the video in place (EYKO-126). It was only **1.5 to 4 minutes** of phone video (3.5 min at the Pixel\'s 20 Mbps). For file types, Android\'s own list covers mp4, 3gp, mkv and webm (H.264, HEVC, VP8, VP9, AV1); it does not list `.avi` or `.mov`. `.mov` works on both phones in practice; `.avi` fails on both.',
     'E9 · `docs/research/2026-11-16-head3-background-and-limits.md` (Part 2)',
-    'The 500 MB limit stays only on the copy fallback (when the phone will not keep the read permission); EYKO-122 suggests a free-space margin instead. The new type list (drop avi; add 3gp, mkv, webm) was built on 17 Nov on the phone and the laptop; a phone check of one file of each is still owed.', 'Done: EYKO-122, 126'],
+    'The 500 MB limit stays only on the copy fallback (when the phone will not keep the read permission); EYKO-122 suggests a free-space margin instead. The new type list (drop avi; add 3gp, mkv, webm) was built on 17 Nov on the phone and the laptop and checked on the Pixel with one file of each. Our ffmpeg-made 3gp was indexed by Android as mp4; a phone-recorded 3gp was not tried.', 'Done: EYKO-122, 126; type list 17 Nov'],
   ['B1', 'B', 'Which stage takes the time, on every phone, same build?', 'Answered',
     'Three phones, same clips. On the Infinix `latest` leads (44 of 138 s, 111 of 234 s). On the A32 `small_objects` leads clip 1 (68 of 203 s) and `latest` clip 2 (147 of 339 s); the model stages are 74–83 % of its time. On the Pixel, frame splitting led clip 1 (26.7 of 64 s) and `latest` clip 2 (45 of 110 s). On 15 Nov splitting got about 3× faster on the Pixel (7.9–10.4 s, same JPEGs).',
     'E1 and Figure 1 · `docs/results/2026-11-15-head3-intake-two-phones.md` · `2026-11-14-head3-intake-infinix.md` · `2026-11-17-head3-intake-a32.md` · E11',
@@ -494,9 +493,10 @@ body.push(grid([2200, 2400, 2400, 2638], ['Type', 'Android lists it', 'Our test'
   ['.mp4 (H.264, HEVC, AV1)', 'yes', 'works', 'keep'],
   ['.mov', 'no (same layout as mp4)', 'works on both phones', 'keep, tested not guaranteed'],
   ['.m4v', 'no (an mp4 by another name)', 'works', 'keep'],
-  ['.avi', '**no**', '**fails on both phones**', '**drop**'],
-  ['.3gp / .mkv / .webm', 'yes', 'mkv refused today; others not tried', 'add, test one file each'],
+  ['.avi', '**no**', '**fails on both phones**', '**dropped 17 Nov**: refused at once, clear message (Pixel)'],
+  ['.3gp / .mkv / .webm', 'yes', 'mkv refused before 17 Nov; others not tried', '**added 17 Nov**: all three ready on the Pixel'],
 ], { firstColBold: true }));
+body.push(P('**Checked on the Pixel (17 Nov):** 15 s files cut from kit clip 1. VP9 `.webm` and H.264 `.mkv` reach "ready" (3 of 45 frames kept each); our `.3gp` reaches "ready" (2 of 45) but Android indexed it as `video/mp4`, so a phone-recorded 3gp is still untested; the EYKO-118 `.avi` is refused with "Use one of: mp4, mov, m4v, 3gp, mkv, webm". Source: `docs/results/2026-11-17-file-types.md`.', { run: { size: 20 }, before: 100 }));
 body.push(grid([3638, 3000, 3000], ['Recording', 'Per minute', '500 MB lasts'], [
   ['Pixel kit clip, 1080p HEVC, 20 Mbps (our file)', '150 MB', '**3.5 min**'],
   ['Pixel 6, 4K30 H.264, 48 Mbps (review)', '360 MB', '1.5 min'],
@@ -566,7 +566,7 @@ body.push(grid([800, 3938, 1600, 1100, 2200], ['Gap', 'What is missing', 'Card',
   ['G18', 'Pixel storage: 620 MB free, the app could not be reinstalled.', 'EYKO-83', 'Medium', 'Closed 8 Nov by the owner; every reinstall since has worked. Reading in place (EYKO-126) also stops videos taking double space.'],
   ['—', 'The A32 has run no background job, queue or battery test.', 'EYKO-168', 'Medium', 'Stage timings done 17 Nov (B1, B2).'],
   ['—', 'Infinix: a saved job does not start after a reboot until the app is opened.', 'EYKO-170', 'Low', 'Likely auto-start control; Zara tests it.'],
-  ['—', '`.avi` accepted but unreadable; 3gp, mkv, webm not accepted.', 'lead (17 Nov)', 'Low', 'Changed 17 Nov on phone and laptop (avi out; 3gp, mkv, webm in); JVM 123 of 123; phone check on the Pixel still owed.'],
+  ['—', '`.avi` accepted but unreadable; 3gp, mkv, webm not accepted.', 'lead (17 Nov)', 'Low', 'Fixed 17 Nov on phone and laptop (avi out; 3gp, mkv, webm in); Pixel: webm, mkv, 3gp ready, avi refused with a clear message.'],
   ['—', '`mediaProcessing` type and the 6 h timeout are not handled on purpose.', 'EYKO-169', 'Low', ''],
   ['—', 'Model runtime options and int8 (E2).', 'EYKO-121', 'Medium', ''],
   ['—', '`small_objects` not profiled; fewer crops in `latest` changes output.', 'lead', 'Low', ''],
