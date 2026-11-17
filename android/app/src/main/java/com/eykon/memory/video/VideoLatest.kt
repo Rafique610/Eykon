@@ -22,6 +22,9 @@ import kotlin.math.roundToInt
 /** Turns one object's box in a frame file into the vector of its own crop, or null when the box is too small to judge. */
 typealias EmbedCrop = (File, List<Float>) -> FloatArray?
 
+/** The same for all the boxes of one frame file at once, in the same order (EYKO-120: the picture is decoded once, not once per box). */
+typealias EmbedCrops = (File, List<List<Float>>) -> List<FloatArray?>
+
 /**
  * Stage "latest" (card EYKO-15): every object in a scene record becomes a sighting with a time
  * and a place. Among sightings with the same name, two are the same object when their own crops
@@ -52,10 +55,13 @@ object VideoLatest {
     private class Seen(val frameId: Long, val seenAt: String, val place: String?, val label: String, val vector: FloatArray)
 
     fun run(db: SupportSQLiteDatabase, videoId: String) =
-        run(db, videoId, CROP_COSINE_MIN) { file, box -> cropVector(MemoryApp.instance, file, box) }
+        runFrames(db, videoId, CROP_COSINE_MIN) { file, boxes -> cropVectors(MemoryApp.instance, file, boxes) }
 
     /** [embedCrop] is the crop's vector; tests pass their own. */
-    fun run(db: SupportSQLiteDatabase, videoId: String, minCosine: Float, embedCrop: EmbedCrop) {
+    fun run(db: SupportSQLiteDatabase, videoId: String, minCosine: Float, embedCrop: EmbedCrop) =
+        runFrames(db, videoId, minCosine) { file, boxes -> boxes.map { embedCrop(file, it) } }
+
+    private fun runFrames(db: SupportSQLiteDatabase, videoId: String, minCosine: Float, embedCrops: EmbedCrops) {
         val (videoFolder, recordedAt) = db.query("SELECT file_path, recorded_at FROM videos WHERE video_id = ?", arrayOf(videoId)).use { c ->
             if (!c.moveToFirst()) throw IllegalStateException("video $videoId is not in the database")
             (File(c.getString(0)).parentFile ?: throw IllegalStateException("video file has no folder")) to c.getString(1)
@@ -71,10 +77,10 @@ object VideoLatest {
             while (c.moveToNext()) {
                 val file = File(videosDir, c.getString(2))
                 val seenAt = SEEN_AT.format(VideoLink.moment(recordedAt, c.getDouble(1)))
-                for (thing in Json.parseToJsonElement(c.getString(3)).jsonArray) {
-                    val box = thing.jsonObject["box"]!!.jsonArray.map { it.jsonPrimitive.float }
-                    val vector = embedCrop(file, box)
-                    if (vector == null) tooSmall++ else seen.add(Seen(c.getLong(0), seenAt, if (c.isNull(4)) null else c.getString(4), thing.jsonObject["label"]!!.jsonPrimitive.content, vector))
+                val things = Json.parseToJsonElement(c.getString(3)).jsonArray.map { it.jsonObject }
+                val vectors = embedCrops(file, things.map { thing -> thing["box"]!!.jsonArray.map { it.jsonPrimitive.float } })
+                for ((thing, vector) in things.zip(vectors)) {
+                    if (vector == null) tooSmall++ else seen.add(Seen(c.getLong(0), seenAt, if (c.isNull(4)) null else c.getString(4), thing["label"]!!.jsonPrimitive.content, vector))
                 }
             }
         }
@@ -82,7 +88,12 @@ object VideoLatest {
         db.beginTransaction()
         try {
             // Idempotent: this video's sightings from an earlier run go first; relink() then restores whatever they had replaced.
-            val before = db.query("SELECT DISTINCT label FROM object_sightings WHERE video_id = ?", arrayOf(videoId)).use { c -> buildList { while (c.moveToNext()) add(c.getString(0)) } }
+            // Per label, the earliest time this run removes or adds a sighting: answers before it cannot change (EYKO-120).
+            val from = HashMap<String, String>()
+            db.query("SELECT label, MIN(seen_at) FROM object_sightings WHERE video_id = ? GROUP BY label", arrayOf(videoId)).use { c ->
+                while (c.moveToNext()) from[c.getString(0)] = c.getString(1)
+            }
+            for (s in seen) from.merge(s.label, s.seenAt) { a, b -> minOf(a, b) }
             db.execSQL("DELETE FROM object_sightings WHERE video_id = ?", arrayOf(videoId))
             for (s in seen) {
                 db.execSQL(
@@ -90,7 +101,7 @@ object VideoLatest {
                     arrayOf(s.label, s.frameId, videoId, s.seenAt, s.place, VideoVectors.toBlob(s.vector)),
                 )
             }
-            (before + seen.map { it.label }).distinct().forEach { relink(db, it, minCosine) }
+            from.forEach { (label, seenAt) -> relink(db, label, minCosine, seenAt) }
             db.setTransactionSuccessful()
         } finally {
             db.endTransaction()
@@ -104,22 +115,61 @@ object VideoLatest {
      * gives the same answer whichever video was added first, and an older video can never
      * replace a newer sighting. A sighting replaces the most alike earlier one that is still
      * the latest, provided it is alike enough and from another frame.
+     * Only rows whose answer changed are written (EYKO-120: before, every row of the label was rewritten for each video).
+     * With [fromSeenAt] (the earliest time a sighting was added or removed), rows before it are not compared again; see [link].
      */
-    internal fun relink(db: SupportSQLiteDatabase, label: String, minCosine: Float) {
-        class Row(val id: Long, val frameId: Long, val vector: FloatArray, var supersededBy: Long? = null)
-        val rows = db.query("SELECT id, frame_id, embedding FROM object_sightings WHERE label = ? ORDER BY seen_at, id", arrayOf(label)).use { c ->
-            buildList { while (c.moveToNext()) add(Row(c.getLong(0), c.getLong(1), VideoVectors.fromBlob(c.getBlob(2)))) }
+    internal fun relink(db: SupportSQLiteDatabase, label: String, minCosine: Float, fromSeenAt: String? = null) {
+        val times = ArrayList<String>()
+        val rows = db.query("SELECT id, frame_id, embedding, is_latest, superseded_by, seen_at FROM object_sightings WHERE label = ? ORDER BY seen_at, id", arrayOf(label)).use { c ->
+            buildList { while (c.moveToNext()) { add(Link(c.getLong(0), c.getLong(1), VideoVectors.fromBlob(c.getBlob(2)), c.getInt(3) == 1, if (c.isNull(4)) null else c.getLong(4))); times.add(c.getString(5)) } }
         }
-        val latest = ArrayList<Row>()
-        for (row in rows) {
-            val same = latest.filter { it.frameId != row.frameId }.maxByOrNull { cosine(it.vector, row.vector) }
-            if (same != null && cosine(same.vector, row.vector) >= minCosine) {
-                same.supersededBy = row.id
-                latest.remove(same)
+        val was = rows.map { it.isLatest to it.supersededBy }
+        link(rows, minCosine, if (fromSeenAt == null) 0 else times.indexOfFirst { it >= fromSeenAt }.let { if (it < 0) rows.size else it })
+        rows.forEachIndexed { i, row ->
+            if (was[i] != (row.isLatest to row.supersededBy)) {
+                db.execSQL("UPDATE object_sightings SET is_latest = ?, superseded_by = ? WHERE id = ?", arrayOf(if (row.isLatest) 1 else 0, row.supersededBy, row.id))
+            }
+        }
+    }
+
+    /** One sighting for [link]: its answer (latest, or replaced by which id) is worked out afresh. */
+    internal class Link(val id: Long, val frameId: Long, val vector: FloatArray, var isLatest: Boolean = true, var supersededBy: Long? = null)
+
+    /**
+     * [rows] in time order. Each row replaces the most alike earlier row that is still the latest and from another frame, if
+     * the cosine is at least [minCosine]; on a tie the earlier of the latest rows wins (as maxByOrNull did). Each cosine is
+     * worked out once and no list is made per row (EYKO-120).
+     *
+     * Rows before [from] keep the answer they hold (a later row cannot change an earlier answer), so only rows from [from]
+     * on are compared: when a new video is the newest, that is its own sightings against the current latest ones, not the
+     * whole label again. The latest rows at [from] are the earlier rows not replaced by an earlier row. This gives the same
+     * answer as [from] = 0 when nothing before [from] was added or removed since the answers were written.
+     */
+    internal fun link(rows: List<Link>, minCosine: Float, from: Int = 0) {
+        val position = HashMap<Long, Int>(rows.size * 2)
+        rows.forEachIndexed { i, row -> position[row.id] = i }
+        val latest = ArrayList<Link>()
+        for (i in 0 until from) {
+            val row = rows[i]
+            val by = row.supersededBy
+            if (by == null || (position[by] ?: from) >= from) { row.isLatest = true; row.supersededBy = null; latest.add(row) } else row.isLatest = false
+        }
+        for (i in from until rows.size) { rows[i].isLatest = true; rows[i].supersededBy = null }
+        for (row in rows.subList(from, rows.size)) {
+            var best = -1
+            var bestCosine = Float.NEGATIVE_INFINITY
+            for (i in latest.indices) {
+                val other = latest[i]
+                if (other.frameId == row.frameId) continue
+                val c = cosine(other.vector, row.vector)
+                if (best < 0 || c > bestCosine) { best = i; bestCosine = c }
+            }
+            if (best >= 0 && bestCosine >= minCosine) {
+                latest[best].apply { isLatest = false; supersededBy = row.id }
+                latest.removeAt(best)
             }
             latest.add(row)
         }
-        rows.forEach { db.execSQL("UPDATE object_sightings SET is_latest = ?, superseded_by = ? WHERE id = ?", arrayOf(if (it.supersededBy == null) 1 else 0, it.supersededBy, it.id)) }
     }
 
     /** Both vectors have length 1, so the dot product is the cosine. */
@@ -144,15 +194,21 @@ object VideoLatest {
     }
 
     /** The MobileCLIP vector of the object's own part of the frame. */
-    fun cropVector(context: Context, file: File, box: List<Float>): FloatArray? {
+    fun cropVector(context: Context, file: File, box: List<Float>): FloatArray? = cropVectors(context, file, listOf(box)).single()
+
+    /** The vectors of several objects' own parts of one frame, in order: the picture is decoded once for all of them. */
+    fun cropVectors(context: Context, file: File, boxes: List<List<Float>>): List<FloatArray?> {
+        if (boxes.isEmpty()) return emptyList()
         val picture = BitmapFactory.decodeFile(file.absolutePath) ?: throw IllegalStateException("picture ${file.name} cannot be read")
         try {
-            val (x, y, side) = cropSquare(box, picture.width, picture.height) ?: return null
-            val crop = Bitmap.createBitmap(picture, x, y, side, side)
-            try {
-                return ImageEmbedder.embed(context, crop)
-            } finally {
-                if (crop !== picture) crop.recycle()
+            return boxes.map { box ->
+                val (x, y, side) = cropSquare(box, picture.width, picture.height) ?: return@map null
+                val crop = Bitmap.createBitmap(picture, x, y, side, side)
+                try {
+                    ImageEmbedder.embed(context, crop)
+                } finally {
+                    if (crop !== picture) crop.recycle()
+                }
             }
         } finally {
             picture.recycle()

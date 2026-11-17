@@ -1,0 +1,148 @@
+{
+ "part1": {
+  "boxes": 12,
+  "crops": 9,
+  "now_ms": 46.180461500625825,
+  "new_ms": 6.787108999560587,
+  "same_pixels": true
+ },
+ "part2": {
+  "by_batch_size": {
+   "1": {
+    "one_at_a_time_ms": 260.70778999928734,
+    "batch_ms": 260.68557299731765
+   },
+   "4": {
+    "one_at_a_time_ms": 259.1356194998298,
+    "batch_ms": 305.37652850034647
+   },
+   "8": {
+    "one_at_a_time_ms": 263.13566287490175,
+    "batch_ms": 329.661202375064
+   },
+   "9": {
+    "one_at_a_time_ms": 315.4156893332482,
+    "batch_ms": 366.16136833294553
+   }
+  },
+  "max_abs_change": 0.0,
+  "max_cosine_change": 0.0,
+  "real_pairs": 963,
+  "pairs_that_close": 0
+ },
+ "part3": {
+  "real_crops_same_links": true,
+  "from_earliest_same_links": true,
+  "links_at_threshold": 33,
+  "growth": [
+   {
+    "sightings": 20,
+    "now_cosines": 176,
+    "new_cosines": 160,
+    "from_cosines": 160,
+    "now_writes": 20,
+    "new_writes": 0,
+    "now_ms": 1.7786120006348938,
+    "new_ms": 1.3819630003126804,
+    "from_ms": 1.7276819999096915,
+    "same": true
+   },
+   {
+    "sightings": 500,
+    "now_cosines": 120659,
+    "new_cosines": 120163,
+    "from_cosines": 9404,
+    "now_writes": 500,
+    "new_writes": 1,
+    "now_ms": 925.0424220008426,
+    "new_ms": 946.4578260012786,
+    "from_ms": 62.43164699844783,
+    "same": true
+   },
+   {
+    "sightings": 1000,
+    "now_cosines": 482264,
+    "new_cosines": 481268,
+    "from_cosines": 18980,
+    "now_writes": 1000,
+    "new_writes": 0,
+    "now_ms": 4365.743843001837,
+    "new_ms": 3441.96938299865,
+    "from_ms": 123.70783399819629,
+    "same": true
+   },
+   {
+    "sightings": 1500,
+    "now_cosines": 1076723,
+    "new_cosines": 1075227,
+    "from_cosines": 28109,
+    "now_writes": 1500,
+    "new_writes": 2,
+    "now_ms": 6973.858535002364,
+    "new_ms": 6807.4464250021265,
+    "from_ms": 173.30257200228516,
+    "same": true
+   },
+   {
+    "sightings": 2000,
+    "now_cosines": 1900987,
+    "new_cosines": 1898991,
+    "from_cosines": 37366,
+    "now_writes": 2000,
+    "new_writes": 1,
+    "now_ms": 9783.010815001035,
+    "new_ms": 7640.25452399801,
+    "from_ms": 154.13235800224356,
+    "same": true
+   },
+   {
+    "sightings": 2500,
+    "now_cosines": 2955002,
+    "new_cosines": 2952506,
+    "from_cosines": 46570,
+    "now_writes": 2500,
+    "new_writes": 1,
+    "now_ms": 11255.778152997664,
+    "new_ms": 18905.41006299827,
+    "from_ms": 344.3459750014881,
+    "same": true
+   },
+   {
+    "sightings": 3000,
+    "now_cosines": 4241834,
+    "new_cosines": 4238838,
+    "from_cosines": 55840,
+    "now_writes": 3000,
+    "new_writes": 0,
+    "now_ms": 28616.295817999344,
+    "new_ms": 25179.353176001314,
+    "from_ms": 325.29843600059394,
+    "same": true
+   },
+   {
+    "sightings": 3500,
+    "now_cosines": 5752977,
+    "new_cosines": 5749481,
+    "from_cosines": 64629,
+    "now_writes": 3500,
+    "new_writes": 1,
+    "now_ms": 29314.956359998178,
+    "new_ms": 35711.2874739978,
+    "from_ms": 493.6980769998627,
+    "same": true
+   },
+   {
+    "sightings": 4000,
+    "now_cosines": 7484821,
+    "new_cosines": 7480825,
+    "from_cosines": 73494,
+    "now_writes": 4000,
+    "new_writes": 3,
+    "now_ms": 40151.807018999534,
+    "new_ms": 28747.57820800005,
+    "from_ms": 286.0976479969395,
+    "same": true
+   }
+  ]
+ }
+}
