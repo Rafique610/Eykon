@@ -192,4 +192,44 @@ ax.text(1100, 1300, "* sqlite-vec keeps its data in the database file (the OS fi
 ax.legend(loc="lower right", frameon=False, fontsize=8.5, labelcolor=INK)
 finish(fig, "3-memory-vs-size.png", "Memory each method holds as the library grows (lower is smaller)",
        "PSS after building minus PSS before, S3 varied COCO photos. int8 + re-check holds under a third of float32.")
-print("written", sorted(p.name for p in OUT.glob("*-vs-size.png")))
+
+# 4 · B5: the phones against the laptop, same vectors (S2 = the phones' own 90 clips + noise)
+B5_SIZES = [20000, 50000, 100000]
+PHONES = [  # median of 5 run medians, ms; sources in the subtitle
+    ("A32 before EYKO-114/115 (old search)", RED, [115.2, 283.7, 565.2], (0, (4, 3))),
+    ("A32, hot, on battery", YELLOW, [21.2, 51.9, 112.1], "-"),
+    ("A32, cable", ORANGE, [21.3, 52.1, 102.5], "-"),
+    ("Pixel 9 Pro XL, low battery", GREEN, [3.2, 8.1, 13.8], "-"),
+]
+laptop = [statistics.median(float(r["median_ms"]) for r in DATA["real"][("blob_memory_numpy_1t", n)]) for n in B5_SIZES]
+fig, ax = plt.subplots(figsize=(11, 6.6), facecolor=SURFACE)
+ends = []
+for label, color, ys, ls in PHONES + [("laptop, numpy 1 thread", BLUE, laptop, "-")]:
+    ax.plot(B5_SIZES, ys, color=color, linewidth=2, linestyle=ls, marker="o", markersize=6,
+            markeredgecolor=SURFACE, markeredgewidth=1.5, label=label, zorder=3)
+    ratio = "" if color == BLUE else f" · {ys[-1] / laptop[-1]:.1f}× laptop"
+    ends.append([ys[-1], B5_SIZES[-1], label, f"{ys[-1]:.1f} ms{ratio}"])
+end_labels(ax, ends, 0.09)
+ax.set_facecolor(SURFACE)
+for side in ("top", "right"):
+    ax.spines[side].set_visible(False)
+for side in ("left", "bottom"):
+    ax.spines[side].set_color(GRID)
+ax.tick_params(colors=INK2, labelsize=9)
+ax.set_xscale("log")
+ax.set_yscale("log")
+ax.xaxis.set_major_locator(FixedLocator(B5_SIZES))
+ax.xaxis.set_minor_locator(NullLocator())
+ax.set_xticklabels(["20k", "50k", "100k"])
+ax.set_xlim(17000, 100000 * 3.3)
+ax.set_ylim(1.5, 900)
+ax.grid(color=GRID, linewidth=0.8)
+ax.set_axisbelow(True)
+ax.set_xlabel("vectors stored", color=INK2, fontsize=9)
+ax.set_ylabel("median time per search (ms, log scale)", color=INK2, fontsize=9)
+ax.legend(loc="upper left", frameon=False, fontsize=8.5, labelcolor=INK)
+ax.text(30000, 1.6,"Phone numbers: 2026-11-08-adopt-mapped.md (A32 cable, old search);\n"
+        "2026-11-09-final-setup-conditions.md (A32 hot2, Pixel saver off)", fontsize=8, color=INK2, va="bottom")
+finish(fig, "4-phone-vs-laptop.png", "B5 · Chip or code? The phones against the laptop, same vectors (lower is faster)",
+       "Phones: the app's search (red = the old search before EYKO-114/115). Laptop: one-thread numpy. S2 vectors (90 own clips + noise).")
+print("written", sorted(p.name for p in OUT.glob("*.png")))
