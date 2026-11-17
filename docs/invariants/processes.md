@@ -85,6 +85,29 @@ kept as something that can be opened in a meeting in under a minute:
   one click away. A result that exists only in chat or someone's memory
   doesn't count.
 
+## Which phone a card runs on (Pixel by default)
+
+Set 17 November 2026 by the owner. Phone runs cost the phone holder's time,
+so a card names the fewest phones that answer its question.
+
+- **Default: the Pixel 9 Pro XL only.** Every phone card runs there.
+- **The modest phone is Zara's Infinix X670** when a card needs a second,
+  cheaper phone (her own cards, or a run she can do).
+- **The Samsung A32 only when the result truly needs the slowest phone**:
+  the question itself is about the worst case (time or memory on the
+  low-end phone, a limit that only it can show), or a Pixel/Infinix result
+  leaves a real doubt that only the A32 can settle. "For completeness" or
+  "both phones" by habit is not a reason.
+- **Whoever writes the card decides, not whoever runs it.** Before a card
+  says "Pixel and A32", compare: what does the Pixel (and the Infinix, if it
+  ran) already show, and would the A32 change the answer? Write the decision
+  and its one-line reason in the card ("A32: not needed, the Pixel answers
+  it" or "A32: needed, because …"). The agent does this itself when it
+  writes or amends a card; it does not leave the choice to the person
+  running it.
+- A card that skips the A32 says so in its result file's limits, so the
+  doc never implies three phones when one ran.
+
 ## Team branches, reviews and merges
 
 Set 7 November 2026 by the owner. **Taha Ahmed** is the lead (plans the

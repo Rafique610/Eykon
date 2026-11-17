@@ -54,4 +54,5 @@ Rules for package managers, build tools, and paths.
 - LiteRT-LM for on-device inference.
 - Build via `task build-android`.
 - Phone tests never use `connectedDebugAndroidTest`: it uninstalls the app and deletes the saved memories and models. Install both APKs with `adb install -r`, then run `adb shell am instrument -w -e class ... com.eykon.memory.test/androidx.test.runner.AndroidJUnitRunner` (see `task spike-android-vectors`).
+- Cleaning up after a phone test deletes **only the folders that test created**, by the ids it logged (for example the `read <video_id>` lines), never "whatever is not in the backup list". Back up the whole `files/videos/` tree, not just a list of names, before a test that adds videos, and print the delete list before deleting. (17 Nov 2026: a list read two names per line deleted four real video folders on the A32; repaired from the originals.)
 - In Taskfile commands, single-quote Windows paths (`'.\gradlew.bat'`, `'app\build\...'`): Task's shell drops unquoted backslashes. Call the wrapper as `.\gradlew.bat`, which also works where `NoDefaultCurrentDirectoryInExePath` is set (the agent's shell).
