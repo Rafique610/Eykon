@@ -3,9 +3,11 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
-    <!-- EYKO-44: video jobs run as WorkManager long-running work in a foreground service of type dataSync, with a notification. -->
+    <!-- EYKO-44: video jobs run as WorkManager long-running work in a foreground service, with a notification. EYKO-122: of type
+         mediaProcessing on Android 15+ (the type for processing media on the phone), dataSync on 12 to 14 (mediaProcessing is new in 15). -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PROCESSING" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <!-- EYKO-127: lets the app read where a picked video was recorded (Android hides it otherwise) -->
     <uses-permission android:name="android.permission.ACCESS_MEDIA_LOCATION" />
@@ -42,10 +44,11 @@
             </intent-filter>
         </activity>
 
-        <!-- WorkManager's own foreground service, given the type Android 14+ requires (merged into the library's declaration). -->
+        <!-- WorkManager's own foreground service, given the types Android 14+ requires (merged into the library's declaration).
+             Only one is used at a time (VideoJobWorker.serviceType): both at once would only be a way round the 6 h limit. -->
         <service
             android:name="androidx.work.impl.foreground.SystemForegroundService"
-            android:foregroundServiceType="dataSync"
+            android:foregroundServiceType="dataSync|mediaProcessing"
             tools:node="merge" />
     </application>
 

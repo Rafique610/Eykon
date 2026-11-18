@@ -24,13 +24,13 @@ writes; now **73 thousand** and 0 to 3 writes, with the same links on every chec
 
 | Part | Now | Faster version | Same output? | Laptop result |
 |---|---|---|---|---|
-| Crop cut | the frame JPEG is decoded once **per object** (`cropVector`) | decode once **per frame**, cut every box from it | **yes**: every crop the same pixels | 46.2 ms → 6.8 ms per frame of 12 boxes |
-| Crop vector | MobileCLIP-S2, one crop per run, 4 threads | the frame's crops in one batch | yes: vectors identical (largest change 0) | **slower**: 0.80× to 0.86× (260 ms per crop alone, 305 to 366 ms per crop in batches of 4 to 9) |
+| Crop cut | the frame JPEG is decoded once **per object** (`cropVector`) | decode once **per frame**, cut every box from it | **yes**: every crop the same pixels | 15.9 ms → 1.2 ms per frame of 12 boxes |
+| Crop vector | MobileCLIP-S2, one crop per run, 4 threads | the frame's crops in one batch | yes: vectors identical (largest change 0) | **slower**: 0.71× to 0.83× (83 ms per crop alone, 107 to 117 ms per crop in batches of 4 to 9) |
 | Relink, per pair | each row makes a new list of candidates and works out the best cosine twice | one cosine per pair, no list | **yes** (90 real crops, thresholds 0.80, 0.85, 0.87, 0.90) | about the same; it was never the cost |
 | Relink, rows written | every row of the label is written for every video | only rows whose answer changed | **yes** | 4,000 → 0 to 3 writes per added video |
 | Relink, rows compared | the whole label again, from its first sighting | from the earliest time this video adds or removes a sighting of that label | **yes** (4 orders of adding the 6 clips, including out of order and re-runs; and every growth step) | see the next table |
 
-What it costs per object on the laptop: crop cut 0.6 ms (now 3.8 ms), crop vector 260 ms. So the decode-once change saves about
+What it costs per object on the laptop: crop cut 0.1 ms (now 1.3 ms), crop vector 83 ms (laptop, nothing else running; a first run with a download going was about 3× slower in every part, same ratios). So the decode-once change saves about
 1 % of `latest` today. It is in because it is free and shrinks the memory churn of decoding the same picture 8 times (clip 2: 134
 sightings from 16 kept frames).
 
@@ -54,7 +54,9 @@ result. On the 90 real crops added clip by clip in time order: 1,136 cosines →
 Why it gives the same answer: a row's answer depends only on the rows before it in time. When a video adds or removes sightings of a
 label from time t on, every row before t keeps its answer, and the rows still latest at t are the earlier rows not replaced by an
 earlier row. So `link` keeps those, and works out the rows from t on exactly as before. Re-running a video counts its old rows'
-times too (they are removed). This holds as long as the stored answers were written by the same rule and threshold, which is how
+times too (they are removed). A new split deletes the video's frames, which would remove its sightings by cascade without
+any relink, so `VideoSplit` first calls `VideoLatest.forget`, which removes them and relinks from their earliest time (follow-up,
+on-device test `whenASplitAgainRemovesAMiddleVideosSightingsTheAnswersAroundItAreFixed`). This holds as long as the stored answers were written by the same rule and threshold, which is how
 every row is made. A full relink is still there (`relink` without a time).
 
 ![latest time against sightings, and relink comparisons](latest-profile/latest-time-vs-sightings.png)

@@ -89,10 +89,7 @@ object VideoLatest {
         try {
             // Idempotent: this video's sightings from an earlier run go first; relink() then restores whatever they had replaced.
             // Per label, the earliest time this run removes or adds a sighting: answers before it cannot change (EYKO-120).
-            val from = HashMap<String, String>()
-            db.query("SELECT label, MIN(seen_at) FROM object_sightings WHERE video_id = ? GROUP BY label", arrayOf(videoId)).use { c ->
-                while (c.moveToNext()) from[c.getString(0)] = c.getString(1)
-            }
+            val from = earliestPerLabel(db, videoId)
             for (s in seen) from.merge(s.label, s.seenAt) { a, b -> minOf(a, b) }
             db.execSQL("DELETE FROM object_sightings WHERE video_id = ?", arrayOf(videoId))
             for (s in seen) {
@@ -107,6 +104,32 @@ object VideoLatest {
             db.endTransaction()
         }
         Log.i(TAG, "latest $videoId: ${seen.size} sightings ($tooSmall boxes too small) in ${(System.nanoTime() - start) / 1_000_000} ms")
+    }
+
+    /**
+     * Remove [videoId]'s sightings and fix the answers they took part in. Called before the video's frames are deleted (a new
+     * split): the delete would remove the sightings through ON DELETE CASCADE without a relink, and the next run, which relinks
+     * only from its own rows' time, would leave the answers between the old rows and the new ones stale.
+     */
+    fun forget(db: SupportSQLiteDatabase, videoId: String, minCosine: Float = CROP_COSINE_MIN) {
+        db.beginTransaction()
+        try {
+            val from = earliestPerLabel(db, videoId)
+            db.execSQL("DELETE FROM object_sightings WHERE video_id = ?", arrayOf(videoId))
+            from.forEach { (label, seenAt) -> relink(db, label, minCosine, seenAt) }
+            db.setTransactionSuccessful()
+        } finally {
+            db.endTransaction()
+        }
+    }
+
+    /** Label -> the earliest time of [videoId]'s stored sightings of it. */
+    private fun earliestPerLabel(db: SupportSQLiteDatabase, videoId: String): HashMap<String, String> {
+        val from = HashMap<String, String>()
+        db.query("SELECT label, MIN(seen_at) FROM object_sightings WHERE video_id = ? GROUP BY label", arrayOf(videoId)).use { c ->
+            while (c.moveToNext()) from[c.getString(0)] = c.getString(1)
+        }
+        return from
     }
 
     /**

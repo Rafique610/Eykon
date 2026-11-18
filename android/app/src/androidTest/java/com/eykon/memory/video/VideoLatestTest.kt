@@ -168,6 +168,27 @@ class VideoLatestTest {
         assertEquals(Triple("monday", true, null as Long?), Triple(only.videoId, only.isLatest, only.supersededBy))
     }
 
+    /**
+     * A new split deletes the video's frames, and with them (cascade) its sightings. Monday's keys were replaced by Tuesday's,
+     * Tuesday's by Wednesday's: once Tuesday's are gone, Monday's must be replaced by Wednesday's, not point at a deleted row.
+     */
+    @Test
+    fun whenASplitAgainRemovesAMiddleVideosSightingsTheAnswersAroundItAreFixed() {
+        video("monday", "2026-10-05T08:00:00Z", Triple(2.0, "a hallway", listOf(keys)))
+        video("tuesday", "2026-10-06T08:00:00Z", Triple(5.0, "a kitchen", listOf(keys)))
+        video("wednesday", "2026-10-07T08:00:00Z", Triple(1.0, "an office", listOf(keys)))
+        process("monday", "tuesday", "wednesday")
+
+        VideoLatest.forget(db, "tuesday") // what VideoSplit.run does first
+        db.execSQL("DELETE FROM frames WHERE video_id = 'tuesday'")
+        process("tuesday") // no frames now, so no sightings
+
+        val (monday, wednesday) = sightings("keys")
+        assertEquals(listOf("monday", "wednesday"), listOf(monday.videoId, wednesday.videoId))
+        assertEquals(wednesday.id, monday.supersededBy)
+        assertEquals(listOf(Triple("keys", "wednesday", "an office")), latest())
+    }
+
     @Test
     fun withinOneVideoALaterFrameReplacesAnEarlierOneAndHistoryIsKept() {
         video("walk", "2026-10-05T08:00:00Z", Triple(1.0, "a hallway", listOf(keys)), Triple(9.0, "a kitchen", listOf(keys)), Triple(20.0, "a bedroom", listOf(keys)))

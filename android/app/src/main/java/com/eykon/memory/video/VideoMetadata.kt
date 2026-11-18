@@ -9,8 +9,6 @@ import java.time.format.DateTimeParseException
 /** Pure parsers for what Android's MediaMetadataRetriever returns. No Android classes, so they run in JVM tests. */
 object VideoMetadata {
 
-    const val MAX_MB = 500
-
     /**
      * Mime type -> file extension; the laptop accepts the same six (`src/config.py`). Android's supported-formats page lists
      * mp4, 3gp, mkv and webm; mov and m4v are mp4 by layout and work on our phones. avi was dropped: Android does not list it

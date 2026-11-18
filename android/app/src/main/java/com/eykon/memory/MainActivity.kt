@@ -65,4 +65,13 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+
+    /**
+     * EYKO-122: opening the app resets Android 15's 6 h a day for foreground services, so a queue the limit stopped is started
+     * again here (a process that stayed alive does not pass MemoryApp.onCreate). With nothing queued the run ends at once.
+     */
+    override fun onStart() {
+        super.onStart()
+        (application as MemoryApp).kickVideoWorker()
+    }
 }

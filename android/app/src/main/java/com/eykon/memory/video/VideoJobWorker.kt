@@ -3,8 +3,10 @@ package com.eykon.memory.video
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.Context
 import android.content.pm.ServiceInfo
+import android.os.Build
 import android.util.Log
 import androidx.work.BackoffPolicy
 import androidx.work.CoroutineWorker
@@ -46,6 +48,7 @@ class VideoJobWorker(context: Context, params: WorkerParameters) : CoroutineWork
         } catch (e: CancellationException) {
             // Why Android stopped us (EYKO-44 review): shown in `adb logcat -s EykonVideo`, so the phone checks can say which stop it was.
             Log.w(TAG, "worker stopped, reason ${stopReasonName(stopReason)} (code $stopReason)")
+            if (stopReason == WorkInfo.STOP_REASON_FOREGROUND_SERVICE_TIMEOUT) notifyPaused()
             throw e
         }
     }
@@ -56,6 +59,7 @@ class VideoJobWorker(context: Context, params: WorkerParameters) : CoroutineWork
         if (!withContext(Dispatchers.Default) { app.videoWorker.hasWork() }) return Result.success()
         try {
             setForeground(foregroundInfo("Starting"))
+            notificationManager().cancel(PAUSED_NOTIFICATION_ID) // running in the foreground again
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {
@@ -102,7 +106,28 @@ class VideoJobWorker(context: Context, params: WorkerParameters) : CoroutineWork
 
     private fun foregroundInfo(text: String): ForegroundInfo {
         ensureChannel()
-        return ForegroundInfo(NOTIFICATION_ID, notification(text), ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC)
+        return ForegroundInfo(NOTIFICATION_ID, notification(text), serviceType(Build.VERSION.SDK_INT))
+    }
+
+    /**
+     * EYKO-122: Android 15+ allows a dataSync or mediaProcessing foreground service 6 hours in 24, then stops it (WorkManager stops
+     * the worker with this reason, and Android will not start one of that type again from the background). The saved stages stay;
+     * the work goes on as plain background work when Android lets it, and opening the app resets the 6 hours (MainActivity starts the
+     * worker again). This note says so, because otherwise the processing notification just disappears.
+     */
+    private fun notifyPaused() {
+        ensureChannel()
+        val open = applicationContext.packageManager.getLaunchIntentForPackage(applicationContext.packageName)?.let {
+            PendingIntent.getActivity(applicationContext, 0, it, PendingIntent.FLAG_IMMUTABLE)
+        }
+        val note = Notification.Builder(applicationContext, CHANNEL_ID)
+            .setContentTitle("Video processing paused")
+            .setContentText("Android allows 6 hours a day in the background. Open Eykon to carry on.")
+            .setSmallIcon(android.R.drawable.stat_sys_warning)
+            .setAutoCancel(true)
+            .apply { if (open != null) setContentIntent(open) }
+            .build()
+        notificationManager().notify(PAUSED_NOTIFICATION_ID, note)
     }
 
     /** Created once per process, not on every notification update. */
@@ -127,9 +152,14 @@ class VideoJobWorker(context: Context, params: WorkerParameters) : CoroutineWork
         const val UNIQUE_NAME = "video-jobs"
         private const val CHANNEL_ID = "video_processing"
         private const val NOTIFICATION_ID = 4401
+        private const val PAUSED_NOTIFICATION_ID = 4402
         private const val PROGRESS_EVERY_MS = 3_000L
         private const val TAG = "EykonVideo"
         private val channelCreated = AtomicBoolean(false)
+
+        /** mediaProcessing (added in Android 15, API 35) is the type for our work; older phones only have dataSync. */
+        fun serviceType(sdk: Int): Int =
+            if (sdk >= 35) ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PROCESSING else ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC
 
         /** Readable name for WorkInfo.STOP_REASON_* (API 31+ values; older phones report not-stopped or unknown). */
         fun stopReasonName(code: Int): String = when (code) {
@@ -138,7 +168,7 @@ class VideoJobWorker(context: Context, params: WorkerParameters) : CoroutineWork
             WorkInfo.STOP_REASON_PREEMPT -> "preempted"
             WorkInfo.STOP_REASON_TIMEOUT -> "timeout"
             WorkInfo.STOP_REASON_DEVICE_STATE -> "device state"
-            WorkInfo.STOP_REASON_FOREGROUND_SERVICE_TIMEOUT -> "foreground service timeout (Android 15 dataSync limit)"
+            WorkInfo.STOP_REASON_FOREGROUND_SERVICE_TIMEOUT -> "foreground service timeout (Android 15+ 6 h a day limit)"
             WorkInfo.STOP_REASON_APP_STANDBY -> "app standby"
             WorkInfo.STOP_REASON_BACKGROUND_RESTRICTION -> "background restriction"
             WorkInfo.STOP_REASON_USER -> "stopped by the user"

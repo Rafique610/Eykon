@@ -33,7 +33,9 @@ object VideoSplit {
         val framesDir = File(folder, "frames")
         val times = frameTimes(durationS)
 
-        // Idempotent: remove what an earlier run of this stage wrote.
+        // Idempotent: remove what an earlier run of this stage wrote. The sightings go first, with a relink: deleting the frames
+        // would remove them by cascade and leave other videos' answers pointing at them.
+        VideoLatest.forget(db, videoId)
         db.execSQL("DELETE FROM frames WHERE video_id = ?", arrayOf(videoId))
 
         val startFrames = System.nanoTime()

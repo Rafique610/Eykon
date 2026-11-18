@@ -33,7 +33,8 @@ data class SavedVideo(val video: Video, val timeFromFile: Boolean, val placeBloc
 /**
  * Phone twin of the laptop's capture.py: check, read metadata, add the videos row and its job.
  * EYKO-126: the picked gallery file is read in place (a kept read permission, no copy). Only when the phone will not
- * keep that permission is the file copied into app storage, as before (with the 500 MB limit).
+ * keep that permission is the file copied into app storage. The copy has no fixed size limit (EYKO-122: 500 MB was 1.5 to 4
+ * minutes of phone video); it needs the video plus [VideoCopy.RESERVE_BYTES] free, checked before and during the copy.
  */
 class VideoCapture(
     private val context: Context,
@@ -77,15 +78,13 @@ class VideoCapture(
      * Split from [save] so a test can hand in a stream without a content provider.
      */
     internal fun saveStream(ext: String, sizeBytes: Long?, open: () -> InputStream): SavedVideo {
-        val limit = VideoMetadata.MAX_MB * 1024L * 1024L
-        if (sizeBytes != null && sizeBytes > limit) throw UploadException(VideoCopy.tooLarge(limit))
         VideoCopy.roomProblem(sizeBytes, context.filesDir.usableSpace)?.let { throw UploadException(it) }
 
         val videoId = newId()
         val folder = File(context.filesDir, "videos/$videoId").apply { mkdirs() }
         val file = File(folder, "$videoId.$ext")
         try {
-            val copied = VideoCopy.copyAndHash(open(), file, limit) { context.filesDir.usableSpace }
+            val copied = VideoCopy.copyAndHash(open(), file, Long.MAX_VALUE) { context.filesDir.usableSpace }
             Log.i(TAG, "copy $videoId: ${copied.bytes} bytes in ${copied.copyMs} ms (hash ${copied.hashMs} ms)")
             return register(videoId, file, copied.sha256, sourceUri = null, displayName = null)
         } catch (e: Exception) {
