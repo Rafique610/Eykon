@@ -1,0 +1,22 @@
+11-18 15:58:07.781 30214 30242 I EykonVideo: read 9040b0f69b3a458fa98a00d4c1821177: 187772526 bytes in place in 266 ms (no copy)
+11-18 15:58:26.823 30214 30242 I EykonVideo: split 9040b0f69b3a458fa98a00d4c1821177: 225 frames in 9563 ms (one pass; 1727 ms to JPEG, 200 ms to write, the rest decoding), audio 74.9 s in 9275 ms
+11-18 16:00:38.526 30214 30243 W EykonVideo: foreground service not allowed here, running as plain work: ForegroundServiceStartNotAllowedException: startForegroundService() not allowed: service com.ey
+11-18 16:00:38.526 30214 30243 W EykonVideo: android.app.ForegroundServiceStartNotAllowedException: startForegroundService() not allowed: service com.eykon.memory/androidx.work.impl.foreground.SystemF
+11-18 16:00:38.526 30214 30243 W EykonVideo: 	at android.os.Parcel.readParcelableInternal(Parcel.java:5253)
+11-18 16:00:38.526 30214 30243 W EykonVideo: 	at android.os.Parcel.readParcelable(Parcel.java:5234)
+11-18 16:00:38.526 30214 30243 W EykonVideo: 	at android.os.Parcel.readException(Parcel.java:3334)
+11-18 16:00:38.526 30214 30243 W EykonVideo: 	at android.os.Parcel.readException(Parcel.java:3278)
+11-18 16:00:38.526 30214 30243 W EykonVideo: 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1100)
+11-18 16:00:38.526 30214 30243 W EykonVideo: 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+11-18 16:00:38.526 30214 30243 W EykonVideo: 	at java.lang.Thread.run(Thread.java:1571)
+11-18 16:00:41.776 30214 30242 W EykonVideo: worker stopped, reason foreground service timeout (Android 15+ 6 h a day limit) (code -128)
+11-18 16:00:58.594 30214 30242 W EykonVideo: foreground service not allowed here, running as plain work: ForegroundServiceStartNotAllowedException: startForegroundService() not allowed: service com.ey
+11-18 16:00:58.594 30214 30242 W EykonVideo: android.app.ForegroundServiceStartNotAllowedException: startForegroundService() not allowed: service com.eykon.memory/androidx.work.impl.foreground.SystemF
+11-18 16:00:58.594 30214 30242 W EykonVideo: 	at android.os.Parcel.readParcelableInternal(Parcel.java:5253)
+11-18 16:00:58.594 30214 30242 W EykonVideo: 	at android.os.Parcel.readParcelable(Parcel.java:5234)
+11-18 16:00:58.594 30214 30242 W EykonVideo: 	at android.os.Parcel.readException(Parcel.java:3334)
+11-18 16:00:58.594 30214 30242 W EykonVideo: 	at android.os.Parcel.readException(Parcel.java:3278)
+11-18 16:00:58.594 30214 30242 W EykonVideo: 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1100)
+11-18 16:00:58.594 30214 30242 W EykonVideo: 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+11-18 16:00:58.594 30214 30242 W EykonVideo: 	at java.lang.Thread.run(Thread.java:1571)
+11-18 16:00:58.724 30214 30242 I EykonVideo: finish 9040b0f69b3a458fa98a00d4c1821177: ready; 209 dropped frame files deleted

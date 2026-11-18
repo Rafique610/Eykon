@@ -56,7 +56,11 @@ class VideoJobWorker(context: Context, params: WorkerParameters) : CoroutineWork
     private suspend fun run(): Result {
         // Each added video appends a run (APPEND_OR_REPLACE); the first one drains the whole queue, so the later ones find nothing.
         // Return at once instead of asking for a foreground service from the background (the "not allowed" lines after EYKO-44 check 4).
-        if (!withContext(Dispatchers.Default) { app.videoWorker.hasWork() }) return Result.success()
+        // EYKO-172: nothing left to do, so a "paused" note from an earlier 6 h stop is out of date (opening the app runs this too).
+        if (!withContext(Dispatchers.Default) { app.videoWorker.hasWork() }) {
+            notificationManager().cancel(PAUSED_NOTIFICATION_ID)
+            return Result.success()
+        }
         try {
             setForeground(foregroundInfo("Starting"))
             notificationManager().cancel(PAUSED_NOTIFICATION_ID) // running in the foreground again
@@ -80,7 +84,11 @@ class VideoJobWorker(context: Context, params: WorkerParameters) : CoroutineWork
                 }
                 // False: another loop in this process is still working. Try again soon (short linear backoff); a kick that arrives meanwhile
                 // is appended (APPEND_OR_REPLACE) rather than ignored.
-                if (ran) Result.success() else Result.retry()
+                if (ran) {
+                    // EYKO-172: the queue is done (also when the rest ran as plain work after a 6 h stop): the "paused" note no longer holds.
+                    if (!app.videoJobs.hasQueued()) notificationManager().cancel(PAUSED_NOTIFICATION_ID)
+                    Result.success()
+                } else Result.retry()
             } finally {
                 progress.cancel()
             }

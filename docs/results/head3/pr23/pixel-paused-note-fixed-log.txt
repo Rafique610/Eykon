@@ -1,0 +1,40 @@
+11-18 16:07:41.777  3287  3384 I EykonVideo: read c5def724267347fa910d484e2acb955e: 187772542 bytes in place in 250 ms (no copy)
+11-18 16:08:04.424  3287  3384 I EykonVideo: split c5def724267347fa910d484e2acb955e: 225 frames in 11955 ms (one pass; 2551 ms to JPEG, 283 ms to write, the rest decoding), audio 74.9 s in 10476 ms
+11-18 16:09:45.163  3287  3374 W EykonVideo: foreground service not allowed here, running as plain work: ForegroundServiceStartNotAllowedException: startForegroundService() not allowed: service com.ey
+11-18 16:09:45.163  3287  3374 W EykonVideo: android.app.ForegroundServiceStartNotAllowedException: startForegroundService() not allowed: service com.eykon.memory/androidx.work.impl.foreground.SystemF
+11-18 16:09:45.163  3287  3374 W EykonVideo: 	at android.os.Parcel.readParcelableInternal(Parcel.java:5253)
+11-18 16:09:45.163  3287  3374 W EykonVideo: 	at android.os.Parcel.readParcelable(Parcel.java:5234)
+11-18 16:09:45.163  3287  3374 W EykonVideo: 	at android.os.Parcel.readException(Parcel.java:3334)
+11-18 16:09:45.163  3287  3374 W EykonVideo: 	at android.os.Parcel.readException(Parcel.java:3278)
+11-18 16:09:45.163  3287  3374 W EykonVideo: 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1100)
+11-18 16:09:45.163  3287  3374 W EykonVideo: 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+11-18 16:09:45.163  3287  3374 W EykonVideo: 	at java.lang.Thread.run(Thread.java:1571)
+11-18 16:10:05.220  3287  4431 W EykonVideo: foreground service not allowed here, running as plain work: ForegroundServiceStartNotAllowedException: startForegroundService() not allowed: service com.ey
+11-18 16:10:05.220  3287  4431 W EykonVideo: android.app.ForegroundServiceStartNotAllowedException: startForegroundService() not allowed: service com.eykon.memory/androidx.work.impl.foreground.SystemF
+11-18 16:10:05.220  3287  4431 W EykonVideo: 	at android.os.Parcel.readParcelableInternal(Parcel.java:5253)
+11-18 16:10:05.220  3287  4431 W EykonVideo: 	at android.os.Parcel.readParcelable(Parcel.java:5234)
+11-18 16:10:05.220  3287  4431 W EykonVideo: 	at android.os.Parcel.readException(Parcel.java:3334)
+11-18 16:10:05.220  3287  4431 W EykonVideo: 	at android.os.Parcel.readException(Parcel.java:3278)
+11-18 16:10:05.220  3287  4431 W EykonVideo: 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1100)
+11-18 16:10:05.220  3287  4431 W EykonVideo: 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+11-18 16:10:05.220  3287  4431 W EykonVideo: 	at java.lang.Thread.run(Thread.java:1571)
+11-18 16:10:35.303  3287  5034 W EykonVideo: foreground service not allowed here, running as plain work: ForegroundServiceStartNotAllowedException: startForegroundService() not allowed: service com.ey
+11-18 16:10:35.303  3287  5034 W EykonVideo: android.app.ForegroundServiceStartNotAllowedException: startForegroundService() not allowed: service com.eykon.memory/androidx.work.impl.foreground.SystemF
+11-18 16:10:35.303  3287  5034 W EykonVideo: 	at android.os.Parcel.readParcelableInternal(Parcel.java:5253)
+11-18 16:10:35.303  3287  5034 W EykonVideo: 	at android.os.Parcel.readParcelable(Parcel.java:5234)
+11-18 16:10:35.303  3287  5034 W EykonVideo: 	at android.os.Parcel.readException(Parcel.java:3334)
+11-18 16:10:35.303  3287  5034 W EykonVideo: 	at android.os.Parcel.readException(Parcel.java:3278)
+11-18 16:10:35.303  3287  5034 W EykonVideo: 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1100)
+11-18 16:10:35.303  3287  5034 W EykonVideo: 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+11-18 16:10:35.303  3287  5034 W EykonVideo: 	at java.lang.Thread.run(Thread.java:1571)
+11-18 16:11:08.517  3287  3384 W EykonVideo: worker stopped, reason foreground service timeout (Android 15+ 6 h a day limit) (code -128)
+11-18 16:11:15.369  3287  3384 W EykonVideo: foreground service not allowed here, running as plain work: ForegroundServiceStartNotAllowedException: startForegroundService() not allowed: service com.ey
+11-18 16:11:15.369  3287  3384 W EykonVideo: android.app.ForegroundServiceStartNotAllowedException: startForegroundService() not allowed: service com.eykon.memory/androidx.work.impl.foreground.SystemF
+11-18 16:11:15.369  3287  3384 W EykonVideo: 	at android.os.Parcel.readParcelableInternal(Parcel.java:5253)
+11-18 16:11:15.369  3287  3384 W EykonVideo: 	at android.os.Parcel.readParcelable(Parcel.java:5234)
+11-18 16:11:15.369  3287  3384 W EykonVideo: 	at android.os.Parcel.readException(Parcel.java:3334)
+11-18 16:11:15.369  3287  3384 W EykonVideo: 	at android.os.Parcel.readException(Parcel.java:3278)
+11-18 16:11:15.369  3287  3384 W EykonVideo: 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1100)
+11-18 16:11:15.369  3287  3384 W EykonVideo: 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+11-18 16:11:15.369  3287  3384 W EykonVideo: 	at java.lang.Thread.run(Thread.java:1571)
+11-18 16:11:15.451  3287  3384 I EykonVideo: finish c5def724267347fa910d484e2acb955e: ready; 209 dropped frame files deleted
