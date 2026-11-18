@@ -72,3 +72,23 @@ the fix the seven videos in the app have 26 sightings and 6 latest ones, one per
 
 One MobileCLIP run per object: about 540 ms each on the Pixel. A 22 s clip with 8 kept frames
 and 28 objects took 15.0 s in this stage, more than all the earlier stages together.
+
+## Checked by a person on 18 November 2026 (EYKO-72)
+
+Zara Tahir checked all 54 crops (`latest/crop-identity-2026-10-13-reviewed.csv`; the AI's file is
+unchanged). **5 of 54 rows changed**, each moved into a different "same physical object" group:
+`clip4_000052_4_laptop` (back of a PC), `clip4_000043_2_chair` and `clip4_000052_8_chair` (blue office
+chair near the desk), `clip2_000030_1_dining-table` and `clip2_000037_1_dining-table` (paper on the
+cafeteria table). Groups went from 24 to 25.
+
+Re-run with `task crop-pairs`:
+
+| | Before | After |
+|---|---|---|
+| Same-object pairs / different-object pairs | 48 / 288 | 44 / 292 |
+| Lowest same / highest different | 0.766 / 0.917 | 0.808 / 0.917 |
+| Fewest wrong calls | 18 of 336 (0.86 to 0.87) | 14 of 336 (0.87) |
+| Threshold chosen | 0.87 | 0.87 |
+| At 0.85: same called different / different called same | 9 of 48 / 12 of 288 | 6 of 44 / 13 of 292 |
+
+**Does the decision hold? Yes.** The threshold stays at 0.87 and the number of wrong calls goes down.

@@ -292,3 +292,32 @@ clip with 13 kept frames at the Pixel's medians):
 - Why the phone's scores differ (runtime version, 8-bit kernels); the fp16 file (308 MB) as a check.
 - The "earbuds" phrase: the visible thing is the case; the phrase was fixed before the run.
 - YOLOX-Tiny's load time (77.8 s) includes importing the MobileCLIP tools; not its real load cost.
+
+## Checked by a person on 18 November 2026 (EYKO-72)
+
+Zara Tahir checked both label sets. Ours-44 (`perception/presence-2026-10-13-reviewed.csv`): 34 cells
+changed, all 0 to 1 (see the frame-search note); things present rose from 88 to 122 and absences fell
+from 264 to 230. Own-50 (`detectors/own-presence-2026-10-14-reviewed.csv`): **4 of 300 cells changed**,
+all 0 to 1, objects that were really there but hidden behind something; things present 87 to 91. The
+AI's files are unchanged.
+
+Re-scored with `task detector-bench -- score` from the saved per-model results (Rafique's files; the
+run on the AI's labels gives exactly the repo's `scores-2026-10-14.json`). Found | false alarms:
+
+| Model | Ours-44 before | Ours-44 after | Own-50 before | Own-50 after |
+|---|---|---|---|---|
+| YOLOE-11L | 39 of 88 \| 1 | 39 of 122 \| 1 | 44 of 87 \| 6 | 44 of 91 \| 6 |
+| YOLOE-11S | 39 of 88 \| 3 | 39 of 122 \| 3 | 20 of 87 \| 0 | 20 of 91 \| 0 |
+| D-FINE S (Objects365) | 39 of 88 \| 24 | 52 of 122 \| 11 | 37 of 87 \| 12 | 37 of 91 \| 12 |
+| D-FINE M | 48 of 88 \| 26 | 59 of 122 \| 15 | 42 of 87 \| 11 | 42 of 91 \| 11 |
+| OWLv2 | 86 of 88 \| 117 | 115 of 122 \| 88 | 81 of 87 \| 67 | 82 of 91 \| 66 |
+| OWLv2 8-bit | 86 of 88 \| 159 | 117 of 122 \| 128 | 72 of 87 \| 65 | 73 of 91 \| 64 |
+| OmDet-Turbo | 81 of 88 \| 92 | 101 of 122 \| 72 | 77 of 87 \| 71 | 77 of 91 \| 71 |
+| YOLOX-Tiny | 30 of 88 \| 6 | 34 of 122 \| 2 | 7 of 87 \| 10 | 7 of 91 \| 10 |
+
+**Does the decision hold? Yes.** YOLOE-11L finds the same things as before and keeps its low false
+alarms (1 on Ours-44, 6 on Own-50); the open-vocabulary models (OWLv2, OmDet-Turbo) still find the most, with many false alarms. The other rows
+of the full table moved the same way and are in the re-scored output. The percentages on Ours-44 go down for every model that did not see
+the newly marked things (recall fell from 44 % to 32 % for YOLOE-11L) because the person marked many
+more small or half-hidden things (backpacks, chairs, phones) than the AI did. False alarm rates fall
+on Ours-44 for models that did see them (D-FINE 24 to 11), since those were not false after all.

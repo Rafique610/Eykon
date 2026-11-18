@@ -134,3 +134,28 @@ Whether typed-phrase search over the frame vectors covers what the detector miss
 - These clips were also used for the keyframe work (EYKO-45), so they are not unseen data.
 - Debug build; one phone. The Samsung A32 was not run.
 - Actions were not labelled.
+
+## Checked by a person on 18 November 2026 (EYKO-72)
+
+Zara Tahir looked at all 44 pictures and checked the AI's labels
+(`perception/labels-2026-10-13-reviewed.csv`; the AI's file is unchanged). **37 of 44 rows changed.**
+Almost all changes add things the AI left out of "other object": paper or a page (22 rows), a
+bag, a helmet, a phone, a pen; the main object was right in 42 of 44 rows (two clip6 frames had
+"none" and now say "bushes", which the detector has no class for, so they are left out of the main
+object row). Five clip5 frames got the place "terrace" (not one of the nine phrases).
+
+Re-scored with the same detector files. The reviewed "other object" is a list ("cell phone and
+paper"), so a frame is right when **any listed thing** is among the detector's objects (a scratch
+script, `phone` read as `cell phone`, `PCs` as `tv`, `page` as `paper`); the AI's labels scored
+with the same rule give the same numbers as before.
+
+| Row | Tiny before | Tiny after | Nano before | Nano after |
+|---|---|---|---|---|
+| Main object | 43 of 44 (98 %) | 41 of 42 (98 %) | 43 of 44 (98 %) | 41 of 42 (98 %) |
+| Other object | 18 of 32 (56 %) | 20 of 42 (48 %) | 4 of 32 (12 %) | 4 of 42 (10 %) |
+| Place, all frames | 23 of 44 (52 %) | 23 of 44 (52 %) | 23 of 44 (52 %) | 23 of 44 (52 %) |
+
+**Does the decision hold? Yes.** Tiny is still far ahead of Nano on the other things, and the
+main-object score is the same. More frames now count (42 instead of 32) because the person found a
+second thing in frames the AI called "none"; Tiny's share falls a little because several of the added
+things (paper, helmet, bag) are not detector classes.
