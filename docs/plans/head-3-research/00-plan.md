@@ -24,7 +24,7 @@ Ego4D cannot be shared and Taha's access ended 1 Nov, so every phone run uses th
 | # | Question | Status (17 Nov, matches `head3-defense.js`) | Closes with |
 |---|---|---|---|
 | A1 | App killed mid-stage on a real phone? | Answered | EYKO-116 Part 3, EYKO-119 |
-| A2 | App closed or another app in front? | Answered | EYKO-44, EYKO-85 (A32: EYKO-168) |
+| A2 | App closed or another app in front? | Answered | EYKO-44, 85, 168, 172 (Infinix restart: EYKO-170) |
 | A3 | Same video added twice? | Answered | EYKO-71 |
 | A4 | Bad inputs: HEVC, HDR, portrait, variable frame rate, no GPS/time, corrupt, > 500 MB? | Answered | EYKO-118, 123, 126, 127 |
 | A5 | Where do 500 MB and the four file types come from? | Answered | EYKO-122, EYKO-126 |
@@ -36,7 +36,7 @@ Ego4D cannot be shared and Taha's access ended 1 Nov, so every phone run uses th
 | C1 | A resumed stage gives the same rows as a clean run? | Answered | EYKO-119 |
 | C2 | Retry wastes 3 attempts on a file that can never work? | Answered | EYKO-119, 126 |
 | C3 | Back-fill of a new stage on real old videos? | Partly (saved stage set back by hand) | EYKO-117, 123 |
-| D1 | Why an in-app thread and not WorkManager? | Answered (now WorkManager) | EYKO-44, EYKO-122 |
+| D1 | Why an in-app thread and not WorkManager? | Answered (now WorkManager, mediaProcessing on 15+) | EYKO-44, 122, 169, 172 |
 | E1 | Why is `latest` the slowest stage, and can it be faster with the same output? | Answered | EYKO-120 |
 | E2 | Can the models run faster (threads, XNNPACK/NNAPI, int8) with the same captions? | Open | EYKO-121 |
 

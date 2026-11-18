@@ -110,8 +110,8 @@ body.push(new Paragraph({ heading: HeadingLevel.TITLE, children: [new TextRun('V
 body.push(P('From a clip picked on the phone to a background job that runs ten stages, survives crashes and finishes with the app closed.', { run: { color: C.muted, size: 22 }, after: 200 }));
 
 body.push(grid([2100, W - 2100], null, [
-  ['**Last updated**', '17 Nov 2026'],
-  ['**Overall status**', 'Built, in the app and measured on three phones (Pixel 9 Pro XL, Infinix X670, Samsung A32). Jobs now run as Android background work with a notification, so they finish with the app closed, the screen off and the phone in deep sleep. A crash or a kill resumes at the stage after the last saved one with identical output. The app reads the picked video in place (no copy, no 500 MB limit) and refuses the same file twice. Not done: faster models (EYKO-121) and the A32\'s background check (EYKO-168).'],
+  ['**Last updated**', '18 Nov 2026'],
+  ['**Overall status**', 'Built, in the app and measured on three phones (Pixel 9 Pro XL, Infinix X670, Samsung A32). Jobs now run as Android background work with a notification, so they finish with the app closed, the screen off and the phone in deep sleep. A crash or a kill resumes at the stage after the last saved one with identical output. The app reads the picked video in place (no copy, no 500 MB limit) and refuses the same file twice. On Android 15+ jobs run as `mediaProcessing` and a 6 h stop is handled. Not done: faster models (EYKO-121) and the Infinix restart check (EYKO-170).'],
   ['**Cards**', 'EYKO-2 (add a clip), EYKO-3 (job queue), EYKO-16 (finish), EYKO-44 (background work), EYKO-71 (duplicates, free space), EYKO-85 (long clip in the background), EYKO-116 Part 3 (kill mid-stage), EYKO-117 (phone harness), EYKO-118 (bad inputs), EYKO-119 (safe reruns), EYKO-120 (`latest` profile), EYKO-122 (Android rules), EYKO-123 (Pixel run), EYKO-126 (read in place), EYKO-127 (recording place), EYKO-64 (Pixel timing)'],
 ], { firstColFill: true }));
 
@@ -185,7 +185,7 @@ body.push(new Table({
 
 body.push(LABEL('Decisions and the reason for each'));
 body.push(grid([3700, 4338, 1600], ['Decision', 'Because', 'Show'], [
-  ['Jobs run as WorkManager long-running work with a `dataSync` foreground service and a "Video n of m" notification (EYKO-44).', 'The in-app thread stalled with another app in front (21.2 min instead of about 13) and was killed for "excessive cpu" after 26 min in the background. With the service, 55 min of video ran 96 min in the background without a kill.', 'E5, E8'],
+  ['Jobs run as WorkManager long-running work with a foreground service (`mediaProcessing` on Android 15+, `dataSync` below; EYKO-122, PR #23) and a "Video n of m" notification (EYKO-44).', 'The in-app thread stalled with another app in front (21.2 min instead of about 13) and was killed for "excessive cpu" after 26 min in the background. With the service, 55 min of video ran 96 min in the background without a kill.', 'E5, E8'],
   ['One job per video, ten stages in a fixed order, the stage saved after each one.', 'A crash costs only the stage it hit. Every stage deletes or rebuilds its own rows first, so running it twice gives the same result.', 'E4'],
   ['Errors that can never succeed fail at once (`PermanentFailure`); the rest get 3 attempts.', 'An unreadable or deleted file used to waste three attempts.', 'E4, E7'],
   ['Read the picked video in place; copy only if the phone will not keep the read permission (EYKO-126).', 'The copy was 98 % of the storage cost and the reason for the 500 MB limit.', 'E7'],
@@ -195,7 +195,7 @@ body.push(grid([3700, 4338, 1600], ['Decision', 'Because', 'Show'], [
 
 body.push(LABEL('Weak spots: say these before they find them'));
 const weak = [
-  ['Partly', 'The Samsung A32 ran the stage timings (17 Nov) but not a background job or a queue. EYKO-168 covers its background check and Samsung\'s "Sleeping apps" rule.'],
+  ['Partly', 'Samsung\'s sleep lists did not stop a job the person just started on the A32 (EYKO-168), but an app left unopened for days was not tested.'],
   ['Partly', 'On the Infinix, a job saved before a reboot only starts when the app is opened. The Pixel starts it by itself. Likely the maker\'s auto-start control, not proven.'],
   ['Open', 'Faster models with the same captions (E2) are not measured: EYKO-121 has not started.'],
   ['Partly', 'Battery per minute of video is measured on the Pixel only, with the screen on (18–24 mAh). The Infinix runs were on the charger.'],
@@ -231,7 +231,8 @@ const steps = [
   ['Improvement · 15 Nov', 'ok', 'Frame splitting about 3× faster on the Pixel, same JPEGs', 'Splitting frames was the biggest stage on the Pixel (26.7 s). Copying pixel rows in bulk and asking the decoder for full speed took it to 7.9–10.4 s, with identical JPEG files.', 'E11'],
   ['Test · 15 Nov · EYKO-85', 'ok', 'An 8-minute clip in 4 minutes in the background', 'Screen off, deep Doze, with or without Battery Saver: ready in 4 min 10 s and 4 min 4 s. Only Extreme Battery Saver pauses the app.', 'E5'],
   ['Research · 16–17 Nov · EYKO-122, 120', 'ok', 'Android\'s rules, and a faster `latest` with the same output', 'Android 15+ allows a `dataSync` service 6 h a day. `latest` now decodes each frame once and relinks only from the new video\'s time: for 4,000 sightings 7.5 million comparisons became 73 thousand, same links.', 'E8, E9, E10'],
-  ['Still open', null, 'What comes next', 'The A32 background check (EYKO-168). Faster models with the same captions (EYKO-121). Fewer crop vectors in `latest`, which changes the output and needs a quality score. `small_objects` not profiled. Infinix auto-start after a reboot. The file-type list (drop `.avi`).', null],
+  ['Check · 18 Nov · EYKO-172, 168', 'ok', 'mediaProcessing, the 6 h stop, and the A32 in the background', 'Taha\'s PR #23 made the job `mediaProcessing` on Android 15+ and added a "paused" note for the 6 h limit. On the Pixel, with the limit shortened to 2 minutes, the job stopped cleanly with the note and no crash, and the last stage ran as plain work. The note stayed after the job was done; fixed the same day. On the A32 a job finished with the screen off, resumed by itself after a restart, and Samsung\'s Sleeping and Deep sleeping apps did not stop it.', 'E5, E8'],
+  ['Still open', null, 'What comes next', 'The Infinix restart check (EYKO-170). Faster models with the same captions (EYKO-121). Fewer crop vectors in `latest`, which changes the output and needs a quality score. `small_objects` not profiled. Infinix auto-start after a reboot. The file-type list (drop `.avi`).', null],
 ];
 steps.forEach((s, i) => {
   const [kind, tone, title, text, show] = s;
@@ -268,9 +269,9 @@ const Q = [
     'E4 · `docs/results/2026-11-09-storage-and-crash.md` (Part 3) · `docs/results/2026-11-11-stages-safe-to-rerun.md`',
     'These were clean `force-stop` kills, not a power-manager or out-of-memory kill. `filter`, `dedup`, `embed_images`, `link` and `finish` were not killed on a phone; they last under 3 s and are covered by the run-twice tests (10 of 10).', 'Done: EYKO-116 Part 3, EYKO-119'],
   ['A2', 'A', 'What if the app is closed, or another app is in front?', 'Answered',
-    'The job keeps going. Since EYKO-44 it runs as Android background work with a notification. On the Pixel an 8-minute clip was ready in **4 min 10 s** with the app in the background, the screen off and the phone in deep Doze (4 min 4 s with Battery Saver). On the Infinix a 5-minute clip took 5.5 min in front, 6.7 min with five other apps in front and 5.4 min after a swipe from recents. Before, the same kind of clip stalled (21.2 min instead of about 13).',
-    'E5 and Figure 3 · `docs/results/2026-11-15-eyko85-background-long-clip.md` · `2026-11-12-eyko44-workmanager-phone-checks.md` · `2026-11-15-eyko44-pixel-checks.md`',
-    'Extreme Battery Saver pauses the app completely. After a reboot the Pixel resumes the job by itself; the Infinix waits until the app is opened (likely its auto-start control, not proven). Android 15+ allows the service 6 h a day; not reached in any test. The A32 was not run (EYKO-168).', 'Done: EYKO-44, EYKO-85 · Open: EYKO-168'],
+    'The job keeps going. Since EYKO-44 it runs as Android background work with a notification. On the Pixel an 8-minute clip was ready in **4 min 10 s** with the app in the background, the screen off and the phone in deep Doze (4 min 4 s with Battery Saver). On the Infinix a 5-minute clip took 5.5 min in front, 6.7 min with five other apps in front and 5.4 min after a swipe from recents. On the A32 a 75 s clip was ready in about 6 min with the screen off, and after a restart it resumed by itself (EYKO-168). Before, the same kind of clip stalled (21.2 min instead of about 13).',
+    'E5 and Figure 3 · `docs/results/2026-11-15-eyko85-background-long-clip.md` · `2026-11-12-eyko44-workmanager-phone-checks.md` · `2026-11-15-eyko44-pixel-checks.md` · `2026-11-18-pr23-pixel-a32-checks.md`',
+    'Extreme Battery Saver pauses the app completely. After a reboot the Pixel and the A32 resume the job by itself; the Infinix waits until the app is opened (likely its auto-start control: EYKO-170). Samsung\'s Sleeping and Deep sleeping apps did not stop a job just started; an app left unopened for days was not tested. The Android 15+ 6 h limit, shortened to 2 min on the Pixel, stops the job cleanly with a "paused" note (E8).', 'Done: EYKO-44, 85, 168, 172 · Open: EYKO-170'],
   ['A3', 'A', 'What if the same video is added twice?', 'Answered',
     'It is refused with "This video is already saved (recorded …)". The app takes the file\'s SHA-256 while reading it and checks it against every saved video. On the Pixel the second add of a clip left no row, no job and no folder. The hash costs 17–22 ms per clip.',
     'E7 · `docs/results/2026-11-10-eyko-71-duplicates-and-space.md` · on-device `VideoCaptureTest` 4 of 4',
@@ -282,7 +283,7 @@ const Q = [
   ['A5', 'A', 'Where do the 500 MB limit and the four file types come from?', 'Answered',
     '500 MB was a copy limit, and it is gone on the normal path: the app now reads the video in place (EYKO-126). It was only **1.5 to 4 minutes** of phone video (3.5 min at the Pixel\'s 20 Mbps). For file types, Android\'s own list covers mp4, 3gp, mkv and webm (H.264, HEVC, VP8, VP9, AV1); it does not list `.avi` or `.mov`. `.mov` works on both phones in practice; `.avi` fails on both.',
     'E9 · `docs/research/2026-11-16-head3-background-and-limits.md` (Part 2)',
-    'The 500 MB limit stays only on the copy fallback (when the phone will not keep the read permission); EYKO-122 suggests a free-space margin instead. The new type list (drop avi; add 3gp, mkv, webm) was built on 17 Nov on the phone and the laptop and checked on the Pixel with one file of each. Our ffmpeg-made 3gp was indexed by Android as mp4; a phone-recorded 3gp was not tried.', 'Done: EYKO-122, 126; type list 17 Nov'],
+    'Since PR #23 (18 Nov) the copy fallback has no fixed limit either: it needs the video plus 200 MB free, checked before and during the copy. On the A32, 500 MB was 3.9 min of its 1080p camera video. The new type list (drop avi; add 3gp, mkv, webm) was built on 17 Nov on the phone and the laptop and checked on the Pixel with one file of each. Our ffmpeg-made 3gp was indexed by Android as mp4; a phone-recorded 3gp was not tried.', 'Done: EYKO-122, 126; type list 17 Nov'],
   ['B1', 'B', 'Which stage takes the time, on every phone, same build?', 'Answered',
     'Three phones, same clips. On the Infinix `latest` leads (44 of 138 s, 111 of 234 s). On the A32 `small_objects` leads clip 1 (68 of 203 s) and `latest` clip 2 (147 of 339 s); the model stages are 74–83 % of its time. On the Pixel, frame splitting led clip 1 (26.7 of 64 s) and `latest` clip 2 (45 of 110 s). On 15 Nov splitting got about 3× faster on the Pixel (7.9–10.4 s, same JPEGs).',
     'E1 and Figure 1 · `docs/results/2026-11-15-head3-intake-two-phones.md` · `2026-11-14-head3-intake-infinix.md` · `2026-11-17-head3-intake-a32.md` · E11',
@@ -316,9 +317,9 @@ const Q = [
     'E3 · `docs/results/2026-11-15-head3-intake-two-phones.md` (S4) · `2026-11-14-head3-intake-infinix.md` (S4)',
     'This sets the saved stage back by hand; no real new stage has been shipped to a phone full of old videos yet. One video per phone.', 'EYKO-117, 123'],
   ['D1', 'D', 'Why an in-app thread and not WorkManager?', 'Answered',
-    'We switched to WorkManager (EYKO-44). The in-app thread stalled and was killed in the background. Now the job is long-running work with a `dataSync` foreground service, which is how Android lets work run over 10 minutes. It has held in every test (E5).',
-    'E8 · `docs/research/2026-11-16-head3-background-and-limits.md` (Part 1) · E5',
-    'Android 15+ gives a `dataSync` or `mediaProcessing` service 6 h a day; opening the app resets it. EYKO-122 recommends `mediaProcessing` on Android 15+, a check that a job stopped by the 6 h limit resumes, and telling Transsion, Xiaomi and Samsung users about their battery settings. None of these is a card yet.', 'Done: EYKO-44, 122'],
+    'We switched to WorkManager (EYKO-44). The in-app thread stalled and was killed in the background. Now the job is long-running work with a foreground service, which is how Android lets work run over 10 minutes: `mediaProcessing` on Android 15+ (checked on the Pixel), `dataSync` on 12 to 14. It has held in every test (E5).',
+    'E8 · `docs/research/2026-11-16-head3-background-and-limits.md` (Part 1) · `docs/results/2026-11-18-pr23-pixel-a32-checks.md` · E5',
+    'Android 15+ gives the service 6 h a day; opening the app resets it. With the limit shortened to 2 min on the Pixel, the job stopped with a "Video processing paused" note and no crash, and went on as plain work. The note outlived the pause until a fix on 18 Nov. A real 6 h day was not run. Samsung, Xiaomi and Transsion users now see a card telling them which battery setting keeps jobs going.', 'Done: EYKO-44, 122, 169, 172'],
   ['E1', 'E', 'Why is `latest` the slowest stage, and can it be faster with the same output?', 'Answered',
     'It computes one MobileCLIP vector per sighting: 0.23–0.25 s each on the Pixel, 0.80–1.02 s on the Infinix, in a straight line. EYKO-120 made it cheaper with identical output. Each frame is now decoded once, not once per object. Relinking compares only from the new video\'s time: for 4,000 sightings, **7.5 million → 73 thousand** comparisons and 4,000 → 0–3 row writes.',
     'E10 and Figure 4 · `docs/results/2026-11-17-latest-stage-profile.md` · `2026-11-11-pixel-kit-clips-timing.md`',
@@ -480,8 +481,8 @@ ev('E8', 'What Android allows a long video job (research, 16 Nov)', 'Long-runnin
 body.push(grid([2600, 4200, 2838], ['Option', 'Limit (Android documentation)', 'What we measured'], [
   ['In-app thread (before EYKO-44)', 'No protection; a busy background process can be killed', 'killed after 26 min; stalled with another app in front'],
   ['WorkManager, plain worker', 'Doze stops it; 10 to 20 min per window by standby bucket', 'fallback only; ran once at the end of a queue'],
-  ['**WorkManager + `dataSync` foreground service (now)**', 'Android 12+: cannot start from the background. Android 15+: 6 h in 24 h, reset when the app is opened', '**works in background, after a swipe, in deep Doze**'],
-  ['`mediaProcessing` service (Android 15+)', 'Same 6 h, counted separately; describes our work better', 'not tried'],
+  ['WorkManager + `dataSync` foreground service (Android 12-14)', 'Android 12+: cannot start from the background', 'works in background, after a swipe, in deep Doze, after a restart (Pixel, A32)'],
+  ['**WorkManager + `mediaProcessing` (Android 15+, now)**', '6 h in 24 h, reset when the app is opened', '**Pixel: in use (type 0x2000); a 2-min test limit stops it cleanly with a "paused" note, no crash**'],
   ['Phone makers (Samsung, Xiaomi, Transsion)', 'Extra battery rules on top (dontkillmyapp.com)', 'Infinix: no start after reboot until opened'],
   ['Extreme Battery Saver (Pixel)', 'Pixel setting', 'app paused completely'],
 ], { firstColBold: true, highlight: (r) => r[0].includes('(now)') }));
@@ -500,6 +501,7 @@ body.push(P('**Checked on the Pixel (17 Nov):** 15 s files cut from kit clip 1. 
 body.push(grid([3638, 3000, 3000], ['Recording', 'Per minute', '500 MB lasts'], [
   ['Pixel kit clip, 1080p HEVC, 20 Mbps (our file)', '150 MB', '**3.5 min**'],
   ['Pixel 6, 4K30 H.264, 48 Mbps (review)', '360 MB', '1.5 min'],
+  ['Samsung A32, 1080p (default), 17.3 Mbps (85 of its own camera files, 18 Nov)', '130 MB', '3.9 min'],
 ], { firstColBold: true }));
 body.push(SRC('docs/research/2026-11-16-head3-background-and-limits.md (Part 2) · developer.android.com/media/platform/supported-formats'));
 
@@ -564,10 +566,10 @@ body.push(grid([800, 3938, 1600, 1100, 2200], ['Gap', 'What is missing', 'Card',
   ['G10', 'Videos only processed while the app was in front; an 8-minute clip stalled.', 'EYKO-44, 85', 'Medium', 'Fixed. WorkManager + foreground service: 8-min clip in 4 min 10 s in the background, screen off (Pixel); 55 min in 96 min (Infinix).'],
   ['G11', 'The same file could be added twice.', 'EYKO-71', 'Low', 'Fixed 10 Nov: SHA-256 while reading, refused with a message.'],
   ['G18', 'Pixel storage: 620 MB free, the app could not be reinstalled.', 'EYKO-83', 'Medium', 'Closed 8 Nov by the owner; every reinstall since has worked. Reading in place (EYKO-126) also stops videos taking double space.'],
-  ['—', 'The A32 has run no background job, queue or battery test.', 'EYKO-168', 'Medium', 'Stage timings done 17 Nov (B1, B2).'],
+  ['—', 'The A32 had run no background job.', 'EYKO-168', 'Medium', 'Done 18 Nov: background, restart and Samsung sleep lists all held. Not tested: an app unopened for days.'],
   ['—', 'Infinix: a saved job does not start after a reboot until the app is opened.', 'EYKO-170', 'Low', 'Likely auto-start control; Zara tests it.'],
   ['—', '`.avi` accepted but unreadable; 3gp, mkv, webm not accepted.', 'lead (17 Nov)', 'Low', 'Fixed 17 Nov on phone and laptop (avi out; 3gp, mkv, webm in); Pixel: webm, mkv, 3gp ready, avi refused with a clear message.'],
-  ['—', '`mediaProcessing` type and the 6 h timeout are not handled on purpose.', 'EYKO-169', 'Low', ''],
+  ['—', '`mediaProcessing` type and the 6 h timeout were not handled on purpose.', 'EYKO-169, 172', 'Low', 'Done 18 Nov (PR #23 + the paused-note fix 421afcb); checked on the Pixel with a 2-min limit.'],
   ['—', 'Model runtime options and int8 (E2).', 'EYKO-121', 'Medium', ''],
   ['—', '`small_objects` not profiled; fewer crops in `latest` changes output.', 'lead', 'Low', ''],
   ['—', 'No way to delete a saved video.', 'EYKO-66', '—', ''],
