@@ -1,0 +1,24 @@
+11-18 16:20:23.280 12445 12484 I EykonVideo: read 4201022cc283401a864b672e27979d74: 187772510 bytes in place in 1164 ms (no copy)
+11-18 16:20:52.148 12445 12485 I EykonVideo: read 87569992921d4a618903eb77ad3c9be9: 186496660 bytes in place in 1078 ms (no copy)
+11-18 16:21:02.774 12445 12484 I EykonVideo: filter 4201022cc283401a864b672e27979d74: kept 25 of 225 (less sharp 200) in 3559 ms
+11-18 16:28:08.514 15934 16259 I EykonVideo: dedup 4201022cc283401a864b672e27979d74: kept 16 of 25 (hash dropped 9, embedding dropped 0) in 73984 ms; embedded 16 frames, 4276 ms each; memory java 9 MB, native 216 MB
+11-18 16:34:24.826 15934 16259 I EykonVideo: finish 4201022cc283401a864b672e27979d74: ready; 209 dropped frame files deleted
+11-18 16:35:09.105 15934 16259 I EykonVideo: filter 87569992921d4a618903eb77ad3c9be9: kept 25 of 224 (less sharp 199) in 3636 ms
+11-18 16:35:21.432 15934 16259 I EykonVideo: dedup 87569992921d4a618903eb77ad3c9be9: kept 10 of 25 (hash dropped 14, embedding dropped 1) in 12302 ms; embedded 11 frames, 1060 ms each; memory java 14 MB, native 838 MB
+11-18 16:37:51.466 15934 16259 I EykonVideo: finish 87569992921d4a618903eb77ad3c9be9: ready; 214 dropped frame files deleted
+11-18 16:58:58.644  1441  1481 I ActivityManager: Start proc 12468:com.eykon.memory/u0a255 for broadcast {com.eykon.memory/androidx.work.impl.background.systemalarm.RescheduleReceiver}
+11-18 16:59:01.878  1441  3877 I ActivityManager: Background started FGS: Allowed [callingPackage: com.eykon.memory; callingUid: 10255; uidState: TRNB; intent: Intent { act=ACTION_START_FOREGROUND cmp=com.eykon.memory/an
+11-18 16:59:58.512 12468 12732 I EykonVideo: dedup fe2e2fe73c1a43aaadc0a0d746097933: kept 16 of 25 (hash dropped 9, embedding dropped 0) in 56567 ms; embedded 16 frames, 3409 ms each; memory java 5 MB, native 216 MB
+11-18 17:04:49.789 12468 12732 I EykonVideo: finish fe2e2fe73c1a43aaadc0a0d746097933: ready; 209 dropped frame files deleted
+11-18 17:05:48.606 12468 12731 I EykonVideo: read 5ccfadedbf674ae992a7d9d3ba12d2ad: 187772542 bytes in place in 1238 ms (no copy)
+11-18 17:06:26.571 12468 12731 I EykonVideo: filter 5ccfadedbf674ae992a7d9d3ba12d2ad: kept 25 of 225 (less sharp 200) in 3158 ms
+11-18 17:06:41.871 12468 12731 I EykonVideo: dedup 5ccfadedbf674ae992a7d9d3ba12d2ad: kept 16 of 25 (hash dropped 9, embedding dropped 0) in 15285 ms; embedded 16 frames, 922 ms each; memory java 15 MB, native 849 MB
+11-18 17:11:19.802 12468 12731 I EykonVideo: finish 5ccfadedbf674ae992a7d9d3ba12d2ad: ready; 209 dropped frame files deleted
+11-18 17:12:55.606 12468 12731 I EykonVideo: read a8f101a4e12c47f39dfd90c0607c6eb8: 186496676 bytes in place in 1182 ms (no copy)
+11-18 17:13:31.394 12468 12731 I EykonVideo: filter a8f101a4e12c47f39dfd90c0607c6eb8: kept 25 of 224 (less sharp 199) in 2925 ms
+11-18 17:13:41.946 12468 12731 I EykonVideo: dedup a8f101a4e12c47f39dfd90c0607c6eb8: kept 10 of 25 (hash dropped 14, embedding dropped 1) in 10538 ms; embedded 11 frames, 910 ms each; memory java 11 MB, native 851 MB
+11-18 17:16:13.670 12468 12731 I EykonVideo: finish a8f101a4e12c47f39dfd90c0607c6eb8: ready; 214 dropped frame files deleted
+11-18 17:18:02.335 12468 19846 I EykonVideo: read 1ea813ede1a34f6584c9330634cb1d9e: 186496676 bytes in place in 772 ms (no copy)
+11-18 17:18:39.404 12468 19846 I EykonVideo: filter 1ea813ede1a34f6584c9330634cb1d9e: kept 25 of 224 (less sharp 199) in 2750 ms
+11-18 17:18:50.533 12468 19846 I EykonVideo: dedup 1ea813ede1a34f6584c9330634cb1d9e: kept 10 of 25 (hash dropped 14, embedding dropped 1) in 11112 ms; embedded 11 frames, 959 ms each; memory java 21 MB, native 851 MB
+11-18 17:21:19.529 12468 19846 I EykonVideo: finish 1ea813ede1a34f6584c9330634cb1d9e: ready; 214 dropped frame files deleted

@@ -19,10 +19,13 @@ picker, driven over adb.
 | 3c | 172 | Pixel | `device_config delete …` | default limit back | done (`get` returns null) | — |
 | 4 | 172 | Pixel | Video tab | no maker card (Google) | no card | `head3/pr23/pixel-no-maker-card.png` |
 | 5 | 172 | A32 | Video tab | Samsung card | **shown**, with "Open Eykon's settings" | `head3/pr23/a32-samsung-card.png` |
-| 5b | 172 | A32 | Battery to Unrestricted, come back | card gone | **not done**: a Settings change on the owner's phone, left for the owner. Review note: the card is worked out when the screen is drawn and nothing redraws it on return, so it may stay until the next redraw | — |
+| 5b | 172 | A32 | owner set Battery to Unrestricted; Eykon opened afresh | card gone | **card gone** (Eykon on the battery allow-list, `deviceidle whitelist: user`). Not checked: whether it goes on returning from Settings without a redraw | `head3/pr23/a32-no-card-unrestricted.png` |
 | 6 | 172 | A32 | Samsung bitrate | fill the empty row | **1080p (the default): 17.3 Mbps**, median of 85 camera files in the phone's media index (size ÷ duration; range 16.2-30.0), so about 130 MB a minute and 500 MB = 3.9 min. No video recorded or copied (privacy); codec not read; no 4K file on the phone | `content query` on `DCIM/Camera` |
 | 7 | 168, step 1 | A32 | kit clip 2, Home, screen off | ready without opening the app | **ready** 5 min 56 s after adding; no stop or kill line | `head3/pr23/a32-background-log.txt` |
-| 8 | 168, steps 2-4 | A32 | restart mid-job; Sleeping apps by hand; Sleeping apps mid-job | — | **not done**: each needs the owner (unlock after a restart; Settings changes). Clips `bg_s2_*`, `bg_s3_*`, `bg_s4_c2` are in the A32's Movies folder for it | — |
+| 8 | 168, step 2 | A32 (Unrestricted) | two clips queued, Home, `adb reboot` right after the first clip's `filter`; owner unlocked, did **not** open Eykon | resumes by itself | **yes**: Eykon started from the boot broadcast about 2.5 min after the phone was back, resumed at `dedup` (the stage after the saved one), both videos ready (16:34, 16:37) without the app being opened | `head3/pr23/a32-168-steps-2-4-log.txt` |
+| 9 | 168, step 3 | A32 (Unrestricted + Sleeping apps) | owner added Eykon to Sleeping apps; clip, Home, reboot after `filter`; not opened | — | **resumed by itself**: `Start proc … for broadcast … BOOT_COMPLETED`, "Background started FGS: Allowed", resumed at `dedup`, ready 17:04:49 | same |
+| 10 | 168, step 4 | A32 (Unrestricted + Deep sleeping) | clip, Home, owner added Eykon to Deep sleeping apps mid-job | — | **inconclusive**: the job reached ready (17:11:19) about when the setting was added. A new clip with Deep sleeping already on ran in the background to ready in 3.3 min | same |
+| 11 | 168, extra | A32 (**Optimized** + Deep sleeping) | owner set Battery back to Optimized; new clip from the app, Home | — | **ready in 3.3 min** in the background. Standby bucket 10 (active), because adding the clip opens the app | same |
 
 ## Reading
 
@@ -32,10 +35,16 @@ picker, driven over adb.
   (research doc, Part 1).
 - **The paused note outlived the pause** (step 3b) and is now fixed: it clears when the queue is empty.
 - **The A32 holds a background job** with the screen off, on One UI 5.1, with Eykon in standby bucket 40 ("rare") at the start.
+- **After a restart the A32 resumes the job by itself** (unlike the Infinix, EYKO-170), also with Eykon in Sleeping apps.
+- **Samsung's sleep lists did not stop a job the person just started**, with battery Unrestricted or Optimized. What one UI does to an
+  app left unopened for days (the 3-day rule) is not shown: adding a clip always makes the app active, and a natural 3-day wait was
+  dropped from the card. Answer for D1 on the A32: the background job holds; the Samsung card's advice is a safeguard, not a fix
+  for something seen here.
 - The Samsung bitrate row in `docs/research/2026-11-16-head3-background-and-limits.md` is filled: 500 MB was about 4 minutes on the A32 too.
 
 ## Owed (owner, phone in hand)
 
 1. ~~Pixel: open Eykon after a limit stop and check that the paused note goes (step 3b).~~ Done 18 Nov: it did not; fixed and re-checked.
-2. A32: Battery to Unrestricted, back to Eykon: is the card gone? Then set it back (step 5b).
-3. A32: EYKO-168 steps 2-4 (restart mid-job without opening the app; Sleeping apps by hand, then restart; Sleeping apps mid-job).
+2. ~~A32: Battery to Unrestricted~~ done 18 Nov: card gone; Battery set back to Optimized by the owner.
+3. ~~A32: EYKO-168 steps 2-4~~ done 18 Nov with the owner (rows 8 to 11). Owner removes Eykon from Sleeping and Deep sleeping apps.
+A32 clean-up: the six test folders removed by id, database restored (same SHA-256), folder list matches the backup, test clips removed.
