@@ -94,6 +94,16 @@ Sources for B10a to B11: [bad inputs](../results/2026-11-12-head3-bad-inputs.md)
 4. **Accept the types Android lists for decoding:** mp4, m4v, mov (tested), 3gp, mkv, webm. Drop avi. Change the
    "Use one of: ..." message to match.
 
+## What is in the code now (18 Nov 2026)
+
+| Recommendation | Code |
+|---|---|
+| D1.1 `mediaProcessing` on Android 15+ | `VideoJobWorker.serviceType`: mediaProcessing from API 35, dataSync below; manifest declares both types and the new permission. One type at a time. |
+| D1.2 the 6 h timeout | On `STOP_REASON_FOREGROUND_SERVICE_TIMEOUT` the worker posts "Video processing paused ... Open Eykon to carry on"; `MainActivity.onStart` starts the queue again (opening the app resets the 6 h). Not tested: needs a Pixel and 6 h of queue. |
+| D1.3 maker settings | `MakerSettings.hint(Build.MANUFACTURER)` for Samsung, Xiaomi/Redmi/POCO, Tecno/Infinix/itel, shown on the video screen until battery use is unrestricted, with a button to Eykon's settings. Xiaomi autostart cannot be read by an app. |
+| A5.2 no fixed 500 MB on the copy path | `MAX_MB` removed; the copy needs the video plus `VideoCopy.RESERVE_BYTES` (200 MB) free, checked before and every 8 MB. The laptop's `video_max_mb` is unchanged. |
+| A5.4 file types | Done by Rafique (`386ec68`). |
+
 ## Not read or not known
 
 - dontkillmyapp.com has no Infinix page; the Infinix row uses its Tecno page plus two support guides.

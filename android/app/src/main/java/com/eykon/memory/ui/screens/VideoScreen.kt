@@ -6,6 +6,8 @@ import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
+import android.os.PowerManager
 import android.provider.Settings
 import android.graphics.BitmapFactory
 import androidx.core.content.ContextCompat
@@ -41,6 +43,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.eykon.memory.ui.viewmodels.VideoViewModel
 import com.eykon.memory.video.FrameHit
+import com.eykon.memory.video.MakerSettings
 import com.eykon.memory.video.PLACE_PERMISSIONS
 import com.eykon.memory.video.SavedVideo
 import com.eykon.memory.video.VideoPipeline
@@ -111,6 +114,12 @@ fun VideoScreen(
         }
     }
 
+    // EYKO-122: on makers that stop background work, say which setting keeps it going; gone once battery use is unrestricted
+    // (Xiaomi's autostart cannot be read by an app, so it is only in the text).
+    val makerHint = MakerSettings.hint(Build.MANUFACTURER)?.takeUnless {
+        (context.getSystemService(android.content.Context.POWER_SERVICE) as PowerManager).isIgnoringBatteryOptimizations(context.packageName)
+    }
+
     LazyColumn(
         modifier = modifier.fillMaxSize().padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
@@ -133,6 +142,16 @@ fun VideoScreen(
         }
         if (uiState.isSaving) {
             item { CircularProgressIndicator() }
+        }
+        if (makerHint != null) item {
+            Column {
+                MessageCard(makerHint, MaterialTheme.colorScheme.secondaryContainer)
+                TextButton(onClick = {
+                    context.startActivity(
+                        Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.fromParts("package", context.packageName, null)),
+                    )
+                }) { Text("Open Eykon's settings") }
+            }
         }
         uiState.readyNotice?.let { notice ->
             item { MessageCard(notice, MaterialTheme.colorScheme.primaryContainer) }

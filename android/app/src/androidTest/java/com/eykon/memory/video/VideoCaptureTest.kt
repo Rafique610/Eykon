@@ -95,13 +95,14 @@ class VideoCaptureTest {
     }
 
     @Test
-    fun aFileOverTheLimitIsRefusedBeforeAnyCopying() {
+    fun aFileLargerThanTheFreeSpaceIsRefusedBeforeAnyCopying() {
+        // EYKO-122: no fixed size limit any more; a file is refused when it does not fit with room to process it. 1 PB never fits.
         var opened = false
         try {
-            capture.saveStream("mp4", 501L * 1024 * 1024) { opened = true; InstrumentationRegistry.getInstrumentation().context.assets.open("test_clip.mp4") }
+            capture.saveStream("mp4", 1L shl 50) { opened = true; InstrumentationRegistry.getInstrumentation().context.assets.open("test_clip.mp4") }
             fail("expected a refusal")
         } catch (e: UploadException) {
-            assertEquals("This file is larger than the limit of 500 MB.", e.message)
+            assertTrue(e.message!!, e.message!!.startsWith("Not enough free space"))
         }
         assertFalse("the file must not even be opened", opened)
         assertEquals(0, count("videos"))
