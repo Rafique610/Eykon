@@ -54,7 +54,7 @@ The limit is `500 × 1024 × 1024` = 524,288,000 bytes.
 | Pixel, 8-minute loop of that clip | 20.0 Mbps (1,197,672,204 B / 480 s) | 150 MB | 3.5 min | our file ([EYKO-85](../results/2026-11-15-eyko85-background-long-clip.md)) |
 | Pixel 6, 4K30 H.264 | 48 Mbps | 360 MB | 1.5 min | [GSMArena review](https://www.gsmarena.com/google_pixel_6-review-2350p6.php) |
 | Pixel 4, 1080p30 / 4K30 | file sizes 130 / 350 MB per min | 130 / 350 MB | 4.0 / 1.5 min | [Android Central](https://www.androidcentral.com/pixel-4-doesnt-support-4k-60fps-because-it-uses-too-much-space) (seen in search results) |
-| Samsung A32 | not measured, no source found | | | gap |
+| Samsung A32, 1080p (default) | 17.3 Mbps median of 85 camera files (16.2-30.0) | 130 MB | **3.9 min** | our phone, media index size / duration, 18 Nov ([PR #23 checks](../results/2026-11-18-pr23-pixel-a32-checks.md)) |
 
 So **500 MB is 1.5 to 4 minutes of phone camera video.** It is not a sensible cap on what a person records. It was a copy limit (storage
 for the copy), and in-place reading took the copy away.

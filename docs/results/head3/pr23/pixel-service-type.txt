@@ -1,0 +1,6 @@
+  * ServiceRecord{65cfb4b u0 com.eykon.memory/androidx.work.impl.foreground.SystemForegroundService c:com.eykon.memory}
+    intent={act=ACTION_START_FOREGROUND cmp=com.eykon.memory/androidx.work.impl.foreground.SystemForegroundService}
+    infoAllowStartForeground=[callingPackage: com.eykon.memory; callingUid: 10358; uidState: TOP ; uidBFSL: [BFSL]; BFGS denied: false; intent: Intent { act=ACTION_START_FOREGROUND cmp=com.eykon.memory/androidx.work.impl.foreground.SystemForegroundService }; code:PROC_STATE_TOP; tempAllowListReason:<null>; allowWiu:12; targetSdkVersion:35; callerTargetSdkVersion:35; startForegroundCount:1; bindFromPackage:null; isBindService:false]
+    isForeground=true foregroundId=4401 types=0x00002000 foregroundNoti=Notification(channel=video_processing shortcut=null contentView=null vibrate=null sound=null defaults=0 flags=ONGOING_EVENT|ONLY_ALERT_ONCE|FOREGROUND_SERVICE color=0x00000000 vis=PRIVATE template=null)
+      intent=Intent { act=ACTION_START_FOREGROUND xflg=0x4 cmp=com.eykon.memory/androidx.work.impl.foreground.SystemForegroundService (has extras) }
+      intent=Intent { act=ACTION_NOTIFY xflg=0x4 cmp=com.eykon.memory/androidx.work.impl.foreground.SystemForegroundService (has extras) }

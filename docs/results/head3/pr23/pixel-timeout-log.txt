@@ -1,0 +1,76 @@
+11-18 14:46:36.462  4023  4297 D WM-Processor: Processor: processing WorkGenerationalId(workSpecId=f1fb71c9-d780-4543-bc77-adaac9b32ed8, generation=0)
+11-18 14:46:36.526  4023  4297 D WM-Processor: Work WorkGenerationalId(workSpecId=f1fb71c9-d780-4543-bc77-adaac9b32ed8, generation=0) is already enqueued for processing
+11-18 14:46:36.784  4023  4023 D WM-Processor: Processor f1fb71c9-d780-4543-bc77-adaac9b32ed8 executed; reschedule = false
+11-18 14:47:02.086  9405  9451 D WM-Processor: Processor: processing WorkGenerationalId(workSpecId=c8c08db5-3716-4590-bb89-085621289f80, generation=0)
+11-18 14:47:02.126  9405  9450 D WM-Processor: Work WorkGenerationalId(workSpecId=c8c08db5-3716-4590-bb89-085621289f80, generation=0) is already enqueued for processing
+11-18 14:47:02.127  9405  9405 D WM-Processor: Processor c8c08db5-3716-4590-bb89-085621289f80 executed; reschedule = false
+11-18 14:47:02.312 26349 19158 D WM-Processor: doy: processing WorkGenerationalId(workSpecId=45168b65-1e07-4d79-956c-e202feb43667, generation=0)
+11-18 14:47:02.343 26349 26349 D WM-Processor: doy 45168b65-1e07-4d79-956c-e202feb43667 executed; reschedule = false
+11-18 14:47:02.348  9405  9436 I EykonVideo: read 5a2809f69ac34299815c07a8e44318bb: 187772510 bytes in place in 213 ms (no copy)
+11-18 14:47:02.405  9405  9444 D WM-Processor: Processor: processing WorkGenerationalId(workSpecId=a9dbcbc6-473e-434a-ad6f-ca69e5a5ae22, generation=0)
+11-18 14:47:02.486  9405  9434 I WM-Processor: Moving WorkSpec (a9dbcbc6-473e-434a-ad6f-ca69e5a5ae22) to the foreground
+11-18 14:47:02.505  9405  9405 I WM-SystemFgDispatcher: Started foreground service Intent { act=ACTION_START_FOREGROUND xflg=0x4 cmp=com.eykon.memory/androidx.work.impl.foreground.SystemForegroundService (has extras) }
+11-18 14:47:02.505  9405  9405 D WM-SystemFgDispatcher: Notifying with (id:4401, workSpecId: a9dbcbc6-473e-434a-ad6f-ca69e5a5ae22, notificationType :8192)
+11-18 14:47:02.517  9405  9405 D WM-SystemFgDispatcher: Notifying with (id:4401, workSpecId: a9dbcbc6-473e-434a-ad6f-ca69e5a5ae22, notificationType :8192)
+11-18 14:47:02.518  9405  9434 D WM-Processor: Work WorkGenerationalId(workSpecId=a9dbcbc6-473e-434a-ad6f-ca69e5a5ae22, generation=0) is already enqueued for processing
+11-18 14:47:24.638  9405  9436 I EykonVideo: split 5a2809f69ac34299815c07a8e44318bb: 225 frames in 11609 ms (one pass; 2232 ms to JPEG, 271 ms to write, the rest decoding), audio 74.9 s in 10431 ms
+11-18 14:48:54.874 12524 12715 D WM-Processor: pl4: processing WorkGenerationalId(workSpecId=6474156c-3479-4e14-b51a-e711db5e716a, generation=0)
+11-18 14:48:54.965 12524 12715 D WM-Processor: Work WorkGenerationalId(workSpecId=6474156c-3479-4e14-b51a-e711db5e716a, generation=0) is already enqueued for processing
+11-18 14:48:58.225 12524 12713 D WM-Processor: Processor cancelling 6474156c-3479-4e14-b51a-e711db5e716a
+11-18 14:48:58.225 12524 12713 D WM-Processor: WorkerWrapper interrupted for 6474156c-3479-4e14-b51a-e711db5e716a
+11-18 14:48:58.250 12524 12524 D WM-Processor: pl4 6474156c-3479-4e14-b51a-e711db5e716a executed; reschedule = false
+11-18 14:49:05.564  9405  9405 I WM-SystemFgDispatcher: Foreground service timed out, FGS type: 8192
+11-18 14:49:05.565  9405  9405 D WM-SystemFgService: Shutting down.
+11-18 14:49:05.587  9405  9451 D WM-Processor: WorkerWrapper interrupted for a9dbcbc6-473e-434a-ad6f-ca69e5a5ae22
+11-18 14:49:05.593  9405  9405 I WM-SystemFgService: Re-initializing SystemForegroundService after a request to shut-down.
+11-18 14:49:05.598  9405  9405 I WM-SystemFgDispatcher: Stopping foreground service
+11-18 14:49:05.598  9405  9405 D WM-SystemFgService: Shutting down.
+11-18 14:49:05.646  9405  9405 D WM-Processor: Processor a9dbcbc6-473e-434a-ad6f-ca69e5a5ae22 executed; reschedule = true
+11-18 14:49:05.757  9405  9450 D WM-Processor: Processor: processing WorkGenerationalId(workSpecId=a9dbcbc6-473e-434a-ad6f-ca69e5a5ae22, generation=0)
+11-18 14:49:05.760  9405  9450 D WM-Processor: Work WorkGenerationalId(workSpecId=a9dbcbc6-473e-434a-ad6f-ca69e5a5ae22, generation=0) is already enqueued for processing
+11-18 14:49:05.780  9405  9451 I WM-Processor: Moving WorkSpec (a9dbcbc6-473e-434a-ad6f-ca69e5a5ae22) to the foreground
+11-18 14:49:05.808  9405  9909 W EykonVideo: foreground service not allowed here, running as plain work: ForegroundServiceStartNotAllowedException: startForegroundService() not allowed: service com.eykon.memory/androidx.work.impl.foreground
+11-18 14:49:05.859  9405  9405 D WM-Processor: Processor a9dbcbc6-473e-434a-ad6f-ca69e5a5ae22 executed; reschedule = true
+11-18 14:49:05.864  9405  9405 I WM-SystemFgDispatcher: Stopping foreground service
+11-18 14:49:05.864  9405  9405 D WM-SystemFgService: Shutting down.
+11-18 14:49:25.835  9405  9451 D WM-Processor: Processor: processing WorkGenerationalId(workSpecId=a9dbcbc6-473e-434a-ad6f-ca69e5a5ae22, generation=0)
+11-18 14:49:25.866  9405  9450 I WM-Processor: Moving WorkSpec (a9dbcbc6-473e-434a-ad6f-ca69e5a5ae22) to the foreground
+11-18 14:49:25.885  9405  9909 W EykonVideo: foreground service not allowed here, running as plain work: ForegroundServiceStartNotAllowedException: startForegroundService() not allowed: service com.eykon.memory/androidx.work.impl.foreground
+11-18 14:49:25.926  9405  9405 D WM-Processor: Processor a9dbcbc6-473e-434a-ad6f-ca69e5a5ae22 executed; reschedule = true
+11-18 14:49:25.936  9405  9405 I WM-SystemFgDispatcher: Stopping foreground service
+11-18 14:49:25.936  9405  9405 D WM-SystemFgService: Shutting down.
+11-18 14:49:26.453 18770 18858 D WM-Processor: c: processing WorkGenerationalId(workSpecId=692f489c-969f-4704-bd57-5e70942e1c88, generation=61)
+11-18 14:49:26.508 18770 18855 D WM-Processor: Work WorkGenerationalId(workSpecId=692f489c-969f-4704-bd57-5e70942e1c88, generation=61) is already enqueued for processing
+11-18 14:49:29.326 18770 18770 D WM-Processor: c 692f489c-969f-4704-bd57-5e70942e1c88 executed; reschedule = false
+11-18 14:49:55.914  9405  9451 D WM-Processor: Processor: processing WorkGenerationalId(workSpecId=a9dbcbc6-473e-434a-ad6f-ca69e5a5ae22, generation=0)
+11-18 14:49:55.942  9405  9434 I WM-Processor: Moving WorkSpec (a9dbcbc6-473e-434a-ad6f-ca69e5a5ae22) to the foreground
+11-18 14:49:55.970  9405 11002 W EykonVideo: foreground service not allowed here, running as plain work: ForegroundServiceStartNotAllowedException: startForegroundService() not allowed: service com.eykon.memory/androidx.work.impl.foreground
+11-18 14:49:56.013  9405  9405 D WM-Processor: Processor a9dbcbc6-473e-434a-ad6f-ca69e5a5ae22 executed; reschedule = true
+11-18 14:49:56.016  9405  9405 I WM-SystemFgDispatcher: Stopping foreground service
+11-18 14:49:56.016  9405  9405 D WM-SystemFgService: Shutting down.
+11-18 14:50:21.457  9405  9436 I EykonVideo: latest 5a2809f69ac34299815c07a8e44318bb: 134 sightings (2 boxes too small) in 115105 ms
+11-18 14:50:21.465  9405  9436 W EykonVideo: worker stopped, reason foreground service timeout (Android 15+ 6 h a day limit) (code -128)
+11-18 14:50:35.998  9405  9450 D WM-Processor: Processor: processing WorkGenerationalId(workSpecId=a9dbcbc6-473e-434a-ad6f-ca69e5a5ae22, generation=0)
+11-18 14:50:36.017  9405  9450 I WM-Processor: Moving WorkSpec (a9dbcbc6-473e-434a-ad6f-ca69e5a5ae22) to the foreground
+11-18 14:50:36.039  9405  9436 W EykonVideo: foreground service not allowed here, running as plain work: ForegroundServiceStartNotAllowedException: startForegroundService() not allowed: service com.eykon.memory/androidx.work.impl.foreground
+11-18 14:50:36.112  9405  9436 I EykonVideo: finish 5a2809f69ac34299815c07a8e44318bb: ready; 209 dropped frame files deleted
+11-18 14:50:36.136  9405  9405 E WM-Processor: Unable to stop foreground service
+11-18 14:50:36.136  9405  9405 E WM-Processor: android.app.BackgroundServiceStartNotAllowedException: Not allowed to start service Intent { act=ACTION_STOP_FOREGROUND xflg=0x4 cmp=com.eykon.memory/androidx.work.impl.foreground.SystemForegro
+11-18 14:50:36.136  9405  9405 E WM-Processor: 	at android.app.ContextImpl.startServiceCommon(ContextImpl.java:2235)
+11-18 14:50:36.136  9405  9405 E WM-Processor: 	at android.app.ContextImpl.startService(ContextImpl.java:2190)
+11-18 14:50:36.136  9405  9405 E WM-Processor: 	at android.content.ContextWrapper.startService(ContextWrapper.java:871)
+11-18 14:50:36.136  9405  9405 E WM-Processor: 	at androidx.work.impl.Processor.stopForegroundService(Processor.java:402)
+11-18 14:50:36.136  9405  9405 E WM-Processor: 	at androidx.work.impl.Processor.cleanUpWorkerUnsafe(Processor.java:424)
+11-18 14:50:36.136  9405  9405 E WM-Processor: 	at androidx.work.impl.Processor.onExecuted(Processor.java:344)
+11-18 14:50:36.136  9405  9405 E WM-Processor: 	at androidx.work.impl.Processor.lambda$startWork$1$androidx-work-impl-Processor(Processor.java:179)
+11-18 14:50:36.136  9405  9405 E WM-Processor: 	at androidx.work.impl.Processor$$ExternalSyntheticLambda2.run(D8$$SyntheticClass:0)
+11-18 14:50:36.136  9405  9405 E WM-Processor: 	at android.os.Handler.handleCallback(Handler.java:1082)
+11-18 14:50:36.136  9405  9405 E WM-Processor: 	at android.os.Handler.dispatchMessageImpl(Handler.java:135)
+11-18 14:50:36.136  9405  9405 E WM-Processor: 	at android.os.Handler.dispatchMessage(Handler.java:126)
+11-18 14:50:36.136  9405  9405 E WM-Processor: 	at android.os.Looper.loopOnce(Looper.java:295)
+11-18 14:50:36.136  9405  9405 E WM-Processor: 	at android.os.Looper.loop(Looper.java:398)
+11-18 14:50:36.136  9405  9405 E WM-Processor: 	at android.app.ActivityThread.main(ActivityThread.java:9569)
+11-18 14:50:36.136  9405  9405 E WM-Processor: 	at java.lang.reflect.Method.invoke(Native Method)
+11-18 14:50:36.136  9405  9405 E WM-Processor: 	at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:575)
+11-18 14:50:36.136  9405  9405 E WM-Processor: 	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:918)
+11-18 14:50:36.144  9405  9405 D WM-Processor: Processor a9dbcbc6-473e-434a-ad6f-ca69e5a5ae22 executed; reschedule = false

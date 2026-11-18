@@ -1,0 +1,4 @@
+11-18 14:52:35.541  3351  3482 I EykonVideo: read 4c408d13b7934fd8a390c9948d09fdc5: 187772502 bytes in place in 1151 ms (no copy)
+11-18 14:53:16.794  3351  3482 I EykonVideo: split 4c408d13b7934fd8a390c9948d09fdc5: 225 frames in 25671 ms (one pass; 2360 ms to JPEG, 469 ms to write, the rest decoding), audio 74.9 s in 14997 ms
+11-18 14:58:30.991  3351  3482 I EykonVideo: latest 4c408d13b7934fd8a390c9948d09fdc5: 134 sightings (2 boxes too small) in 152085 ms
+11-18 14:58:31.025  3351  3482 I EykonVideo: finish 4c408d13b7934fd8a390c9948d09fdc5: ready; 209 dropped frame files deleted
