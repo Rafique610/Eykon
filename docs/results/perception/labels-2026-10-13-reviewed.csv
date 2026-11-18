@@ -1,0 +1,45 @@
+frame,main_object,other_object,place,marked_by,checked_by,changed
+clip1_000001,person,chair and paper,a classroom,ai,Zara Tahir,yes
+clip1_000012,person,cell phone and paper,a classroom,ai,Zara Tahir,yes
+clip1_000022,person,cell phone and paper,a classroom,ai,Zara Tahir,yes
+clip1_000035,person,"cell phone, helmet and paper",a classroom,ai,Zara Tahir,yes
+clip1_000037,person,"cell phone, helmet and paper",a classroom,ai,Zara Tahir,yes
+clip1_000050,person,"phone, bag and paper",a classroom,ai,Zara Tahir,yes
+clip1_000061,person,"bag, helmet and cell phone half hidden behind the paper",a classroom,ai,Zara Tahir,yes
+clip1_000065,person,"bag, helmet and paper",a classroom,ai,Zara Tahir,yes
+clip1_000081,person,cell phone and bag,a classroom,ai,Zara Tahir,yes
+clip1_000099,person,bag and helmet and paper,a classroom,ai,Zara Tahir,yes
+clip1_000108,person,paper,a classroom,ai,Zara Tahir,yes
+clip1_000120,person,paper and bag,a classroom,ai,Zara Tahir,yes
+clip1_000133,person,paper,a classroom,ai,Zara Tahir,yes
+clip1_000142,person,cell phone,a classroom,ai,Zara Tahir,no
+clip1_000158,person,cell phone,a classroom,ai,Zara Tahir,no
+clip1_000163,person,cell phone,a classroom,ai,Zara Tahir,no
+clip1_000180,person,none,a classroom,ai,Zara Tahir,no
+clip1_000191,person,bag,a classroom,ai,Zara Tahir,yes
+clip2_000001,person,"cell phone, pen and paper",none,ai,Zara Tahir,yes
+clip2_000014,person,"cell phone, pen and paper",none,ai,Zara Tahir,yes
+clip2_000025,person,"chair, cell phone, pen and paper",none,ai,Zara Tahir,yes
+clip2_000030,person,cell phone and paper,none,ai,Zara Tahir,yes
+clip2_000037,person,cell phone and paper,none,ai,Zara Tahir,yes
+clip3_000009,person,laptop and page,a hallway,ai,Zara Tahir,yes
+clip3_000026,person,laptop and page,a hallway,ai,Zara Tahir,yes
+clip3_000032,person,laptop and page,a hallway,ai,Zara Tahir,yes
+clip3_000043,person,laptop and page,a hallway,ai,Zara Tahir,yes
+clip3_000047,person,laptop and page,a hallway,ai,Zara Tahir,yes
+clip4_000001,person,"laptop, PCs and bag",a classroom,ai,Zara Tahir,yes
+clip4_000012,person,chair,a classroom,ai,Zara Tahir,no
+clip4_000019,person,PCs,a classroom,ai,Zara Tahir,yes
+clip4_000030,person,PCs,a classroom,ai,Zara Tahir,yes
+clip4_000043,person,"chair, bottle",a classroom,ai,Zara Tahir,yes
+clip4_000052,person,"laptop, chair and bag",a classroom,ai,Zara Tahir,yes
+clip4_000061,person,"backpack, phone, notebook, PCs and laptop",a classroom,ai,Zara Tahir,yes
+clip4_000065,backpack,backpack,a classroom,ai,Zara Tahir,no
+clip5_000004,person,chair,terrace,ai,Zara Tahir,yes
+clip5_000010,person,chair,terrace,ai,Zara Tahir,yes
+clip5_000019,person,chair,terrace,ai,Zara Tahir,yes
+clip5_000032,person,chair,terrace,ai,Zara Tahir,yes
+clip5_000040,person,fan and table tennis net,terrace,ai,Zara Tahir,yes
+clip6_000001,car,car,a street,ai,Zara Tahir,no
+clip6_000016,bushes,backpack on shoulder,a street,ai,Zara Tahir,yes
+clip6_000022,bushes,none,a street,ai,Zara Tahir,yes

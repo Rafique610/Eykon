@@ -68,3 +68,29 @@ those two cards matter.
   partly hidden things.
 - Laptop vectors, not the phone's own. No timing was measured.
 - The same clips were used for the keyframe and detector work, so this is not unseen data.
+
+## Checked by a person on 18 November 2026 (EYKO-72)
+
+Zara Tahir checked all 44 presence rows (`perception/presence-2026-10-13-reviewed.csv`; the AI's file
+is unchanged). **22 of 44 rows changed, 34 cells, every one 0 to 1** (AI said "not there", the person
+sees it): backpack 15, chair 8, phone 8, laptop 2, monitor 1. So the AI under-called things that were
+small, half hidden or at the edge, and never marked something that was not there.
+
+Same probe, same vectors, new labels (top 5 / average precision, phrase as typed):
+
+| Thing | Frames before | Frames after | Top 5 before | Top 5 after | Avg precision before | Avg precision after |
+|---|---|---|---|---|---|---|
+| phone | 16 | 24 | 3 of 5 | 3 of 5 | 0.43 | 0.51 |
+| laptop | 9 | 11 | 4 of 5 | 4 of 5 | 0.77 | 0.69 |
+| chair | 17 | 25 | 3 of 5 | 3 of 5 | 0.52 | 0.63 |
+| backpack | 6 | 21 | 3 of 5 | 4 of 5 | 0.58 | 0.61 |
+| monitor | 7 | 8 | 3 of 5 | 4 of 5 | 0.51 | 0.74 |
+| car, papers, table tennis | unchanged | unchanged | same | same | same | same |
+
+The phone's detector now finds 5 of 24 phone frames (was 5 of 16), 7 of 11 laptops, 18 of 25 chairs,
+and 0 of 21 backpacks (was 0 of 6): it misses more than it seemed to.
+
+**Does the finding hold? Yes.** Searching by typed phrase still ranks real frames first for most
+things, and the detector's weakness on small and partly hidden things is larger, not smaller, than
+we wrote. The chance level rose (a random order is now right more often), so the average precisions
+are less far above chance than before, for backpack and phone in particular.
