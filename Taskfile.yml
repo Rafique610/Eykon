@@ -194,6 +194,10 @@ tasks:
     desc: "EYKO-15 — compare crop vectors of same-object and different-object pairs and print the threshold with the fewest wrong calls (give the phone's object crops json and the identity csv)"
     cmd: uv run python src/benchmarks/crop_pairs.py {{.CLI_ARGS}}
 
+  evidence-map-plots:
+    desc: "Graphs for docs/head2-head3-evidence-map.md that no card drew (mapped adoption, background kill, storage, 500 MB, split, 0.87 threshold, memory vs sqlite-vec)"
+    cmd: uv run --no-project --python 3.10 --with numpy==2.2.6 --with matplotlib==3.10.9 python -I src/benchmarks/plot_evidence_map.py
+
   latest-profile:
     desc: "EYKO-120 — time the `latest` stage's crop cut, crop vectors and relink against faster versions with the same output (real test frame, the 90 Pixel crops, COCO vectors)"
     cmd: uv run --no-project --python 3.10 --index https://download.pytorch.org/whl/cpu --index-strategy unsafe-best-match --with open_clip_torch --with "onnx==1.23.*" --with onnxruntime --with pillow --with numpy==2.2.6 --with matplotlib==3.10.9 python -I src/benchmarks/latest_profile.py
