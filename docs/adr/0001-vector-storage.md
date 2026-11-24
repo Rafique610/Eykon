@@ -24,7 +24,7 @@ In code: `android/app/src/main/java/com/eykon/memory/video/VideoVectors.kt`, `Ve
   score, not just the top 20, because it grows time windows around the best frames.
 - Android gives each app **268 MB of Java memory**, on the 6 GB A32 and the 16 GB Pixel alike. With all three tables held in Java
   memory, **20k rows each fit and 50k do not** (`OutOfMemoryError`), on all three phones (EYKO-100, 94).
-- Our own target of **200 ms per search on the slow phone has no source yet** (EYKO-101). It is written down as an assumption, not used as a hard limit.
+- Our own target of **200 ms per search on the slow phone has no source** (EYKO-101 found none that names 200 ms; Nielsen's limits are 0.1 / 1 / 10 s). It is not a hard limit.
 
 ## Options considered (all measured by us unless marked)
 
@@ -104,5 +104,5 @@ Reopen this ADR if any of these happens:
 
 ## Not decided here
 
-- Sources for the 200 ms target and the user's library size per month (EYKO-101): an assumption until then.
+- The user's library size per month: **sourced on 21 Nov** (EYKO-101, `docs/results/2026-11-21-vector-growth-estimate.md`). A part-day first-person user reaches trigger 3 (300k) in about 5 months, all-day recording in about 6 weeks; a phone-camera user stays near 2,800 a year.
 - The whole-app search speed after a restart (Head 7, G22 / G23).
