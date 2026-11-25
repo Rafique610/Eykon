@@ -94,6 +94,10 @@ take about **1.8× as long at 32–64 KB** (a whole bigger page per read, and a 
 The index query is fastest at 16 KB. Commit time hardly moves on this laptop's NVMe disk (fsync dominates); on a
 phone's flash the extra bytes may matter more (not measured).
 
+![page size trade-off: space, bytes per small commit, single-row reads](page-size/page-size-tradeoff.png)
+
+(Drawn from `page-size.json` by `src/benchmarks/plot_page_size.py`, `task page-size-plot`.)
+
 **Why 16 KB and not 32 or 64 KB, measured:** past 16 KB the space saving is 5 % (32 KB, about 0.8 GB a year for the
 typical user) or nothing (64 KB), while every small commit writes 2× (32 KB) or 3.7× (64 KB) the bytes of 16 KB and point
 reads take 1.8× as long. In absolute terms all of it is small (microseconds; a few hundred KB a video), so the choice
