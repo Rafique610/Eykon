@@ -17,7 +17,7 @@
   "4096": {
    "page_size": 4096,
    "file_bytes": 649568256,
-   "insert_s": 11.79,
+   "insert_s": 12.09,
    "rows": {
     "frames": 340000,
     "scene_records": 20000,
@@ -51,13 +51,13 @@
    },
    "per_kept_frame_bytes": 32478,
    "max_id_ms": 0.008,
-   "full_read_s": 0.047,
+   "full_read_s": 0.04,
    "image_vec_identical": true
   },
   "8192": {
    "page_size": 8192,
    "file_bytes": 464756736,
-   "insert_s": 9.27,
+   "insert_s": 9.23,
    "rows": {
     "frames": 340000,
     "scene_records": 20000,
@@ -91,13 +91,13 @@
    },
    "per_kept_frame_bytes": 23238,
    "max_id_ms": 0.008,
-   "full_read_s": 0.026,
+   "full_read_s": 0.028,
    "image_vec_identical": true
   },
   "16384": {
    "page_size": 16384,
    "file_bytes": 414154752,
-   "insert_s": 9.55,
+   "insert_s": 10.03,
    "rows": {
     "frames": 340000,
     "scene_records": 20000,
@@ -130,14 +130,14 @@
     "object_sightings": 2355.5
    },
    "per_kept_frame_bytes": 20708,
-   "max_id_ms": 0.011,
-   "full_read_s": 0.025,
+   "max_id_ms": 0.008,
+   "full_read_s": 0.023,
    "image_vec_identical": true
   },
   "32768": {
    "page_size": 32768,
    "file_bytes": 392495104,
-   "insert_s": 11.19,
+   "insert_s": 11.29,
    "rows": {
     "frames": 340000,
     "scene_records": 20000,
@@ -171,13 +171,13 @@
    },
    "per_kept_frame_bytes": 19625,
    "max_id_ms": 0.008,
-   "full_read_s": 0.021,
+   "full_read_s": 0.022,
    "image_vec_identical": true
   },
   "65536": {
    "page_size": 65536,
    "file_bytes": 391839744,
-   "insert_s": 12.9,
+   "insert_s": 13.31,
    "rows": {
     "frames": 340000,
     "scene_records": 20000,
@@ -220,18 +220,18 @@
    "page_size": 4096,
    "file_bytes": 410619904,
    "bytes_per_row": 4106.2,
-   "insert_s": 10.14,
-   "max_id_ms": 0.017,
-   "full_read_s": 0.2,
+   "insert_s": 7.68,
+   "max_id_ms": 0.008,
+   "full_read_s": 0.209,
    "identical": true
   },
   "16384": {
    "page_size": 16384,
    "file_bytes": 234242048,
    "bytes_per_row": 2342.4,
-   "insert_s": 4.83,
+   "insert_s": 5.0,
    "max_id_ms": 0.004,
-   "full_read_s": 0.12,
+   "full_read_s": 0.117,
    "identical": true
   }
  },
@@ -242,17 +242,71 @@
    "file_bytes": 410619904
   },
   "vacuum_while_wal": {
-   "vacuum_s": 2.19,
+   "vacuum_s": 2.22,
    "page_size_after": 4096
   },
   "after_leaving_wal": {
    "page_size": 16384,
    "journal": "wal",
    "file_bytes": 234242048,
-   "vacuum_s": 1.77,
+   "vacuum_s": 1.9,
    "integrity": "ok",
    "identical": true,
    "max_frame_id": 100000
+  }
+ },
+ "e5_small_writes_and_reads": {
+  "4096": {
+   "commit_ms": 4.146,
+   "wal_bytes_per_commit": 34059,
+   "wal_pages_per_commit": 8.32,
+   "read_ms": {
+    "sighting_by_id": 0.0087,
+    "scene_by_frame": 0.0056,
+    "latest_of_label": 0.2664
+   },
+   "sqlite_cache_kib": 2000,
+   "cache_pages": 500,
+   "file_bytes": 649580544
+  },
+  "16384": {
+   "commit_ms": 4.536,
+   "wal_bytes_per_commit": 123115,
+   "wal_pages_per_commit": 7.51,
+   "read_ms": {
+    "sighting_by_id": 0.0098,
+    "scene_by_frame": 0.0067,
+    "latest_of_label": 0.1922
+   },
+   "sqlite_cache_kib": 2000,
+   "cache_pages": 125,
+   "file_bytes": 414171136
+  },
+  "32768": {
+   "commit_ms": 4.358,
+   "wal_bytes_per_commit": 237196,
+   "wal_pages_per_commit": 7.24,
+   "read_ms": {
+    "sighting_by_id": 0.0178,
+    "scene_by_frame": 0.0117,
+    "latest_of_label": 0.2113
+   },
+   "sqlite_cache_kib": 2000,
+   "cache_pages": 62,
+   "file_bytes": 392495104
+  },
+  "65536": {
+   "commit_ms": 5.31,
+   "wal_bytes_per_commit": 458265,
+   "wal_pages_per_commit": 6.99,
+   "read_ms": {
+    "sighting_by_id": 0.016,
+    "scene_by_frame": 0.0106,
+    "latest_of_label": 0.2399
+   },
+   "sqlite_cache_kib": 2000,
+   "cache_pages": 31,
+   "file_bytes": 391839744
   }
  }
 }

@@ -9,6 +9,7 @@ with real MobileCLIP vectors, at several page sizes:
       the MAX(id) check, and the vectors read back bit for bit;
   E3  option (b), an existing 4 KB database in WAL mode (as Room uses on the phone) converted with VACUUM;
   E4  whether a new database still takes a page size after WAL is switched on (where the app would have to set it).
+  E5  what bigger pages cost: a `relink`-style commit of 3 changed sightings (time, WAL bytes) and random single-row reads.
 Test databases go in data/eyko167/ (git-ignored) and are deleted. Results: docs/results/page-size/page-size.json.
 """
 
@@ -232,11 +233,53 @@ def e4_order():
     return out
 
 
+def e5_small_writes_and_reads(kept=20_000, commits=300, lookups=3_000):
+    """What bigger pages cost: a `relink`-style commit of 3 changed sightings, and random single-row reads (WAL, as on the phone)."""
+    import random
+    out = {}
+    for page in (4096, 16384, 32768, 65536):
+        path = fresh(f"e5-{page}.db")
+        con = open_db(path, page, "wal")
+        fill(con, kept)
+        con.execute("PRAGMA wal_checkpoint(TRUNCATE)")
+        n_sight = con.execute("SELECT MAX(id) FROM object_sightings").fetchone()[0]
+        labels = [r[0] for r in con.execute("SELECT DISTINCT label FROM object_sightings")]
+        cache_kib = -con.execute("PRAGMA cache_size").fetchone()[0]
+        rnd = random.Random(167)
+        con.execute("PRAGMA wal_autocheckpoint=0")  # let the WAL grow so the bytes each commit writes can be counted
+        start = time.perf_counter()
+        for _ in range(commits):
+            con.execute("BEGIN")
+            for _ in range(3):
+                con.execute("UPDATE object_sightings SET is_latest = 0, superseded_by = ? WHERE id = ?", (rnd.randint(1, n_sight), rnd.randint(1, n_sight)))
+            con.execute("COMMIT")
+        write_ms = (time.perf_counter() - start) / commits * 1e3
+        wal = os.path.getsize(f"{path}-wal")
+        con.execute("PRAGMA wal_checkpoint(TRUNCATE)")
+        con.close()
+        reads_ms = {}
+        for name, sql, arg in (("sighting_by_id", "SELECT label, embedding FROM object_sightings WHERE id = ?", lambda: rnd.randint(1, n_sight)),
+                               ("scene_by_frame", "SELECT objects, caption FROM scene_records WHERE frame_id = ?", lambda: rnd.randint(1, kept * FRAME_ROWS_PER_KEPT)),
+                               ("latest_of_label", "SELECT id, place FROM object_sightings WHERE label = ? AND is_latest = 1", lambda: rnd.choice(labels))):
+            con = sqlite3.connect(path)  # fresh connection: SQLite's own cache starts empty (the OS file cache does not)
+            args = [arg() for _ in range(lookups)]
+            t = time.perf_counter()
+            for a in args:
+                con.execute(sql, (a,)).fetchall()
+            reads_ms[name] = round((time.perf_counter() - t) / lookups * 1e3, 4)
+            con.close()
+        out[page] = {"commit_ms": round(write_ms, 3), "wal_bytes_per_commit": round(wal / commits), "wal_pages_per_commit": round(wal / commits / page, 2),
+                     "read_ms": reads_ms, "sqlite_cache_kib": cache_kib, "cache_pages": cache_kib * 1024 // page, "file_bytes": os.path.getsize(path)}
+        print("e5", page, out[page])
+        fresh(f"e5-{page}.db")
+    return out
+
+
 if __name__ == "__main__":
     WORK.mkdir(parents=True, exist_ok=True)
     OUT.mkdir(parents=True, exist_ok=True)
     result = {"sqlite": sqlite3.sqlite_version, "vectors": {"image": str(IMAGES.relative_to(ROOT)), "text": str(TEXTS.relative_to(ROOT))},
               "per_kept_frame": {"frame_rows": FRAME_ROWS_PER_KEPT, "sightings": SIGHTINGS_PER_KEPT, "kept_per_video": KEPT_PER_VIDEO},
-              "e4_order": e4_order(), "e1_library_20k": e1_library(), "e2_image_100k": e2_image_only(), "e3_migrate_100k": e3_migrate()}
+              "e4_order": e4_order(), "e1_library_20k": e1_library(), "e2_image_100k": e2_image_only(), "e3_migrate_100k": e3_migrate(), "e5_small_writes_and_reads": e5_small_writes_and_reads()}
     (OUT / "page-size.json").write_text(json.dumps(result, indent=1), encoding="utf-8")
     print("wrote docs/results/page-size/page-size.json")
