@@ -65,21 +65,29 @@ LINES = [  # rows, label, source
 MONTHS = [1, 3, 6, 12]
 
 # Storage, app data only (EYKO-126: the video itself is read from the gallery, not copied). Bytes, decimal units.
+# Corrected 25 Nov: database rows are counted at their size ON DISK with SQLite's 4 KB pages (EYKO-167 dbstat), and the
+# kept frame's files at what the camera clip's video folder measured (EYKO-126); see the result file, "Step 3b".
 AUDIO_PER_MIN = 16_000 * 2 * 60  # 16 kHz 16-bit mono WAV, kept after processing (2026-11-09-storage-and-crash.md)
-FRAME_ROWS_PER_MIN = 100 * 3 * 60  # one ~100 B `frames` row for every sampled frame, 3 a second (same file)
-KEPT_FRAME = {  # picture + database rows (image and text vectors, caption, sightings) per kept frame (same file)
-    "low": 50_600,  # measured: movie, 27.5 MB pictures + 14.6 MB database for 831 kept frames
-    "central": 63_000,  # middle of the formula for camera clips, 60-66 kB (more sightings per frame than the movie)
-    "high": 66_000,
+FRAME_ROW = 202  # one `frames` row on disk (EYKO-167, dbstat at 4 KB pages; 100 B of data); 3 a second
+DB_PER_KEPT = 4_106 + 2_053 + 168 + 457  # image_vec, text_vec, video_texts + keyword index, scene_records (EYKO-167, 4 KB)
+SIGHTING = 4_119  # one object_sightings row on disk: its 2 KB crop vector fills a 4 KB page (EYKO-167)
+SIGHTINGS_PER_KEPT = {"low": 1.93, "central": 5.4, "high": 8.4}  # movie 1,604/831; kit clip 1 54/10; kit clip 2 134/16
+FOLDER_PER_KEPT = {  # the kept frame's files in the video folder: its JPEG and its share of the dedup vector file
+    "low": (27_500_000 + 1_900_000) / 831,  # movie (1920x804 film): 27.5 MB pictures + 1.9 MB other folder files, 831 kept
+    "central": (10_448_896 - round(297.8 * 32_000)) / 13,  # camera clip t4 (EYKO-126): folder minus its WAV, 13 kept
+    "high": (10_448_896 - round(297.8 * 32_000)) / 13,
 }
 SEARCH_COPY = 512 * 4 + 8  # the `.vec` file next to the database: one float32 image vector + its id (ADR 0001)
-CHECK = ("EYKO-126 t4: 297.8 s, 13 kept frames, app data grew 10,448,896 B", 297.8, 13, 10_448_896)  # read-from-gallery.md
+CHECK = ("EYKO-116 movie run: database grew 14.6 MB for 831 kept frames, 1,604 sightings, 9,904 frame rows",
+         831, 1_604, 9_904, 14_600_000)  # 2026-11-09-storage-and-crash.md, Part 2 (a)
 
 
-def storage_per_day(minutes, kept_per_day, kept_bytes):
-    """Bytes a day by part."""
-    return {"audio": minutes * AUDIO_PER_MIN, "frame_rows": minutes * FRAME_ROWS_PER_MIN,
-            "kept_frames": kept_per_day * kept_bytes, "search_copy": kept_per_day * SEARCH_COPY}
+def storage_per_day(minutes, kept_per_day, case="central"):
+    """Bytes a day by part; `case` picks the low / central / high sightings and folder size per kept frame."""
+    return {"audio": minutes * AUDIO_PER_MIN, "frame_rows": minutes * 180 * FRAME_ROW,
+            "kept_frame_files": kept_per_day * FOLDER_PER_KEPT[case],
+            "database_rows": kept_per_day * (DB_PER_KEPT + SIGHTINGS_PER_KEPT[case] * SIGHTING),
+            "search_copy": kept_per_day * SEARCH_COPY}
 
 
 def rate(rows):
@@ -116,10 +124,10 @@ def main():
              "days_to": {t: round(days_to(t, per_day), 1) for t, _, _ in LINES},
              "days_to_fastest": {t: round(days_to(t, minutes * high), 1) for t, _, _ in LINES},
              "search_ms_at_12_months": {p: round(ms_at(per_day * 12 * DAYS_PER_MONTH, pts)) for p, pts in SEARCH_MS.items()}}
-        parts = storage_per_day(minutes, per_day, KEPT_FRAME["central"])
+        parts = storage_per_day(minutes, per_day)
         day_bytes = sum(parts.values())
-        low_bytes = sum(storage_per_day(minutes, minutes * low, KEPT_FRAME["low"]).values())
-        high_bytes = sum(storage_per_day(minutes, minutes * high, KEPT_FRAME["high"]).values())
+        low_bytes = sum(storage_per_day(minutes, minutes * low, "low").values())
+        high_bytes = sum(storage_per_day(minutes, minutes * high, "high").values())
         s["storage"] = {"mb_per_day": round(day_bytes / 1e6, 2), "mb_per_day_parts": {k: round(v / 1e6, 2) for k, v in parts.items()},
                         "gb": {m: round(day_bytes * m * DAYS_PER_MONTH / 1e9, 2) for m in MONTHS},
                         "gb_range": {m: [round(low_bytes * m * DAYS_PER_MONTH / 1e9, 2), round(high_bytes * m * DAYS_PER_MONTH / 1e9, 2)] for m in MONTHS},
@@ -138,12 +146,14 @@ def main():
         w.writerow(["scenario", "month", "image_vectors_central", "image_vectors_low", "image_vectors_high", "storage_gb",
                     "storage_gb_without_audio"])
         w.writerows(rows_csv)
-    name, sec, kept, measured = CHECK
-    predicted = sum(storage_per_day(sec / 60, kept, KEPT_FRAME["central"]).values())
+    name, kept, sightings, frame_rows, measured = CHECK
+    predicted = kept * DB_PER_KEPT + sightings * SIGHTING + frame_rows * FRAME_ROW
     result["storage_check"] = {"case": name, "predicted_bytes": round(predicted), "measured_bytes": measured,
                                "error_pct": round((predicted - measured) / measured * 100, 2)}
-    result["storage_inputs"] = {"audio_per_min": AUDIO_PER_MIN, "frame_rows_per_min": FRAME_ROWS_PER_MIN, "kept_frame": KEPT_FRAME,
-                                "search_copy": SEARCH_COPY}
+    result["storage_inputs"] = {"audio_per_min": AUDIO_PER_MIN, "frame_row": FRAME_ROW, "db_per_kept": DB_PER_KEPT, "sighting": SIGHTING,
+                                "sightings_per_kept": SIGHTINGS_PER_KEPT, "folder_per_kept": FOLDER_PER_KEPT, "search_copy": SEARCH_COPY,
+                                "kept_frame_total": {c: round(FOLDER_PER_KEPT[c] + DB_PER_KEPT + SIGHTINGS_PER_KEPT[c] * SIGHTING + SEARCH_COPY)
+                                                     for c in ("low", "central", "high")}}
     (OUT / "vector-growth.json").write_text(json.dumps(result, indent=1), encoding="utf-8")
     plot(result, low, high, central)
     plot_storage(result)
@@ -228,10 +238,11 @@ def plot_storage(result):
     chk = result["storage_check"]
     fig.text(0.01, 0.985, "How much phone storage the app uses over 12 months (EYKO-101)", ha="left", va="top", fontsize=11,
              color=INK, fontweight="bold")
-    fig.text(0.01, 0.93, "Video is read from the gallery (not copied). Per minute of video: 1.92 MB of 16 kHz audio + 18 kB of frame "
-             "rows; per kept frame: 63 kB (picture + database) + 2 kB search copy. Formula checked on a measured clip: "
-             f"{chk['error_pct']:+.2f} %. Sources: docs/results/2026-11-21-vector-growth-estimate.md.", ha="left", va="top",
-             fontsize=8, color=MUTED, wrap=True)
+    tot = result["storage_inputs"]["kept_frame_total"]["central"] / 1e3
+    fig.text(0.01, 0.93, "Video is read from the gallery (not copied). Per minute of video: 1.92 MB of 16 kHz audio + 36 kB of frame "
+             f"rows; per kept frame: {tot:.0f} kB (JPEG, database rows on disk with 4 KB pages incl. 5.4 sightings, search copy). "
+             f"Database part checked on a measured run: {chk['error_pct']:+.1f} %. Sources: docs/results/2026-11-21-vector-growth-estimate.md.",
+             ha="left", va="top", fontsize=8, color=MUTED, wrap=True)
     fig.tight_layout(rect=(0, 0, 1, 0.87))
     for ext in ("png", "svg"):
         fig.savefig(OUT / f"vector-growth-storage.{ext}", dpi=170, facecolor=SURFACE)

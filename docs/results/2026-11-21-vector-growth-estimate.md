@@ -7,7 +7,7 @@ published studies of how much people record. Run: `task vector-growth` (`src/ben
 [`vector-growth/vector-growth.csv`](vector-growth/vector-growth.csv). Every source, quote and dead end:
 [`vector-growth/sources.md`](vector-growth/sources.md).
 
-**Verdict.** **Storage (added 24 Nov): the typical user's app data reaches about 15.6 GB after one month and 187 GB after a year, 73 % of it the kept 16 kHz audio; this limit comes before search speed.** A person who records first-person video for part of the day (**3.25 h, typical**) reaches **100k image
+**Verdict.** **Storage (added 24 Nov, corrected 25 Nov): the typical user's app data reaches about 18 GB after one month and 216 GB after a year, 63 % of it the kept 16 kHz audio; this limit comes before search speed.** A person who records first-person video for part of the day (**3.25 h, typical**) reaches **100k image
 vectors after about 7 weeks (48 days) and 300k after about 5 months**; at the fastest kept rate we measured, 26 and 79
 days. Recording all waking hours (**12 h, heavy**) reaches 100k in **13 days**. A person who only uses the phone camera
 the usual way (**0.72 min a day, light**) has **about 2,800 after a year** and never comes near any limit. So the
@@ -72,44 +72,60 @@ in a week, which fits the light scenario. Source details and the quotes: [`vecto
 
 ![image vectors over 12 months](vector-growth/vector-growth.png)
 
-## Step 3b: storage on the phone (asked for on 24 Nov)
+## Step 3b: storage on the phone (asked for on 24 Nov, corrected 25 Nov)
 
-Since EYKO-126 the video is read from the gallery, not copied, so the app's own storage is (all measured parts, from
-`2026-11-09-storage-and-crash.md` and ADR 0001):
+Since EYKO-126 the video is read from the gallery, not copied, so the app's own storage is:
 
 ```
-storage a day = minutes × (1.92 MB audio + 18 kB frame rows) + kept frames × (63 kB picture and database + 2.06 kB search copy)
+storage a day = minutes × (1.92 MB audio + 36 kB frame rows)
+              + kept frames × (70.7 kB files in the video folder + 6.8 kB database rows + sightings × 4.12 kB + 2.06 kB search copy)
 ```
 
 | Part | Size | Where it comes from |
 |---|---|---|
 | 16 kHz mono WAV, kept after processing | 32,000 B a second = **1.92 MB per minute of video** | EYKO-116: "exactly 16,000 Hz x 2 bytes" |
-| `frames` rows (every sampled frame, kept or not) | 100 B × 3 a second = **18 kB a minute** | EYKO-116, 10,820 rows measured |
-| Per kept frame: JPEG + database rows (image and text vectors, caption, sightings) | **63 kB** (middle of 60–66 kB for camera clips; **50.6 kB measured** on the 55-min movie) | EYKO-116 formula and Part 2 (a) |
+| `frames` rows (every sampled frame, kept or not) | 202 B on disk × 3 a second = **36 kB a minute** | EYKO-167 (`dbstat`, 4 KB pages) |
+| Kept frame's files in the video folder (its JPEG and its share of the dedup vector file) | **70.7 kB** on camera video (35.4 kB on the movie) | EYKO-126 camera clip t4: folder 10,448,896 B minus its 9,529,600 B WAV, over 13 kept frames; the two saved camera kept frames are 58.9 kB each |
+| Database rows per kept frame: image vector, text vector, caption with its keyword index, scene record | **6.8 kB** on disk (4,106 + 2,053 + 168 + 457 B) | EYKO-167 (`dbstat`, 4 KB pages) |
+| Each object sighting (its 2 KB crop vector fills a 4 KB page) | **4.12 kB** on disk, × **5.4** per kept frame (1.93 on the movie, 8.4 on kit clip 2) | EYKO-167; head3 runs |
 | Search copy of the image vector (`.vec` + id) | **2,056 B** per kept frame | ADR 0001 (about 205 MB per 100k) |
 
-**Checked against a measured clip:** EYKO-126's 297.8 s clip with 13 kept frames grew the app's data by 10,448,896 B;
-the formula gives 10,464,668 B (**+0.15 %**).
+Per kept frame that is **102 kB** (52 kB on the movie's mix, 114 kB at 8.4 sightings).
+
+**Check (database part):** rebuilt with EYKO-116's measured movie run (831 kept frames, 1,604 sightings, 9,904 frame
+rows) the database rows give 14.24 MB; measured 14.6 MB (**−2.4 %**). There is no measured run of the whole app data for
+camera video yet.
+
+**Correction (25 Nov).** The first version (24 Nov) used 63 kB per kept frame and 18 kB of frame rows a minute, and
+claimed a "+0.15 %" match with the EYKO-126 clip. Both were wrong: (1) EYKO-116's formula counted each sighting at its
+2.07 kB of data, but with 4 KB pages it takes 4.12 kB on disk, and a `frames` row takes 202 B, not 100 B (EYKO-167);
+(2) the 10,448,896 B "measurement" is the clip's **video folder only** (WAV + JPEGs), while the database lives in
+`memories.db` outside it, so comparing it with a formula that included database rows proved nothing. Totals rose by
+about 15 %.
 
 | Scenario | Per day | 1 month | 3 months | 6 months | **12 months** | 12 months, range | 12 months if the audio file is deleted |
 |---|---|---|---|---|---|---|---|
-| Light (0.72 min) | 1.9 MB | 0.06 GB | 0.17 GB | 0.35 GB | **0.69 GB** | 0.62 – 0.86 GB | 0.19 GB |
-| Typical (3.25 h) | 513 MB | 15.6 GB | 46.8 GB | 93.6 GB | **187 GB** | 168 – 233 GB | 50 GB |
-| Heavy (12 h) | 1,892 MB | 57.6 GB | 173 GB | 346 GB | **691 GB** | 621 – 859 GB | 186 GB |
+| Light (0.72 min) | 2.2 MB | 0.07 GB | 0.20 GB | 0.40 GB | **0.80 GB** | 0.63 – 1.10 GB | 0.29 GB |
+| Typical (3.25 h) | 592 MB | 18.0 GB | 54.1 GB | 108 GB | **216 GB** | 169 – 298 GB | 80 GB |
+| Heavy (12 h) | 2,186 MB | 66.5 GB | 200 GB | 399 GB | **799 GB** | 625 – 1,100 GB | 294 GB |
 
-Range: slowest kept rate with the measured 50.6 kB per frame, to the fastest with 66 kB.
+Range: slowest kept rate with the movie's per-frame sizes, to the fastest kept rate with 8.4 sightings per frame.
 
 ![app storage over 12 months](vector-growth/vector-growth-storage.png)
 
 **Reading:**
-- **Storage runs out long before search gets slow.** A typical first-person user has 187 GB of app data after a year,
-  and 15.6 GB after the first month. Search at that point (about 63k vectors) still takes about 67 ms on the hot A32 (estimated from the measured 50k–100k).
-- **The audio file is 73 % of it.** Deleting the 16 kHz WAV once speech has been processed (already noted as the next
-  saving in `2026-11-13-read-from-gallery.md`) cuts the typical year to 50 GB. The other 27 % is the kept frames:
-  their JPEGs (33–45 kB each) are most of it.
-- **Per hour of first-person video: about 158 MB** (142 – 196 MB). Head 2 C2's "126 MB an hour" was measured on kit
-  clip 1 looped four times, where dedup kept only 13 frames in 5 minutes (2.6 a minute), so it is low for real use.
-- Light users stay under 1 GB a year.
+- **Storage runs out long before search gets slow.** A typical first-person user has 216 GB of app data after a year,
+  and 18 GB after the first month. Search at that point (about 63k vectors) still takes about 67 ms on the hot A32
+  (estimated from the measured 50k–100k).
+- **The audio file is 63 % of it.** Deleting the 16 kHz WAV once speech has been processed (already noted as the next
+  saving in `2026-11-13-read-from-gallery.md`) cuts the typical year to 80 GB. Of the rest, the kept frames' JPEGs are
+  the largest part (146 MB a day), then the database rows (60 MB a day, most of it sightings).
+- **16 KB database pages (EYKO-167) would save about 8.8 GB a year** for the typical user (database rows 29 → 17 kB per
+  kept frame).
+- **Per hour of first-person video: about 182 MB** (143 – 251 MB). Head 2 C2's "126 MB an hour" was measured on kit
+  clip 1 looped four times, where dedup kept only 13 frames in 5 minutes (2.6 a minute), and it counted only the video
+  folder, so it is low for real use.
+- Light users stay around 1 GB a year.
 
 ## Step 4: against what the phones can do
 
@@ -155,7 +171,8 @@ pass mark (EYKO-101's own title asked for a source; none of S7, S8 names 200 ms)
 3. **Search times past 100k are extrapolated**, linearly from three measured sizes; the A32 on battery also slows its
    fast cores after about 90 s (EYKO-111).
 4. **Storage assumes nothing is ever deleted** (no "delete a video" yet, EYKO-66) and that the WAV stays (as built). The
-   63 kB per kept frame comes from screen and camera clips; camera JPEGs may be larger (EYKO-116 limits).
+   The kept frame's folder size (70.7 kB) comes from one camera clip of 13 kept frames; the database part is checked on
+   one measured run (−2.4 %), but no whole-app measurement on camera video exists yet. Sightings per kept frame vary 1.9–8.4.
 5. **Only the image table is counted**, because only it is searched. `text_vec` grows at the same rate; it costs storage
    (1.5 KB a row) but no search time today. `audio_vec` would add rows once speech windows exist.
 
