@@ -1,0 +1,312 @@
+{
+ "sqlite": "3.37.2",
+ "vectors": {
+  "image": "data/eyko91_coco/images_512.f32",
+  "text": "android/app/src/androidTest/assets/vectors/own_text_384.f32"
+ },
+ "per_kept_frame": {
+  "frame_rows": 17,
+  "sightings": 5.4,
+  "kept_per_video": 53
+ },
+ "e4_order": {
+  "page_then_wal": 16384,
+  "wal_then_page": 4096
+ },
+ "e1_library_20k": {
+  "4096": {
+   "page_size": 4096,
+   "file_bytes": 649568256,
+   "insert_s": 12.09,
+   "rows": {
+    "frames": 340000,
+    "scene_records": 20000,
+    "image_vec": 20000,
+    "video_texts": 20000,
+    "text_vec": 20000,
+    "object_sightings": 108000
+   },
+   "table_bytes": {
+    "audio_segments": 4096,
+    "audio_vec": 4096,
+    "audio_windows": 4096,
+    "frames": 68784128,
+    "image_vec": 82128896,
+    "object_sightings": 444895232,
+    "scene_records": 9134080,
+    "videos": 172032,
+    "sqlite_schema": 12288,
+    "text_vec": 41058304,
+    "transcript_chunks": 4096,
+    "video_texts": 2457600,
+    "video_texts_fts": 909312
+   },
+   "bytes_per_row": {
+    "frames": 202.3,
+    "scene_records": 456.7,
+    "image_vec": 4106.4,
+    "video_texts": 122.9,
+    "text_vec": 2052.9,
+    "object_sightings": 4119.4
+   },
+   "per_kept_frame_bytes": 32478,
+   "max_id_ms": 0.008,
+   "full_read_s": 0.04,
+   "image_vec_identical": true
+  },
+  "8192": {
+   "page_size": 8192,
+   "file_bytes": 464756736,
+   "insert_s": 9.23,
+   "rows": {
+    "frames": 340000,
+    "scene_records": 20000,
+    "image_vec": 20000,
+    "video_texts": 20000,
+    "text_vec": 20000,
+    "object_sightings": 108000
+   },
+   "table_bytes": {
+    "audio_segments": 8192,
+    "audio_vec": 8192,
+    "audio_windows": 8192,
+    "frames": 67870720,
+    "image_vec": 54689792,
+    "object_sightings": 296697856,
+    "scene_records": 9076736,
+    "videos": 188416,
+    "sqlite_schema": 8192,
+    "text_vec": 32817152,
+    "transcript_chunks": 8192,
+    "video_texts": 2433024,
+    "video_texts_fts": 942080
+   },
+   "bytes_per_row": {
+    "frames": 199.6,
+    "scene_records": 453.8,
+    "image_vec": 2734.5,
+    "video_texts": 121.7,
+    "text_vec": 1640.9,
+    "object_sightings": 2747.2
+   },
+   "per_kept_frame_bytes": 23238,
+   "max_id_ms": 0.008,
+   "full_read_s": 0.028,
+   "image_vec_identical": true
+  },
+  "16384": {
+   "page_size": 16384,
+   "file_bytes": 414154752,
+   "insert_s": 10.03,
+   "rows": {
+    "frames": 340000,
+    "scene_records": 20000,
+    "image_vec": 20000,
+    "video_texts": 20000,
+    "text_vec": 20000,
+    "object_sightings": 108000
+   },
+   "table_bytes": {
+    "audio_segments": 16384,
+    "audio_vec": 16384,
+    "audio_windows": 16384,
+    "frames": 67518464,
+    "image_vec": 46874624,
+    "object_sightings": 254394368,
+    "scene_records": 8863744,
+    "videos": 196608,
+    "sqlite_schema": 16384,
+    "text_vec": 32784384,
+    "transcript_chunks": 16384,
+    "video_texts": 2441216,
+    "video_texts_fts": 999424
+   },
+   "bytes_per_row": {
+    "frames": 198.6,
+    "scene_records": 443.2,
+    "image_vec": 2343.7,
+    "video_texts": 122.1,
+    "text_vec": 1639.2,
+    "object_sightings": 2355.5
+   },
+   "per_kept_frame_bytes": 20708,
+   "max_id_ms": 0.008,
+   "full_read_s": 0.023,
+   "image_vec_identical": true
+  },
+  "32768": {
+   "page_size": 32768,
+   "file_bytes": 392495104,
+   "insert_s": 11.29,
+   "rows": {
+    "frames": 340000,
+    "scene_records": 20000,
+    "image_vec": 20000,
+    "video_texts": 20000,
+    "text_vec": 20000,
+    "object_sightings": 108000
+   },
+   "table_bytes": {
+    "audio_segments": 32768,
+    "audio_vec": 32768,
+    "audio_windows": 32768,
+    "frames": 67272704,
+    "image_vec": 43745280,
+    "object_sightings": 237469696,
+    "scene_records": 8814592,
+    "videos": 229376,
+    "sqlite_schema": 32768,
+    "text_vec": 31260672,
+    "transcript_chunks": 32768,
+    "video_texts": 2457600,
+    "video_texts_fts": 1081344
+   },
+   "bytes_per_row": {
+    "frames": 197.9,
+    "scene_records": 440.7,
+    "image_vec": 2187.3,
+    "video_texts": 122.9,
+    "text_vec": 1563.0,
+    "object_sightings": 2198.8
+   },
+   "per_kept_frame_bytes": 19625,
+   "max_id_ms": 0.008,
+   "full_read_s": 0.022,
+   "image_vec_identical": true
+  },
+  "65536": {
+   "page_size": 65536,
+   "file_bytes": 391839744,
+   "insert_s": 13.31,
+   "rows": {
+    "frames": 340000,
+    "scene_records": 20000,
+    "image_vec": 20000,
+    "video_texts": 20000,
+    "text_vec": 20000,
+    "object_sightings": 108000
+   },
+   "table_bytes": {
+    "audio_segments": 65536,
+    "audio_vec": 65536,
+    "audio_windows": 65536,
+    "frames": 67371008,
+    "image_vec": 42401792,
+    "object_sightings": 237436928,
+    "scene_records": 8847360,
+    "videos": 327680,
+    "sqlite_schema": 65536,
+    "text_vec": 31326208,
+    "transcript_chunks": 65536,
+    "video_texts": 2490368,
+    "video_texts_fts": 1310720
+   },
+   "bytes_per_row": {
+    "frames": 198.2,
+    "scene_records": 442.4,
+    "image_vec": 2120.1,
+    "video_texts": 124.5,
+    "text_vec": 1566.3,
+    "object_sightings": 2198.5
+   },
+   "per_kept_frame_bytes": 19592,
+   "max_id_ms": 0.008,
+   "full_read_s": 0.022,
+   "image_vec_identical": true
+  }
+ },
+ "e2_image_100k": {
+  "4096": {
+   "page_size": 4096,
+   "file_bytes": 410619904,
+   "bytes_per_row": 4106.2,
+   "insert_s": 7.68,
+   "max_id_ms": 0.008,
+   "full_read_s": 0.209,
+   "identical": true
+  },
+  "16384": {
+   "page_size": 16384,
+   "file_bytes": 234242048,
+   "bytes_per_row": 2342.4,
+   "insert_s": 5.0,
+   "max_id_ms": 0.004,
+   "full_read_s": 0.117,
+   "identical": true
+  }
+ },
+ "e3_migrate_100k": {
+  "before": {
+   "page_size": 4096,
+   "journal": "wal",
+   "file_bytes": 410619904
+  },
+  "vacuum_while_wal": {
+   "vacuum_s": 2.22,
+   "page_size_after": 4096
+  },
+  "after_leaving_wal": {
+   "page_size": 16384,
+   "journal": "wal",
+   "file_bytes": 234242048,
+   "vacuum_s": 1.9,
+   "integrity": "ok",
+   "identical": true,
+   "max_frame_id": 100000
+  }
+ },
+ "e5_small_writes_and_reads": {
+  "4096": {
+   "commit_ms": 4.146,
+   "wal_bytes_per_commit": 34059,
+   "wal_pages_per_commit": 8.32,
+   "read_ms": {
+    "sighting_by_id": 0.0087,
+    "scene_by_frame": 0.0056,
+    "latest_of_label": 0.2664
+   },
+   "sqlite_cache_kib": 2000,
+   "cache_pages": 500,
+   "file_bytes": 649580544
+  },
+  "16384": {
+   "commit_ms": 4.536,
+   "wal_bytes_per_commit": 123115,
+   "wal_pages_per_commit": 7.51,
+   "read_ms": {
+    "sighting_by_id": 0.0098,
+    "scene_by_frame": 0.0067,
+    "latest_of_label": 0.1922
+   },
+   "sqlite_cache_kib": 2000,
+   "cache_pages": 125,
+   "file_bytes": 414171136
+  },
+  "32768": {
+   "commit_ms": 4.358,
+   "wal_bytes_per_commit": 237196,
+   "wal_pages_per_commit": 7.24,
+   "read_ms": {
+    "sighting_by_id": 0.0178,
+    "scene_by_frame": 0.0117,
+    "latest_of_label": 0.2113
+   },
+   "sqlite_cache_kib": 2000,
+   "cache_pages": 62,
+   "file_bytes": 392495104
+  },
+  "65536": {
+   "commit_ms": 5.31,
+   "wal_bytes_per_commit": 458265,
+   "wal_pages_per_commit": 6.99,
+   "read_ms": {
+    "sighting_by_id": 0.016,
+    "scene_by_frame": 0.0106,
+    "latest_of_label": 0.2399
+   },
+   "sqlite_cache_kib": 2000,
+   "cache_pages": 31,
+   "file_bytes": 391839744
+  }
+ }
+}

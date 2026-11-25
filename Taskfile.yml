@@ -197,6 +197,13 @@ tasks:
   vector-growth:
     desc: "EYKO-101 — image vectors a user has after 1, 3, 6, 12 months (our kept-frame rate x sourced minutes a day), table + graph"
     cmd: uv run --no-project --python 3.10 --with numpy==2.2.6 --with matplotlib==3.10.9 python -I src/benchmarks/vector_growth.py
+  page-size:
+    desc: "EYKO-167 — vector tables at SQLite page sizes 4-64 KB on the real schema with real vectors, WAL conversion (laptop)"
+    cmd: uv run --no-project --python 3.10 --with numpy==2.2.6 python -I src/benchmarks/vector_page_size.py
+
+  page-size-plot:
+    desc: "EYKO-167 — draw the page-size trade-off (space, WAL bytes per small commit, single-row reads) from page-size.json"
+    cmd: uv run --no-project --python 3.10 --with numpy==2.2.6 --with matplotlib==3.10.9 python -I src/benchmarks/plot_page_size.py
 
   latest-profile:
     desc: "EYKO-120 — time the `latest` stage's crop cut, crop vectors and relink against faster versions with the same output (real test frame, the 90 Pixel crops, COCO vectors)"
