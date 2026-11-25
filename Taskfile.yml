@@ -194,6 +194,14 @@ tasks:
     desc: "EYKO-15 — compare crop vectors of same-object and different-object pairs and print the threshold with the fewest wrong calls (give the phone's object crops json and the identity csv)"
     cmd: uv run python src/benchmarks/crop_pairs.py {{.CLI_ARGS}}
 
+  page-size:
+    desc: "EYKO-167 — vector tables at SQLite page sizes 4-64 KB on the real schema with real vectors, WAL conversion (laptop)"
+    cmd: uv run --no-project --python 3.10 --with numpy==2.2.6 python -I src/benchmarks/vector_page_size.py
+
+  page-size-plot:
+    desc: "EYKO-167 — draw the page-size trade-off (space, WAL bytes per small commit, single-row reads) from page-size.json"
+    cmd: uv run --no-project --python 3.10 --with numpy==2.2.6 --with matplotlib==3.10.9 python -I src/benchmarks/plot_page_size.py
+
   latest-profile:
     desc: "EYKO-120 — time the `latest` stage's crop cut, crop vectors and relink against faster versions with the same output (real test frame, the 90 Pixel crops, COCO vectors)"
     cmd: uv run --no-project --python 3.10 --index https://download.pytorch.org/whl/cpu --index-strategy unsafe-best-match --with open_clip_torch --with "onnx==1.23.*" --with onnxruntime --with pillow --with numpy==2.2.6 --with matplotlib==3.10.9 python -I src/benchmarks/latest_profile.py
