@@ -126,6 +126,13 @@ than the 63 kB used there, so EYKO-101's storage totals are about 10–15 % low 
 with (a) for new databases if the phone shows it can be set. 16 KB, not larger: 32 KB saves 5 % more and 64 KB nothing,
 while small commits write 2–3.7× more and point reads take 1.8× as long (E5).
 
+**What adopting it costs in the app (review, 25 Nov):** the app opens `memories.db` through Room
+(`MemoryDatabase.getInstance`: `Room.databaseBuilder(...).addCallback(roomCallback)`), and a Room callback only gets
+`onCreate` and `onOpen`, never `onConfigure`. So the test's third way (WAL off and the page size in `onConfigure`) is not
+reachable as the app is built. Option (a) would need a small `SupportSQLiteOpenHelper.Factory` that wraps the framework
+one and adds the `onConfigure` step, passed with `.openHelperFactory(...)`. Option (b) can run from `onOpen` (no
+transaction is open there), or from that same wrapper. Either is its own change with an ADR 0001 note.
+
 ## Limits
 
 1. **Laptop only so far.** Android's SQLite version, its default page size, and whether its open helper lets the app
@@ -146,5 +153,5 @@ adb shell am instrument -w -e class com.eykon.memory.video.VectorPageSizeTest co
 adb logcat -d -s EYKO167
 ```
 
-Install with `adb install -r` first (never `connectedDebugAndroidTest`). Not compiled on this laptop (no Android SDK
-platform).
+Install with `adb install -r` first (never `connectedDebugAndroidTest`). Compiled on the lead's laptop on 25 Nov
+(`:app:compileDebugAndroidTestKotlin`, no errors); not run on a phone yet.
