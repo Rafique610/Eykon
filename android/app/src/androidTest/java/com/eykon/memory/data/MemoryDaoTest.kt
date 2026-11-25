@@ -129,6 +129,41 @@ class MemoryDaoTest {
         assertEquals(0, indexHits("elephant"))
     }
 
+    @Test
+    fun openReplacesLegacyTriggersAndEditStillWorks() = runBlocking {
+        val sql = db.openHelper.writableDatabase
+        // Put the phone back in the state it had before the fix.
+        listOf("memories_fts_bd", "memories_fts_bu", "memories_fts_au").forEach {
+            sql.execSQL("DROP TRIGGER IF EXISTS $it")
+        }
+        sql.execSQL(
+            "CREATE TRIGGER memories_ad AFTER DELETE ON memories BEGIN " +
+                "INSERT INTO memories_fts(memories_fts, docid, text) VALUES('delete', old.id, old.text); END"
+        )
+        sql.execSQL(
+            "CREATE TRIGGER memories_au AFTER UPDATE ON memories BEGIN " +
+                "INSERT INTO memories_fts(memories_fts, docid, text) VALUES('delete', old.id, old.text); " +
+                "INSERT INTO memories_fts(docid, text) VALUES (new.id, new.text); END"
+        )
+
+        // Opening the database twice: the second open must change nothing.
+        MemoryDatabase.roomCallback.onOpen(sql)
+        MemoryDatabase.roomCallback.onOpen(sql)
+
+        val names = sql.query("SELECT name FROM sqlite_master WHERE type='trigger' AND tbl_name='memories'")
+            .use { c -> generateSequence { if (c.moveToNext()) c.getString(0) else null }.toList() }
+        assertEquals(
+            listOf("memories_ai", "memories_fts_au", "memories_fts_bd", "memories_fts_bu"),
+            names.sorted()
+        )
+
+        val id = dao.insert(MemoryRecord(text = "old phone", embedding = emptyList(), timestamp = "2026-09-09T01:00:00"))
+        dao.update(dao.getById(id)!!.copy(text = "upgraded phone"))
+        assertEquals(0, indexHits("old"))
+        dao.deleteById(id)
+        assertEquals(0, indexHits("upgraded"))
+    }
+
     private fun indexHits(word: String): Int =
         db.openHelper.writableDatabase
             .query("SELECT docid FROM memories_fts WHERE memories_fts MATCH ?", arrayOf(word))
