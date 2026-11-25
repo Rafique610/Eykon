@@ -53,7 +53,7 @@ is kit clip 1 looped, so dedup drops the repeats.
 | Scenario | Minutes a day | From | Checked |
 |---|---|---|---|
 | **Light**: phone camera, used as people do | **0.72** | 28 videos a month × 47 s (IJHCI 2026 smartphone video study, S2) | search text (page refused) |
-| **Typical**: first-person recording for part of the day | **195 (3.25 h)** | median of three measured daily wear times of personal cameras: 2.8 h and 3.25 h (dementia caregivers, S4), 5.9 h (SenseCam at home, S3) | search text |
+| **Typical**: first-person recording for part of the day | **195 (3.25 h)** | median of three measured daily wear times of personal cameras: 2.8 h and 3.25 h (dementia caregivers, S4), 5.9 h (SenseCam at home, S3) | opened (25 Nov) |
 | **Heavy**: first-person recording, all waking hours | **720 (12 h)** | NTCIR lifeloggers wore the camera 12–14 h a day, breakfast to sleep (S5); lower end taken | search text |
 | Head 2 until now | 60 (1 h) | assumption, no source | — |
 
@@ -162,8 +162,9 @@ pass mark (EYKO-101's own title asked for a source; none of S7, S8 names 200 ms)
 
 1. **Minutes a day: small and mixed samples.** The light figure is one 2026 study of 32–40 people. The typical figure
    comes from camera wear studies (caregivers, home environment) where people were asked to wear a camera, not from
-   people choosing to record video for a memory app; no study of the latter exists that we found. Seven of the eight
-   sources were checked only through search-tool text: the fetch tool refused their domains (`sources.md`).
+   people choosing to record video for a memory app; no study of the latter exists that we found. On 21 Nov seven of
+   the eight sources were checked only through search-tool text; on 25 Nov five of them were opened in a browser and
+   the quotes found (S3, S4, S6, S7, S8). The light (S2) and heavy (S5) figures are still search text (`sources.md`).
 2. **Kept frames per minute in a whole day.** The Ego4D clips (8 min) were cut from longer recordings for benchmark
    questions, so they are busy moments. A full day has long still stretches (desk, sofa), where the cheap filters and
    dedup keep far fewer frames (the screen recording kept 0.35 a minute). So the typical and heavy rows are **upper
@@ -185,4 +186,4 @@ pass mark (EYKO-101's own title asked for a source; none of S7, S8 names 200 ms)
   far one.
 - **Open follow-ups (not done here):** (a) a background hold test with the app's real tables (image mapped only) to
   replace the byte estimate above; (b) one real day-long first-person recording through the pipeline, for a day-long
-  kept-frame rate; (c) open the "search text" sources in a browser and confirm the quotes.
+  kept-frame rate; (c) open S2 and S5 (the two left as search text) and confirm the quotes.
