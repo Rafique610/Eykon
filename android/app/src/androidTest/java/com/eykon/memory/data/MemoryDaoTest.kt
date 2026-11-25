@@ -25,6 +25,7 @@ class MemoryDaoTest {
         val context = ApplicationProvider.getApplicationContext<Context>()
         db = Room.inMemoryDatabaseBuilder(context, MemoryDatabase::class.java)
             .allowMainThreadQueries()
+            .addCallback(MemoryDatabase.roomCallback)
             .build()
         dao = db.memoryDao()
     }
@@ -110,4 +111,26 @@ class MemoryDaoTest {
         dao.deleteAll()
         assertEquals(0, dao.count())
     }
+
+    @Test
+    fun editAndDeleteKeepKeywordIndexInStep() = runBlocking {
+        val id = dao.insert(
+            MemoryRecord(text = "purple giraffe", embedding = emptyList(), timestamp = "2026-09-09T01:00:00")
+        )
+        assertEquals(1, dao.searchFts("giraffe", 5).size)
+
+        dao.update(dao.getById(id)!!.copy(text = "green elephant"))
+        assertEquals(0, indexHits("giraffe"))
+        assertEquals(1, indexHits("elephant"))
+
+        dao.deleteById(id)
+        assertEquals(0, dao.count())
+        // Ask the index itself: searchFts joins memories, so it would hide a stale entry.
+        assertEquals(0, indexHits("elephant"))
+    }
+
+    private fun indexHits(word: String): Int =
+        db.openHelper.writableDatabase
+            .query("SELECT docid FROM memories_fts WHERE memories_fts MATCH ?", arrayOf(word))
+            .use { it.count }
 }
