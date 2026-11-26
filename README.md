@@ -18,7 +18,7 @@ Built using a **feature-based file structure**:
   - `MemoryRecord.kt`: Room SQLite entity mirroring the Phase 1 schema (`id`, `text`, `embedding`, `timestamp`, `source_type`, `metadata`).
   - `Converters.kt`: Room TypeConverter serializing `List<Float>` ↔ SQLite TEXT (JSON string) for the 384-dim vector.
   - `MemoryDao.kt`: Suspend CRUD methods (`insert`, `insertAll`, `getAll`, `getById`, `deleteById`, `count`, `deleteAll`, `searchFts`) + `getAllAsFlow()`.
-  - `MemoryDatabase.kt`: Room SQLite database singleton (`memories.db`) with `fts4` virtual table synchronization and triggers.
+  - `MemoryDatabase.kt`: Room SQLite database singleton (`memories.db`) with `fts4` virtual table synchronization and triggers. The delete and edit triggers use a plain `DELETE FROM memories_fts WHERE docid = old.id` before the row changes (fts4 has no FTS5 `'delete'` command; EYKO-67); phones with the old `memories_ad` / `memories_au` triggers get them dropped by name on open.
 - `android/app/src/main/java/com/eykon/memory/capture/`:
   - `TextCaptureService.kt`: Input validation, token-bounded chunking, and `MemoryRecord` assembly (supports `sourceType = "text"` and `"audio"`).
   - `AudioCaptureService.kt`: Low-level 16kHz 16-bit Mono PCM audio capture using Android `AudioRecord` with RIFF/WAVE header assembly.

@@ -194,6 +194,9 @@ tasks:
     desc: "EYKO-15 — compare crop vectors of same-object and different-object pairs and print the threshold with the fewest wrong calls (give the phone's object crops json and the identity csv)"
     cmd: uv run python src/benchmarks/crop_pairs.py {{.CLI_ARGS}}
 
+  vector-growth:
+    desc: "EYKO-101 — image vectors a user has after 1, 3, 6, 12 months (our kept-frame rate x sourced minutes a day), table + graph"
+    cmd: uv run --no-project --python 3.10 --with numpy==2.2.6 --with matplotlib==3.10.9 python -I src/benchmarks/vector_growth.py
   page-size:
     desc: "EYKO-167 — vector tables at SQLite page sizes 4-64 KB on the real schema with real vectors, WAL conversion (laptop)"
     cmd: uv run --no-project --python 3.10 --with numpy==2.2.6 python -I src/benchmarks/vector_page_size.py
