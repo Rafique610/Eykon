@@ -58,7 +58,8 @@ Not measurements, so no graph: the proof that Android blocks sqlite-vec (raw log
 
 | Claim | Write-up | Raw evidence |
 |---|---|---|
-| Search loop 5.9× faster, 2,400/2,400 hits the same | [Head-7-Search.docx](documents/Head-7-Search.docx) | [vectors/search/](results/vectors/search/) |
+| **EYKO-100**, the vector loop alone (four running sums, keep the best 20 instead of sorting): 100k vectors, A32 536.8 → 91.0 ms (**5.9×**), Pixel 261.6 → 38.8 ms (6.7×); same top 20 on 400 of 400 checks | [Head-2-Setup-and-storage.docx](documents/Head-2-Setup-and-storage.docx) (Figure 3, B5) | [a32-2026-11-04-sweep-real.csv](results/vectors/a32-2026-11-04-sweep-real.csv), [pixel9proxl-2026-11-04-sweep-real.csv](results/vectors/pixel9proxl-2026-11-04-sweep-real.csv) (`blob_memory_dot` → `blob_memory_fast`) |
+| **EYKO-102**, the whole search (text to result cards: plain number arrays, frames read as id + video + time only, path and caption read for the hits alone): 20k kept frames, A32 1,286 → 302 ms (**4.3×**), Pixel 493 → 119 ms (**4.1×**); **2,400 of 2,400 hits identical** | [Head-7-Search.docx](documents/Head-7-Search.docx) (section 5, Figures 1–2) | [vectors/search/](results/vectors/search/) (before / after CSVs and hit lists), [compare_search_hits.py](../src/benchmarks/compare_search_hits.py) |
 | Mapped NEON vectors 5.5× faster (573.8 → 102.5 ms at 100k, A32) | [2026-11-08-mapped-fast.md](results/2026-11-08-mapped-fast.md), [2026-11-08-adopt-mapped.md](results/2026-11-08-adopt-mapped.md) | [vectors/](results/vectors/) |
 | Speed from 1k to 300k on 3 phones | [2026-11-05-vectors-phone-sweep.md](results/2026-11-05-vectors-phone-sweep.md) | [vectors/](results/vectors/) (`*-sweep*.csv`) |
 | 4–5 MB of Java memory instead of out-of-memory at 50k | [2026-11-07-vectors-off-heap.md](results/2026-11-07-vectors-off-heap.md) | [vectors/offheap/](results/vectors/offheap/) |
@@ -69,11 +70,11 @@ Not measurements, so no graph: the proof that Android blocks sqlite-vec (raw log
 
 **Graphs**
 
-*Search loop: the app's whole search before (grey) and after*
+*EYKO-102: the app's whole search before (grey) and after*
 
 ![Search loop: the app's whole search before (grey) and after](documents/source/figures/head7-search-before-after.png)
 
-*Search loop: old against faster loop, same answers*
+*EYKO-100: old against faster vector loop, same answers*
 
 ![Search loop: old against faster loop, same answers](documents/source/figures/head2-vector-fast-loop.png)
 
