@@ -1,0 +1,4 @@
+--------- beginning of main
+11-26 20:20:09.009 16259 16282 I EYKO167 : convert: 100000 rows inserted in 27268 ms; before: page_size 4096, journal wal, 412037120 B on disk
+11-26 20:21:02.868 16259 16282 I EYKO167 : convert: VACUUM 53696 ms (page size set by execSQL); after: page_size 16384, journal wal, 234700800 B on disk; integrity ok
+11-26 20:22:00.493 16259 16282 I EYKO167 : convert: page_size after reopening 16384; scores bit-identical for 20 queries: true; rows 100000

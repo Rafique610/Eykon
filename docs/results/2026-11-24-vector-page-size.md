@@ -2,7 +2,7 @@
 
 Head 2 storage. EYKO-97 found that a 512-number vector row (2,048 B) takes 4,107 B on disk, because SQLite's default
 4 KB page holds only one. This card measures the options on the laptop (done here) and on phones with `VectorPageSizeTest`
-(Infinix done 26 Nov, EYKO-175; Pixel pending, EYKO-174). Run: `task page-size` (`src/benchmarks/vector_page_size.py`); numbers:
+(Infinix, EYKO-175, and Pixel, EYKO-174, both 26 Nov). Run: `task page-size` (`src/benchmarks/vector_page_size.py`); numbers:
 [`page-size/page-size.json`](page-size/page-size.json). **No schema change is made on this card** (the lead decides).
 
 **Short answer (laptop).** With 16 KB pages a realistic library is **36 % smaller** (20,000 kept frames: 650 MB →
@@ -10,8 +10,9 @@ Head 2 storage. EYKO-97 found that a 512-number vector row (2,048 B) takes 4,107
 **`object_sightings`**: each sighting also stores a 2 KB crop vector, and there are 5.4 per kept frame. **But a database
 in WAL mode keeps its page size**, and Android switches WAL on when it opens the app's database. So the page size can
 only be changed by leaving WAL for a moment: on the laptop that works (`VACUUM` of 100k image rows in 1.9 s, data
-identical). **On the Infinix (Android 13) converting works** (100k image rows 412 → 235 MB, VACUUM 13.9 s, scores bit-identical),
-**but a new database cannot be made at 16 KB** through the app's callbacks: it starts at 4 KB in WAL mode.
+identical). **On both phones (Infinix, Android 13; Pixel, Android 17) converting works** (100k image rows 412 → 235 MB, scores
+bit-identical; VACUUM 13.9 s on the Infinix, 54–57 s on the nearly full Pixel), **but a new database cannot be made at
+16 KB** through the app's callbacks: it starts at 4 KB in WAL mode on both.
 
 ## Setup
 
@@ -75,7 +76,7 @@ uses WAL by default; the app sets no journal mode). So setting the page size in 
 be ignored, as in the second row. **Infinix (Android 13, 26 Nov, EYKO-175): confirmed, and worse.** All three ways in
 `VectorPageSizeTest.whereTheAppCanSetThePageSizeOfANewDatabase` ended at 4,096 B pages with WAL on: the default, a PRAGMA
 in `onConfigure`, and even WAL off / PRAGMA / WAL on in `onConfigure`. By `onConfigure` the new file is already set up
-in WAL mode, so its page size is fixed. Pixel (Android 17): pending (EYKO-174).
+in WAL mode, so its page size is fixed. **Pixel (Android 17, 26 Nov, EYKO-174): the same**, 4,096 B all three ways.
 
 ## E5: what bigger pages cost (added 25 Nov)
 
@@ -121,33 +122,36 @@ than the 63 kB used there, so EYKO-101's storage totals are about 10–15 % low 
 
 | Option | What it takes | Saves | Risk |
 |---|---|---|---|
-| (a) 16 KB for new databases only | Set the page size before WAL is on (E4) | new installs only | **not possible through `onConfigure` on the Infinix** (all three ways stayed at 4 KB); a new database would need the same conversion as (b) |
-| (b) convert existing databases once | WAL off, `PRAGMA page_size=16384`, `VACUUM`, WAL on, once at startup | every install, about 36 % of the database | a one-off VACUUM: **13.9 s for 100k image rows on the Infinix** (412.0 → 234.7 MB, data identical), and free space equal to the database |
+| (a) 16 KB for new databases only | Set the page size before WAL is on (E4) | new installs only | **not possible through `onConfigure` on Android 13 or 17** (all three ways stayed at 4 KB on the Infinix and the Pixel); a new database would need the same conversion as (b) |
+| (b) convert existing databases once | WAL off, `PRAGMA page_size=16384`, `VACUUM`, WAL on, once at startup | every install, about 36 % of the database | a one-off VACUUM of 100k image rows (412.0 → 234.7 MB, data identical): **13.9 s on the Infinix, 53.7 and 56.7 s on the Pixel** (99 % full); free space equal to the database |
 | (c) leave it | nothing | nothing | the cost stays as accepted in ADR 0001 |
 
-**Proposed (laptop + Infinix; Pixel pending):** (b) only, run once when the app opens and finds a 4 KB database, and also
-right after a new database is created, since (a) does not work on the Infinix. 16 KB, not larger: 32 KB saves 5 % more and 64 KB nothing,
+**Proposed (laptop + both phones):** (b) only, run once when the app opens and finds a 4 KB database, and also right
+after a new database is created, since (a) does not work on Android 13 or 17. 16 KB, not larger: 32 KB saves 5 % more and 64 KB nothing,
 while small commits write 2–3.7× more and point reads take 1.8× as long (E5).
 
 **What adopting it costs in the app (review, 25 Nov):** the app opens `memories.db` through Room
 (`MemoryDatabase.getInstance`: `Room.databaseBuilder(...).addCallback(roomCallback)`), and a Room callback only gets
 `onCreate` and `onOpen`, never `onConfigure`. On the Infinix even that third way (WAL off and the page size in `onConfigure`)
 stayed at 4 KB, so a wrapping open-helper factory would not help for (a) either. Option (b) can run from `onOpen` (no
-transaction is open there). On the Infinix it took 13.9 s for 100k rows, so it must run off the main thread
-(WorkManager or a background job), not block the first screen. It is its own change with an ADR 0001 note.
+transaction is open there). It took 13.9 s for 100k rows on the Infinix and up to 56.7 s on the Pixel, so it must
+run off the main thread (WorkManager or a background job), not block the first screen, and check first that free space
+is at least the database's size. It is its own change with an ADR 0001 note.
 
 ## Limits
 
-1. **One phone so far.** The Infinix (Android 13) ran both tests; the Pixel (Android 17, EYKO-174) has not. Android's
-   database layer differs between versions, so the Pixel could answer (a) differently. Laptop times are not phone times
-   (VACUUM: 1.9 s laptop, 13.9 s Infinix).
+1. **Two phones, one run each (the Pixel's conversion twice).** Both Android versions gave the same answer on (a). The
+   VACUUM times differ a lot: 1.9 s laptop, 13.9 s Infinix, 53.7 / 56.7 s Pixel. The Pixel was charging at 32 °C, so
+   not hot; its storage was 99 % full (1.6 GB free of 109 GB), which is the likely cause but is **not measured** (the
+   Pixel was not re-run with more free space). A phone with little free space is exactly where this conversion would
+   run, so the slow number is the one to plan for.
 2. The library is synthetic in its proportions (checked within 2 % against a measured run), with real vectors and real
    caption text. Sightings per kept frame vary (5.4 on clip 1, 8.4 on clip 2, 1.9 on the movie); more sightings mean a
    bigger saving.
 3. E5's timings are laptop (NVMe) timings with a warm OS file cache; a phone's flash and a cold cache could widen the
    gaps. The WAL bytes per commit do not depend on the disk.
 
-## Phone check (Infinix done 26 Nov; Pixel pending)
+## Phone check (Infinix and Pixel, 26 Nov)
 
 `android/app/src/androidTest/java/com/eykon/memory/video/VectorPageSizeTest.kt`, one phone (the Pixel, by the team's
 rule), on its own test database (`eyko167_pagesize.db`, deleted at the end), never `memories.db`:
@@ -171,4 +175,19 @@ Install with `adb install -r` first (never `connectedDebugAndroidTest`). Compile
 | Integrity, page size after reopening | ok, 16,384 |
 | Search scores before and after | bit-identical for 20 queries |
 
-Pixel (Android 17): EYKO-174, not run yet.
+**Pixel 9 Pro XL, Android 17 (Rafique, EYKO-174, 26 Nov):** charging, 32 °C, 1.6 GB free of 109 GB. The two tests run
+one at a time (logs saved after each, so the log buffer drops nothing), the conversion twice. Logs:
+`page-size/pixel-2026-11-26-*.txt`.
+
+| Check | Run 1 | Run 2 |
+|---|---|---|
+| New database, default / PRAGMA in `onConfigure` / WAL off in `onConfigure` | 4,096 / 4,096 / 4,096 B pages, WAL on | (not repeated) |
+| Convert 100k image rows: size on disk | 412,037,120 → 234,700,800 B (−43 %) | the same |
+| VACUUM time | 53,696 ms | 56,707 ms |
+| Insert of the 100k rows | 27,268 ms | 24,432 ms |
+| Integrity, page size after reopening | ok, 16,384 | ok, 16,384 |
+| Search scores before and after | bit-identical for 20 queries | bit-identical |
+| Whole test | `OK (1 test)`, 204.2 s | `OK (1 test)`, 201.6 s |
+
+The step after VACUUM (reopen, rebuild the `.vec` search copy, 20 searches) also took about 57 s on the Pixel both
+times, another sign that writes are slow on this phone right now.
