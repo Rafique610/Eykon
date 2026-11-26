@@ -104,27 +104,11 @@ class WhisperTranscriber(private val context: Context) {
                 )
             }
 
-            val modelFile = resolveModelFile()
-            if (modelFile == null) {
-                // If model is not yet sideloaded, provide actionable fallback with push instruction
-                val durationSec = samples.size / AudioCaptureService.SAMPLE_RATE.toFloat()
-                Log.w(
-                    TAG,
-                    "Whisper model not found on device. Sideload to: " +
-                        "/sdcard/Android/data/${context.packageName}/files/models/$DEFAULT_MODEL_NAME"
-                )
-                return@withContext Result.success(
-                    "[Audio captured: ${String.format("%.1f", durationSec)}s] Please push whisper-tiny.en to models directory."
-                )
-            }
-
-            // Real on-device transcription inference placeholder
-            // In full production, this binds to the TFLite / ONNX Whisper session
-            val durationSec = samples.size / AudioCaptureService.SAMPLE_RATE.toFloat()
-            Log.i(TAG, "Transcribing ${samples.size} samples (${durationSec}s) with ${modelFile.name}...")
-
-            // Return transcribed text string
-            Result.success("Voice memo (${String.format("%.1f", durationSec)}s recorded)")
+            // EYKO-145: no speech engine is wired yet (EYKO-8), so never return text the person did not say.
+            val reason = if (resolveModelFile() == null) "no speech model on this phone"
+            else "speech to text is not built yet (EYKO-8)"
+            Log.w(TAG, "Not transcribed: $reason")
+            Result.failure(UnsupportedOperationException("Not transcribed: $reason"))
         } catch (e: Exception) {
             Log.e(TAG, "Transcription failed: ${e.message}", e)
             Result.failure(e)
