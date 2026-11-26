@@ -86,6 +86,18 @@ def ffmpeg_scene(path: Path, n: int) -> list[float]:
     return sorted(times[i] for i in best)
 
 
+def small_copy(path: Path) -> Path:
+    """EYKO-130: a 360 p copy for PySceneDetect, whose threshold search decodes the clip up to 13 times
+    (hours on 5-minute 1080p clips). Cut detection works on shrunk frames; times are the same file's."""
+    if cv2.VideoCapture(str(path)).get(cv2.CAP_PROP_FRAME_HEIGHT) <= 720:
+        return path
+    out = Path("D:/eykon-cache/bench/small-copies") / path.name
+    if not out.exists():
+        out.parent.mkdir(parents=True, exist_ok=True)
+        subprocess.run([FFMPEG, "-y", "-i", str(path), "-vf", "scale=-2:360", "-an", "-c:v", "libx264", "-preset", "veryfast", str(out)], check=True, capture_output=True)
+    return out
+
+
 def pyscenedetect(path: Path, n: int, adaptive: bool) -> list[float]:
     """PySceneDetect: find cuts, keep the middle frame of each scene. The threshold is searched
     so that the number of scenes is as close to n as it can get."""
@@ -114,10 +126,28 @@ def pyscenedetect(path: Path, n: int, adaptive: bool) -> list[float]:
 # ── running it ────────────────────────────────────────────────────────────────────────────────
 
 
-def main(phone_files: list[str]) -> None:
-    clips = sorted(CLIPS.glob("*.mp4"))
+def uniform_needed(duration: float, moments: list[tuple[float, float]], sharpness: np.ndarray, start: int) -> int | None:
+    """Fewest evenly spaced frames that hit every moment (EYKO-130), searched from `start` up to one per second."""
+    for n in range(max(1, start), int(duration) + 1):
+        if score(uniform(duration, n), moments, sharpness)["hit"] == len(moments):
+            return n
+    return None
+
+
+def main(args: list[str]) -> None:
+    # EYKO-130: `--clips DIR --moments CSV` score another clip set (the long still clips) with the same rules.
+    clips_dir, moments_file = CLIPS, MOMENTS
+    while args and args[0] in ("--clips", "--moments"):
+        if args[0] == "--clips":
+            clips_dir = Path(args[1])
+        else:
+            moments_file = Path(args[1])
+        args = args[2:]
+    phone_files = args
+    clips = sorted(clips_dir.glob("*.mp4"))
     marks: dict[str, list[tuple[float, float]]] = {c.name: [] for c in clips}
-    for row in csv.DictReader(MOMENTS.open(encoding="utf-8")):
+    needed = {}  # clip number -> (ours kept, fewest uniform frames that hit every moment)
+    for row in csv.DictReader(moments_file.open(encoding="utf-8")):
         marks[row["clip"]].append((float(row["start_s"]), float(row["end_s"])))
 
     phones = [json.loads(Path(f).read_text(encoding="utf-8")) for f in phone_files]
@@ -131,18 +161,22 @@ def main(phone_files: list[str]) -> None:
         methods = {f"ours ({phone['device']})": kept[f"clip{number}.mp4"] for phone, kept in zip(phones, ours)}
         methods |= {
             "B0 uniform": uniform(duration, n),
+            "B0 uniform, 1 per 3 s (no budget)": uniform(duration, max(1, round(duration / 3))),
             "B1 codec keyframes (no budget)": iframes(clip),
             "B2 ffmpeg scene filter": ffmpeg_scene(clip, n),
-            "B3 PySceneDetect content": pyscenedetect(clip, n, adaptive=False),
-            "B3 PySceneDetect adaptive": pyscenedetect(clip, n, adaptive=True),
+            "B3 PySceneDetect content": pyscenedetect(small_copy(clip), n, adaptive=False),
+            "B3 PySceneDetect adaptive": pyscenedetect(small_copy(clip), n, adaptive=True),
         }
         for name, kept in methods.items():
             rows.append((group, number, name, score(kept, marks[clip.name], sharpness) | {"minutes": duration / 60}))
+        needed[number] = (n, uniform_needed(duration, marks[clip.name], sharpness, 1))
         print(f"clip {number} ({duration:.1f} s, {len(marks[clip.name])} moments, budget {n}) done", file=sys.stderr)
 
     names = list(dict.fromkeys(r[2] for r in rows))
     for group in ("tuning", "held out", "all"):
         chosen = [r for r in rows if group == "all" or r[0] == group]
+        if not chosen:  # EYKO-130: two clips, so no held-out group
+            continue
         print(f"\n### {group} clips ({', '.join(str(n) for n in sorted({r[1] for r in chosen}))})\n")
         print("| Method | Frames kept | Kept per minute | Moments hit | Moment recall | Wasted frames |")
         print("|---|---|---|---|---|---|")
@@ -157,6 +191,11 @@ def main(phone_files: list[str]) -> None:
     for name in names:
         cells = [next(f"{r[3]['hit']}/{r[3]['moments']} with {r[3]['kept']}" for r in rows if r[1] == n and r[2] == name) for n in range(1, len(clips) + 1)]
         print(f"| {name} | " + " | ".join(cells) + " |")
+    print("\n### frames each needs to hit every moment\n")
+    print("| Clip | Ours kept | Fewest evenly spaced frames that hit every moment |")
+    print("|---|---|---|")
+    for number, (ours_n, uniform_n) in needed.items():
+        print(f"| clip {number} | {ours_n} | {uniform_n if uniform_n else 'none up to 1 per second'} |")
 
 
 if __name__ == "__main__":

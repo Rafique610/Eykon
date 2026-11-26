@@ -85,6 +85,16 @@
         ["Now (sharpest per 3 s)", "19.1", "1.0", "12.4", "**32.6**", "44"]
       ]}},
       "Moments at 44 frames: ours 31 of 35, uniform 34, PySceneDetect content 29, adaptive 20, ffmpeg 13.",
+      {"h3": "Long, mostly still clips on the phone (26 Nov, EYKO-130, untuned)"},
+      "Two 5-minute camera originals with 13 events logged by a person on 14 Oct (S3-01 classroom, S3-04 outside). Pass rule written before the run: every event, at most half the frames evenly spaced needs.",
+      {"table": {"cols": ["Method", "Frames kept", "Events hit (13)", "Kept in idle time"], "widths": [3, 1.5, 1.5, 1.5], "rows": [
+        ["Ours (Pixel)", "59", "**10**", "69 %"],
+        ["B0 uniform, same count", "59", "6", "86 %"],
+        ["B0 uniform, 1 per 3 s", "201", "13", "81 %"],
+        ["B2 ffmpeg scene filter", "59", "5", "66 %"],
+        ["B3 PySceneDetect content", "59", "7", "75 %"]
+      ]}},
+      "**Fails the pass rule; best of all methods at the same count.** Still room: 7 frames kept, 5 of 8 events (phone down, laptop opened, bottle placed missed; uniform needs 30 frames for all 8). Hand-held outside: 5 of 5 but 52 frames where uniform needs 19. Phone cost 23.6 and 25.3 s per video minute. Source: docs/results/2026-11-26-keyframes-still-video.md.",
       {"h3": "Outside data: EPIC-KITCHENS-100 (13 Oct, untuned)"},
       "Eight head-camera kitchen videos, 11 minutes, 158 moments marked by the dataset's own annotators. Run with the laptop copy at the phone's thresholds **before the slot rule existed**.",
       {"table": {"cols": ["Method", "Frames", "Moments hit (158)"], "widths": [3.5, 1.5, 2], "rows": [
