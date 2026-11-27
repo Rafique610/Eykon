@@ -22,7 +22,7 @@ Infinix answers these; where only the slowest phone could settle a point, that i
 | 5b | Move the crop vector out of the sightings row | **Refuted**: 4,212 against 4,122 B a sighting; 16 KB pages (EYKO-167) are what helps | nothing |
 | 6 | A separate vector file with 16 KB pages instead of converting with VACUUM | **Refuted**: own file stays 4 KB; ATTACH gives 16 KB but Android then turns WAL off | nothing; VACUUM conversion stays (EYKO-175) |
 | 7 | Accelerators for the models (XNNPACK, NNAPI; a GPU run for the VLM) | **Not tested**: no completed phone run | nothing; open |
-| 8 | Drop YOLOX-Tiny beside D-FINE (EYKO-134) | **Not supported**: YOLOX alone finds 75 of 1,400 COCO objects (and makes 85 wrong boxes). The one-open-vocabulary-detector variant: not tested | nothing |
+| 8 | Drop YOLOX-Tiny beside D-FINE (EYKO-134) | **Not supported**: YOLOX alone finds 75 of 1,400 COCO objects (and makes 85 wrong boxes). One open-vocabulary detector instead of two: not supported by the 14 Oct re-scored numbers (YOLOE-11L short list: 39 of 122 everyday things against D-FINE S 52); broad-list YOLOE-11L never measured | nothing |
 | 9a | Hybrid search per channel (keywords for transcripts) | **Not testable yet**: no transcripts exist (EYKO-7/8) | recorded here for decision D2 (EYKO-75) |
 | 9b | One "not found" cut-off on the best score (EYKO-138) | **Refuted** on COCO: about 25 % wrong calls (fixed or relative cut-off) | nothing; EYKO-138 needs another signal |
 | 10 | Many Ego4D gains may be inside the noise | **Holds**: R@1 window gain, any-object crops (per set), smoothing ±6 s and the 0.85 choice are not shown | per-question results are now saved (`ego4d_eval.py`) |
@@ -200,9 +200,21 @@ EYKO-121, the app's rules for both models, against COCO's person-drawn boxes. Ra
 
 People count (168 photos with people): D-FINE's own "person" is a little better on COCO (mean error 0.62 against 0.73; misses
 everyone in 2 photos against 10), but it called keys a person on our own clips, which is why the app counts with YOLOX.
-The other variant in the proposal, one open-vocabulary detector (YOLOE-S or L with the full word list) replacing two
-models, was **not tested**: it needs a word list for D-FINE's classes, a YOLOE-S export and person-labelled own frames
-(EYKO-78).
+**The other variant: one open-vocabulary detector instead of two.** No new run: our 14 Oct comparison already measured it on
+the same frames, re-scored on 18 Nov with labels a person checked
+([`2026-10-14-detectors-open-vocabulary.md`](2026-10-14-detectors-open-vocabulary.md), EYKO-72).
+
+| Detector | Everyday things (Ours-44), found of 122 / false alarms | Own small things (Own-50), found of 91 / false alarms | Laptop ms a frame (14 Oct) |
+|---|---|---|---|
+| D-FINE S Objects365 (365 fixed names) | **52** / 11 | 37 / 12 | 370 |
+| YOLOE-11L, our short word list | 39 / 1 | **44** / 6 | 544 |
+| YOLOE-11S, our short word list | 39 / 3 | 20 / 0 | 753 |
+
+YOLOE-11S with its own broad 4,585-name list found 45 everyday and **9** own things (13 false), scored on the earlier
+labels (88 and 87 present), so it is not comparable cell for cell with the table. YOLOE-11L with a short list is better on our
+own things and raises fewer false alarms, but finds fewer everyday things than D-FINE S (39 against 52) and is slower per
+frame; a short list also loses the breadth that captions and sightings use. **Not supported by what we measured.** Never
+measured: YOLOE-11L with a broad (365-name) list, which needs a new export.
 
 **Verdict (for dropping YOLOX): not supported.** Dropping YOLOX loses 75 right finds to save the cheapest model (about 35 ms of the scene step's
 ~320 ms on the laptop). COCO is YOLOX's own training set, so the real check is on person-labelled own clips (EYKO-78).
