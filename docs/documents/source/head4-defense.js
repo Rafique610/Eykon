@@ -261,7 +261,7 @@ const Q = [
   // id, group, q, status, say, show, push, card
   ['A1', 'A', 'Is your frame selection better than existing keyframe methods, on a phone?', 'Partly',
     'Not in general, and we do not claim it. At the same number of frames: on six short hand-held clips evenly spaced frames find **34 of 35** moments and ours **31**. On two long, mostly still clips ours finds **10 of 13** events, evenly spaced 6, PySceneDetect 7, Katna 7, ffmpeg 5. Our real gain is cost: these stages went from 137.5 to 32.6 s per video minute.',
-    'E1, E3, E5, E8 · `docs/results/2026-11-26-keyframes-still-video.md` · `docs/results/2026-11-27-keyframes-katna.md`',
+    'E8 and Figure 1, E1, E3, E5 · `docs/results/2026-11-26-keyframes-still-video.md` · `docs/results/2026-11-27-keyframes-katna.md`',
     'On the long clips ours still failed the rule we wrote before the run (all 13 events, at half the frames evenly spaced needs). 13 events is a small set: one event is 8 points. EPIC ran on a laptop copy, not the phone.', 'Done: EYKO-45, 130, 131'],
   ['A2', 'A', 'Did you compare with Katna, the tool closest to your idea?', 'Answered',
     'Yes, at the same frame count on all three sets. Katna finds the fewest moments every time: **27 of 35** (ours 31, evenly spaced 34), **7 of 13** (ours 10) and **84 of 158** on EPIC (ours 125, evenly spaced 113). Katna 0.9.2, MIT, run untuned in its own environment.',
@@ -420,12 +420,13 @@ body.push(grid([3238, 1600, 1600, 1600, 1600], ['Rule (laptop copy)', 'Long clip
 body.push(P('**Rule:** adopt only if at least 12 of 13 events with at most 59 frames, and EPIC within 1 point. **How close the copy is to the phone:** S3-01 3 of the Pixel\'s 7 frames at the same second, S3-04 49 of 52; the copy finds 9 events where the Pixel finds 10, so rules are compared within the copy only.', { run: { size: 20 }, before: 100 }));
 body.push(SRC('docs/results/2026-11-27-dedup-recent-or-whole.md · docs/results/keyframes/window-still-2026-11-27.md · window-epic-2026-11-27.md · src/benchmarks/keyframe_window.py'));
 
-ev('E8', 'Katna, the closest existing tool, at our frame count (27 Nov, EYKO-131)', 'Katna finds the fewest moments of all methods on every set.');
+ev('E8', 'Katna and every method side by side, at our frame count (27 Nov, EYKO-131)', 'Katna finds the fewest moments of all methods on every set; ours leads on the long still clips and EPIC, and trails evenly spaced frames on the short clips.');
 body.push(grid([3638, 1200, 1200, 1800, 1800], ['Data', 'Frames', 'Ours', 'Evenly spaced', '**Katna**'], [
   ['Six short own clips (35 moments)', '44', '31', '34', '**27**'],
   ['S3-01 + S3-04 (13 events)', '59', '10', '6', '**7**'],
   ['EPIC-KITCHENS-100 (158 moments; ours = laptop copy)', '175', '125', '113', '**84**'],
 ], { firstColBold: true }));
+figure('head4-methods.png', '**Figure 1.** Share of marked moments found by every method at the same frame count as ours, on the three data sets. Ours is best on the long still clips and on EPIC, and behind evenly spaced frames on the short clips. PySceneDetect and ffmpeg were not run at the EPIC budget. Drawn by `figures/head4_keyframes.py` from the saved result tables.');
 body.push(P('Katna 0.9.2 (MIT), one-off environment, asked for exactly our frame count. Its pictures were matched back to the decoded frame they came from to get their times. Long clips were given to it as 360 p copies. Laptop cost 7.5 to 10.8 s per video minute; one 9 s clip took hours and is left out.', { run: { size: 20 }, before: 100 }));
 body.push(SRC('docs/results/2026-11-27-keyframes-katna.md · docs/results/keyframes/katna-six-clips-2026-11-27.md · katna-still-2026-11-27.md · katna-epic-2026-11-27.md · src/benchmarks/keyframe_katna.py'));
 
@@ -502,6 +503,7 @@ body.push(H2('References'));
   'Scripts: `src/benchmarks/keyframe_eval.py`, `keyframe_tune.py`, `keyframe_public.py`, `keyframe_window.py`, `keyframe_katna.py`, `frame_report.py`',
   'Phone benchmark: `android/app/src/androidTest/.../KeyframeBenchmarkTest.kt`',
   'Record document: `docs/documents/source/heads/head4.json`',
+  'Graph: `docs/documents/source/figures/head4_keyframes.py` (run from the repo root with `uv run`)',
 ].forEach((t) => body.push(bullet(t)));
 
 // ======================================================================
