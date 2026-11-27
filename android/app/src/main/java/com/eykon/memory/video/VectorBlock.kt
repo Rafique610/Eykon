@@ -125,6 +125,16 @@ internal class VectorBlock(private val mode: VectorMode, private val rows: Int, 
         }
     }
 
+    /**
+     * Hypothesis 4 (decision re-check): a mapped block hands its pages back to the system, so they stop counting in the
+     * app's memory while it is in the background. The mapping stays valid; the next search reads the pages again.
+     * Returns the bytes released (0 for an unmapped block or when the native library is missing).
+     */
+    fun release(): Long {
+        if (!mode.mapped || !VideoVectors.nativeLoaded) return 0
+        return chunks.sumOf { maxOf(0L, VectorNative.release(it)) }
+    }
+
     private fun scoreInt8(query: FloatArray, out: FloatArray) {
         val q = IntArray(size) { (query[it] * 127f).roundToInt().coerceIn(-127, 127) }
         val scratch = ByteArray(size)
@@ -154,4 +164,10 @@ internal object VectorNative {
 
     /** Writes the dot product of [query] with each of the [rows] vectors in [buffer] to out[outOffset + row]. */
     @JvmStatic external fun scoreF32(buffer: java.nio.ByteBuffer, rows: Int, size: Int, query: FloatArray, out: FloatArray, outOffset: Int)
+
+    /** Gives the pages of a mapped [buffer] back to the system (madvise DONTNEED); returns the bytes released, -1 on failure. */
+    @JvmStatic external fun release(buffer: java.nio.ByteBuffer): Long
+
+    /** Hypotheses 2 + 3: int8 rows (one [scales] entry per row) against int8 [query] codes; out[outOffset + r] = scale * qscale * dot. */
+    @JvmStatic external fun scoreI8(buffer: java.nio.ByteBuffer, rows: Int, size: Int, scales: FloatArray, query: ByteArray, qscale: Float, out: FloatArray, outOffset: Int)
 }

@@ -6,6 +6,7 @@ import com.eykon.memory.data.MemoryDatabase
 import com.eykon.memory.video.VideoJobs
 import com.eykon.memory.video.VideoJobScheduler
 import com.eykon.memory.video.VideoPipeline
+import com.eykon.memory.video.VideoVectors
 import com.eykon.memory.video.VideoWorker
 import androidx.work.WorkManager
 import kotlinx.coroutines.CoroutineScope
@@ -47,6 +48,19 @@ class MemoryApp : Application() {
             }
             videoJobs.requeueBehind(VideoPipeline.STAGES.last().first) // videos processed before newer stages existed
             kickVideoWorker()
+        }
+    }
+
+    /**
+     * Hypothesis 4 (decision re-check, 26 Nov): when the screen is hidden, give the mapped vector pages back, so a
+     * background app does not keep about 230 MB of them counted (the Infinix killed it at 225-276 MB, EYKO-116).
+     * Video jobs never search, so they do not need the pages; the next search reads them again.
+     */
+    override fun onTrimMemory(level: Int) {
+        super.onTrimMemory(level)
+        if (level >= android.content.ComponentCallbacks2.TRIM_MEMORY_UI_HIDDEN) {
+            val bytes = VideoVectors.releaseMapped()
+            if (bytes > 0) android.util.Log.i("EykonVideo", "vectors: released $bytes B of mapped pages (trim level $level)")
         }
     }
 

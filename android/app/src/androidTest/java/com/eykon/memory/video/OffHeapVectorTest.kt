@@ -326,6 +326,13 @@ class OffHeapVectorTest {
             VideoVectors.clearCache()
             val queries = tables.associate { it.third to TestVectors.queries("real", it.third, 1)[0] }
             for ((table, _, size) in tables) VideoVectors.scores(db, table, queries.getValue(size))
+            // Hypothesis 4 (decision re-check, 26 Nov): -e release true does what the app now does when its screen is hidden
+            if (args.getString("release") == "true") {
+                val before = Debug.MemoryInfo().also { Debug.getMemoryInfo(it) }.totalPss / 1024.0
+                val bytes = VideoVectors.releaseMapped()
+                val after = Debug.MemoryInfo().also { Debug.getMemoryInfo(it) }.totalPss / 1024.0
+                Log.i(tag, "hold: released $bytes B of mapped pages, PSS %.0f -> %.0f MB".format(Locale.ROOT, before, after))
+            }
             Log.i(tag, "hold: $mode, $n rows x 3 tables loaded, pid ${android.os.Process.myPid()}, holding $seconds s: open other apps now")
             var waited = 0
             while (waited < seconds) {
