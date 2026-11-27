@@ -22,6 +22,21 @@ object VideoSplit {
     fun frameTimes(durationS: Double, fps: Double = FPS): List<Double> =
         List(ceil(durationS * fps - 1e-6).toInt().coerceAtLeast(0)) { it / fps }
 
+    /**
+     * Idempotent: remove what an earlier run of this stage wrote. The sightings go first, with a relink: deleting the frames
+     * would remove them by cascade and leave other videos' answers pointing at them.
+     * Decision re-check (26 Nov): the frames' image vectors go by cascade too, which VideoVectors cannot see (embed_images
+     * then deletes nothing, so it never called forget, and the search file kept the old rows). So the file is dropped here
+     * when this video had vectors, and rebuilt at the next search.
+     */
+    internal fun clearEarlierRun(db: SupportSQLiteDatabase, videoId: String) {
+        VideoLatest.forget(db, videoId)
+        val hadVectors = db.query("SELECT 1 FROM image_vec WHERE frame_id IN (SELECT id FROM frames WHERE video_id = ?) LIMIT 1", arrayOf(videoId))
+            .use { it.moveToFirst() }
+        db.execSQL("DELETE FROM frames WHERE video_id = ?", arrayOf(videoId))
+        if (hadVectors) VideoVectors.forget(db, "image_vec")
+    }
+
     fun run(db: SupportSQLiteDatabase, videoId: String) {
         val (filePath, sourceUri, durationS) = db.query("SELECT file_path, source_uri, duration_s FROM videos WHERE video_id = ?", arrayOf(videoId)).use { cursor ->
             if (!cursor.moveToFirst()) throw IllegalStateException("video $videoId is not in the database")
@@ -33,10 +48,7 @@ object VideoSplit {
         val framesDir = File(folder, "frames")
         val times = frameTimes(durationS)
 
-        // Idempotent: remove what an earlier run of this stage wrote. The sightings go first, with a relink: deleting the frames
-        // would remove them by cascade and leave other videos' answers pointing at them.
-        VideoLatest.forget(db, videoId)
-        db.execSQL("DELETE FROM frames WHERE video_id = ?", arrayOf(videoId))
+        clearEarlierRun(db, videoId)
 
         val startFrames = System.nanoTime()
         var method = "one pass"

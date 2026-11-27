@@ -12,6 +12,7 @@ import com.eykon.memory.spike.TestVectors
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import java.io.File
 import org.junit.runner.RunWith
 
 /**
@@ -141,6 +142,48 @@ class VectorPageSizeTest {
         } finally {
             helper.close()
             cleanUp()
+        }
+    }
+
+    /**
+     * Hypothesis 6 (decision re-check, 26 Nov): instead of converting the app's database with VACUUM, keep the vectors in a
+     * SEPARATE, freshly made file whose page size is set before its first table. Two ways: (a) a file opened on its own with
+     * Android's SQLiteDatabase, PRAGMA page_size before anything else; (b) the same file ATTACHed to the app-style WAL database
+     * and created through it (PRAGMA vec.page_size, then CREATE TABLE vec.t). Logs page size and journal mode for each.
+     */
+    @Test
+    fun aSeparateFreshFileFor16KbPages() {
+        val dir = context.getDatabasePath(name).parentFile!!.also { it.mkdirs() }
+        for (way in listOf("own_file", "attached")) {
+            val file = File(dir, "eyko_recheck_$way.db")
+            listOf("", "-wal", "-shm", "-journal").forEach { File(file.path + it).delete() }
+            val line = runCatching {
+                if (way == "own_file") {
+                    val db = android.database.sqlite.SQLiteDatabase.openOrCreateDatabase(file, null)
+                    try {
+                        db.execSQL("PRAGMA page_size=16384")
+                        db.execSQL("CREATE TABLE image_vec (frame_id INTEGER PRIMARY KEY, embedding BLOB NOT NULL)")
+                        db.execSQL("INSERT INTO image_vec VALUES (1, zeroblob(2048))")
+                        val page = db.rawQuery("PRAGMA page_size", null).use { it.moveToFirst(); it.getLong(0) }
+                        val journal = db.rawQuery("PRAGMA journal_mode", null).use { it.moveToFirst(); it.getString(0) }
+                        "page_size $page, journal $journal"
+                    } finally { db.close() }
+                } else {
+                    cleanUp()
+                    val helper = open()
+                    try {
+                        val db = helper.writableDatabase
+                        db.enableWriteAheadLogging() // the app's database runs in WAL (Room's default); attach under the same mode
+                        db.execSQL("ATTACH DATABASE '${file.path}' AS vec")
+                        db.execSQL("PRAGMA vec.page_size=16384")
+                        db.execSQL("CREATE TABLE vec.image_vec (frame_id INTEGER PRIMARY KEY, embedding BLOB NOT NULL)")
+                        db.execSQL("INSERT INTO vec.image_vec VALUES (1, zeroblob(2048))")
+                        "page_size ${long(db, "PRAGMA vec.page_size")}, journal ${text(db, "PRAGMA vec.journal_mode")}, main journal ${text(db, "PRAGMA main.journal_mode")}"
+                    } finally { helper.close(); cleanUp() }
+                }
+            }.getOrElse { "FAILED ${it.javaClass.simpleName}: ${it.message?.take(200)}" }
+            Log.i(tag, "separate file, $way: $line")
+            listOf("", "-wal", "-shm", "-journal").forEach { File(file.path + it).delete() }
         }
     }
 }

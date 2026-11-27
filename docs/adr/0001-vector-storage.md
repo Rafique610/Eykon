@@ -12,7 +12,9 @@
    memory-mapped and scored in place by a small NEON C function (`libeykonvec.so`, mode `MAPPED_NATIVE`), not loaded into Java memory.
    The file is written once, appended to as videos arrive, and rebuilt if it no longer matches the database.
 3. **The "has the table changed?" check on every search reads `MAX(id)`**, not `COUNT(*)`. Writes and deletes clear the cache themselves.
-   Any code that deletes vectors must call `VideoVectors.forget`.
+   Any code that deletes vectors must call `VideoVectors.forget`, **including deletes that reach the vectors by cascade**
+   (deleting frames, texts or videos). *26 Nov re-check: the split stage's rerun did not, and left deleted rows in the
+   search file; fixed in `VideoSplit.clearEarlierRun`, proved on the Infinix (`docs/results/2026-11-26-decision-recheck.md` part 4b).*
 4. **If the native library does not load, the app falls back** to the old in-memory search (`HEAP_F32`), which is exact but limited to about 20k rows per table.
 
 In code: `android/app/src/main/java/com/eykon/memory/video/VideoVectors.kt`, `VectorBlock.kt`, `android/app/src/main/cpp/eykonvec.c`
@@ -78,7 +80,9 @@ No more than 7 % slower anywhere, so trigger 1 did not fire. Full tables, a seco
   We keep it because the BLOBs must stay for laptop/phone parity, and the copy can always be rebuilt from them.
 - **About 7 % slower than the old way would be** without `COUNT(*)` (102.5 against 95.5 ms at 100k): the price of not running out of memory.
 - **A delete rebuilds the whole file** (23 s at 100k). Today only a stage re-run deletes vectors.
-- **RAM is still used while searching** (file pages, about 594 MB PSS at 3 × 100k). Android can drop them, and the next search is
+- **RAM is still used while searching** (file pages, about 594 MB PSS at 3 × 100k). *Proposed, not adopted: hand these pages back when the
+  screen is hidden (`madvise(MADV_DONTNEED)`). It works on Linux (219 → 23 MB, same scores) but has not run on a phone; code on
+  `taha/recheck-phone-pending`, `2026-11-26-decision-recheck.md` part 4.* Android can drop them, and the next search is
   then slower: 3.8× for the first search after 5 minutes in the background, on the Infinix (EYKO-109).
 - **arm64 only:** `libeykonvec.so` is built for arm64-v8a. Other phones use the fallback.
 
@@ -101,6 +105,11 @@ Reopen this ADR if any of these happens:
 3. A table passes **300k rows** (the largest size measured, EYKO-109), or one search passes our own 200 ms target on the A32 on battery.
 4. The **storage copy** becomes a problem on a real phone (EYKO-83, G18), or "delete a video" (EYKO-66) makes rebuilds frequent.
 5. A laptop result (EYKO-91) shows an approximate index keeping recall@20 ≥ 0.99 **and** a way to give every frame a score.
+   *26 Nov re-check: "every frame's score" is not needed. Windows only need exact scores for the best candidates and the
+   neighbours they grow over; an int8 pass + exact float32 re-score of those, certified by an error bound, returned the app's
+   windows exactly on 52 of 52 queries at 100k and read 53 MB instead of 205 MB (laptop; `2026-11-26-decision-recheck.md`
+   parts 2 + 3). So top-k methods are eligible again when this trigger or trigger 3 fires. Phone speed is not measured; the NEON int8
+   kernel and its phone test wait on `taha/recheck-phone-pending`.*
 
 ## Not decided here
 

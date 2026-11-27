@@ -1,0 +1,51 @@
+{
+ "photos": 300,
+ "objects": {
+  "objects": 1400,
+  "yolox": 529,
+  "dfine": 727,
+  "either": 802,
+  "only_yolox": 75,
+  "yolox_wrong_alone": 85,
+  "yolox_boxes": 721
+ },
+ "only_yolox_by_name": {
+  "tennis racket": 8,
+  "umbrella": 7,
+  "suitcase": 7,
+  "bottle": 7,
+  "book": 6,
+  "sports ball": 4,
+  "chair": 3,
+  "car": 3,
+  "vase": 3,
+  "banana": 3,
+  "bowl": 2,
+  "kite": 2,
+  "surfboard": 2,
+  "boat": 2,
+  "sandwich": 2,
+  "skateboard": 2,
+  "knife": 1,
+  "cup": 1,
+  "dining table": 1,
+  "tie": 1,
+  "sink": 1,
+  "baseball glove": 1,
+  "apple": 1,
+  "couch": 1,
+  "baseball bat": 1,
+  "skis": 1,
+  "cake": 1,
+  "oven": 1
+ },
+ "people": {
+  "photos_with_people": 168,
+  "yolox_exact": 227,
+  "dfine_exact": 226,
+  "yolox_mean_abs_error": 0.73,
+  "dfine_mean_abs_error": 0.62,
+  "yolox_says_none_but_people": 10,
+  "dfine_says_none_but_people": 2
+ }
+}

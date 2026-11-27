@@ -11,6 +11,8 @@ android {
     compileSdk = 35
 
     defaultConfig {
+        // -PidSuffix=.recheck installs a second copy beside a teammate's own build (different signing key), leaving its data alone
+        (findProperty("idSuffix") as String?)?.let { applicationIdSuffix = it }
         applicationId = "com.eykon.memory"
         minSdk = 31
         targetSdk = 35

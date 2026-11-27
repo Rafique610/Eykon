@@ -172,3 +172,13 @@ android/               # Kotlin + Compose app
 Phase 3 experiments A1–A4 exist but several rest on very small samples
 (see `docs/plans/00-roadmap.md` section 9); they are smoke tests, audited in
 card EYKO-35.
+
+## Paths already tried (check before proposing them again)
+
+| Tried | Verdict | Record |
+|---|---|---|
+| sqlite-vec on Android (system SQLite, R1 bundled, R2 requery, R3 SQLCipher, R4 static) | rejected: blocked or 2.2-4.7x slower, top-k only | `docs/adr/0001-vector-storage.md` |
+| float16 / int8 vector copies judged by "same hits"; HNSW on the phone | not adopted (ADR 0001); int8 + exact re-score is exact, see below | ADR 0001, EYKO-109, EYKO-91 |
+| Dynamic and plain static int8 for the five models | rejected: slower or answers change | `docs/results/2026-11-25-scene-models-runtime.md` |
+| 32 / 64 KB SQLite pages | rejected: 16 KB is the best trade-off | `docs/results/2026-11-24-vector-page-size.md` |
+| Decision re-check, 26 Nov: dedup window, int8 + re-score, page release, time-based same-object rule, crop vector table, separate 16 KB file, dropping YOLOX, one "not found" cut-off, score intervals | per proposal (adopted: split-rerun fix, per-question results. Refuted or not supported: dedup window, time rule, crop-vector table, separate 16 KB file, dropping YOLOX, one cut-off. Still open, need a phone: page release, int8 speed, accelerators; branch `taha/recheck-phone-pending`) | `docs/results/2026-11-26-decision-recheck.md` |

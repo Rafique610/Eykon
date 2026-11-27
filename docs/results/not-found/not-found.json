@@ -1,0 +1,729 @@
+{
+ "photos": 300,
+ "names": 78,
+ "fixed_score_cutoff": {
+  "auc_present_vs_absent": 0.829,
+  "best_cutoff": 0.2022,
+  "mistakes_at_best": 38,
+  "of": 156,
+  "present_hidden_at_best": 22,
+  "absent_still_answered_at_best": 16,
+  "present_median": 0.2301,
+  "absent_median": 0.1724
+ },
+ "relative_z_cutoff": {
+  "auc_present_vs_absent": 0.795,
+  "best_cutoff": 4.2919,
+  "mistakes_at_best": 39,
+  "of": 156,
+  "present_hidden_at_best": 24,
+  "absent_still_answered_at_best": 15,
+  "present_median": 4.6914,
+  "absent_median": 3.6701
+ },
+ "top1_has_it_when_present": 65,
+ "per_name": [
+  {
+   "name": "airplane",
+   "photos_with_it": 2,
+   "present": 0.21119850873947144,
+   "absent": 0.1500113308429718,
+   "present_z": 4.513204097747803,
+   "absent_z": 2.626890182495117,
+   "best_photo_has_it": true
+  },
+  {
+   "name": "apple",
+   "photos_with_it": 6,
+   "present": 0.2103181630373001,
+   "absent": 0.1954052746295929,
+   "present_z": 4.4346466064453125,
+   "absent_z": 4.281099319458008,
+   "best_photo_has_it": true
+  },
+  {
+   "name": "backpack",
+   "photos_with_it": 8,
+   "present": 0.1833217740058899,
+   "absent": 0.1833217740058899,
+   "present_z": 3.899059534072876,
+   "absent_z": 3.8697421550750732,
+   "best_photo_has_it": false
+  },
+  {
+   "name": "banana",
+   "photos_with_it": 6,
+   "present": 0.23656000196933746,
+   "absent": 0.15012091398239136,
+   "present_z": 5.360858917236328,
+   "absent_z": 2.985170602798462,
+   "best_photo_has_it": true
+  },
+  {
+   "name": "baseball bat",
+   "photos_with_it": 6,
+   "present": 0.20774123072624207,
+   "absent": 0.16821792721748352,
+   "present_z": 3.941049575805664,
+   "absent_z": 3.169717311859131,
+   "best_photo_has_it": true
+  },
+  {
+   "name": "baseball glove",
+   "photos_with_it": 8,
+   "present": 0.19252289831638336,
+   "absent": 0.1604413390159607,
+   "present_z": 3.701033353805542,
+   "absent_z": 3.0901529788970947,
+   "best_photo_has_it": true
+  },
+  {
+   "name": "bear",
+   "photos_with_it": 3,
+   "present": 0.2333507090806961,
+   "absent": 0.22091877460479736,
+   "present_z": 4.693846225738525,
+   "absent_z": 4.673570156097412,
+   "best_photo_has_it": true
+  },
+  {
+   "name": "bed",
+   "photos_with_it": 4,
+   "present": 0.21651630103588104,
+   "absent": 0.1594272255897522,
+   "present_z": 4.604818344116211,
+   "absent_z": 3.2502524852752686,
+   "best_photo_has_it": true
+  },
+  {
+   "name": "bench",
+   "photos_with_it": 20,
+   "present": 0.2586393654346466,
+   "absent": 0.1865237057209015,
+   "present_z": 4.871631145477295,
+   "absent_z": 3.614107608795166,
+   "best_photo_has_it": true
+  },
+  {
+   "name": "bicycle",
+   "photos_with_it": 10,
+   "present": 0.2641369104385376,
+   "absent": 0.14797931909561157,
+   "present_z": 5.683506488800049,
+   "absent_z": 3.0036067962646484,
+   "best_photo_has_it": true
+  },
+  {
+   "name": "bird",
+   "photos_with_it": 6,
+   "present": 0.20478174090385437,
+   "absent": 0.13664895296096802,
+   "present_z": 4.588694095611572,
+   "absent_z": 2.609510898590088,
+   "best_photo_has_it": true
+  },
+  {
+   "name": "boat",
+   "photos_with_it": 7,
+   "present": 0.22511085867881775,
+   "absent": 0.18775039911270142,
+   "present_z": 4.688953399658203,
+   "absent_z": 4.067626476287842,
+   "best_photo_has_it": true
+  },
+  {
+   "name": "book",
+   "photos_with_it": 12,
+   "present": 0.17270269989967346,
+   "absent": 0.17270269989967346,
+   "present_z": 4.148812770843506,
+   "absent_z": 4.22783088684082,
+   "best_photo_has_it": false
+  },
+  {
+   "name": "bottle",
+   "photos_with_it": 21,
+   "present": 0.18681611120700836,
+   "absent": 0.165725439786911,
+   "present_z": 4.140331745147705,
+   "absent_z": 3.7379157543182373,
+   "best_photo_has_it": true
+  },
+  {
+   "name": "bowl",
+   "photos_with_it": 18,
+   "present": 0.1871659755706787,
+   "absent": 0.1741611510515213,
+   "present_z": 3.313410520553589,
+   "absent_z": 2.9485878944396973,
+   "best_photo_has_it": true
+  },
+  {
+   "name": "broccoli",
+   "photos_with_it": 1,
+   "present": 0.19528086483478546,
+   "absent": 0.15361475944519043,
+   "present_z": 4.749118804931641,
+   "absent_z": 3.265266180038452,
+   "best_photo_has_it": true
+  },
+  {
+   "name": "bus",
+   "photos_with_it": 12,
+   "present": 0.24970461428165436,
+   "absent": 0.17734137177467346,
+   "present_z": 4.595314025878906,
+   "absent_z": 3.4103128910064697,
+   "best_photo_has_it": true
+  },
+  {
+   "name": "cake",
+   "photos_with_it": 7,
+   "present": 0.2161930948495865,
+   "absent": 0.1949482560157776,
+   "present_z": 4.64248514175415,
+   "absent_z": 4.835139274597168,
+   "best_photo_has_it": true
+  },
+  {
+   "name": "car",
+   "photos_with_it": 28,
+   "present": 0.16420987248420715,
+   "absent": 0.16420987248420715,
+   "present_z": 3.3478944301605225,
+   "absent_z": 3.6182310581207275,
+   "best_photo_has_it": false
+  },
+  {
+   "name": "carrot",
+   "photos_with_it": 3,
+   "present": 0.164820596575737,
+   "absent": 0.164820596575737,
+   "present_z": 3.231778860092163,
+   "absent_z": 3.2442736625671387,
+   "best_photo_has_it": false
+  },
+  {
+   "name": "cat",
+   "photos_with_it": 10,
+   "present": 0.222822904586792,
+   "absent": 0.12675270438194275,
+   "present_z": 4.424580097198486,
+   "absent_z": 2.4791293144226074,
+   "best_photo_has_it": true
+  },
+  {
+   "name": "cell phone",
+   "photos_with_it": 9,
+   "present": 0.18069668114185333,
+   "absent": 0.18069668114185333,
+   "present_z": 3.623424530029297,
+   "absent_z": 3.904534339904785,
+   "best_photo_has_it": false
+  },
+  {
+   "name": "chair",
+   "photos_with_it": 35,
+   "present": 0.18199627101421356,
+   "absent": 0.18199627101421356,
+   "present_z": 3.246877670288086,
+   "absent_z": 3.613023281097412,
+   "best_photo_has_it": false
+  },
+  {
+   "name": "clock",
+   "photos_with_it": 16,
+   "present": 0.25761786103248596,
+   "absent": 0.15051838755607605,
+   "present_z": 5.806412696838379,
+   "absent_z": 3.250094413757324,
+   "best_photo_has_it": true
+  },
+  {
+   "name": "couch",
+   "photos_with_it": 12,
+   "present": 0.26086732745170593,
+   "absent": 0.16674929857254028,
+   "present_z": 5.057458400726318,
+   "absent_z": 3.380995273590088,
+   "best_photo_has_it": true
+  },
+  {
+   "name": "cow",
+   "photos_with_it": 1,
+   "present": 0.18868538737297058,
+   "absent": 0.15922990441322327,
+   "present_z": 4.0107035636901855,
+   "absent_z": 3.115335702896118,
+   "best_photo_has_it": true
+  },
+  {
+   "name": "cup",
+   "photos_with_it": 24,
+   "present": 0.2022310495376587,
+   "absent": 0.16620904207229614,
+   "present_z": 4.367868423461914,
+   "absent_z": 3.30320143699646,
+   "best_photo_has_it": true
+  },
+  {
+   "name": "dining table",
+   "photos_with_it": 34,
+   "present": 0.1780393123626709,
+   "absent": 0.17698635160923004,
+   "present_z": 3.182798385620117,
+   "absent_z": 3.761490821838379,
+   "best_photo_has_it": true
+  },
+  {
+   "name": "dog",
+   "photos_with_it": 9,
+   "present": 0.21700048446655273,
+   "absent": 0.16939446330070496,
+   "present_z": 4.731446266174316,
+   "absent_z": 3.914933919906616,
+   "best_photo_has_it": true
+  },
+  {
+   "name": "donut",
+   "photos_with_it": 2,
+   "present": 0.19657298922538757,
+   "absent": 0.15355229377746582,
+   "present_z": 4.412896633148193,
+   "absent_z": 3.013965129852295,
+   "best_photo_has_it": true
+  },
+  {
+   "name": "elephant",
+   "photos_with_it": 4,
+   "present": 0.2264699637889862,
+   "absent": 0.15765967965126038,
+   "present_z": 4.8534674644470215,
+   "absent_z": 3.226287603378296,
+   "best_photo_has_it": true
+  },
+  {
+   "name": "fire hydrant",
+   "photos_with_it": 4,
+   "present": 0.31690752506256104,
+   "absent": 0.2307879626750946,
+   "present_z": 6.06830358505249,
+   "absent_z": 4.683399677276611,
+   "best_photo_has_it": true
+  },
+  {
+   "name": "fork",
+   "photos_with_it": 7,
+   "present": 0.1686430424451828,
+   "absent": 0.16121721267700195,
+   "present_z": 3.3304548263549805,
+   "absent_z": 3.145963668823242,
+   "best_photo_has_it": true
+  },
+  {
+   "name": "frisbee",
+   "photos_with_it": 6,
+   "present": 0.3191620707511902,
+   "absent": 0.21137984097003937,
+   "present_z": 5.125197410583496,
+   "absent_z": 3.2823145389556885,
+   "best_photo_has_it": true
+  },
+  {
+   "name": "giraffe",
+   "photos_with_it": 3,
+   "present": 0.2797393202781677,
+   "absent": 0.16752028465270996,
+   "present_z": 5.9274373054504395,
+   "absent_z": 3.1742312908172607,
+   "best_photo_has_it": true
+  },
+  {
+   "name": "hair drier",
+   "photos_with_it": 1,
+   "present": 0.16241179406642914,
+   "absent": 0.16241179406642914,
+   "present_z": 3.2328310012817383,
+   "absent_z": 3.247307538986206,
+   "best_photo_has_it": false
+  },
+  {
+   "name": "handbag",
+   "photos_with_it": 18,
+   "present": 0.22342342138290405,
+   "absent": 0.13980357348918915,
+   "present_z": 5.799314022064209,
+   "absent_z": 3.1814208030700684,
+   "best_photo_has_it": true
+  },
+  {
+   "name": "horse",
+   "photos_with_it": 8,
+   "present": 0.24681732058525085,
+   "absent": 0.16341754794120789,
+   "present_z": 5.537101745605469,
+   "absent_z": 3.7439801692962646,
+   "best_photo_has_it": true
+  },
+  {
+   "name": "hot dog",
+   "photos_with_it": 4,
+   "present": 0.2957819700241089,
+   "absent": 0.18712076544761658,
+   "present_z": 5.851503372192383,
+   "absent_z": 3.4427216053009033,
+   "best_photo_has_it": true
+  },
+  {
+   "name": "keyboard",
+   "photos_with_it": 10,
+   "present": 0.2650708556175232,
+   "absent": 0.18249884247779846,
+   "present_z": 5.910988807678223,
+   "absent_z": 4.546962738037109,
+   "best_photo_has_it": true
+  },
+  {
+   "name": "kite",
+   "photos_with_it": 9,
+   "present": 0.30029958486557007,
+   "absent": 0.20822957158088684,
+   "present_z": 4.596451759338379,
+   "absent_z": 3.5134875774383545,
+   "best_photo_has_it": true
+  },
+  {
+   "name": "knife",
+   "photos_with_it": 11,
+   "present": 0.16045013070106506,
+   "absent": 0.14073187112808228,
+   "present_z": 3.608401298522949,
+   "absent_z": 3.0142948627471924,
+   "best_photo_has_it": true
+  },
+  {
+   "name": "laptop",
+   "photos_with_it": 11,
+   "present": 0.2380094826221466,
+   "absent": 0.20412692427635193,
+   "present_z": 4.892849922180176,
+   "absent_z": 4.971591949462891,
+   "best_photo_has_it": true
+  },
+  {
+   "name": "microwave",
+   "photos_with_it": 2,
+   "present": 0.30399155616760254,
+   "absent": 0.2182546854019165,
+   "present_z": 6.449495315551758,
+   "absent_z": 4.302835941314697,
+   "best_photo_has_it": true
+  },
+  {
+   "name": "motorcycle",
+   "photos_with_it": 7,
+   "present": 0.21654140949249268,
+   "absent": 0.172034353017807,
+   "present_z": 4.872528553009033,
+   "absent_z": 3.9716405868530273,
+   "best_photo_has_it": true
+  },
+  {
+   "name": "mouse",
+   "photos_with_it": 6,
+   "present": 0.25261521339416504,
+   "absent": 0.16940590739250183,
+   "present_z": 5.733209609985352,
+   "absent_z": 3.580813407897949,
+   "best_photo_has_it": true
+  },
+  {
+   "name": "orange",
+   "photos_with_it": 7,
+   "present": 0.2552110254764557,
+   "absent": 0.20051932334899902,
+   "present_z": 5.234909534454346,
+   "absent_z": 3.9589390754699707,
+   "best_photo_has_it": true
+  },
+  {
+   "name": "oven",
+   "photos_with_it": 2,
+   "present": 0.2728157043457031,
+   "absent": 0.2728157043457031,
+   "present_z": 5.786659240722656,
+   "absent_z": 5.950170040130615,
+   "best_photo_has_it": false
+  },
+  {
+   "name": "parking meter",
+   "photos_with_it": 1,
+   "present": 0.30068764090538025,
+   "absent": 0.2323301136493683,
+   "present_z": 5.085989952087402,
+   "absent_z": 3.7259626388549805,
+   "best_photo_has_it": true
+  },
+  {
+   "name": "person",
+   "photos_with_it": 168,
+   "present": 0.1799682378768921,
+   "absent": 0.13695771992206573,
+   "present_z": 3.3669025897979736,
+   "absent_z": 2.3824522495269775,
+   "best_photo_has_it": true
+  },
+  {
+   "name": "pizza",
+   "photos_with_it": 7,
+   "present": 0.26968473196029663,
+   "absent": 0.1843792200088501,
+   "present_z": 5.3624267578125,
+   "absent_z": 4.189087867736816,
+   "best_photo_has_it": true
+  },
+  {
+   "name": "potted plant",
+   "photos_with_it": 5,
+   "present": 0.22683236002922058,
+   "absent": 0.22683236002922058,
+   "present_z": 4.674993991851807,
+   "absent_z": 4.828118324279785,
+   "best_photo_has_it": false
+  },
+  {
+   "name": "refrigerator",
+   "photos_with_it": 9,
+   "present": 0.2874903380870819,
+   "absent": 0.20014502108097076,
+   "present_z": 5.771459102630615,
+   "absent_z": 4.234291076660156,
+   "best_photo_has_it": true
+  },
+  {
+   "name": "remote",
+   "photos_with_it": 8,
+   "present": 0.18636834621429443,
+   "absent": 0.18636834621429443,
+   "present_z": 3.328503370285034,
+   "absent_z": 3.516000509262085,
+   "best_photo_has_it": false
+  },
+  {
+   "name": "sandwich",
+   "photos_with_it": 4,
+   "present": 0.2198079526424408,
+   "absent": 0.19870972633361816,
+   "present_z": 5.123407363891602,
+   "absent_z": 4.900106430053711,
+   "best_photo_has_it": true
+  },
+  {
+   "name": "scissors",
+   "photos_with_it": 2,
+   "present": 0.15970125794410706,
+   "absent": 0.15222731232643127,
+   "present_z": 4.067153453826904,
+   "absent_z": 3.85278058052063,
+   "best_photo_has_it": true
+  },
+  {
+   "name": "sheep",
+   "photos_with_it": 3,
+   "present": 0.26845240592956543,
+   "absent": 0.17491400241851807,
+   "present_z": 6.609516143798828,
+   "absent_z": 4.3869242668151855,
+   "best_photo_has_it": true
+  },
+  {
+   "name": "sink",
+   "photos_with_it": 13,
+   "present": 0.251293808221817,
+   "absent": 0.20644083619117737,
+   "present_z": 4.369503021240234,
+   "absent_z": 4.125378131866455,
+   "best_photo_has_it": true
+  },
+  {
+   "name": "skateboard",
+   "photos_with_it": 8,
+   "present": 0.27827316522598267,
+   "absent": 0.269924521446228,
+   "present_z": 4.2919392585754395,
+   "absent_z": 5.1183671951293945,
+   "best_photo_has_it": true
+  },
+  {
+   "name": "skis",
+   "photos_with_it": 9,
+   "present": 0.24678289890289307,
+   "absent": 0.24678289890289307,
+   "present_z": 4.054486274719238,
+   "absent_z": 5.0313029289245605,
+   "best_photo_has_it": false
+  },
+  {
+   "name": "snowboard",
+   "photos_with_it": 5,
+   "present": 0.30900540947914124,
+   "absent": 0.22136279940605164,
+   "present_z": 4.373306751251221,
+   "absent_z": 3.2962632179260254,
+   "best_photo_has_it": true
+  },
+  {
+   "name": "spoon",
+   "photos_with_it": 4,
+   "present": 0.15210287272930145,
+   "absent": 0.15210287272930145,
+   "present_z": 2.8900437355041504,
+   "absent_z": 2.9093174934387207,
+   "best_photo_has_it": false
+  },
+  {
+   "name": "sports ball",
+   "photos_with_it": 16,
+   "present": 0.20275935530662537,
+   "absent": 0.18595463037490845,
+   "present_z": 3.6233134269714355,
+   "absent_z": 3.7913694381713867,
+   "best_photo_has_it": true
+  },
+  {
+   "name": "suitcase",
+   "photos_with_it": 4,
+   "present": 0.25734657049179077,
+   "absent": 0.14045476913452148,
+   "present_z": 5.639655113220215,
+   "absent_z": 2.430330991744995,
+   "best_photo_has_it": true
+  },
+  {
+   "name": "surfboard",
+   "photos_with_it": 11,
+   "present": 0.24868300557136536,
+   "absent": 0.2134573608636856,
+   "present_z": 3.892899990081787,
+   "absent_z": 3.884935140609741,
+   "best_photo_has_it": true
+  },
+  {
+   "name": "teddy bear",
+   "photos_with_it": 3,
+   "present": 0.23577983677387238,
+   "absent": 0.17632707953453064,
+   "present_z": 5.467196941375732,
+   "absent_z": 3.9916493892669678,
+   "best_photo_has_it": true
+  },
+  {
+   "name": "tennis racket",
+   "photos_with_it": 13,
+   "present": 0.2698068618774414,
+   "absent": 0.19101601839065552,
+   "present_z": 4.956326484680176,
+   "absent_z": 4.4223856925964355,
+   "best_photo_has_it": true
+  },
+  {
+   "name": "tie",
+   "photos_with_it": 11,
+   "present": 0.19427981972694397,
+   "absent": 0.15940101444721222,
+   "present_z": 4.807844638824463,
+   "absent_z": 3.7378783226013184,
+   "best_photo_has_it": true
+  },
+  {
+   "name": "toilet",
+   "photos_with_it": 7,
+   "present": 0.3065333366394043,
+   "absent": 0.23274007439613342,
+   "present_z": 5.688875675201416,
+   "absent_z": 5.110775947570801,
+   "best_photo_has_it": true
+  },
+  {
+   "name": "toothbrush",
+   "photos_with_it": 2,
+   "present": 0.16903583705425262,
+   "absent": 0.16903583705425262,
+   "present_z": 3.6093480587005615,
+   "absent_z": 3.665393352508545,
+   "best_photo_has_it": false
+  },
+  {
+   "name": "traffic light",
+   "photos_with_it": 12,
+   "present": 0.29982101917266846,
+   "absent": 0.23153533041477203,
+   "present_z": 5.951387882232666,
+   "absent_z": 4.988847255706787,
+   "best_photo_has_it": true
+  },
+  {
+   "name": "train",
+   "photos_with_it": 14,
+   "present": 0.24262316524982452,
+   "absent": 0.1898341327905655,
+   "present_z": 3.9156854152679443,
+   "absent_z": 3.7090535163879395,
+   "best_photo_has_it": true
+  },
+  {
+   "name": "truck",
+   "photos_with_it": 16,
+   "present": 0.23798726499080658,
+   "absent": 0.1581059992313385,
+   "present_z": 5.142736911773682,
+   "absent_z": 3.278977155685425,
+   "best_photo_has_it": true
+  },
+  {
+   "name": "tv",
+   "photos_with_it": 16,
+   "present": 0.25250694155693054,
+   "absent": 0.16055068373680115,
+   "present_z": 5.317389011383057,
+   "absent_z": 3.1062510013580322,
+   "best_photo_has_it": true
+  },
+  {
+   "name": "umbrella",
+   "photos_with_it": 14,
+   "present": 0.26021793484687805,
+   "absent": 0.17081446945667267,
+   "present_z": 4.944838047027588,
+   "absent_z": 3.343262195587158,
+   "best_photo_has_it": true
+  },
+  {
+   "name": "vase",
+   "photos_with_it": 12,
+   "present": 0.2737967371940613,
+   "absent": 0.1556406021118164,
+   "present_z": 5.611701965332031,
+   "absent_z": 3.698709011077881,
+   "best_photo_has_it": true
+  },
+  {
+   "name": "wine glass",
+   "photos_with_it": 10,
+   "present": 0.22245952486991882,
+   "absent": 0.15248572826385498,
+   "present_z": 5.423691749572754,
+   "absent_z": 3.7294399738311768,
+   "best_photo_has_it": true
+  },
+  {
+   "name": "zebra",
+   "photos_with_it": 5,
+   "present": 0.2880045771598816,
+   "absent": 0.163956880569458,
+   "present_z": 6.1715826988220215,
+   "absent_z": 3.6747725009918213,
+   "best_photo_has_it": true
+  }
+ ]
+}

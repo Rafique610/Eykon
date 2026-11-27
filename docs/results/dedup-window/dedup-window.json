@@ -1,0 +1,1122 @@
+{
+ "rule": "app thresholds: {\"dark\": 25.0, \"bright\": 235.0, \"blur\": 60.0, \"diff\": 6.0, \"hist\": 0.1, \"hash_max\": 6, \"cos_min\": 0.95}",
+ "windows_s": [
+  10,
+  20,
+  30
+ ],
+ "clips": {
+  "PXL_20261014_094359202.mp4": {
+   "frames": 224,
+   "filtered": 134,
+   "kept": {
+    "none": 134,
+    "whole": 31,
+    "10 s": 34,
+    "20 s": 31,
+    "30 s": 31
+   },
+   "objects": {
+    "Airplane": {
+     "none": {
+      "last_seen_s": 40.3,
+      "frames": 1
+     },
+     "whole": {
+      "last_seen_s": null,
+      "frames": 0
+     },
+     "10 s": {
+      "last_seen_s": null,
+      "frames": 0
+     },
+     "20 s": {
+      "last_seen_s": null,
+      "frames": 0
+     },
+     "30 s": {
+      "last_seen_s": null,
+      "frames": 0
+     }
+    },
+    "Blackboard/Whiteboard": {
+     "none": {
+      "last_seen_s": 68.0,
+      "frames": 73
+     },
+     "whole": {
+      "last_seen_s": 68.0,
+      "frames": 16
+     },
+     "10 s": {
+      "last_seen_s": 68.0,
+      "frames": 19
+     },
+     "20 s": {
+      "last_seen_s": 68.0,
+      "frames": 16
+     },
+     "30 s": {
+      "last_seen_s": 68.0,
+      "frames": 16
+     }
+    },
+    "Cabinet/shelf": {
+     "none": {
+      "last_seen_s": 67.7,
+      "frames": 102
+     },
+     "whole": {
+      "last_seen_s": 65.0,
+      "frames": 22
+     },
+     "10 s": {
+      "last_seen_s": 65.3,
+      "frames": 24
+     },
+     "20 s": {
+      "last_seen_s": 60.0,
+      "frames": 22
+     },
+     "30 s": {
+      "last_seen_s": 60.0,
+      "frames": 22
+     }
+    },
+    "Cell Phone": {
+     "none": {
+      "last_seen_s": 52.3,
+      "frames": 41
+     },
+     "whole": {
+      "last_seen_s": 52.0,
+      "frames": 8
+     },
+     "10 s": {
+      "last_seen_s": 52.0,
+      "frames": 9
+     },
+     "20 s": {
+      "last_seen_s": 52.0,
+      "frames": 8
+     },
+     "30 s": {
+      "last_seen_s": 52.0,
+      "frames": 8
+     }
+    },
+    "Chair": {
+     "none": {
+      "last_seen_s": 68.3,
+      "frames": 4
+     },
+     "whole": {
+      "last_seen_s": 68.3,
+      "frames": 2
+     },
+     "10 s": {
+      "last_seen_s": 68.3,
+      "frames": 2
+     },
+     "20 s": {
+      "last_seen_s": 68.3,
+      "frames": 2
+     },
+     "30 s": {
+      "last_seen_s": 68.3,
+      "frames": 2
+     }
+    },
+    "Desk": {
+     "none": {
+      "last_seen_s": 68.3,
+      "frames": 116
+     },
+     "whole": {
+      "last_seen_s": 68.3,
+      "frames": 27
+     },
+     "10 s": {
+      "last_seen_s": 68.3,
+      "frames": 30
+     },
+     "20 s": {
+      "last_seen_s": 68.3,
+      "frames": 27
+     },
+     "30 s": {
+      "last_seen_s": 68.3,
+      "frames": 27
+     }
+    },
+    "Faucet": {
+     "none": {
+      "last_seen_s": 10.0,
+      "frames": 1
+     },
+     "whole": {
+      "last_seen_s": null,
+      "frames": 0
+     },
+     "10 s": {
+      "last_seen_s": null,
+      "frames": 0
+     },
+     "20 s": {
+      "last_seen_s": null,
+      "frames": 0
+     },
+     "30 s": {
+      "last_seen_s": null,
+      "frames": 0
+     }
+    },
+    "Glasses": {
+     "none": {
+      "last_seen_s": 50.7,
+      "frames": 1
+     },
+     "whole": {
+      "last_seen_s": 50.7,
+      "frames": 1
+     },
+     "10 s": {
+      "last_seen_s": 50.7,
+      "frames": 1
+     },
+     "20 s": {
+      "last_seen_s": 50.7,
+      "frames": 1
+     },
+     "30 s": {
+      "last_seen_s": 50.7,
+      "frames": 1
+     }
+    },
+    "Gloves": {
+     "none": {
+      "last_seen_s": 45.7,
+      "frames": 1
+     },
+     "whole": {
+      "last_seen_s": null,
+      "frames": 0
+     },
+     "10 s": {
+      "last_seen_s": 45.7,
+      "frames": 1
+     },
+     "20 s": {
+      "last_seen_s": null,
+      "frames": 0
+     },
+     "30 s": {
+      "last_seen_s": null,
+      "frames": 0
+     }
+    },
+    "Keyboard": {
+     "none": {
+      "last_seen_s": 45.0,
+      "frames": 1
+     },
+     "whole": {
+      "last_seen_s": null,
+      "frames": 0
+     },
+     "10 s": {
+      "last_seen_s": 45.0,
+      "frames": 1
+     },
+     "20 s": {
+      "last_seen_s": null,
+      "frames": 0
+     },
+     "30 s": {
+      "last_seen_s": null,
+      "frames": 0
+     }
+    },
+    "Knife": {
+     "none": {
+      "last_seen_s": 51.3,
+      "frames": 1
+     },
+     "whole": {
+      "last_seen_s": null,
+      "frames": 0
+     },
+     "10 s": {
+      "last_seen_s": null,
+      "frames": 0
+     },
+     "20 s": {
+      "last_seen_s": null,
+      "frames": 0
+     },
+     "30 s": {
+      "last_seen_s": null,
+      "frames": 0
+     }
+    },
+    "Marker": {
+     "none": {
+      "last_seen_s": 60.0,
+      "frames": 2
+     },
+     "whole": {
+      "last_seen_s": 60.0,
+      "frames": 2
+     },
+     "10 s": {
+      "last_seen_s": 32.0,
+      "frames": 1
+     },
+     "20 s": {
+      "last_seen_s": 60.0,
+      "frames": 2
+     },
+     "30 s": {
+      "last_seen_s": 60.0,
+      "frames": 2
+     }
+    },
+    "Monitor/TV": {
+     "none": {
+      "last_seen_s": 68.3,
+      "frames": 1
+     },
+     "whole": {
+      "last_seen_s": 68.3,
+      "frames": 1
+     },
+     "10 s": {
+      "last_seen_s": 68.3,
+      "frames": 1
+     },
+     "20 s": {
+      "last_seen_s": 68.3,
+      "frames": 1
+     },
+     "30 s": {
+      "last_seen_s": 68.3,
+      "frames": 1
+     }
+    },
+    "Other Shoes": {
+     "none": {
+      "last_seen_s": 25.3,
+      "frames": 1
+     },
+     "whole": {
+      "last_seen_s": 25.3,
+      "frames": 1
+     },
+     "10 s": {
+      "last_seen_s": 25.3,
+      "frames": 1
+     },
+     "20 s": {
+      "last_seen_s": 25.3,
+      "frames": 1
+     },
+     "30 s": {
+      "last_seen_s": 25.3,
+      "frames": 1
+     }
+    },
+    "Paint Brush": {
+     "none": {
+      "last_seen_s": 64.3,
+      "frames": 2
+     },
+     "whole": {
+      "last_seen_s": null,
+      "frames": 0
+     },
+     "10 s": {
+      "last_seen_s": 59.3,
+      "frames": 1
+     },
+     "20 s": {
+      "last_seen_s": 59.3,
+      "frames": 1
+     },
+     "30 s": {
+      "last_seen_s": 59.3,
+      "frames": 1
+     }
+    },
+    "Pen/Pencil": {
+     "none": {
+      "last_seen_s": 61.3,
+      "frames": 41
+     },
+     "whole": {
+      "last_seen_s": 57.0,
+      "frames": 11
+     },
+     "10 s": {
+      "last_seen_s": 57.0,
+      "frames": 12
+     },
+     "20 s": {
+      "last_seen_s": 57.0,
+      "frames": 11
+     },
+     "30 s": {
+      "last_seen_s": 57.0,
+      "frames": 11
+     }
+    },
+    "Remote": {
+     "none": {
+      "last_seen_s": 21.3,
+      "frames": 1
+     },
+     "whole": {
+      "last_seen_s": null,
+      "frames": 0
+     },
+     "10 s": {
+      "last_seen_s": null,
+      "frames": 0
+     },
+     "20 s": {
+      "last_seen_s": null,
+      "frames": 0
+     },
+     "30 s": {
+      "last_seen_s": null,
+      "frames": 0
+     }
+    },
+    "Ring": {
+     "none": {
+      "last_seen_s": 32.0,
+      "frames": 5
+     },
+     "whole": {
+      "last_seen_s": 32.0,
+      "frames": 2
+     },
+     "10 s": {
+      "last_seen_s": 32.0,
+      "frames": 2
+     },
+     "20 s": {
+      "last_seen_s": 32.0,
+      "frames": 2
+     },
+     "30 s": {
+      "last_seen_s": 32.0,
+      "frames": 2
+     }
+    },
+    "Sneakers": {
+     "none": {
+      "last_seen_s": 73.7,
+      "frames": 13
+     },
+     "whole": {
+      "last_seen_s": 72.0,
+      "frames": 2
+     },
+     "10 s": {
+      "last_seen_s": 72.0,
+      "frames": 2
+     },
+     "20 s": {
+      "last_seen_s": 72.0,
+      "frames": 2
+     },
+     "30 s": {
+      "last_seen_s": 72.0,
+      "frames": 2
+     }
+    },
+    "Speaker": {
+     "none": {
+      "last_seen_s": 24.0,
+      "frames": 1
+     },
+     "whole": {
+      "last_seen_s": null,
+      "frames": 0
+     },
+     "10 s": {
+      "last_seen_s": null,
+      "frames": 0
+     },
+     "20 s": {
+      "last_seen_s": null,
+      "frames": 0
+     },
+     "30 s": {
+      "last_seen_s": null,
+      "frames": 0
+     }
+    },
+    "Tablet": {
+     "none": {
+      "last_seen_s": 49.0,
+      "frames": 1
+     },
+     "whole": {
+      "last_seen_s": null,
+      "frames": 0
+     },
+     "10 s": {
+      "last_seen_s": null,
+      "frames": 0
+     },
+     "20 s": {
+      "last_seen_s": null,
+      "frames": 0
+     },
+     "30 s": {
+      "last_seen_s": null,
+      "frames": 0
+     }
+    },
+    "Toothbrush": {
+     "none": {
+      "last_seen_s": 59.0,
+      "frames": 2
+     },
+     "whole": {
+      "last_seen_s": null,
+      "frames": 0
+     },
+     "10 s": {
+      "last_seen_s": 58.7,
+      "frames": 1
+     },
+     "20 s": {
+      "last_seen_s": null,
+      "frames": 0
+     },
+     "30 s": {
+      "last_seen_s": null,
+      "frames": 0
+     }
+    },
+    "own:keys": {
+     "none": {
+      "last_seen_s": 68.0,
+      "frames": 76
+     },
+     "whole": {
+      "last_seen_s": 68.0,
+      "frames": 13
+     },
+     "10 s": {
+      "last_seen_s": 68.0,
+      "frames": 16
+     },
+     "20 s": {
+      "last_seen_s": 68.0,
+      "frames": 13
+     },
+     "30 s": {
+      "last_seen_s": 68.0,
+      "frames": 13
+     }
+    }
+   },
+   "lag_s": {
+    "none": {
+     "median": 0.0,
+     "max": 0.0,
+     "names_exact": 23,
+     "names": 23,
+     "names_lost": 0
+    },
+    "whole": {
+     "median": 2.7,
+     "max": 64.3,
+     "names_exact": 9,
+     "names": 23,
+     "names_lost": 10
+    },
+    "10 s": {
+     "median": 0.3,
+     "max": 51.3,
+     "names_exact": 10,
+     "names": 23,
+     "names_lost": 6
+    },
+    "20 s": {
+     "median": 4.3,
+     "max": 59.0,
+     "names_exact": 9,
+     "names": 23,
+     "names_lost": 9
+    },
+    "30 s": {
+     "median": 4.3,
+     "max": 59.0,
+     "names_exact": 9,
+     "names": 23,
+     "names_lost": 9
+    }
+   }
+  },
+  "PXL_20261014_094903187.mp4": {
+   "frames": 225,
+   "filtered": 179,
+   "kept": {
+    "none": 179,
+    "whole": 53,
+    "10 s": 56,
+    "20 s": 54,
+    "30 s": 53
+   },
+   "objects": {
+    "Bench": {
+     "none": {
+      "last_seen_s": 72.0,
+      "frames": 1
+     },
+     "whole": {
+      "last_seen_s": 72.0,
+      "frames": 1
+     },
+     "10 s": {
+      "last_seen_s": 72.0,
+      "frames": 1
+     },
+     "20 s": {
+      "last_seen_s": 72.0,
+      "frames": 1
+     },
+     "30 s": {
+      "last_seen_s": 72.0,
+      "frames": 1
+     }
+    },
+    "Book": {
+     "none": {
+      "last_seen_s": 52.7,
+      "frames": 15
+     },
+     "whole": {
+      "last_seen_s": 52.7,
+      "frames": 3
+     },
+     "10 s": {
+      "last_seen_s": 52.7,
+      "frames": 4
+     },
+     "20 s": {
+      "last_seen_s": 52.7,
+      "frames": 3
+     },
+     "30 s": {
+      "last_seen_s": 52.7,
+      "frames": 3
+     }
+    },
+    "Bracelet": {
+     "none": {
+      "last_seen_s": 47.3,
+      "frames": 1
+     },
+     "whole": {
+      "last_seen_s": 47.3,
+      "frames": 1
+     },
+     "10 s": {
+      "last_seen_s": 47.3,
+      "frames": 1
+     },
+     "20 s": {
+      "last_seen_s": 47.3,
+      "frames": 1
+     },
+     "30 s": {
+      "last_seen_s": 47.3,
+      "frames": 1
+     }
+    },
+    "Camera": {
+     "none": {
+      "last_seen_s": 67.3,
+      "frames": 8
+     },
+     "whole": {
+      "last_seen_s": 67.3,
+      "frames": 3
+     },
+     "10 s": {
+      "last_seen_s": 67.3,
+      "frames": 4
+     },
+     "20 s": {
+      "last_seen_s": 67.3,
+      "frames": 3
+     },
+     "30 s": {
+      "last_seen_s": 67.3,
+      "frames": 3
+     }
+    },
+    "Carpet": {
+     "none": {
+      "last_seen_s": 64.0,
+      "frames": 1
+     },
+     "whole": {
+      "last_seen_s": null,
+      "frames": 0
+     },
+     "10 s": {
+      "last_seen_s": null,
+      "frames": 0
+     },
+     "20 s": {
+      "last_seen_s": null,
+      "frames": 0
+     },
+     "30 s": {
+      "last_seen_s": null,
+      "frames": 0
+     }
+    },
+    "Cell Phone": {
+     "none": {
+      "last_seen_s": 70.3,
+      "frames": 86
+     },
+     "whole": {
+      "last_seen_s": 70.3,
+      "frames": 26
+     },
+     "10 s": {
+      "last_seen_s": 70.3,
+      "frames": 27
+     },
+     "20 s": {
+      "last_seen_s": 70.3,
+      "frames": 25
+     },
+     "30 s": {
+      "last_seen_s": 70.3,
+      "frames": 26
+     }
+    },
+    "Chair": {
+     "none": {
+      "last_seen_s": 74.7,
+      "frames": 175
+     },
+     "whole": {
+      "last_seen_s": 73.3,
+      "frames": 51
+     },
+     "10 s": {
+      "last_seen_s": 73.3,
+      "frames": 54
+     },
+     "20 s": {
+      "last_seen_s": 73.3,
+      "frames": 52
+     },
+     "30 s": {
+      "last_seen_s": 73.3,
+      "frames": 51
+     }
+    },
+    "Cup": {
+     "none": {
+      "last_seen_s": 60.3,
+      "frames": 2
+     },
+     "whole": {
+      "last_seen_s": 2.3,
+      "frames": 1
+     },
+     "10 s": {
+      "last_seen_s": 2.3,
+      "frames": 1
+     },
+     "20 s": {
+      "last_seen_s": 2.3,
+      "frames": 1
+     },
+     "30 s": {
+      "last_seen_s": 2.3,
+      "frames": 1
+     }
+    },
+    "Desk": {
+     "none": {
+      "last_seen_s": 74.7,
+      "frames": 172
+     },
+     "whole": {
+      "last_seen_s": 73.3,
+      "frames": 50
+     },
+     "10 s": {
+      "last_seen_s": 73.3,
+      "frames": 53
+     },
+     "20 s": {
+      "last_seen_s": 73.3,
+      "frames": 51
+     },
+     "30 s": {
+      "last_seen_s": 73.3,
+      "frames": 50
+     }
+    },
+    "Fork": {
+     "none": {
+      "last_seen_s": 15.3,
+      "frames": 1
+     },
+     "whole": {
+      "last_seen_s": 15.3,
+      "frames": 1
+     },
+     "10 s": {
+      "last_seen_s": 15.3,
+      "frames": 1
+     },
+     "20 s": {
+      "last_seen_s": 15.3,
+      "frames": 1
+     },
+     "30 s": {
+      "last_seen_s": 15.3,
+      "frames": 1
+     }
+    },
+    "Glasses": {
+     "none": {
+      "last_seen_s": 67.7,
+      "frames": 21
+     },
+     "whole": {
+      "last_seen_s": 67.7,
+      "frames": 5
+     },
+     "10 s": {
+      "last_seen_s": 67.7,
+      "frames": 6
+     },
+     "20 s": {
+      "last_seen_s": 67.7,
+      "frames": 6
+     },
+     "30 s": {
+      "last_seen_s": 67.7,
+      "frames": 5
+     }
+    },
+    "Hat": {
+     "none": {
+      "last_seen_s": 2.0,
+      "frames": 1
+     },
+     "whole": {
+      "last_seen_s": null,
+      "frames": 0
+     },
+     "10 s": {
+      "last_seen_s": null,
+      "frames": 0
+     },
+     "20 s": {
+      "last_seen_s": null,
+      "frames": 0
+     },
+     "30 s": {
+      "last_seen_s": null,
+      "frames": 0
+     }
+    },
+    "Leather Shoes": {
+     "none": {
+      "last_seen_s": 72.7,
+      "frames": 2
+     },
+     "whole": {
+      "last_seen_s": 72.7,
+      "frames": 2
+     },
+     "10 s": {
+      "last_seen_s": 72.7,
+      "frames": 2
+     },
+     "20 s": {
+      "last_seen_s": 72.7,
+      "frames": 2
+     },
+     "30 s": {
+      "last_seen_s": 72.7,
+      "frames": 2
+     }
+    },
+    "Microphone": {
+     "none": {
+      "last_seen_s": 21.3,
+      "frames": 1
+     },
+     "whole": {
+      "last_seen_s": null,
+      "frames": 0
+     },
+     "10 s": {
+      "last_seen_s": null,
+      "frames": 0
+     },
+     "20 s": {
+      "last_seen_s": null,
+      "frames": 0
+     },
+     "30 s": {
+      "last_seen_s": null,
+      "frames": 0
+     }
+    },
+    "Pen/Pencil": {
+     "none": {
+      "last_seen_s": 45.3,
+      "frames": 1
+     },
+     "whole": {
+      "last_seen_s": null,
+      "frames": 0
+     },
+     "10 s": {
+      "last_seen_s": null,
+      "frames": 0
+     },
+     "20 s": {
+      "last_seen_s": null,
+      "frames": 0
+     },
+     "30 s": {
+      "last_seen_s": null,
+      "frames": 0
+     }
+    },
+    "Pencil Case": {
+     "none": {
+      "last_seen_s": 51.7,
+      "frames": 1
+     },
+     "whole": {
+      "last_seen_s": 51.7,
+      "frames": 1
+     },
+     "10 s": {
+      "last_seen_s": 51.7,
+      "frames": 1
+     },
+     "20 s": {
+      "last_seen_s": 51.7,
+      "frames": 1
+     },
+     "30 s": {
+      "last_seen_s": 51.7,
+      "frames": 1
+     }
+    },
+    "Pillow": {
+     "none": {
+      "last_seen_s": 35.3,
+      "frames": 2
+     },
+     "whole": {
+      "last_seen_s": null,
+      "frames": 0
+     },
+     "10 s": {
+      "last_seen_s": null,
+      "frames": 0
+     },
+     "20 s": {
+      "last_seen_s": null,
+      "frames": 0
+     },
+     "30 s": {
+      "last_seen_s": null,
+      "frames": 0
+     }
+    },
+    "Ring": {
+     "none": {
+      "last_seen_s": 68.7,
+      "frames": 6
+     },
+     "whole": {
+      "last_seen_s": 67.3,
+      "frames": 2
+     },
+     "10 s": {
+      "last_seen_s": 67.3,
+      "frames": 1
+     },
+     "20 s": {
+      "last_seen_s": 67.3,
+      "frames": 2
+     },
+     "30 s": {
+      "last_seen_s": 67.3,
+      "frames": 2
+     }
+    },
+    "Sneakers": {
+     "none": {
+      "last_seen_s": 72.3,
+      "frames": 14
+     },
+     "whole": {
+      "last_seen_s": 72.3,
+      "frames": 8
+     },
+     "10 s": {
+      "last_seen_s": 72.3,
+      "frames": 8
+     },
+     "20 s": {
+      "last_seen_s": 72.3,
+      "frames": 8
+     },
+     "30 s": {
+      "last_seen_s": 72.3,
+      "frames": 8
+     }
+    },
+    "Stapler": {
+     "none": {
+      "last_seen_s": 53.3,
+      "frames": 10
+     },
+     "whole": {
+      "last_seen_s": 52.7,
+      "frames": 4
+     },
+     "10 s": {
+      "last_seen_s": 52.7,
+      "frames": 5
+     },
+     "20 s": {
+      "last_seen_s": 52.7,
+      "frames": 5
+     },
+     "30 s": {
+      "last_seen_s": 52.7,
+      "frames": 4
+     }
+    },
+    "Wallet/Purse": {
+     "none": {
+      "last_seen_s": 50.0,
+      "frames": 62
+     },
+     "whole": {
+      "last_seen_s": 50.0,
+      "frames": 10
+     },
+     "10 s": {
+      "last_seen_s": 40.7,
+      "frames": 10
+     },
+     "20 s": {
+      "last_seen_s": 50.0,
+      "frames": 10
+     },
+     "30 s": {
+      "last_seen_s": 50.0,
+      "frames": 10
+     }
+    },
+    "Wine Glass": {
+     "none": {
+      "last_seen_s": 68.0,
+      "frames": 1
+     },
+     "whole": {
+      "last_seen_s": 68.0,
+      "frames": 1
+     },
+     "10 s": {
+      "last_seen_s": 68.0,
+      "frames": 1
+     },
+     "20 s": {
+      "last_seen_s": 68.0,
+      "frames": 1
+     },
+     "30 s": {
+      "last_seen_s": 68.0,
+      "frames": 1
+     }
+    },
+    "own:earbuds": {
+     "none": {
+      "last_seen_s": 59.0,
+      "frames": 42
+     },
+     "whole": {
+      "last_seen_s": 58.3,
+      "frames": 8
+     },
+     "10 s": {
+      "last_seen_s": 59.0,
+      "frames": 9
+     },
+     "20 s": {
+      "last_seen_s": 58.3,
+      "frames": 9
+     },
+     "30 s": {
+      "last_seen_s": 58.3,
+      "frames": 8
+     }
+    }
+   },
+   "lag_s": {
+    "none": {
+     "median": 0.0,
+     "max": 0.0,
+     "names_exact": 23,
+     "names": 23,
+     "names_lost": 0
+    },
+    "whole": {
+     "median": 0.0,
+     "max": 64.0,
+     "names_exact": 12,
+     "names": 23,
+     "names_lost": 5
+    },
+    "10 s": {
+     "median": 0.0,
+     "max": 64.0,
+     "names_exact": 12,
+     "names": 23,
+     "names_lost": 5
+    },
+    "20 s": {
+     "median": 0.0,
+     "max": 64.0,
+     "names_exact": 12,
+     "names": 23,
+     "names_lost": 5
+    },
+    "30 s": {
+     "median": 0.0,
+     "max": 64.0,
+     "names_exact": 12,
+     "names": 23,
+     "names_lost": 5
+    }
+   }
+  }
+ }
+}
