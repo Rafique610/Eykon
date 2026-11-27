@@ -40,6 +40,8 @@ object VideoSchema {
           phash       TEXT,
           kept        INTEGER NOT NULL DEFAULT 1,
           drop_reason TEXT,
+          brightness  REAL,
+          sharpness   REAL,
           UNIQUE (video_id, frame_no)
         )
         """,
@@ -158,6 +160,12 @@ object VideoSchema {
         val columns = db.query("PRAGMA table_info(videos)").use { cursor -> buildSet { while (cursor.moveToNext()) add(cursor.getString(1)) } }
         for (column in listOf("content_hash", "source_uri", "display_name")) {
             if (column !in columns) db.execSQL("ALTER TABLE videos ADD COLUMN $column TEXT")
+        }
+        // EYKO-73: what the filter measured on each frame; NULL for frames filtered before this existed.
+        val frameColumns = db.query("PRAGMA table_info(frames)").use { cursor -> buildSet { while (cursor.moveToNext()) add(cursor.getString(1)) } }
+        if (frameColumns.isEmpty()) return
+        for (column in listOf("brightness", "sharpness")) {
+            if (column !in frameColumns) db.execSQL("ALTER TABLE frames ADD COLUMN $column REAL")
         }
     }
 }
