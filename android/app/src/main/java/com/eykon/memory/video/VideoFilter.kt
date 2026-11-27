@@ -29,6 +29,7 @@ object VideoFilter {
         val start = System.nanoTime()
         val thresholds = FrameFilters.Thresholds()
         val decisions = ArrayList<Pair<Long, String?>>(frames.size)
+        val measured = ArrayList<Triple<Long, Double, Double>>(frames.size) // EYKO-73: frame id, brightness, sharpness
         var previousKept: Gray? = null
         for (slot in frames.chunked(slotFrames)) { // only one slot of pictures is in memory at a time
             val grays = slot.map { loadSmallGray(File(videosDir, it.third)) }
@@ -36,6 +37,7 @@ object VideoFilter {
             reasons.indexOf(null).takeIf { it >= 0 }?.let { previousKept = grays[it] }
             slot.forEachIndexed { i, (id, frameNo, _) ->
                 decisions.add(id to reasons[i])
+                measured.add(Triple(id, FrameFilters.brightness(grays[i]), FrameFilters.laplacianVariance(grays[i])))
                 if (Log.isLoggable(TAG, Log.DEBUG)) Log.d(TAG, "filter $videoId frame $frameNo: ${reasons[i] ?: "kept"}")
             }
         }
@@ -47,6 +49,9 @@ object VideoFilter {
             db.execSQL("UPDATE frames SET kept = 1, drop_reason = NULL WHERE video_id = ?", arrayOf(videoId))
             for ((id, reason) in decisions) {
                 if (reason != null) db.execSQL("UPDATE frames SET kept = 0, drop_reason = ? WHERE id = ?", arrayOf(reason, id))
+            }
+            for ((id, brightness, sharpness) in measured) {
+                db.execSQL("UPDATE frames SET brightness = ?, sharpness = ? WHERE id = ?", arrayOf(brightness, sharpness, id))
             }
             db.setTransactionSuccessful()
         } finally {
