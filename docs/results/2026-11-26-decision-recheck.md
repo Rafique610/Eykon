@@ -3,7 +3,7 @@
 On 26 Nov the lead (Taha) asked for every current decision to be checked against its own reasons, and for each proposed
 better way to be **tested**: adopt it if the test holds, and write it down here if it does not, so later sessions know the
 path was tried. This file is that record. Each part gives the proposal, the test (exact command, data, device), the numbers,
-and a one-line verdict. Base: `feature/video-memory` at `5024d67`; branch `taha/decision-recheck`.
+and a one-line verdict. Base: `feature/video-memory` at `5024d67` (27 Nov: merged with `9218820`); branch `taha/decision-recheck`.
 
 Phone runs: Zara's **Infinix X670 (Android 13)**, over USB, a second copy of the app installed beside hers
 (`-PidSuffix=.recheck`, package `com.eykon.memory.recheck`), so her own app and data were never touched. Laptop: Intel
@@ -14,7 +14,7 @@ Infinix answers these; where only the slowest phone could settle a point, that i
 
 | # | Proposal | Verdict | What changed |
 |---|---|---|---|
-| 1 | Drop repeat frames only against the last W s, not the whole video | **Not supported** on our 75 s clips | nothing; open for long recordings |
+| 1 | Drop repeat frames only against the last W s, not the whole video | **Not supported**: our 75 s clips, and EYKO-132 on long still clips and EPIC | nothing |
 | 2 + 3 | Search an int8 copy first, then exact float32 for the best candidates and window neighbours | **Exact on the laptop** (52 of 52 identical and certified, 53 MB read instead of 205 MB); **phone speed not measured** | ADR 0001 note only; search unchanged; NEON kernel waits on `taha/recheck-phone-pending` |
 | 4 | Give the mapped vector pages back when the app's screen is hidden | **Mechanism holds on Linux** (PSS 219 → 23 MB, same scores); **never run on a phone** | **not merged**: code waits on `taha/recheck-phone-pending` for the kill test |
 | 4b | (found while checking ADR 0001's MAX(id) rule) a split-stage rerun leaves deleted vectors in the search file | **Bug confirmed on the phone** (20 rows in the file for 15 live) and **fixed** (15 for 15) | **adopted**: `VideoSplit.clearEarlierRun` |
@@ -46,7 +46,14 @@ same view later is the evidence that a thing is still there, so compare only wit
 no repeat more than 20 s apart was being dropped. Only a 10 s window changes anything (+3 frames, 4 names fewer lost, one
 clip). What does lose names is dropping look-alike frames **at all** (5 to 10 of 23 names), because near-identical frames
 carry different small detections; a window does not fix that. **Verdict: not supported on 75 s clips; the case it was
-about (coming back after minutes) needs our own long recordings (EYKO-50). Nothing changed.**
+about (coming back after minutes) was not on these clips. Nothing changed.**
+
+**Independent test (Rafique, EYKO-132, 27 Nov, [`2026-11-27-dedup-recent-or-whole.md`](2026-11-27-dedup-recent-or-whole.md)),**
+with its pass rule written before the run (W = 30 s: at least 12 of 13 events on two long still clips with at most 59
+frames, and EPIC recall within 1 point): **fails**. W = 30 s gave 10 of 13 events with 66 frames (whole video: 9 with 58);
+EPIC was unchanged at 79.1 %. W = 5 s recovers 12 of 13 but keeps 84 frames. So on a still scene my concern is real (a
+short window brings missed events back), but it pays for them in frames; the whole-video rule stays. Neither test measured
+"where is it now" answers on a recording where the camera returns after many minutes.
 
 ## 2 + 3 · An int8 first pass, exact scores only where needed
 
@@ -245,7 +252,7 @@ clip and index, no Ego4D text), so the next licensed run (after EYKO-139) can be
 - One phone (Infinix, Android 13). The A32 was not needed for these questions except the background kill, where EYKO-116
   only ever ran on the Infinix too.
 - COCO photos stand in for frames in 2 + 3, 8 and 9b; our own long first-person recordings do not exist yet (EYKO-50).
-- 1 rests on two 75 s clips; 5a on 54 crops from one session.
+- 1's own run rests on two 75 s clips (EYKO-132 adds two long still clips and EPIC); 5a on 54 crops from one session.
 - The phone ran a second copy of the app (`com.eykon.memory.recheck`), the same code, not Zara's installed build.
 - **Still open, all needing a phone:** 2 + 3 (int8 pass speed), 4 (background kill), 7 (accelerators). The code and tests
   for them are on `taha/recheck-phone-pending`.
