@@ -1,0 +1,416 @@
+{
+ "onnxruntime": "1.31.1",
+ "cpu": "x86_64",
+ "cores": 8,
+ "pictures": [
+  "android/app/src/androidTest/assets/detector_golden.jpg",
+  "android/app/src/test/resources/filters/blurred.png",
+  "android/app/src/test/resources/filters/dark.png",
+  "android/app/src/test/resources/filters/other.png",
+  "android/app/src/test/resources/filters/sharp.png",
+  "android/app/src/test/resources/filters/upright.png",
+  "android/app/src/test/resources/perception/dog.jpg"
+ ],
+ "warmup": 3,
+ "runs": 20,
+ "models": {
+  "yolox_tiny": {
+   "file": "yolox_tiny.onnx",
+   "mb": 20.2,
+   "input_shape": [
+    1,
+    3,
+    416,
+    416
+   ],
+   "inputs": 7,
+   "app_setting": {
+    "threads": 4,
+    "optimisation": "all"
+   },
+   "app": {
+    "median_ms": 34.19,
+    "p90_ms": 47.53
+   },
+   "threads": {
+    "1": {
+     "median_ms": 79.4,
+     "p90_ms": 81.91
+    },
+    "2": {
+     "median_ms": 48.07,
+     "p90_ms": 49.16
+    },
+    "4": {
+     "median_ms": 34.72,
+     "p90_ms": 36.04
+    },
+    "8": {
+     "median_ms": 38.54,
+     "p90_ms": 55.69
+    }
+   },
+   "optimisation": {
+    "off": {
+     "median_ms": 49.52,
+     "p90_ms": 58.55,
+     "vs_app_output": {
+      "max_abs_change": 7e-05,
+      "lowest_cosine": 1.0
+     }
+    },
+    "basic": {
+     "median_ms": 48.29,
+     "p90_ms": 51.59,
+     "vs_app_output": {
+      "max_abs_change": 7e-05,
+      "lowest_cosine": 1.0
+     }
+    },
+    "extended": {
+     "median_ms": 44.96,
+     "p90_ms": 49.4,
+     "vs_app_output": {
+      "max_abs_change": 7e-05,
+      "lowest_cosine": 1.0
+     }
+    },
+    "all": {
+     "median_ms": 34.61,
+     "p90_ms": 39.36,
+     "vs_app_output": {
+      "max_abs_change": 0.0,
+      "lowest_cosine": 1.0
+     }
+    }
+   },
+   "int8_dynamic": {
+    "mb": 5.2,
+    "median_ms": 147.78,
+    "p90_ms": 152.32,
+    "preview_vs_float": {
+     "max_abs_change": 3.33859,
+     "lowest_cosine": 1.0
+    }
+   }
+  },
+  "dfine_s_obj365": {
+   "file": "dfine_s_obj365.onnx",
+   "mb": 42.1,
+   "input_shape": [
+    1,
+    3,
+    640,
+    640
+   ],
+   "inputs": 7,
+   "app_setting": {
+    "threads": 4,
+    "optimisation": "off"
+   },
+   "app": {
+    "median_ms": 276.38,
+    "p90_ms": 296.47
+   },
+   "threads": {
+    "1": {
+     "median_ms": 516.51,
+     "p90_ms": 572.77
+    },
+    "2": {
+     "median_ms": 332.84,
+     "p90_ms": 367.99
+    },
+    "4": {
+     "median_ms": 271.16,
+     "p90_ms": 288.11
+    },
+    "8": {
+     "median_ms": 315.28,
+     "p90_ms": 353.18
+    }
+   },
+   "optimisation": {
+    "off": {
+     "median_ms": 291.31,
+     "p90_ms": 315.79,
+     "vs_app_output": {
+      "max_abs_change": 0.0,
+      "lowest_cosine": 1.0
+     }
+    },
+    "basic": {
+     "median_ms": 284.54,
+     "p90_ms": 351.42,
+     "vs_app_output": {
+      "max_abs_change": 4.74632,
+      "lowest_cosine": 1.0
+     }
+    },
+    "extended": {
+     "median_ms": 283.82,
+     "p90_ms": 365.93,
+     "vs_app_output": {
+      "max_abs_change": 4.74644,
+      "lowest_cosine": 1.0
+     }
+    },
+    "all": {
+     "median_ms": 300.24,
+     "p90_ms": 401.59,
+     "vs_app_output": {
+      "max_abs_change": 4.74646,
+      "lowest_cosine": 1.0
+     }
+    }
+   },
+   "int8_dynamic": {
+    "mb": 11.3,
+    "median_ms": 731.71,
+    "p90_ms": 812.02,
+    "preview_vs_float": {
+     "max_abs_change": 8.38657,
+     "lowest_cosine": 1.0
+    }
+   }
+  },
+  "yoloe_11l_own": {
+   "file": "yoloe_11l_own.onnx",
+   "mb": 110.7,
+   "input_shape": [
+    1,
+    3,
+    640,
+    640
+   ],
+   "inputs": 7,
+   "app_setting": {
+    "threads": 4,
+    "optimisation": "all"
+   },
+   "app": {
+    "median_ms": 930.11,
+    "p90_ms": 1065.77
+   },
+   "threads": {
+    "1": {
+     "median_ms": 1590.66,
+     "p90_ms": 1624.82
+    },
+    "2": {
+     "median_ms": 1027.2,
+     "p90_ms": 1045.58
+    },
+    "4": {
+     "median_ms": 806.47,
+     "p90_ms": 973.55
+    },
+    "8": {
+     "median_ms": 1063.22,
+     "p90_ms": 1815.3
+    }
+   },
+   "optimisation": {
+    "off": {
+     "median_ms": 1367.75,
+     "p90_ms": 1503.06,
+     "vs_app_output": {
+      "max_abs_change": 0.03278,
+      "lowest_cosine": 1.0
+     }
+    },
+    "basic": {
+     "median_ms": 1560.09,
+     "p90_ms": 1783.83,
+     "vs_app_output": {
+      "max_abs_change": 0.03278,
+      "lowest_cosine": 1.0
+     }
+    },
+    "extended": {
+     "median_ms": 1447.88,
+     "p90_ms": 1555.96,
+     "vs_app_output": {
+      "max_abs_change": 0.02991,
+      "lowest_cosine": 1.0
+     }
+    },
+    "all": {
+     "median_ms": 1019.16,
+     "p90_ms": 1177.6,
+     "vs_app_output": {
+      "max_abs_change": 0.0,
+      "lowest_cosine": 1.0
+     }
+    }
+   },
+   "int8_dynamic": {
+    "mb": 29.1,
+    "median_ms": 5938.51,
+    "p90_ms": 7526.77,
+    "preview_vs_float": {
+     "max_abs_change": 799.62592,
+     "lowest_cosine": 1.0
+    }
+   }
+  },
+  "mobileclip_s2_image": {
+   "file": "mobileclip_s2_image.onnx",
+   "mb": 143.0,
+   "input_shape": [
+    1,
+    3,
+    256,
+    256
+   ],
+   "inputs": 7,
+   "app_setting": {
+    "threads": 4,
+    "optimisation": "all"
+   },
+   "app": {
+    "median_ms": 198.32,
+    "p90_ms": 209.75
+   },
+   "threads": {
+    "1": {
+     "median_ms": 689.71,
+     "p90_ms": 804.73
+    },
+    "2": {
+     "median_ms": 318.91,
+     "p90_ms": 362.71
+    },
+    "4": {
+     "median_ms": 187.81,
+     "p90_ms": 195.4
+    },
+    "8": {
+     "median_ms": 127.79,
+     "p90_ms": 140.17
+    }
+   },
+   "optimisation": {
+    "off": {
+     "median_ms": 314.78,
+     "p90_ms": 340.23,
+     "vs_app_output": {
+      "max_abs_change": 0.0,
+      "lowest_cosine": 1.0
+     }
+    },
+    "basic": {
+     "median_ms": 385.85,
+     "p90_ms": 427.94,
+     "vs_app_output": {
+      "max_abs_change": 0.0,
+      "lowest_cosine": 1.0
+     }
+    },
+    "extended": {
+     "median_ms": 280.98,
+     "p90_ms": 307.86,
+     "vs_app_output": {
+      "max_abs_change": 0.0,
+      "lowest_cosine": 1.0
+     }
+    },
+    "all": {
+     "median_ms": 234.04,
+     "p90_ms": 274.02,
+     "vs_app_output": {
+      "max_abs_change": 0.0,
+      "lowest_cosine": 1.0
+     }
+    }
+   },
+   "int8_dynamic": {
+    "mb": 36.8,
+    "median_ms": 1615.69,
+    "p90_ms": 1795.08,
+    "preview_vs_float": {
+     "max_abs_change": 0.42346,
+     "lowest_cosine": -0.02774
+    }
+   }
+  },
+  "mobileclip_s2_text": {
+   "file": "mobileclip_s2_text.onnx",
+   "mb": 253.8,
+   "input_shape": [
+    1,
+    77
+   ],
+   "inputs": 10,
+   "app_setting": {
+    "threads": 4,
+    "optimisation": "all"
+   },
+   "app": {
+    "median_ms": 493.08,
+    "p90_ms": 822.85
+   },
+   "threads": {
+    "1": {
+     "median_ms": 161.84,
+     "p90_ms": 215.45
+    },
+    "2": {
+     "median_ms": 76.69,
+     "p90_ms": 101.61
+    },
+    "4": {
+     "median_ms": 65.89,
+     "p90_ms": 69.97
+    },
+    "8": {
+     "median_ms": 86.14,
+     "p90_ms": 105.31
+    }
+   },
+   "optimisation": {
+    "off": {
+     "median_ms": 61.14,
+     "p90_ms": 66.18,
+     "vs_app_output": {
+      "max_abs_change": 0.0,
+      "lowest_cosine": 1.0
+     }
+    },
+    "basic": {
+     "median_ms": 74.83,
+     "p90_ms": 76.71,
+     "vs_app_output": {
+      "max_abs_change": 0.0,
+      "lowest_cosine": 1.0
+     }
+    },
+    "extended": {
+     "median_ms": 64.48,
+     "p90_ms": 68.97,
+     "vs_app_output": {
+      "max_abs_change": 0.0,
+      "lowest_cosine": 1.0
+     }
+    },
+    "all": {
+     "median_ms": 60.23,
+     "p90_ms": 70.42,
+     "vs_app_output": {
+      "max_abs_change": 0.0,
+      "lowest_cosine": 1.0
+     }
+    }
+   },
+   "int8_dynamic": {
+    "mb": 64.0,
+    "median_ms": 56.18,
+    "p90_ms": 155.82,
+    "preview_vs_float": {
+     "max_abs_change": 0.14075,
+     "lowest_cosine": 0.79799
+    }
+   }
+  }
+ }
+}
