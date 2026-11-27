@@ -25,7 +25,8 @@ object VideoVectors {
      * database, mapped and scored in place by libeykonvec.so (EYKO-114: bit-identical, Java memory near zero).
      * If the library does not load, it falls back to HEAP_F32. Tests set other EYKO-109 modes.
      */
-    @Volatile internal var mode = if (runCatching { VectorNative.hashCode() }.isSuccess) VectorMode.MAPPED_NATIVE else VectorMode.HEAP_F32
+    internal val nativeLoaded = runCatching { VectorNative.hashCode() }.isSuccess
+    @Volatile internal var mode = if (nativeLoaded) VectorMode.MAPPED_NATIVE else VectorMode.HEAP_F32
 
     /** How many of the best int8 scores are re-scored with the exact float32 vector (DIRECT_I8 only). */
     private const val RESCORE = 100
@@ -72,6 +73,14 @@ object VideoVectors {
     fun clearCache(table: String? = null) {
         if (table == null) cache.clear() else cache.keys.removeAll { it.endsWith("|$table") }
     }
+
+    /**
+     * Hypothesis 4 (decision re-check, 26 Nov): the app's screen is hidden, so hand the mapped vector pages back to the
+     * system. The cache and the files stay; the next search maps nothing new, it only reads the pages again (laptop:
+     * PSS 230 -> 35 MB for a 205 MB file, next search 22 against 20 ms, same scores). Returns the bytes released.
+     */
+    @Synchronized
+    fun releaseMapped(): Long = cache.values.sumOf { it.block?.release() ?: 0L }
 
     /** The [k] rows most like [query], best first, as (row id, cosine). */
     fun knn(db: SupportSQLiteDatabase, table: String, query: FloatArray, k: Int): List<Pair<Long, Float>> {

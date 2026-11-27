@@ -35,7 +35,7 @@ def main() -> None:
                                        check=True).stdout.splitlines() if l.strip().startswith("LOAD")]
     aligned = all(l.split()[-1] == "0x4000" for l in loads)
     syms = subprocess.run([str(tools / f"llvm-readelf{exe}"), "-sW", "--dyn-syms", str(OUT)], capture_output=True, text=True).stdout
-    exported = all(re.search(rf"Java_com_eykon_memory_video_VectorNative_{f}\b", syms) for f in ("scoreF32",))
+    exported = all(re.search(rf"Java_com_eykon_memory_video_VectorNative_{f}\b", syms) for f in ("scoreF32", "release", "scoreI8"))
     print(f"{OUT.stat().st_size} B  sha256 {hashlib.sha256(OUT.read_bytes()).hexdigest()}  "
           f"LOAD 16 KB aligned: {aligned} ({len(loads)} segments)  JNI symbol exported: {exported}")
     if not (aligned and exported):
