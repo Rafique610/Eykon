@@ -1,0 +1,5 @@
+--------- beginning of main
+11-26 20:18:32.629 16147 16172 I EYKO167 : new database, default: page_size 4096, journal wal, set by -
+11-26 20:18:32.687 16147 16172 I EYKO167 : new database, pragma_in_onConfigure: page_size 4096, journal wal, set by execSQL
+11-26 20:18:32.793 16147 16172 I EYKO167 : new database, wal_off_in_onConfigure: page_size 4096, journal wal, set by execSQL
+11-26 20:18:32.794 16147 16172 I EYKO167 : new database summary: {default=page_size 4096, journal wal, set by -, pragma_in_onConfigure=page_size 4096, journal wal, set by execSQL, wal_off_in_onConfigure=page_size 4096, journal wal, set by execSQL}

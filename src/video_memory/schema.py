@@ -31,6 +31,8 @@ CREATE TABLE IF NOT EXISTS frames (
   phash       TEXT,
   kept        INTEGER NOT NULL DEFAULT 1,
   drop_reason TEXT,                        -- dark | bright | blurry | still | duplicate of frame N
+  brightness  REAL,                        -- EYKO-73: mean grey level the filter measured (0-255)
+  sharpness   REAL,                        -- EYKO-73: variance of the Laplacian the filter measured
   UNIQUE (video_id, frame_no)
 );
 CREATE TABLE IF NOT EXISTS audio_segments (
@@ -106,6 +108,10 @@ def init_db(conn: sqlite3.Connection | None = None) -> None:
             for column in ("content_hash", "source_uri", "display_name"):
                 if column not in columns:
                     conn.execute(f"ALTER TABLE videos ADD COLUMN {column} TEXT")
+            frame_columns = {row[1] for row in conn.execute("PRAGMA table_info(frames)")}
+            for column in ("brightness", "sharpness"):  # EYKO-73
+                if frame_columns and column not in frame_columns:
+                    conn.execute(f"ALTER TABLE frames ADD COLUMN {column} REAL")
         conn.executescript(DDL)
     finally:
         if own:

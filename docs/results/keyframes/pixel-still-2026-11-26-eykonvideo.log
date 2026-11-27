@@ -1,0 +1,18 @@
+11-26 21:46:22.425 I/EykonVideo(18200): split c0r0: 945 frames in 68496 ms (one pass; 28494 ms to JPEG, 1532 ms to write, the rest decoding), audio 314.9 s in 47302 ms
+11-26 21:46:25.868 I/EykonVideo(18200): filter c0r0: kept 21 of 945 (less sharp 840, still 84) in 3419 ms
+11-26 21:46:30.408 I/EykonVideo(18200): dedup c0r0: kept 7 of 21 (hash dropped 13, embedding dropped 1) in 4527 ms; embedded 8 frames, 547 ms each; memory java 28 MB, native 199 MB
+11-26 21:48:31.222 I/EykonVideo(18200): split c0r1: 945 frames in 68544 ms (one pass; 29589 ms to JPEG, 1105 ms to write, the rest decoding), audio 314.9 s in 47549 ms
+11-26 21:48:34.650 I/EykonVideo(18200): filter c0r1: kept 21 of 945 (less sharp 840, still 84) in 3409 ms
+11-26 21:48:38.802 I/EykonVideo(18200): dedup c0r1: kept 7 of 21 (hash dropped 13, embedding dropped 1) in 4147 ms; embedded 8 frames, 506 ms each; memory java 27 MB, native 199 MB
+11-26 21:50:33.532 I/EykonVideo(18200): split c0r2: 945 frames in 61891 ms (one pass; 24055 ms to JPEG, 1851 ms to write, the rest decoding), audio 314.9 s in 49723 ms
+11-26 21:50:36.949 I/EykonVideo(18200): filter c0r2: kept 21 of 945 (less sharp 840, still 84) in 3402 ms
+11-26 21:50:41.240 I/EykonVideo(18200): dedup c0r2: kept 7 of 21 (hash dropped 13, embedding dropped 1) in 4287 ms; embedded 8 frames, 523 ms each; memory java 17 MB, native 199 MB
+11-26 21:59:15.088 I/EykonVideo(18200): split c1r0: 865 frames in 45965 ms (one pass; 8631 ms to JPEG, 1203 ms to write, the rest decoding), audio 288.1 s in 45436 ms
+11-26 21:59:18.910 I/EykonVideo(18200): filter c1r0: kept 83 of 865 (less sharp 768, still 14) in 3808 ms
+11-26 21:59:55.411 I/EykonVideo(18200): dedup c1r0: kept 52 of 83 (hash dropped 13, embedding dropped 18) in 36489 ms; embedded 70 frames, 515 ms each; memory java 7 MB, native 199 MB
+11-26 22:01:25.424 I/EykonVideo(18200): split c1r1: 865 frames in 39667 ms (one pass; 7556 ms to JPEG, 1345 ms to write, the rest decoding), audio 288.1 s in 41275 ms
+11-26 22:01:28.989 I/EykonVideo(18200): filter c1r1: kept 83 of 865 (less sharp 768, still 14) in 3551 ms
+11-26 22:02:05.943 I/EykonVideo(18200): dedup c1r1: kept 52 of 83 (hash dropped 13, embedding dropped 18) in 36943 ms; embedded 70 frames, 521 ms each; memory java 34 MB, native 199 MB
+11-26 22:03:34.682 I/EykonVideo(18200): split c1r2: 865 frames in 46894 ms (one pass; 9682 ms to JPEG, 1714 ms to write, the rest decoding), audio 288.1 s in 26680 ms
+11-26 22:03:38.361 I/EykonVideo(18200): filter c1r2: kept 83 of 865 (less sharp 768, still 14) in 3664 ms
+11-26 22:04:15.546 I/EykonVideo(18200): dedup c1r2: kept 52 of 83 (hash dropped 13, embedding dropped 18) in 37173 ms; embedded 70 frames, 524 ms each; memory java 7 MB, native 199 MB

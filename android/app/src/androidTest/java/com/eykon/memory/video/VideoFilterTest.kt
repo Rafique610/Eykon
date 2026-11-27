@@ -97,6 +97,24 @@ class VideoFilterTest {
     }
 
     @Test
+    fun everyFrameStoresTheBrightnessAndSharpnessTheFilterMeasured() {
+        addAndSplit("test_clip.mp4", "moving", 10.0)
+        VideoFilter.run(db, "moving")
+
+        // EYKO-73: kept or dropped, every frame keeps its two numbers, equal to measuring its picture again
+        db.query("SELECT path, brightness, sharpness FROM frames WHERE video_id = ?", arrayOf("moving")).use { c ->
+            var n = 0
+            while (c.moveToNext()) {
+                val gray = VideoFilter.loadSmallGray(File(root, c.getString(0)))
+                assertEquals(FrameFilters.brightness(gray), c.getDouble(1), 1e-9)
+                assertEquals(FrameFilters.laplacianVariance(gray), c.getDouble(2), 1e-9)
+                n++
+            }
+            assertEquals(30, n)
+        }
+    }
+
+    @Test
     fun aSlotOfOneFrameChecksEveryFrameOnItsOwn() {
         addAndSplit("test_clip_still.mp4", "still", 5.0)
         VideoFilter.run(db, "still", 1)

@@ -1,14 +1,14 @@
 // Rebuilds every head document into docs/documents/. Usage: npm run build (from this folder).
 // Heads with a defense doc are built from head<N>-defense.js; the rest from heads/head<N>.json.
-// heads/head3.json stays as the Head 3 record (its gap and evidence tables are kept current); the .docx comes from head3-defense.js.
+// heads/head3.json and head4.json stay as the Head 3 and 4 records (their gap and evidence tables are kept current); the .docx files come from head3-defense.js and head4-defense.js.
 const { execFileSync } = require("child_process");
 const path = require("path");
 
 const RECORD = {
-  1: "Project-start", 4: "Video-processing",
+  1: "Project-start",
   5: "Scene-understanding", 6: "Indexing-and-memory", 7: "Search", 8: "Evaluation",
 };
-const DEFENSE = [2, 3];
+const DEFENSE = [2, 3, 4];
 
 const run = (args) => execFileSync(process.execPath, args, { stdio: "inherit" });
 for (const n of DEFENSE) run([path.join(__dirname, `head${n}-defense.js`)]);
