@@ -50,11 +50,12 @@
       {"table": {"cols": ["Option", "What it is", "Result", "Verdict"], "widths": [2, 2.6, 3.8, 1.2], "rows": [
         ["Every frame judged on its own (first build)", "Filters + dedup on all frames at 3 fps", "Kept 227 of 416 frames; 137.5 s per minute of video on the Pixel", "Replaced"],
         ["Sharpest per 3 s slot", "Slot rule before dedup", "44 frames kept, 32.6 s per minute; 31 of 35 moments (was 34)", "Adopted"],
-        ["Compare only with recent frames (window W)", "Dedup against the last W seconds instead of the whole video", "Tried while tuning; no setting beat uniform", "Not adopted"],
+        ["Compare only with recent frames (window W)", "Dedup against the last W seconds instead of the whole video", "Tried while tuning; no setting beat uniform. 27 Nov (EYKO-132), with the slot rule, rule fixed before the run: W = 30 s gave 10 of 13 long-clip events with 66 frames (needed 12 with at most 59); EPIC unchanged (79.1 %)", "Not adopted"],
         ["B0 uniform sampling", "Evenly spaced frames, no model", "Matched or beat ours on moments at every budget", "Baseline"],
         ["B1 codec keyframes", "The encoder's own I-frames", "35 % of EPIC-KITCHENS moments; cannot be set to a budget", "Rejected"],
         ["B2 ffmpeg scene filter", "Scene-change score", "80 % on EPIC; 13 of 35 on our clips at 44 frames", "Rejected"],
-        ["B3 PySceneDetect", "Content / adaptive detectors", "83 % on EPIC; 29 / 20 of 35 on our clips", "Rejected"]
+        ["B3 PySceneDetect", "Content / adaptive detectors", "83 % on EPIC; 29 / 20 of 35 on our clips", "Rejected"],
+        ["B4 Katna (EYKO-131)", "Frame difference, brightness filter, K-means on histograms, sharpest per cluster", "Fewest moments everywhere at our frame count: 27 of 35 (ours 31), 7 of 13 long clips (ours 10), 84 of 158 EPIC (ours 125, uniform 113)", "Rejected"]
       ]}}
     ]},
     {"title": "Decisions", "blocks": [
@@ -64,7 +65,9 @@
         ["3", "Keep only the sharpest frame per 3 s slot", "13 Oct 2026", "Cost 137.5 to 32.6 s per minute, at a cost of 3 of 35 moments"],
         ["4", "Two-step dedup: dHash, then MobileCLIP cosine 0.95", "EYKO-6", "Hash catches cheap repeats; MobileCLIP vectors are reused for search"],
         ["5", "Park keyframe tuning", "13 Oct 2026", "No setting beat uniform; tuning later (EYKO-46)"],
-        ["6", "Delete dropped frames' JPEGs at finish", "21 Oct 2026", "Frame files were the storage problem, not the memory itself"]
+        ["6", "Delete dropped frames' JPEGs at finish", "21 Oct 2026", "Frame files were the storage problem, not the memory itself"],
+        ["7", "Keep dropping repeats against the whole video", "27 Nov 2026 (EYKO-132)", "Recent-frames rule (W = 30 s) failed the rule written before the run: 10 of 13 events with 66 frames; shorter windows win events back only by keeping more frames"],
+        ["8", "Store each frame's brightness and sharpness", "27 Nov 2026 (EYKO-73)", "Filter decisions can be checked afterwards; frame list and per-video cut-offs can read them"]
       ]}}
     ]},
     {"title": "Tests and evidence", "blocks": [
@@ -123,7 +126,7 @@
         "EPIC-KITCHENS ran on the laptop copy, before the slot rule, never on a phone.",
         "The cut-offs (25, 235, 60, 6 / 0.10, dHash 6, cosine 0.95) are starting values. Sharpness averages per video ran from 143 to 2,605 on our frames, so one fixed blur number cannot fit every scene.",
         "The 3 s slot length was not tuned.",
-        "Sharpness is not stored and dropped pictures are deleted, so filter decisions cannot be checked afterwards."
+        "Dropped pictures are deleted; since 27 Nov (EYKO-73) each frame's brightness and sharpness are stored, so filter decisions can be checked afterwards (frames filtered before that keep NULL)."
       ]}
     ]},
     {"title": "Gaps and open items", "blocks": [
@@ -131,7 +134,7 @@
       {"table": {"cols": ["Gap", "What is missing", "Card", "Sev.", "Resolution (to fill)"], "widths": [0.6, 4, 0.9, 0.7, 2.2], "rows": [
         ["G1", "Frame filter cut-offs never tuned; need an adaptive blur cut-off tuned on human-marked frames, laptop first.", "EYKO-77", "High", ""],
         ["D1", "Decide what \"dynamic blur\" means: cut-off relative to the video, Gaussian before the Laplacian, or both.", "EYKO-74", "Decision", ""],
-        ["G7", "Store what the filter measured (sharpness, brightness) per frame.", "EYKO-73", "Medium", ""],
+        ["G7", "Store what the filter measured (sharpness, brightness) per frame.", "EYKO-73", "Medium", "Closed 27 Nov: frames.brightness and frames.sharpness written by the filter; phone test checks them against the picture"],
         ["G3", "Dedup cut-offs untuned (dHash 6, cosine 0.95).", "EYKO-79", "Medium", ""],
         ["—", "Check every 30 fps frame and keep the sharpest of each 1/3 s (laptop benchmark first).", "EYKO-48", "—", ""],
         ["—", "Keyframe tuning and optimisation after the pipeline is complete.", "EYKO-46", "—", ""],
