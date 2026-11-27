@@ -315,3 +315,20 @@ tasks:
   build-vector-native:
     desc: "EYKO-114 — build libeykonvec.so (NEON dot products over the memory-mapped vector file) into android/app/src/main/jniLibs/arm64-v8a with the NDK, and check 16 KB alignment and the JNI symbol; pass -- --ndk <dir> for another NDK"
     cmd: uv run python src/benchmarks/build_vector_native.py {{.CLI_ARGS}}
+
+  # Decision re-check, 26 Nov 2026 (docs/results/2026-11-26-decision-recheck.md)
+  score-intervals:
+    desc: "Re-check H10 — Wilson 95 % intervals and best-case McNemar tests for the saved Ego4D scores (reads only our saved totals)"
+    cmd: uv run --no-project python -I src/benchmarks/score_intervals.py
+  int8-windows:
+    desc: "Re-check H2+H3 — int8 pass + exact float32 re-score of candidates and window neighbours against the app's exact windows (100k COCO + own vectors)"
+    cmd: uv run --no-project --python 3.12 --index https://download.pytorch.org/whl/cpu --index-strategy unsafe-best-match --with numpy --with onnxruntime==1.31.1 --with open_clip_torch --with torch --with timm python src/benchmarks/vector_int8_windows.py
+  dedup-window:
+    desc: "Re-check H1 — repeats dropped against the whole video vs the last W seconds: frames kept and last-seen time per object (give clips)"
+    cmd: uv run --no-project --python 3.12 --with numpy --with onnxruntime==1.31.1 --with opencv-python-headless --with pillow --with onnx --with imageio-ffmpeg python src/benchmarks/dedup_window.py {{.CLI_ARGS}}
+  yolox-beside-dfine:
+    desc: "Re-check H8 / EYKO-134 — what YOLOX-Tiny adds beside D-FINE S, against COCO's labels (give instances_val2017.json)"
+    cmd: uv run --no-project --python 3.12 --with numpy --with onnxruntime==1.31.1 --with pillow --with onnx python src/benchmarks/yolox_beside_dfine.py {{.CLI_ARGS}}
+  not-found-cutoff:
+    desc: "Re-check H9b / EYKO-138 — can one cut-off on the best score say 'not in my videos'? COCO, present vs absent (give instances_val2017.json)"
+    cmd: uv run --no-project --python 3.12 --index https://download.pytorch.org/whl/cpu --index-strategy unsafe-best-match --with numpy --with onnxruntime==1.31.1 --with pillow --with onnx --with open_clip_torch --with torch --with timm python src/benchmarks/not_found_cutoff.py {{.CLI_ARGS}}

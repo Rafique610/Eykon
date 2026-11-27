@@ -1,0 +1,54 @@
+{
+ "5a_same_object_rules": {
+  "crops": 54,
+  "same_pairs": 44,
+  "different_pairs": 292,
+  "different_pairs_within_10_s": 40,
+  "rules": {
+   "app: cosine >= 0.87": {
+    "same_missed": 11,
+    "different_merged": 3,
+    "wrong": 14
+   },
+   "same clip within 2 s, else cosine 0.87": {
+    "same_missed": 11,
+    "different_merged": 6,
+    "wrong": 17
+   },
+   "same clip within 5 s, else cosine 0.87": {
+    "same_missed": 7,
+    "different_merged": 23,
+    "wrong": 30
+   },
+   "same clip within 10 s, else cosine 0.87": {
+    "same_missed": 6,
+    "different_merged": 41,
+    "wrong": 47
+   },
+   "same clip within 30 s, else cosine 0.87": {
+    "same_missed": 4,
+    "different_merged": 55,
+    "wrong": 59
+   },
+   "scene-sized crop (side >= 400 px) in the same clip, else cosine 0.87": {
+    "same_missed": 1,
+    "different_merged": 18,
+    "wrong": 19
+   },
+   "scene-sized crop (side >= 480 px) in the same clip, else cosine 0.87": {
+    "same_missed": 5,
+    "different_merged": 8,
+    "wrong": 13
+   }
+  }
+ },
+ "5b_storage": {
+  "rows": 20000,
+  "bytes_per_sighting": {
+   "page 4096, vector inside the row": 4122,
+   "page 4096, vector in a side table": 4212,
+   "page 16384, vector inside the row": 2360,
+   "page 16384, vector in a side table": 2450
+  }
+ }
+}

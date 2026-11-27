@@ -113,13 +113,16 @@ def nlq_scores(rank) -> dict:
                 scores = rank(uid, kept, image, q["query"])
                 order = np.argsort(-scores)
                 inside = (times >= gt[0] - HALF) & (times <= gt[1] + HALF)
-                row = {"hit@1": bool(inside[order[0]]), "hit@5": bool(inside[order[:5]].any()), "chance@1": float(inside.mean())}
+                row = {"hit@1": bool(inside[order[0]]), "hit@5": bool(inside[order[:5]].any()), "chance@1": float(inside.mean()),
+                       "q": f"{uid}#{len(rows[area])}"}  # question key (clip uid + index), no Ego4D text: lets paired tests run
                 for g in GROW:
                     wins = windows(times, scores, g)
                     name = "frame" if g is None else f"grow {g}"
                     row |= {f"{name} R@{k} {x}": any(tiou(w, gt) >= x for w in wins[:k]) for k in (1, 5) for x in (0.3, 0.5)}
                 rows[area].append(row)
-    return {a: {k: round(100 * float(np.mean([r[k] for r in rs])), 1) for k in rs[0]} | {"n": len(rs)} for a, rs in rows.items()}
+    # per_question keeps each question's pass/fail (EYKO-140): with it, a change can be tested question by question (McNemar)
+    return {a: {k: round(100 * float(np.mean([r[k] for r in rs])), 1) for k in rs[0] if k != "q"} | {"n": len(rs)}
+            | {"per_question": {r["q"]: {k: v for k, v in r.items() if isinstance(v, bool)} for r in rs}} for a, rs in rows.items()}
 
 
 def nlq() -> dict:
@@ -164,9 +167,10 @@ def vq() -> dict:
                 answer = max(same)[0] if same else (max(before, key=lambda b: b[1])[0] if before else None)
                 rows.append({"success": answer is not None and track[0] <= answer <= track[1],
                              "seen": any(track[0] <= t <= track[1] and c >= SAME for t, c in before),
-                             "title": q.get("object_title", "")})
+                             "title": q.get("object_title", ""), "q": f"{uid}#{len(rows)}"})
     return {"objects (last seen)": {"success": round(100 * np.mean([r["success"] for r in rows]), 1),
-                                    "seen": round(100 * np.mean([r["seen"] for r in rows]), 1), "n": len(rows)}}
+                                    "seen": round(100 * np.mean([r["seen"] for r in rows]), 1), "n": len(rows),
+                                    "per_question": {r["q"]: {"success": r["success"], "seen": r["seen"]} for r in rows}}}
 
 
 def mq(actions=None, mapping: dict | None = None) -> dict:
